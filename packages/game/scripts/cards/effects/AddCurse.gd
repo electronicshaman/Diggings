@@ -7,8 +7,6 @@ class_name AddCurse
 @export var curse_card_name: String = "Misfire"  # Name of curse card to add
 @export var copies_to_add: int = 1               # How many copies to add
 
-var effect_name: String = ""
-var description: String = ""
 
 func _init() -> void:
 	effect_name = "Add Curse"

@@ -121,6 +121,27 @@ The project is implementing a clean architecture transition as detailed in `docs
 - **Priest** - Missionary, moral authority
 - **Swagman** - Wandering worker, jack-of-trades
 
+## Development Guidelines
+
+### Debugging and Logging
+
+**ALWAYS use GLog for debugging output.** The project has a custom logging system that:
+- Automatically checks `const DEBUG_ENABLED: bool` in each file
+- No need for `if DEBUG_ENABLED:` before log calls
+- Clean syntax: `GLog.debug("message")`, `GLog.warn("message")`, `GLog.error("message")`
+- Automatic source file detection and colored output
+- See `GLOG_USAGE_GUIDE.md` for full documentation
+
+**Example usage in any .gd file:**
+```gdscript
+const DEBUG_ENABLED: bool = true  # Toggle per file
+
+func my_function():
+    GLog.debug("Function called")  # No if statement needed
+    GLog.warn("Something suspicious")
+    GLog.error("Something went wrong")
+```
+
 ## Key Design Principles
 
 - **Fail fast** - Change immediately if not fun

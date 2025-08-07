@@ -6,7 +6,7 @@
 [sub_resource type="Resource" id="MultipleDamage_1"]
 script = ExtResource("2")
 effect_name = "Multiple Damage"
-description = "Deal 2 damage 3 times"
+description = "Deal %s damage %s times" % [damage_amount, number_of_hits]
 damage_amount = 2
 number_of_hits = 3
 

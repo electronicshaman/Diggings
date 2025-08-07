@@ -1,6 +1,9 @@
 extends Node
 class_name DuelManager
 
+# Per-file debug control (GLog will check this)
+const DEBUG_ENABLED = true
+
 @export var duel_state: DuelState
 @export var initial_hand_size: int = 5
 @export var cards_per_turn_draw: int = 1
@@ -14,18 +17,18 @@ signal duel_ended(winner: String)
 var card_effects_processor: CardEffects
 
 func _ready():
-	print("DuelManager initializing...")
+	GLog.info("DuelManager initializing...")
 	
 	if not duel_state:
 		duel_state = DuelState.new()
-		print("Created new DuelState")
+		GLog.info("Created new DuelState")
 	
 	card_effects_processor = CardEffects.new()
 	
 	duel_state.add_change_listener(_on_duel_state_changed)
 
 func _on_duel_state_changed(change_type: String, data: Dictionary):
-	print("DuelState changed: %s" % change_type)
+	GLog.debug("DuelState changed: %s" % change_type)
 	
 	match change_type:
 		"player_died", "player_went_insane":
@@ -34,7 +37,7 @@ func _on_duel_state_changed(change_type: String, data: Dictionary):
 			end_duel("player")
 
 func start_new_duel(player_deck: Array[CardData], enemy_data: EnemyState):
-	print("Starting new duel...")
+	GLog.info("Starting new duel...")
 	
 	duel_state.enemy_data = enemy_data
 	
@@ -58,22 +61,22 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: EnemyState):
 
 func draw_initial_hand():
 	var drawn = duel_state.draw_cards(initial_hand_size)
-	print("Drew initial hand of %d cards" % drawn.size())
+	GLog.info("Drew initial hand of %d cards" % drawn.size())
 
 func start_player_turn():
-	print("Starting player turn %d" % (duel_state.player_turn_count + 1))
+	GLog.info("Starting player turn %d" % (duel_state.player_turn_count + 1))
 	
 	duel_state.start_player_turn()
 	
 	if duel_state.player_turn_count > 1:
 		var drawn = duel_state.draw_cards(cards_per_turn_draw)
 		if drawn.size() > 0:
-			print("Drew %d card(s) for turn" % drawn.size())
+			GLog.debug("Drew %d card(s) for turn" % drawn.size())
 	
 	turn_started.emit(true)
 
 func end_player_turn():
-	print("Ending player turn")
+	GLog.debug("Ending player turn")
 	
 	duel_state.end_player_turn()
 	turn_ended.emit(true)
@@ -82,7 +85,7 @@ func end_player_turn():
 		start_enemy_turn()
 
 func start_enemy_turn():
-	print("Starting enemy turn %d" % (duel_state.enemy_turn_count + 1))
+	GLog.info("Starting enemy turn %d" % (duel_state.enemy_turn_count + 1))
 	
 	duel_state.start_enemy_turn()
 	turn_started.emit(false)
@@ -93,21 +96,21 @@ func process_enemy_turn():
 	var enemy = duel_state.enemy_data
 	
 	if enemy.is_stunned():
-		print("Enemy is stunned, skipping turn")
+		GLog.debug("Enemy is stunned, skipping turn")
 		enemy.reduce_stun()
 		end_enemy_turn()
 		return
 	
 	var damage = 5 + (enemy.turns_alive * 2)
-	print("Enemy attacks for %d damage!" % damage)
+	GLog.info("Enemy attacks for %d damage!" % damage)
 	
 	var actual_damage = duel_state.player_data.take_damage(damage)
-	print("Player took %d damage (after cover)" % actual_damage)
+	GLog.info("Player took %d damage (after cover)" % actual_damage)
 	
 	end_enemy_turn()
 
 func end_enemy_turn():
-	print("Ending enemy turn")
+	GLog.debug("Ending enemy turn")
 	
 	duel_state.end_enemy_turn()
 	turn_ended.emit(false)
@@ -126,10 +129,10 @@ func can_play_card(card_data: CardData) -> bool:
 
 func play_card(card_data: CardData):
 	if not can_play_card(card_data):
-		print("Cannot play card: %s" % card_data.card_name)
+		GLog.warn("Cannot play card: %s" % card_data.card_name)
 		return
 	
-	print("Playing card: %s" % card_data.card_name)
+	GLog.info("Playing card: %s" % card_data.card_name)
 	
 	var player = duel_state.player_data
 	var actual_cost = player.get_actual_energy_cost(card_data.energy_cost, card_data.card_type)
@@ -160,30 +163,30 @@ func apply_card_results(results: Dictionary):
 		var ignore_cover = results.get("ignores_cover", false)
 		var actual_damage = enemy.take_damage(results.damage, ignore_cover)
 		player.damage_dealt_this_turn += actual_damage
-		print("Dealt %d damage to enemy" % actual_damage)
+		GLog.info("Dealt %d damage to enemy" % actual_damage)
 	
 	if results.has("defense") and results.defense > 0:
 		player.gain_cover(results.defense)
-		print("Gained %d defense" % results.defense)
+		GLog.debug("Gained %d defense" % results.defense)
 	
 	if results.has("heal") and results.heal > 0:
 		player.heal(results.heal)
-		print("Healed %d health" % results.heal)
+		GLog.debug("Healed %d health" % results.heal)
 	
 	if results.has("draw") and results.draw > 0:
 		var drawn = duel_state.draw_cards(results.draw)
-		print("Drew %d cards" % drawn.size())
+		GLog.debug("Drew %d cards" % drawn.size())
 	
 	if results.has("energy_restore") and results.energy_restore > 0:
 		player.restore_energy(results.energy_restore)
-		print("Restored %d energy" % results.energy_restore)
+		GLog.debug("Restored %d energy" % results.energy_restore)
 	
 	if results.has("stun_enemy") and results.stun_enemy > 0:
 		enemy.apply_stun(results.stun_enemy)
-		print("Stunned enemy for %d turns" % results.stun_enemy)
+		GLog.info("Stunned enemy for %d turns" % results.stun_enemy)
 
 func end_duel(winner: String):
-	print("Duel ended! Winner: %s" % winner)
+	GLog.info("Duel ended! Winner: %s" % winner)
 	duel_state.end_duel(winner)
 	duel_ended.emit(winner)
 

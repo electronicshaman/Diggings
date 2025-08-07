@@ -60,7 +60,14 @@ func write_log(message: String, level: Level = Level.INFO, source: String = "") 
 	var detected_source = source
 	if detected_source == "":
 		var stack = get_stack()
-		if stack.size() >= 2:
+		# Need to look deeper in the stack to skip GLog convenience functions
+		# stack[0] = write_log, stack[1] = debug/warn/etc, stack[2] = actual calling file
+		if stack.size() >= 3:
+			var caller = stack[2]  # Skip the convenience function
+			var source_parts = caller.source.split("/")
+			detected_source = source_parts[-1].replace(".gd", "")
+		elif stack.size() >= 2:
+			# Fallback for direct write_log calls
 			var caller = stack[1]
 			var source_parts = caller.source.split("/")
 			detected_source = source_parts[-1].replace(".gd", "")
@@ -91,10 +98,16 @@ func write_log(message: String, level: Level = Level.INFO, source: String = "") 
 ## Check if the calling file has DEBUG_ENABLED = false
 func _is_debug_disabled_in_source() -> bool:
 	var stack = get_stack()
-	if stack.size() < 2:
-		return false
+	# Need to look deeper in the stack to skip GLog convenience functions
+	# stack[0] = _is_debug_disabled_in_source, stack[1] = write_log, stack[2] = debug/warn/etc, stack[3] = actual calling file
+	var caller_index = 3
+	if stack.size() < caller_index + 1:
+		# Fallback to previous behavior for direct calls
+		caller_index = 2 if stack.size() >= 3 else 1
+		if stack.size() < caller_index + 1:
+			return false
 	
-	var caller = stack[1]
+	var caller = stack[caller_index]
 	var source_path = caller.source
 	
 	# Try to load the script and check for DEBUG_ENABLED constant
@@ -131,7 +144,7 @@ func critical(message: String, source: String = "") -> void:
 ## File-specific debug control
 func set_file_debug(file_name: String, enabled: bool) -> void:
 	file_debug_toggles[file_name] = enabled
-	debug("File debug toggled: %s = %s" % [file_name, enabled], "GLog")
+	debug("File debug toggled: %s = %s" % [file_name, enabled])
 
 func get_file_debug(file_name: String) -> bool:
 	return file_debug_toggles.get(file_name, true)
@@ -139,15 +152,15 @@ func get_file_debug(file_name: String) -> bool:
 ## Global debug control
 func enable_debug() -> void:
 	debug_enabled = true
-	info("Global debug enabled", "GLog")
+	info("Global debug enabled")
 
 func disable_debug() -> void:
-	info("Global debug disabled", "GLog")
+	info("Global debug disabled")
 	debug_enabled = false
 
 func set_min_level(level: Level) -> void:
 	min_log_level = level
-	info("Minimum log level set to: %s" % level_names[level], "GLog")
+	info("Minimum log level set to: %s" % level_names[level])
 
 ## Utility function to log with automatic source detection
 func log_from(message: String, level: Level = Level.INFO) -> void:

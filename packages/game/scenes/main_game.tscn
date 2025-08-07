@@ -29,7 +29,7 @@ grow_vertical = 2
 color = Color(0.15, 0.12, 0.1, 1)
 
 [node name="PlayerArea" type="Panel" parent="UI/Control"]
-modulate = Color(0.831, 0.686, 0.216, 0.3)
+modulate = Color(0.85098, 0.337255, 0.0431373, 1)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -78,7 +78,7 @@ theme_override_font_sizes/font_size = 20
 text = "Sanity: 100/100"
 
 [node name="EnemyArea" type="Panel" parent="UI/Control"]
-modulate = Color(0.8, 0.2, 0.2, 0.3)
+modulate = Color(0.407843, 0.54902, 0.537255, 1)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -134,7 +134,7 @@ grow_vertical = 0
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="PileIndicators" type="HBoxContainer" parent="UI/Control"]
+[node name="PileIndicatorsLeft" type="HBoxContainer" parent="UI/Control"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -146,12 +146,24 @@ offset_bottom = -20.0
 grow_vertical = 0
 theme_override_constants/separation = 20
 
-[node name="DeckLabel" type="Label" parent="UI/Control/PileIndicators"]
+[node name="DeckLabel" type="Label" parent="UI/Control/PileIndicatorsLeft"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Deck: 0"
 
-[node name="DiscardLabel" type="Label" parent="UI/Control/PileIndicators"]
+[node name="PileIndicatorsRight" type="HBoxContainer" parent="UI/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 921.0
+offset_top = -60.0
+offset_right = 1121.0
+offset_bottom = -20.0
+grow_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="DiscardLabel" type="Label" parent="UI/Control/PileIndicatorsRight"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Discard: 0"
