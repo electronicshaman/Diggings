@@ -4,6 +4,9 @@ class_name CardPile
 # CardPile Resource - Generic card collection for hand, deck, discard, and removed piles
 # Part of the resource-based architecture migration for better performance and reusability
 
+# Debug toggle for this file - set to false to disable CardPile logging
+const DEBUG_ENABLED: bool = true
+
 # Card storage
 @export var cards: Array[CardData] = []
 @export var pile_type: String = "generic"  # "hand", "deck", "discard", "removed"
@@ -15,6 +18,9 @@ var _change_listeners: Array[Callable] = []
 func _init(type: String = "generic", maximum_size: int = -1) -> void:
 	pile_type = type
 	max_size = maximum_size
+	
+	# Example GLog usage - now much cleaner!
+	GLog.debug("CardPile created: type=%s, max_size=%s" % [type, maximum_size])
 
 # Add a callback to be notified of pile changes
 func add_change_listener(callback: Callable) -> void:
@@ -37,13 +43,19 @@ func _emit_change(change_type: String, data: Dictionary = {}) -> void:
 # Add a card to the pile, returns true if successful
 func add_card(card_data: CardData) -> bool:
 	if not card_data:
+		GLog.warn("Attempted to add null card to %s pile" % pile_type)
 		return false
 	
 	# Check size limit
 	if max_size > 0 and cards.size() >= max_size:
+		GLog.warn("Pile %s is full (%d/%d), cannot add card: %s" % [pile_type, cards.size(), max_size, card_data.card_name])
 		return false
 	
 	cards.append(card_data)
+	
+	# Example of different logging levels - much cleaner now!
+	GLog.debug("Added card to %s pile: %s (pile size: %d)" % [pile_type, card_data.card_name, cards.size()])
+	
 	_emit_change("card_added", {"card": card_data})
 	return true
 

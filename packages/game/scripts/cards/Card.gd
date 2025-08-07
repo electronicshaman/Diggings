@@ -22,9 +22,6 @@ func _ready():
 	
 	setup_card_visuals()
 	setup_hover_effects()
-	
-	print("DEBUG: Card %s ready using GUI input workaround" % name)
-	print("DEBUG: Card position: %s, scale: %s" % [position, scale])
 
 func setup_card_visuals():
 	if not card_data:
@@ -106,7 +103,6 @@ func setup_hover_effects():
 
 func _on_mouse_entered():
 	is_hovering = true
-	print("DEBUG: Mouse entered card %s at position %s" % [name, position])
 	
 	# Store original z-index and bring to front
 	original_z_index = z_index
@@ -114,18 +110,14 @@ func _on_mouse_entered():
 
 func _on_mouse_exited():
 	is_hovering = false
-	print("DEBUG: Mouse exited card %s" % name)
 	
 	# Return to original z-index (preserves hand positioning)
 	z_index = original_z_index
 
 func _on_area_input_event(viewport: Node, event: InputEvent, shape_idx: int):
-	"""Handle Area2D input events directly"""
-	print("DEBUG: Area2D input event on card %s: %s" % [name, event])
+	"""Handle Area2D input events directly (fallback - usually button handles this)"""
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		print("DEBUG: Area2D detected left click on card %s!" % name)
 		if card_data:
-			print("DEBUG: Card has data, emitting card_played signal for: %s" % card_data.card_name)
 			card_played.emit(self)
 		else:
 			print("ERROR: Card %s has no card_data!" % name)
@@ -144,14 +136,10 @@ func add_click_button():
 	
 	add_child(button)
 	button.pressed.connect(_on_button_clicked)
-	
-	print("DEBUG: Added click button to card %s" % name)
 
 func _on_button_clicked():
 	"""Handle button click"""
-	print("DEBUG: Button clicked on card %s!" % name)
 	if card_data:
-		print("DEBUG: Card has data, emitting card_played signal for: %s" % card_data.card_name)
 		card_played.emit(self)
 	else:
 		print("ERROR: Card %s has no card_data!" % name)
@@ -186,18 +174,10 @@ func format_card_handling() -> String:
 	return handling_display if handling_display != "Standard" else ""
 
 func _input(event: InputEvent):
-	"""Handle input events using collision detection (workaround for broken Area2D input_event)"""
+	"""Handle input events using collision detection (backup to button workaround)"""
 	if event.is_action_pressed("left_mouse"):
-		print("DEBUG: Left mouse pressed detected by card %s (hover: %s)" % [name, is_hovering])
-		# Check if mouse is hovering over this card (using the working mouse_entered/exited detection)
-		if is_hovering:
-			print("DEBUG: Card %s clicked using collision detection workaround!" % name)
-			
-			if card_data:
-				print("DEBUG: Card has data, emitting card_played signal for: %s" % card_data.card_name)
-				card_played.emit(self)
-			else:
-				print("ERROR: Card %s has no card_data!" % name)
+		if is_hovering and card_data:
+			card_played.emit(self)
 
 # NOTE: Card effects are now handled by CardEffects.gd - this function is deprecated
 # and kept only for reference. The actual effects are calculated in CardEffects.apply_card_effects()

@@ -9,8 +9,8 @@ extends Node2D
 @onready var enemy_name_label = $UI/Control/EnemyArea/EnemyStats/EnemyName
 @onready var enemy_health_label = $UI/Control/EnemyArea/EnemyStats/EnemyHealth
 @onready var enemy_cover_label = $UI/Control/EnemyArea/EnemyStats/EnemyCover
-@onready var deck_label = $UI/Control/PileIndicators/DeckLabel
-@onready var discard_label = $UI/Control/PileIndicators/DiscardLabel
+@onready var deck_label = $UI/Control/PileIndicatorsLeft/DeckLabel
+@onready var discard_label = $UI/Control/PileIndicatorsRight/DiscardLabel
 @onready var turn_label = $UI/Control/TurnInfo/TurnLabel
 @onready var phase_label = $UI/Control/TurnInfo/PhaseLabel
 @onready var end_turn_button = $UI/Control/TurnInfo/EndTurnButton
@@ -157,7 +157,8 @@ func refresh_hand_display():
 		
 		# Position cards manually since Area2D doesn't work well with HBoxContainer
 		var card_spacing = 160  # 150 width + 10 spacing
-		var start_x = -(hand_data.size() - 1) * card_spacing / 2
+		var total_width = (hand_data.size() - 1) * card_spacing
+		var start_x = -total_width / 2
 		card_instance.position.x = start_x + i * card_spacing
 		card_instance.position.y = 0
 		
