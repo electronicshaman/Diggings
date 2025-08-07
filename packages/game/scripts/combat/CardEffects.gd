@@ -9,7 +9,7 @@ func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dicti
 		"draw": 0,
 		"energy_restore": 0,
 		"stun_enemy": 0,
-		"ignores_cover": false,
+		"ignores_defense": false,
 		"discard_random": 0,
 		"add_curse": 0,
 		"sanity_restore": 0

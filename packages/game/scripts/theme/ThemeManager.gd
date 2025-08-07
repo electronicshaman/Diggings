@@ -32,8 +32,8 @@ static func get_card_handling_display_name(handling: String) -> String:
 	match handling:
 		"Standard":
 			return "Standard"
-		"Swag":
-			return "Swag"
+		"Equipped":
+			return "Equipped"
 		"Flash":
 			return "Flash"
 		"Keep":
@@ -53,7 +53,7 @@ static func get_card_handling_definition(handling: String) -> Dictionary:
 				"removed_after_use": false,
 				"triggers_on_draw": false
 			}
-		"Swag":
+		"Equipped":
 			return {
 				"discards_after_use": true,
 				"discards_end_of_turn": false,

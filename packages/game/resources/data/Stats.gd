@@ -1,7 +1,7 @@
 extends Resource
 class_name Stats
 
-# Stats Resource - Handles health, energy, sanity, and cover with change tracking
+# Stats Resource - Handles health, energy, sanity, and defense with change tracking
 # Part of the resource-based architecture migration for better performance and reusability
 
 # Health stats
@@ -62,13 +62,13 @@ class_name Stats
 				current_sanity = max_sanity
 			_emit_change("max_sanity_changed", old_value, max_sanity)
 
-# Cover (temporary defense)
-@export var cover: int = 0:
+# Defense (temporary defense)
+@export var defense: int = 0:
 	set(value):
-		if cover != value:
-			var old_value: int = cover
-			cover = max(0, value)
-			_emit_change("cover_changed", old_value, cover)
+		if defense != value:
+			var old_value: int = defense
+			defense = max(0, value)
+			_emit_change("defense_changed", old_value, defense)
 
 # Change tracking system - since Resources don't have signals, we use a callback system
 var _change_listeners: Array[Callable] = []
@@ -125,18 +125,18 @@ func get_sanity_percentage() -> float:
 
 # Stat modification methods
 
-# Take damage, returns actual damage taken after cover
+# Take damage, returns actual damage taken after defense
 func take_damage(amount: int) -> int:
 	if amount <= 0:
 		return 0
 	
 	var actual_damage: int = amount
 	
-	# Apply cover reduction
-	if cover > 0:
-		var cover_reduction: int = min(cover, amount)
-		actual_damage -= cover_reduction
-		cover -= cover_reduction
+	# Apply defense reduction
+	if defense > 0:
+		var defense_reduction: int = min(defense, amount)
+		actual_damage -= defense_reduction
+		defense -= defense_reduction
 	
 	# Apply remaining damage to health
 	if actual_damage > 0:
@@ -175,15 +175,15 @@ func lose_sanity(amount: int) -> void:
 	if amount > 0:
 		current_sanity -= amount
 
-# Gain cover
-func gain_cover(amount: int) -> void:
+# Gain defense
+func gain_defense(amount: int) -> void:
 	if amount > 0:
-		cover = cover + amount  # Use assignment to trigger setter and signal
+		defense = defense + amount  # Use assignment to trigger setter and signal
 
-# Lose cover
-func lose_cover(amount: int) -> void:
+# Lose defense
+func lose_defense(amount: int) -> void:
 	if amount > 0:
-		cover = max(0, cover - amount)
+		defense = max(0, defense - amount)
 
 # Max stat modification methods
 
@@ -206,7 +206,7 @@ func reset_to_max() -> void:
 	current_health = max_health
 	current_energy = max_energy
 	current_sanity = max_sanity
-	cover = 0
+	defense = 0
 
 # Reset energy to maximum (for new turn)
 func reset_energy() -> void:
@@ -223,7 +223,7 @@ func get_save_data() -> Dictionary:
 		"max_energy": max_energy,
 		"current_sanity": current_sanity,
 		"max_sanity": max_sanity,
-		"cover": cover
+		"defense": defense
 	}
 
 # Load stats from save data dictionary
@@ -234,15 +234,15 @@ func load_from_data(data: Dictionary) -> void:
 	max_energy = data.get("max_energy", max_energy)
 	current_sanity = data.get("current_sanity", current_sanity)
 	max_sanity = data.get("max_sanity", max_sanity)
-	cover = data.get("cover", cover)
+	defense = data.get("defense", defense)
 
 # Debug methods
 
 # Print current stats for debugging
 func print_status() -> void:
-	print("Stats: %d/%d HP, %d/%d Energy, %d/%d Sanity, %d Cover" % [
+	print("Stats: %d/%d HP, %d/%d Energy, %d/%d Sanity, %d Defense" % [
 		current_health, max_health,
 		current_energy, max_energy, 
 		current_sanity, max_sanity,
-		cover
+		defense
 	])

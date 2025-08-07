@@ -8,14 +8,14 @@
 
 ## Available Test Cards
 
-### Gold (Combat)
+### Gold (Attack)
 - **Pickaxe Strike** - 1 Energy: Deal 3 damage
 - **Dynamite Blast** - 2 Energy: Deal 2 damage 3 times
 
-### Grit (Defense)  
+### Grit (Skill)  
 - **Bush Cover** - 1 Energy: Gain 5 defense
 
-### Grog (Social)
+### Grog (Power)
 - **Pub Brawl** - 2 Energy: Draw 2 cards, Deal 2 damage
 
 ### Gamble (Fortune)

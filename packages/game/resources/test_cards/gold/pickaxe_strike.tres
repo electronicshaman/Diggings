@@ -6,8 +6,8 @@
 
 [sub_resource type="Resource" id="Damage_1"]
 script = ExtResource("2")
-damage_amount = 1
-ignores_cover = false
+damage_amount = 3
+ignores_defense = false
 effect_name = "Damage"
 description = "Deal %s damage"
 

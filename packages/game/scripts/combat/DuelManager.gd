@@ -105,7 +105,7 @@ func process_enemy_turn():
 	GLog.info("Enemy attacks for %d damage!" % damage)
 	
 	var actual_damage = duel_state.player_data.take_damage(damage)
-	GLog.info("Player took %d damage (after cover)" % actual_damage)
+	GLog.info("Player took %d damage (after defense)" % actual_damage)
 	
 	end_enemy_turn()
 
@@ -160,13 +160,13 @@ func apply_card_results(results: Dictionary):
 	var enemy = duel_state.enemy_data
 	
 	if results.has("damage") and results.damage > 0:
-		var ignore_cover = results.get("ignores_cover", false)
-		var actual_damage = enemy.take_damage(results.damage, ignore_cover)
+		var ignore_defense = results.get("ignores_defense", false)
+		var actual_damage = enemy.take_damage(results.damage, ignore_defense)
 		player.damage_dealt_this_turn += actual_damage
 		GLog.info("Dealt %d damage to enemy" % actual_damage)
 	
 	if results.has("defense") and results.defense > 0:
-		player.gain_cover(results.defense)
+		player.gain_defense(results.defense)
 		GLog.debug("Gained %d defense" % results.defense)
 	
 	if results.has("heal") and results.heal > 0:

@@ -11,7 +11,7 @@ defense_amount = 5
 
 [resource]
 script = ExtResource("1")
-card_name = "Bush Cover"
+card_name = "Bush Defense"
 energy_cost = 1
 description = ""
 card_type = "Grit"

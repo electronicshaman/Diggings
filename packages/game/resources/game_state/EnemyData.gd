@@ -56,16 +56,16 @@ func is_alive() -> bool:
 func is_dead() -> bool:
 	return stats.is_dead()
 
-func take_damage(amount: int, ignore_cover: bool = false) -> int:
+func take_damage(amount: int, ignore_defense: bool = false) -> int:
 	"""Take damage with enemy-specific modifiers"""
 	var modified_amount = int(amount * defense_modifier)
 	
-	if ignore_cover:
-		# Bypass cover system
-		var old_cover = stats.cover
-		stats.cover = 0
+	if ignore_defense:
+		# Bypass defense system
+		var old_defense = stats.defense
+		stats.defense = 0
 		var damage_taken = stats.take_damage(modified_amount)
-		stats.cover = old_cover  # Restore cover after damage
+		stats.defense = old_defense  # Restore defense after damage
 		return damage_taken
 	else:
 		return stats.take_damage(modified_amount)
@@ -73,11 +73,11 @@ func take_damage(amount: int, ignore_cover: bool = false) -> int:
 func heal(amount: int):
 	stats.heal(amount)
 
-func gain_cover(amount: int):
-	stats.gain_cover(amount)
+func gain_defense(amount: int):
+	stats.gain_defense(amount)
 
-func lose_cover(amount: int):
-	stats.lose_cover(amount)
+func lose_defense(amount: int):
+	stats.lose_defense(amount)
 
 # Stun management
 func apply_stun(turns: int):
@@ -157,9 +157,9 @@ var max_health: int:
 	get: return stats.max_health if stats else 0
 	set(value): if stats: stats.max_health = value
 
-var cover: int:
-	get: return stats.cover if stats else 0
-	set(value): if stats: stats.cover = value
+var defense: int:
+	get: return stats.defense if stats else 0
+	set(value): if stats: stats.defense = value
 
 func get_health_percentage() -> float:
 	return stats.get_health_percentage() if stats else 0.0

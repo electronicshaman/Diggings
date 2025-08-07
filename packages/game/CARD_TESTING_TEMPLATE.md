@@ -42,7 +42,7 @@ Use this template to report card testing results. Copy and fill out for each tes
 ### Resource Management
 - **Health**: ✅ Working / ❌ Broken / ⚠️ Issues
 - **Energy**: ✅ Working / ❌ Broken / ⚠️ Issues  
-- **Cover**: ✅ Working / ❌ Broken / ⚠️ Issues
+- **Defense**: ✅ Working / ❌ Broken / ⚠️ Issues
 - **Sanity**: ✅ Working / ❌ Broken / ⚠️ Issues
 
 ### Hand Management

@@ -15,7 +15,7 @@ script = ExtResource("3")
 effect_name = "Damage"
 description = "Deal 2 damage"
 damage_amount = 2
-ignores_cover = false
+ignores_defense = false
 
 [resource]
 script = ExtResource("1")

@@ -4,24 +4,24 @@ Quick reference for what each card should do. Use this to check if cards are wor
 
 ## Test Cards Available
 
-### Gold Cards (Combat)
+### Gold Cards (Attack)
 #### **Pickaxe Strike**
 - **Cost**: 1 Energy
 - **Effect**: Deal 3 damage
-- **Expected**: Reduces enemy health by 3 (minus cover)
+- **Expected**: Reduces enemy health by 3 (minus defense)
 
 #### **Dynamite Blast** 
 - **Cost**: 2 Energy
 - **Effect**: Deal 2 damage 3 times (6 total damage)
-- **Expected**: Three separate damage instances, each reduced by cover
+- **Expected**: Three separate damage instances, each reduced by defense
 
-### Grit Cards (Defense)
-#### **Bush Cover**
+### Grit Cards (Skill)
+#### **Bush Defense**
 - **Cost**: 1 Energy  
 - **Effect**: Gain 5 defense
-- **Expected**: Adds 5 to player's Cover stat
+- **Expected**: Adds 5 to player's Defense stat
 
-### Grog Cards (Social)  
+### Grog Cards (Power)  
 #### **Pub Brawl**
 - **Cost**: 2 Energy
 - **Effect**: Draw 2 cards, Deal 2 damage
@@ -80,11 +80,11 @@ Quick reference for what each card should do. Use this to check if cards are wor
 ## Testing Priority Order
 
 1. **Basic Functionality**: Can you click cards and end turns?
-2. **Simple Effects**: Do Pickaxe Strike and Bush Cover work?
+2. **Simple Effects**: Do Pickaxe Strike and Bush Defense work?
 3. **Complex Effects**: Does Dynamite Blast hit 3 times?
 4. **Multi-Effect Cards**: Does Pub Brawl draw AND damage?
 5. **RNG Effects**: Does Strike It Rich gambling work?
-6. **Resource Management**: Do health/energy/cover update correctly?
+6. **Resource Management**: Do health/energy/defense update correctly?
 7. **Enemy AI**: Does the enemy attack and take damage?
 
 ---

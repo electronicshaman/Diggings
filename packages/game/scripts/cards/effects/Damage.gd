@@ -2,7 +2,7 @@ extends CardEffect
 class_name Damage
 
 @export var damage_amount: int = 1
-@export var ignores_cover: bool = false
+@export var ignores_defense: bool = false
 
 
 
@@ -14,15 +14,15 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 	# Add damage to results (single hit assumed)
 	results.damage += damage_amount
 	
-	# Set ignore cover flag if this damage ignores cover
-	if ignores_cover:
-		results.ignores_cover = true
+	# Set ignore defense flag if this damage ignores defense
+	if ignores_defense:
+		results.ignores_defense = true
 	
-	var cover_text: String = " (ignores cover)" if ignores_cover else ""
-	print("Applied %s effect from %s (+%d damage%s, total: %d)" % [effect_name, card_data.card_name, damage_amount, cover_text, results.damage])
+	var defense_text: String = " (ignores defense)" if ignores_defense else ""
+	print("Applied %s effect from %s (+%d damage%s, total: %d)" % [effect_name, card_data.card_name, damage_amount, defense_text, results.damage])
 
 func get_formatted_description() -> String:
 	var base_text: String = "Deal %d damage" % damage_amount
-	if ignores_cover:
-		base_text += " (ignores cover)"
+	if ignores_defense:
+		base_text += " (ignores defense)"
 	return base_text

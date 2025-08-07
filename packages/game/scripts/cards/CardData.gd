@@ -20,7 +20,7 @@ class_name CardData
 @export var card_handling: String = "Standard"
 
 # Type-specific properties
-@export var volatile_bonus: bool = false  # For social cards with random effects
+@export var volatile_bonus: bool = false  # For power cards with random effects
 @export var luck_modifier: float = 0.0    # For fortune cards that affect RNG
 
 # Helper methods for mechanical behavior

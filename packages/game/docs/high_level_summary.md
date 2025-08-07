@@ -38,6 +38,22 @@
 - **Multiple mods per card** - create unique combinations
 - **Location-based modifications** - different sites give different mods
 
+### 5. Core Card Types - Mechanical Categories
+
+- **Attack**: A card that deals direct damage to an enemy and may have a secondary effect. Attack cards are the primary way to reduce enemy health and end combat encounters.
+
+- **Skill**: A card with diverse utility effects including defense, buffs, debuffs, card draw, energy manipulation, and other non-damage actions. Skills can be offensive or defensive but cannot deal direct damage (only indirect damage through debuffs).
+
+- **Power**: A persistent upgrade that lasts for the entire combat encounter. Powers provide ongoing effects like stat bonuses, triggered abilities, or playstyle modifications. Each copy of a Power can only be played once per combat.
+
+-**Fortune**: A card with randomized or luck-based effects that embody risk/reward gameplay. Fortune cards may have variable outcomes, gambling mechanics, or chance-based triggers.
+
+- **Status**: A temporary card added to the deck during combat. Status cards are designed to bloat the deck and prevent drawing beneficial cards, often with additional negative effects. They are automatically removed from the deck at the end of combat.
+
+- **Curse**: An unplayable card added to the deck through events or penalties. Like Status cards, Curses bloat the deck and may have negative effects, but they persist in the deck until actively removed through other means.
+
+*Note: These are theme-agnostic mechanical categories. Themes layer flavor and visual design on top of these core functions.*
+
 ## Resource System
 
 - **Health & Sanity** - two ways to lose (physical death or madness)
@@ -107,6 +123,11 @@ Persistent run modifiers (like relics) with Australian gold rush + cosmic horror
 
 ## Key Design Principles
 
+- **Fail fast** - If something isn't fun in the prototype, change it immediately
+- **Data-driven** - Everything should be tweakable without code changes
+- **Show, don't hide** - Enemy intents visible, time effects clear
+- **Respect the player's time** - 30-45 minute runs, quick combat resolution
+- **Embrace the digital medium** - Do things only possible in video games
 - **Fail fast** - If something isn't fun in the prototype, change it immediately
 - **Data-driven** - Everything should be tweakable without code changes
 - **Show, don't hide** - Enemy intents visible, time effects clear

@@ -1,14 +1,17 @@
 extends Node2D
 
+# Debug toggle for this file
+const DEBUG_ENABLED: bool = true
+
 @onready var duel_manager = $DuelManager
 @onready var hand_area = $UI/Control/HandArea
 @onready var player_health_label = $UI/Control/PlayerArea/PlayerStats/HealthLabel
 @onready var player_energy_label = $UI/Control/PlayerArea/PlayerStats/EnergyLabel
-@onready var player_cover_label = $UI/Control/PlayerArea/PlayerStats/CoverLabel
+@onready var player_defense_label = $UI/Control/PlayerArea/PlayerStats/DefenseLabel
 @onready var player_sanity_label = $UI/Control/PlayerArea/PlayerStats/SanityLabel
 @onready var enemy_name_label = $UI/Control/EnemyArea/EnemyStats/EnemyName
 @onready var enemy_health_label = $UI/Control/EnemyArea/EnemyStats/EnemyHealth
-@onready var enemy_cover_label = $UI/Control/EnemyArea/EnemyStats/EnemyCover
+@onready var enemy_defense_label = $UI/Control/EnemyArea/EnemyStats/EnemyDefense
 @onready var deck_label = $UI/Control/PileIndicatorsLeft/DeckLabel
 @onready var discard_label = $UI/Control/PileIndicatorsRight/DiscardLabel
 @onready var turn_label = $UI/Control/TurnInfo/TurnLabel
@@ -52,7 +55,7 @@ func load_test_cards():
 	var card_paths = [
 		"res://resources/test_cards/gold/pickaxe_strike.tres",
 		"res://resources/test_cards/gold/dynamite.tres",
-		"res://resources/test_cards/grit/bush_cover.tres",
+		"res://resources/test_cards/grit/bush_defense.tres",
 		"res://resources/test_cards/grog/pub_brawl.tres",
 		"res://resources/test_cards/gamble/strike_it_rich.tres"
 	]
@@ -127,14 +130,14 @@ func update_ui():
 		var p = duel_state.player_data
 		player_health_label.text = "Health: %d/%d" % [p.current_health, p.max_health]
 		player_energy_label.text = "Energy: %d/%d" % [p.current_energy, p.max_energy]
-		player_cover_label.text = "Cover: %d" % p.cover
+		player_defense_label.text = "Defense: %d" % p.defense
 		player_sanity_label.text = "Sanity: %d/%d" % [p.current_sanity, p.max_sanity]
 	
 	if duel_state.enemy_data:
 		var e = duel_state.enemy_data
 		enemy_name_label.text = e.enemy_name
 		enemy_health_label.text = "Health: %d/%d" % [e.current_health, e.max_health]
-		enemy_cover_label.text = "Cover: %d" % e.cover
+		enemy_defense_label.text = "Defense: %d" % e.defense
 	
 	deck_label.text = "Deck: %d" % duel_manager.get_deck_count()
 	discard_label.text = "Discard: %d" % duel_manager.get_discard_count()
@@ -149,18 +152,21 @@ func refresh_hand_display():
 	
 	var hand_data = duel_manager.get_hand_cards()
 	
+	
 	for i in range(hand_data.size()):
 		var card_data = hand_data[i]
 		var card_instance = card_scene.instantiate()
 		hand_area.add_child(card_instance)
 		hand_cards.append(card_instance)
 		
-		# Position cards manually since Area2D doesn't work well with HBoxContainer
+		# Position cards manually - HandArea is now a Node2D
 		var card_spacing = 160  # 150 width + 10 spacing
 		var total_width = (hand_data.size() - 1) * card_spacing
 		var start_x = -total_width / 2
-		card_instance.position.x = start_x + i * card_spacing
+		var calculated_x = start_x + i * card_spacing
+		card_instance.position.x = calculated_x
 		card_instance.position.y = 0
+		
 		
 		card_instance.card_data = card_data
 		card_instance.setup_card_visuals()

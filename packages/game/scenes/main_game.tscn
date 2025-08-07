@@ -67,10 +67,10 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Energy: 3/3"
 
-[node name="CoverLabel" type="Label" parent="UI/Control/PlayerArea/PlayerStats"]
+[node name="DefenseLabel" type="Label" parent="UI/Control/PlayerArea/PlayerStats"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Cover: 0"
+text = "Defense: 0"
 
 [node name="SanityLabel" type="Label" parent="UI/Control/PlayerArea/PlayerStats"]
 layout_mode = 2
@@ -113,26 +113,13 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Health: 30/30"
 
-[node name="EnemyCover" type="Label" parent="UI/Control/EnemyArea/EnemyStats"]
+[node name="EnemyDefense" type="Label" parent="UI/Control/EnemyArea/EnemyStats"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Cover: 0"
+text = "Defense: 0"
 
-[node name="HandArea" type="HBoxContainer" parent="UI/Control"]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -350.0
-offset_top = -320.0
-offset_right = 350.0
-offset_bottom = -170.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 10
-alignment = 1
+[node name="HandArea" type="Node2D" parent="UI/Control"]
+position = Vector2(576, 316)
 
 [node name="PileIndicatorsLeft" type="HBoxContainer" parent="UI/Control"]
 layout_mode = 1
@@ -167,6 +154,11 @@ theme_override_constants/separation = 20
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Discard: 0"
+
+[node name="RemovedLabel" type="Label" parent="UI/Control/PileIndicatorsRight"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Removed: 0"
 
 [node name="TurnInfo" type="VBoxContainer" parent="UI/Control"]
 layout_mode = 1
@@ -225,11 +217,11 @@ text = "Add Random Card"
 
 [node name="SetHealthButton" type="Button" parent="UI/Control/DebugPanel/DebugButtons"]
 layout_mode = 2
-text = "Set Health 10"
+text = "Add 10 Health"
 
 [node name="SetEnergyButton" type="Button" parent="UI/Control/DebugPanel/DebugButtons"]
 layout_mode = 2
-text = "Set Energy 10"
+text = "Add 10 Energy"
 
 [node name="ResetDuelButton" type="Button" parent="UI/Control/DebugPanel/DebugButtons"]
 layout_mode = 2

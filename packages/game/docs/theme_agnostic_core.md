@@ -25,7 +25,7 @@ themes/
     ├── cards/                      # Australian cards organized by type
     │   ├── gold/                   # Mining/combat cards
     │   ├── grit/                   # Survival/defense cards  
-    │   ├── grog/                   # Social/pub cards
+    │   ├── grog/                   # Power/pub cards
     │   └── gamble/                 # Fortune/speculation cards
     ├── enemies/                    # Australian enemies
     └── curios/                     # Australian curios
@@ -92,7 +92,7 @@ class_name CardTypeDefinition
 @export var chain_description: String = "Each Gold card increases next Gold damage"
 
 # Theme-agnostic mechanical category (independent of flavor)
-@export_enum("Combat", "Defense", "Social", "Fortune") var mechanical_category: String = "Combat"
+@export_enum("Attack", "Skill", "Power", "Fortune") var mechanical_category: String = "Attack"
 
 # Mechanical properties
 @export var base_damage_bonus: int = 0
@@ -126,9 +126,9 @@ class_name CardHandlingDefinition
 **Card Type Categories (Mechanical Foundation):**
 
 ```
-Combat   → Damage-dealing, direct confrontation
-Defense  → Protection, damage reduction, cover
-Social   → Manipulation, information, networking  
+Attack   → Damage-dealing, direct confrontation
+Skill  → Protection, damage reduction, defense
+Power   → Manipulation, information, networking  
 Fortune  → RNG effects, luck modification, speculation
 ```
 
@@ -136,16 +136,16 @@ Fortune  → RNG effects, luck modification, speculation
 
 ```
 WILD WEST THEME:
-Combat="Lead" (🔫, gunmetal), Defense="Leather" (🛡️, brown)
-Social="Liquor" (🥃, amber), Fortune="Luck" (🎲, green)
+Attack="Lead" (🔫, gunmetal), Skill="Leather" (🛡️, brown)
+Power="Liquor" (🥃, amber), Fortune="Luck" (🎲, green)
 
 AUSTRALIAN THEME:  
-Combat="Guns" (🔫, guns), Defense="Grit" (🛡️, brown)
-Social="Grog" (🍺, amber), Fortune="Gamble" (🎲, green)
+Attack="Guns" (🔫, guns), Skill="Grit" (🛡️, brown)
+Power="Grog" (🍺, amber), Fortune="Gamble" (🎲, green)
 
 STEAMPUNK THEME (future):
-Combat="Steel" (⚙️, metallic), Defense="Steam" (🛡️, blue)
-Social="Gear" (🔧, copper), Fortune="Spark" (⚡, yellow)
+Attack="Steel" (⚙️, metallic), Skill="Steam" (🛡️, blue)
+Power="Gear" (🔧, copper), Fortune="Spark" (⚡, yellow)
 ```
 
 **Card Handling Mapping (Mechanical → Thematic) Examples:**
@@ -153,7 +153,7 @@ Social="Gear" (🔧, copper), Fortune="Spark" (⚡, yellow)
 ```
 CORE MECHANICS → WILD WEST → AUSTRALIAN → STEAMPUNK
 Standard       → Normal    → Standard  → Regular
-StartInHand    → Holstered → Swag      → Equipped  
+StartInHand    → Holstered → Equipped      → Equipped  
 TriggerOnDraw  → QuickDraw → Flash     → Automatic
 NoDiscardTurn  → Hold      → Keep      → Maintain
 OneShot        → OneShot   → Spent     → Consumed
@@ -193,7 +193,7 @@ themes/the_rush/
 │   │   ├── bush_tucker.tres
 │   │   ├── weather_the_storm.tres
 │   │   └── kangaroo_hide.tres
-│   ├── social/                      
+│   ├── power/                      
 │   │   ├── bush_telegraph.tres
 │   │   ├── rotgut_whiskey.tres
 │   │   └── pub_brawl.tres
@@ -218,7 +218,7 @@ themes/the_rush/
 
 ```
 Standard → "Standard" (normal behavior)
-StartInHand → "Swag" (starts in hand like a swagman's pack)
+StartInHand → "Equipped" (starts in hand like a swagman's pack)
 TriggerOnDraw → "Flash" (like a flash of inspiration/gold)
 NoDiscardTurn → "Keep" (keep for next turn)
 OneShot → "Oneshot" (resource exhausted, like a mine)

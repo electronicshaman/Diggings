@@ -1,6 +1,9 @@
 extends Resource
 class_name DuelState
 
+# Debug toggle for this file
+const DEBUG_ENABLED: bool = true
+
 # DuelState Resource - Complete duel state container using all our other resources
 # This replaces the complex serialization logic in the old system
 
@@ -138,10 +141,20 @@ func start_player_turn():
 	if player_data:
 		player_data.start_new_turn()
 	
+	# Draw 5 cards at the start of each turn (except turn 1, which already drew initial hand)
+	if player_turn_count > 1:
+		var cards_to_draw = 5 - hand.size()  # Draw up to 5 cards
+		if cards_to_draw > 0:
+			var drawn = draw_cards(cards_to_draw)
+			GLog.info("Drew %d cards at start of turn %d" % [drawn.size(), player_turn_count])
+	
 	_emit_change("player_turn_started", {"turn_count": player_turn_count})
 
 func end_player_turn():
 	"""End the current player turn"""
+	# Discard all non-Keep cards from hand
+	discard_non_keep_cards()
+	
 	if player_data:
 		player_data.end_turn()
 	
@@ -192,19 +205,25 @@ func draw_cards(count: int) -> Array[CardData]:
 func play_card(card_data: CardData):
 	"""Move card from hand to appropriate pile based on handling"""
 	if not hand.remove_card(card_data):
+		GLog.warn("Tried to play card not in hand: %s" % card_data.card_name)
 		return  # Card not in hand
+	
+	GLog.debug("Playing card '%s' with handling: %s" % [card_data.card_name, card_data.card_handling])
 	
 	# Determine destination based on card handling
 	match card_data.card_handling:
-		"NORMAL":
+		"Standard", "Equipped", "Flash", "Keep":
+			# Most cards go to discard pile when played
 			discard_pile.add_card(card_data)
-		"ONESHOT":
+			GLog.debug("Card '%s' moved to discard pile" % card_data.card_name)
+		"Oneshot":
+			# Oneshot cards are removed from the game
 			removed_pile.add_card(card_data)
-		"HOLD":
-			# HOLD cards go to discard when played but persist via player state
+			GLog.debug("Card '%s' removed from game (Oneshot)" % card_data.card_name)
+		_:
+			# Default behavior is to discard
 			discard_pile.add_card(card_data)
-			if player_data:
-				player_data.add_hold_card(card_data)
+			GLog.warn("Unknown card handling '%s' for card '%s', defaulting to discard" % [card_data.card_handling, card_data.card_name])
 
 func discard_card(card_data: CardData):
 	"""Move card from hand to discard pile"""
@@ -215,6 +234,24 @@ func remove_card_from_game(card_data: CardData):
 	"""Move card from hand to removed pile"""
 	if hand.remove_card(card_data):
 		removed_pile.add_card(card_data)
+
+func discard_non_keep_cards():
+	"""Discard all cards that don't have Keep handling from hand"""
+	var cards_to_discard: Array[CardData] = []
+	
+	# Check each card in hand to see if it should be discarded
+	for card in hand.cards:
+		# Check if this card has "Keep" handling
+		if card.card_handling != "Keep":
+			cards_to_discard.append(card)
+	
+	# Discard the non-keep cards
+	for card in cards_to_discard:
+		discard_card(card)
+		GLog.debug("Discarding card at end of turn: %s" % card.card_name)
+	
+	if cards_to_discard.size() > 0:
+		GLog.info("Discarded %d cards at end of turn" % cards_to_discard.size())
 
 # State queries
 func can_play_cards() -> bool:

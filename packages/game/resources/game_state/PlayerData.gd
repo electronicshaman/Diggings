@@ -13,8 +13,8 @@ class_name PlayerData
 
 # Card-specific effects and modifiers
 @export var next_card_free: bool = false
-@export var gold_cost_reduction: int = 0
-@export var gold_cost_reduction_duration: int = 0
+@export var attack_cost_reduction: int = 0
+@export var attack_cost_reduction_duration: int = 0
 @export var grit_cost_reduction: int = 0
 @export var grit_cost_reduction_duration: int = 0
 @export var grog_cost_reduction: int = 0
@@ -30,6 +30,7 @@ class_name PlayerData
 @export var gambling_duration: int = 0
 
 # Duel tracking
+@export var cards_drawn_this_turn: int = 0
 @export var cards_played_this_turn: int = 0
 @export var damage_dealt_this_turn: int = 0
 @export var damage_taken_this_turn: int = 0
@@ -105,8 +106,8 @@ func take_damage(amount: int) -> int:
 func heal(amount: int):
 	stats.heal(amount)
 
-func gain_cover(amount: int):
-	stats.gain_cover(amount)
+func gain_defense(amount: int):
+	stats.gain_defense(amount)
 
 func spend_energy(amount: int) -> bool:
 	return stats.spend_energy(amount)
@@ -147,9 +148,9 @@ func activate_next_card_free():
 	next_card_free = true
 	_emit_change("next_card_free_activated", false, true)
 
-func set_gold_cost_reduction(reduction: int, duration: int):
-	gold_cost_reduction = reduction
-	gold_cost_reduction_duration = duration
+func set_attack_cost_reduction(reduction: int, duration: int):
+	attack_cost_reduction = reduction
+	attack_cost_reduction_duration = duration
 
 func set_grit_cost_reduction(reduction: int, duration: int):
 	grit_cost_reduction = reduction
@@ -181,8 +182,8 @@ func get_actual_energy_cost(base_cost: int, card_type: String) -> int:
 	# Apply type-specific reductions
 	match card_type:
 		"Gold":
-			if gold_cost_reduction_duration > 0:
-				final_cost -= gold_cost_reduction
+			if attack_cost_reduction_duration > 0:
+				final_cost -= attack_cost_reduction
 		"Grit":
 			if grit_cost_reduction_duration > 0:
 				final_cost -= grit_cost_reduction
@@ -210,10 +211,10 @@ func apply_card_cost_reductions():
 		if all_cost_reduction_duration <= 0:
 			all_cost_reduction = 0
 	
-	if gold_cost_reduction_duration > 0:
-		gold_cost_reduction_duration -= 1
-		if gold_cost_reduction_duration <= 0:
-			gold_cost_reduction = 0
+	if attack_cost_reduction_duration > 0:
+		attack_cost_reduction_duration -= 1
+		if attack_cost_reduction_duration <= 0:
+			attack_cost_reduction = 0
 	
 	if grit_cost_reduction_duration > 0:
 		grit_cost_reduction_duration -= 1
@@ -275,8 +276,8 @@ func reset_duel_tracking():
 	gambling_duration = 0
 	next_card_free = false
 	# Reset all cost reductions
-	gold_cost_reduction = 0
-	gold_cost_reduction_duration = 0
+	attack_cost_reduction = 0
+	attack_cost_reduction_duration = 0
 	grit_cost_reduction = 0
 	grit_cost_reduction_duration = 0
 	grog_cost_reduction = 0
@@ -330,9 +331,9 @@ var max_sanity: int:
 	get: return stats.max_sanity if stats else 0
 	set(value): if stats: stats.max_sanity = value
 
-var cover: int:
-	get: return stats.cover if stats else 0
-	set(value): if stats: stats.cover = value
+var defense: int:
+	get: return stats.defense if stats else 0
+	set(value): if stats: stats.defense = value
 
 func get_health_percentage() -> float:
 	return stats.get_health_percentage() if stats else 0.0
@@ -349,8 +350,8 @@ func get_save_data() -> Dictionary:
 		"stats": stats.get_save_data() if stats else {},
 		"character_class_name": character_class_name,
 		"next_card_free": next_card_free,
-		"gold_cost_reduction": gold_cost_reduction,
-		"gold_cost_reduction_duration": gold_cost_reduction_duration,
+		"attack_cost_reduction": attack_cost_reduction,
+		"attack_cost_reduction_duration": attack_cost_reduction_duration,
 		"grit_cost_reduction": grit_cost_reduction,
 		"grit_cost_reduction_duration": grit_cost_reduction_duration,
 		"grog_cost_reduction": grog_cost_reduction,
@@ -383,8 +384,8 @@ func load_from_data(data: Dictionary):
 	stats.load_from_data(data.get("stats", {}))
 	character_class_name = data.get("character_class_name", "")
 	next_card_free = data.get("next_card_free", false)
-	gold_cost_reduction = data.get("gold_cost_reduction", 0)
-	gold_cost_reduction_duration = data.get("gold_cost_reduction_duration", 0)
+	attack_cost_reduction = data.get("attack_cost_reduction", 0)
+	attack_cost_reduction_duration = data.get("attack_cost_reduction_duration", 0)
 	grit_cost_reduction = data.get("grit_cost_reduction", 0)
 	grit_cost_reduction_duration = data.get("grit_cost_reduction_duration", 0)
 	grog_cost_reduction = data.get("grog_cost_reduction", 0)

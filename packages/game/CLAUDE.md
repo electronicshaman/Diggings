@@ -49,9 +49,9 @@ themes/                          # Theme system (TO BE CREATED)
     ├── theme_config.tres       # Theme configuration
     ├── characters/             # Character classes
     ├── cards/                  # Cards by type
-    │   ├── gold/              # Combat cards
-    │   ├── grit/              # Defense cards
-    │   ├── grog/              # Social cards
+    │   ├── gold/              # Attack cards
+    │   ├── grit/              # Skill cards
+    │   ├── grog/              # Power cards
     │   └── gamble/            # Fortune cards
     ├── enemies/               # Enemy definitions
     └── curios/                # Item definitions
@@ -80,7 +80,7 @@ resources/                      # Game data (TO BE CREATED)
    - Card-based turns
 
 2. **Card System**
-   - Four mechanical categories: Combat, Defense, Social, Fortune
+   - Four mechanical categories: Attack, Skill, Power, Fortune
    - Themed as Gold/Grit/Grog/Gamble for Australian theme
    - Digital-only modifiers: Evolving, Viral, Phasing, Unstable
 

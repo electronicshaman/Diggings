@@ -8,7 +8,7 @@ enum BonusType {
 	CARD_DRAW,      # Extra cards at duel start
 	HEALTH_BONUS,   # Extra health at duel start  
 	ENERGY_BONUS,   # Extra energy at duel start
-	COVER_BONUS,    # Start with cover points
+	DEFENSE_BONUS,    # Start with defense points
 	FREE_CARDS,     # Next X cards cost 0 energy
 	COST_REDUCTION  # First X cards cost -1 energy
 }
@@ -38,8 +38,8 @@ func get_formatted_description() -> String:
 			return "Next duel: Start with +%d health" % bonus_amount
 		BonusType.ENERGY_BONUS:
 			return "Next duel: Start with +%d energy" % bonus_amount
-		BonusType.COVER_BONUS:
-			return "Next duel: Start with %d cover" % bonus_amount
+		BonusType.DEFENSE_BONUS:
+			return "Next duel: Start with %d defense" % bonus_amount
 		BonusType.FREE_CARDS:
 			return "Next duel: First %d cards cost 0 energy" % bonus_amount
 		BonusType.COST_REDUCTION:
