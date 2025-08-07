@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemyState" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/game_state/EnemyData.gd" id="1"]
+[ext_resource type="Script" path="res://resources/data/Stats.gd" id="2"]
+
+[sub_resource type="Resource" id="Stats_1"]
+script = ExtResource("2")
+current_health = 30
+max_health = 30
+current_energy = 0
+max_energy = 0
+current_sanity = 100
+max_sanity = 100
+cover = 0
+
+[resource]
+script = ExtResource("1")
+stats = SubResource("Stats_1")
+enemy_name = "Claim Jumper"
+description = "A greedy prospector who steals from other miners"
+stun_turns_remaining = 0
+current_pattern_index = 0
+turns_alive = 0
+damage_modifier = 1.0
+defense_modifier = 1.0

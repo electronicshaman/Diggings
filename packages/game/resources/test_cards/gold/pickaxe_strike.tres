@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Damage.gd" id="2"]
+
+[sub_resource type="Resource" id="Damage_1"]
+script = ExtResource("2")
+effect_name = "Damage"
+description = "Deal 3 damage"
+damage_amount = 3
+ignores_cover = false
+
+[resource]
+script = ExtResource("1")
+card_name = "Pickaxe Strike"
+energy_cost = 1
+description = ""
+card_type = "Gold"
+effects = [SubResource("Damage_1")]
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0

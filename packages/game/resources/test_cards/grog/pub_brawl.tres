@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Draw.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Damage.gd" id="3"]
+
+[sub_resource type="Resource" id="Draw_1"]
+script = ExtResource("2")
+effect_name = "Draw"
+description = "Draw 2 cards"
+cards_to_draw = 2
+
+[sub_resource type="Resource" id="Damage_1"]
+script = ExtResource("3")
+effect_name = "Damage"
+description = "Deal 2 damage"
+damage_amount = 2
+ignores_cover = false
+
+[resource]
+script = ExtResource("1")
+card_name = "Pub Brawl"
+energy_cost = 2
+description = ""
+card_type = "Grog"
+effects = [SubResource("Draw_1"), SubResource("Damage_1")]
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Defense.gd" id="2"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+effect_name = "Defense"
+description = "Gain 5 defense"
+defense_amount = 5
+
+[resource]
+script = ExtResource("1")
+card_name = "Bush Cover"
+energy_cost = 1
+description = ""
+card_type = "Grit"
+effects = [SubResource("Defense_1")]
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
