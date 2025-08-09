@@ -10,9 +10,19 @@ const MapGenerator = preload("res://scripts/map/MapGenerator.gd")
 const MapVisualizer = preload("res://scripts/map/MapVisualizer.gd")
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 
+# Zoom and pan system
+var zoom_level = 1.0
+var zoom_min = 0.3
+var zoom_max = 3.0
+var zoom_speed = 0.1
+var dragging = false
+var drag_start_position = Vector2()
+var initial_map_position = Vector2()
+
 @onready var view_deck_button = $HeaderPanel/HeaderContent/ViewDeckButton
 @onready var floor_label = $HeaderPanel/HeaderContent/FloorLabel
-@onready var map_scroll_container = $MapScrollContainer
+@onready var map_viewport = $MapViewport
+@onready var map_content = $MapViewport/MapContent
 
 # Graph generation system
 var map_generator: MapGenerator
@@ -22,13 +32,67 @@ func _ready():
 	setup_graph_system()
 	setup_button_connections()
 	
-	# Force ScrollContainer to fill the viewport below header
+	# Initialize map content with simple centering
 	var viewport_size = get_viewport().get_visible_rect().size
-	map_scroll_container.position = Vector2(0, 80)
-	map_scroll_container.size = Vector2(viewport_size.x, viewport_size.y - 80)
-	GLog.debug("Set ScrollContainer size to: " + str(map_scroll_container.size))
+	var map_viewport_size = Vector2(viewport_size.x, viewport_size.y - 80)
+	# Set MapContent to a reasonable size and center it in the viewport
+	map_content.size = map_viewport_size  # Match viewport size
+	map_content.position = Vector2.ZERO  # Start at origin of MapViewport
+	GLog.debug("Initialized map content size: " + str(map_content.size) + " at position: " + str(map_content.position))
 	
 	generate_new_map()
+
+func _input(event):
+	# Only handle input when the map scene is active
+	if not visible:
+		return
+		
+	# Handle zooming with mouse wheel
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			zoom_level = min(zoom_level + zoom_speed, zoom_max)
+			_update_zoom(event.position)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			zoom_level = max(zoom_level - zoom_speed, zoom_min)
+			_update_zoom(event.position)
+		# Handle drag start
+		elif event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed and _is_in_map_area(event.position):
+				dragging = true
+				drag_start_position = event.position
+				initial_map_position = map_content.position
+			else:
+				dragging = false
+	
+	# Handle dragging for panning
+	if event is InputEventMouseMotion and dragging:
+		var delta = event.position - drag_start_position
+		map_content.position = initial_map_position + delta
+
+func _is_in_map_area(pos: Vector2) -> bool:
+	# Check if position is in the map viewport (below header)
+	return pos.y > 80
+
+func _update_zoom(mouse_pos: Vector2 = Vector2.ZERO):
+	var old_scale = map_content.scale
+	map_content.scale = Vector2(zoom_level, zoom_level)
+	
+	# Zoom towards mouse position if provided
+	if mouse_pos != Vector2.ZERO and _is_in_map_area(mouse_pos):
+		# Adjust position so zoom happens towards mouse cursor
+		var scale_delta = map_content.scale - old_scale
+		var relative_mouse = mouse_pos - map_content.position
+		map_content.position -= relative_mouse * (scale_delta.x / old_scale.x) if old_scale.x > 0 else Vector2.ZERO
+	
+	GLog.debug("Zoom level: " + str(zoom_level) + ", Scale: " + str(map_content.scale))
+
+func reset_view():
+	"""Reset zoom and center the map"""
+	zoom_level = 1.0
+	map_content.scale = Vector2.ONE
+	# Reset to initial position
+	map_content.position = Vector2.ZERO
+	GLog.debug("View reset to origin with 1.0 zoom")
 
 # Public method to regenerate map (useful for config testing)
 func regenerate_map():
@@ -40,6 +104,9 @@ func regenerate_map():
 		map_generator.initialize_rules()
 	
 	generate_new_map()
+	
+	# Reset view to center the new map
+	call_deferred("reset_view")
 
 # Hot-reload config for testing
 func reload_config():
@@ -60,16 +127,19 @@ func setup_graph_system():
 	map_generator.debug_show_all_nodes = true
 	add_child(map_generator)
 	
-	# ScrollContainer now fills the entire viewport below the header - no special sizing needed!
+	# Debug: Check if map_content is valid
+	if not map_content:
+		GLog.error("MapContent node not found! Check scene structure.")
+		return
 	
-	# Create visualizer and add it to the scroll container
+	
+	
+	# Create visualizer and add it to the map content container
 	map_visualizer = MapVisualizer.new()
 	map_visualizer.setup(map_generator)
 	
-	# No need to clear static layers since we restructured the scene
-	
-	# Add MapVisualizer to ScrollContainer (now with proper size flags)
-	map_scroll_container.add_child(map_visualizer)
+	# Add MapVisualizer to MapContent for zoom/pan system
+	map_content.add_child(map_visualizer)
 	
 	# Make visible
 	map_visualizer.visible = true
@@ -91,10 +161,19 @@ func generate_new_map():
 		restore_existing_map()
 		return
 	
-	# Generate a new map using the seeded RNG system
-	var seed = SeedManager.get_map_random_int(0, 2147483647) if GameManager.is_run_active else -1
+	# Generate a new map using a consistent seed for this run
+	var seed: int
+	if GameManager.is_run_active:
+		# Use the run's master seed + a map-specific offset to ensure consistency
+		seed = SeedManager.master_seed + 12345  # Fixed offset for map generation
+		GLog.debug("Using consistent map seed: " + str(seed) + " (master: " + str(SeedManager.master_seed) + ")")
+	else:
+		# Development mode - use a random seed
+		seed = -1
+		GLog.debug("Using random seed for development")
+	
 	map_generator.generate_map(seed)
-	GLog.info("Generated new map for exploration")
+	GLog.info("Generated new map for exploration with seed: " + str(seed))
 	
 	# Store the map in game_data for persistence
 	if GameManager.is_run_active:
@@ -105,12 +184,13 @@ func generate_new_map():
 		}
 		GLog.debug("Map data stored in GameManager")
 	
-	# Update visualizer size to match the generated map bounds
+	# Update visualizer size and position it at the top-left of MapContent for debugging
 	var map_bounds = map_visualizer.get_graph_bounds()
-	# Use set_deferred to avoid anchor conflicts
 	map_visualizer.set_deferred("custom_minimum_size", map_bounds.size)
 	map_visualizer.set_deferred("size", map_bounds.size)
-	GLog.debug("Updated visualizer size to: " + str(map_bounds.size))
+	# Place at origin for debugging - should definitely be visible
+	map_visualizer.set_deferred("position", Vector2.ZERO)
+	GLog.debug("Positioned visualizer size: " + str(map_bounds.size) + " at origin (0,0)")
 	
 	# Force visibility for debugging
 	map_visualizer.call_deferred("force_visibility")

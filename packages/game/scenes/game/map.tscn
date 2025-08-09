@@ -4,7 +4,9 @@
 
 [node name="Map" type="Control"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 script = ExtResource("1_3fewy")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -12,12 +14,6 @@ layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.08, 0.12, 0.08, 1)
-
-[node name="MapScrollContainer" type="ScrollContainer" parent="."]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 80.0
 
 [node name="HeaderPanel" type="Panel" parent="."]
 custom_minimum_size = Vector2(0, 80)
@@ -36,3 +32,13 @@ text = "Floor 1 - Act 1"
 [node name="ViewDeckButton" type="Button" parent="HeaderPanel/HeaderContent"]
 layout_mode = 2
 text = "View Deck"
+
+[node name="MapViewport" type="Control" parent="."]
+clip_contents = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 80.0
+
+[node name="MapContent" type="Control" parent="MapViewport"]
+anchors_preset = 0
