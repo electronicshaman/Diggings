@@ -16,6 +16,11 @@ class_name EnemyState
 @export var current_pattern_index: int = 0
 @export var turns_alive: int = 0
 
+# Enemy intent system
+@export var current_intent: String = "Unknown"  # Attack, Defend, Special, Unknown
+@export var intent_value: int = 0  # Damage amount, defense amount, etc.
+@export var intent_revealed: bool = false
+
 # Enemy-specific modifiers
 @export var damage_modifier: float = 1.0
 @export var defense_modifier: float = 1.0
@@ -147,6 +152,48 @@ func set_defense_modifier(modifier: float):
 func get_modified_damage(base_damage: int) -> int:
 	"""Calculate damage output with modifier"""
 	return int(base_damage * damage_modifier)
+
+# Intent management
+func set_intent(intent_type: String, value: int = 0):
+	"""Set enemy's current intent"""
+	var old_intent = current_intent
+	current_intent = intent_type
+	intent_value = value
+	intent_revealed = false  # Reset revealed status when intent changes
+	_emit_change("intent_set", old_intent, current_intent)
+
+func reveal_intent():
+	"""Reveal the enemy's current intent to the player"""
+	if not intent_revealed:
+		intent_revealed = true
+		_emit_change("intent_revealed", false, true)
+
+func get_intent_display() -> String:
+	"""Get formatted intent string for display"""
+	if not intent_revealed:
+		return "Unknown"
+	
+	match current_intent:
+		"Attack":
+			return "Attack (%d)" % intent_value
+		"Defend":
+			return "Defend (%d)" % intent_value
+		"Special":
+			return "Special"
+		_:
+			return current_intent
+
+func is_intent_attack() -> bool:
+	"""Check if current intent is an attack"""
+	return current_intent == "Attack"
+
+func is_intent_defend() -> bool:
+	"""Check if current intent is defend"""
+	return current_intent == "Defend"
+
+func is_intent_revealed() -> bool:
+	"""Check if intent has been revealed to player"""
+	return intent_revealed
 
 # Convenience property accessors for compatibility
 var current_health: int:

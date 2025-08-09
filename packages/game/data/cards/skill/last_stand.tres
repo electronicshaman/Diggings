@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/FatalDamagePrevention.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Defense.gd" id="4"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("4")
+defense_amount = 12
+effect_name = "Defense"
+description = "Gain 12 defense"
+
+[sub_resource type="Resource" id="FatalDamagePrevention_1"]
+script = ExtResource("3")
+effect_name = "Fatal Damage Prevention"
+description = "Prevent fatal damage this turn (survive with 1 Health)"
+
+[resource]
+script = ExtResource("1")
+card_name = "Last Stand"
+energy_cost = 3
+description = "Gain 12 defense. Prevent fatal damage this turn (survive with 1 Health)."
+card_type = "Grit"
+card_icon = null
+flavor_text = "When there's nowhere left to run, you make your stand."
+effects = Array[ExtResource("2")]([SubResource("Defense_1"), SubResource("FatalDamagePrevention_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Rare"
+mechanical_category = "Skill"

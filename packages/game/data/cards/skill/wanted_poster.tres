@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/DelayedDamage.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/cards/effects/FirstCardDraw.gd" id="4"]
+
+[sub_resource type="Resource" id="FirstCardDraw_1"]
+script = ExtResource("4")
+cards_to_draw = 2
+effect_name = "First Card Draw"
+description = "If first card played this turn, draw 2 cards"
+
+[sub_resource type="Resource" id="DelayedDamage_1"]
+script = ExtResource("3")
+damage_amount = 2
+effect_name = "Delayed Damage"
+description = "Take 2 damage at the end of this turn"
+
+[resource]
+script = ExtResource("1")
+card_name = "Wanted Poster"
+energy_cost = 0
+description = "If this is the first card played this turn, draw 2 cards. Take 2 damage at the end of this turn."
+card_type = "Gamble"
+card_icon = null
+flavor_text = "Every outlaw knows their worth... and their price."
+effects = Array[ExtResource("2")]([SubResource("FirstCardDraw_1"), SubResource("DelayedDamage_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Common"
+mechanical_category = "Skill"

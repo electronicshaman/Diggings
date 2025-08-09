@@ -70,6 +70,9 @@ class_name Stats
 			defense = max(0, value)
 			_emit_change("defense_changed", old_value, defense)
 
+# Fatal damage prevention
+@export var fatal_damage_prevented: bool = false
+
 # Gold (currency)
 @export var current_gold: int = 0:
 	set(value):
@@ -148,11 +151,22 @@ func take_damage(amount: int) -> int:
 	
 	# Apply remaining damage to health
 	if actual_damage > 0:
-		current_health -= actual_damage
+		var would_be_fatal = (current_health - actual_damage) <= 0
 		
-		# Check for death
-		if current_health <= 0 and (current_health + actual_damage) > 0:
-			_emit_change("died", null, null)
+		# Check for fatal damage prevention
+		if would_be_fatal and fatal_damage_prevented:
+			# Prevent fatal damage - reduce health to 1 instead of 0 or below
+			var prevented_damage = actual_damage - (current_health - 1)
+			current_health = 1
+			fatal_damage_prevented = false  # Used up the prevention
+			_emit_change("fatal_damage_prevented", prevented_damage, current_health)
+			return actual_damage - prevented_damage
+		else:
+			current_health -= actual_damage
+			
+			# Check for death
+			if current_health <= 0 and (current_health + actual_damage) > 0:
+				_emit_change("died", null, null)
 	
 	return actual_damage
 
@@ -193,6 +207,11 @@ func lose_defense(amount: int) -> void:
 	if amount > 0:
 		defense = max(0, defense - amount)
 
+# Activate fatal damage prevention
+func activate_fatal_damage_prevention() -> void:
+	fatal_damage_prevented = true
+	_emit_change("fatal_damage_prevention_activated", false, true)
+
 # Gain gold
 func gain_gold(amount: int) -> void:
 	if amount > 0:
@@ -231,6 +250,7 @@ func reset_to_max() -> void:
 	current_energy = max_energy
 	current_sanity = max_sanity
 	defense = 0
+	fatal_damage_prevented = false
 
 # Reset energy to maximum (for new turn)
 func reset_energy() -> void:
@@ -247,7 +267,8 @@ func get_save_data() -> Dictionary:
 		"max_energy": max_energy,
 		"current_sanity": current_sanity,
 		"max_sanity": max_sanity,
-		"defense": defense
+		"defense": defense,
+		"fatal_damage_prevented": fatal_damage_prevented
 	}
 
 # Load stats from save data dictionary
@@ -259,6 +280,7 @@ func load_from_data(data: Dictionary) -> void:
 	current_sanity = data.get("current_sanity", current_sanity)
 	max_sanity = data.get("max_sanity", max_sanity)
 	defense = data.get("defense", defense)
+	fatal_damage_prevented = data.get("fatal_damage_prevented", false)
 
 # Debug methods
 

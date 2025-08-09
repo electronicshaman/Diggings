@@ -38,6 +38,9 @@ class_name PlayerData
 # HOLD card persistence (cards that persist between turns)
 @export var hold_cards: Array[CardData] = []
 
+# Turn-end effects tracking
+@export var delayed_damage: int = 0
+
 # Change tracking system
 var _change_listeners: Array[Callable] = []
 
@@ -262,6 +265,12 @@ func start_new_turn():
 
 func end_turn():
 	"""Handle end of turn effects"""
+	# Process delayed damage
+	if delayed_damage > 0:
+		stats.take_damage(delayed_damage)
+		delayed_damage = 0
+		_emit_change("delayed_damage_applied", null, delayed_damage)
+	
 	_emit_change("turn_ended", null, null)
 
 func reset_duel_tracking():
@@ -269,6 +278,7 @@ func reset_duel_tracking():
 	cards_played_this_turn = 0
 	damage_dealt_this_turn = 0
 	damage_taken_this_turn = 0
+	delayed_damage = 0
 	gambling_active = false
 	gambling_multiplier = 1.0
 	gambling_duration = 0

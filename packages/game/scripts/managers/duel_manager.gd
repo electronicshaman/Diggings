@@ -54,6 +54,9 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	
 	duel_state.start_duel()
 	
+	# Set initial enemy intent
+	set_enemy_intent_for_next_turn(enemy_data)
+	
 	draw_initial_hand()
 	
 	duel_started.emit()
@@ -79,6 +82,10 @@ func start_player_turn() -> void:
 func end_player_turn() -> void:
 	GLog.debug("Ending player turn")
 	
+	# Process player end-of-turn effects (like delayed damage)
+	if duel_state.player_data:
+		duel_state.player_data.end_turn()
+	
 	duel_state.end_player_turn()
 	turn_ended.emit(true)
 	
@@ -99,16 +106,69 @@ func process_enemy_turn():
 	if enemy.is_stunned():
 		GLog.debug("Enemy is stunned, skipping turn")
 		enemy.reduce_stun()
+		# Set intent for next turn even when stunned
+		set_enemy_intent_for_next_turn(enemy)
 		end_enemy_turn()
 		return
 	
-	var damage = 5 + (enemy.turns_alive * 2)
-	GLog.info("Enemy attacks for %d damage!" % damage)
+	# Execute current intent if it exists
+	execute_enemy_intent(enemy)
 	
-	var actual_damage = duel_state.player_data.take_damage(damage)
-	GLog.info("Player took %d damage (after defense)" % actual_damage)
+	# Set intent for next turn
+	set_enemy_intent_for_next_turn(enemy)
 	
 	end_enemy_turn()
+
+func execute_enemy_intent(enemy):
+	"""Execute the enemy's current intent"""
+	var intent = enemy.current_intent
+	var intent_value = enemy.intent_value
+	
+	match intent:
+		"Attack":
+			var damage = intent_value if intent_value > 0 else (5 + (enemy.turns_alive * 2))
+			GLog.info("Enemy attacks for %d damage!" % damage)
+			var actual_damage = duel_state.player_data.take_damage(damage)
+			GLog.info("Player took %d damage (after defense)" % actual_damage)
+		
+		"Defend":
+			var defense = intent_value if intent_value > 0 else 8
+			enemy.gain_defense(defense)
+			GLog.info("Enemy gained %d defense!" % defense)
+		
+		"Special":
+			GLog.info("Enemy performs special action!")
+			# Could be stun, heal, buff, etc. - for now just a basic attack
+			var damage = 3 + enemy.turns_alive
+			var actual_damage = duel_state.player_data.take_damage(damage)
+			GLog.info("Player took %d special damage (after defense)" % actual_damage)
+		
+		_:
+			# Default/Unknown intent - basic attack
+			var damage = 5 + (enemy.turns_alive * 2)
+			GLog.info("Enemy attacks for %d damage!" % damage)
+			var actual_damage = duel_state.player_data.take_damage(damage)
+			GLog.info("Player took %d damage (after defense)" % actual_damage)
+
+func set_enemy_intent_for_next_turn(enemy):
+	"""Set enemy intent for the next turn based on simple AI"""
+	var turn = enemy.turns_alive + 1
+	
+	# Simple pattern-based AI
+	if turn % 4 == 1:
+		# Turn 1, 5, 9, etc: Big attack
+		enemy.set_intent("Attack", 8 + (turn * 2))
+	elif turn % 4 == 2:
+		# Turn 2, 6, 10, etc: Defend
+		enemy.set_intent("Defend", 6 + turn)
+	elif turn % 4 == 3:
+		# Turn 3, 7, 11, etc: Medium attack
+		enemy.set_intent("Attack", 5 + turn)
+	else:
+		# Turn 4, 8, 12, etc: Special
+		enemy.set_intent("Special", 0)
+	
+	GLog.debug("Enemy intent set to: %s (%d)" % [enemy.current_intent, enemy.intent_value])
 
 func end_enemy_turn():
 	GLog.debug("Ending enemy turn")
@@ -187,6 +247,10 @@ func apply_card_results(results: Dictionary):
 	if results.has("stun_enemy") and results.stun_enemy > 0:
 		enemy.apply_stun(results.stun_enemy)
 		GLog.info("Stunned enemy for %d turns" % results.stun_enemy)
+	
+	if results.has("delayed_damage") and results.delayed_damage > 0:
+		player.delayed_damage += results.delayed_damage
+		GLog.debug("Added %d delayed damage (total: %d)" % [results.delayed_damage, player.delayed_damage])
 
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)

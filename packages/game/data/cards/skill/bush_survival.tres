@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/ConditionalHeal.gd" id="3"]
+
+[sub_resource type="Resource" id="ConditionalHeal_1"]
+script = ExtResource("3")
+base_heal = 6
+bonus_heal = 6
+health_threshold = 0.25
+effect_name = "Conditional Heal"
+description = "Heal 6. If below 25% health, heal 6 additional"
+
+[resource]
+script = ExtResource("1")
+card_name = "Bush Survival"
+energy_cost = 1
+description = "Heal 6. If below 25% health, heal 6 additional."
+card_type = "Grit"
+card_icon = null
+flavor_text = "The bush teaches you to make do with what you have."
+effects = Array[ExtResource("2")]([SubResource("ConditionalHeal_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Common"
+mechanical_category = "Skill"
