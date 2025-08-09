@@ -77,17 +77,27 @@ func reset_run_statistics() -> void:
 		"events_encountered": 0
 	}
 
-func start_new_run(character_class: String, seed: int = -1, mode: GameMode = GameMode.STANDARD) -> void:
+func start_new_run(character_class: String, custom_seed: Variant = null, mode: GameMode = GameMode.STANDARD) -> void:
 	GLog.debug("Starting new run with class: " + character_class)
 	
-	if seed == -1:
-		seed = randi()
+	# Use custom seed if provided, otherwise use GameSettings custom seed, otherwise auto-generate
+	var seed_to_use = custom_seed
+	if seed_to_use == null:
+		seed_to_use = GameSettings.custom_seed if not GameSettings.custom_seed.is_empty() else null
 	
-	current_run_seed = seed
+	# Initialize the seed system for this run
+	var final_seed = SeedManager.set_master_seed(seed_to_use)
+	SeedManager.start_run(seed_to_use)
+	
+	current_run_seed = final_seed
 	current_character_class = character_class
 	current_mode = mode
 	is_run_active = true
 	run_start_time = Time.get_ticks_msec() / 1000.0
+	
+	# Store the seed used for this run
+	GameSettings.last_used_seed = final_seed
+	GameSettings.save_settings()
 	
 	initialize_game_data()
 	reset_run_statistics()
@@ -104,6 +114,9 @@ func end_current_run(victory: bool = false) -> void:
 	var run_duration := (Time.get_ticks_msec() / 1000.0) - run_start_time
 	
 	save_run_statistics(victory, run_duration)
+	
+	# Clean up seed system
+	SeedManager.end_run()
 	
 	change_state(GameState.VICTORY if victory else GameState.GAME_OVER)
 	EventBus.game_ended.emit(victory)

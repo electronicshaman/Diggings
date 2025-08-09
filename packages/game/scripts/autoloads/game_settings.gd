@@ -26,6 +26,11 @@ var particle_effects: bool = true
 var tutorial_completed: bool = false
 var statistics_tracking: bool = true
 
+@export_group("Seed Settings")
+var custom_seed: String = ""  # User-specified seed (empty = auto-generate)
+var show_seed_in_ui: bool = true  # Show current seed in game UI
+var last_used_seed: int = 0  # Last seed used for a run
+
 var settings_file_path: String = "user://settings.cfg"
 
 func _ready() -> void:
@@ -52,6 +57,10 @@ func save_settings() -> void:
 	config.set_value("game", "difficulty", difficulty)
 	config.set_value("game", "tutorial_completed", tutorial_completed)
 	config.set_value("game", "statistics_tracking", statistics_tracking)
+	
+	config.set_value("seed", "custom_seed", custom_seed)
+	config.set_value("seed", "show_seed_in_ui", show_seed_in_ui)
+	config.set_value("seed", "last_used_seed", last_used_seed)
 	
 	var error := config.save(settings_file_path)
 	if error != OK:
@@ -85,6 +94,10 @@ func load_settings() -> void:
 	difficulty = config.get_value("game", "difficulty", difficulty)
 	tutorial_completed = config.get_value("game", "tutorial_completed", tutorial_completed)
 	statistics_tracking = config.get_value("game", "statistics_tracking", statistics_tracking)
+	
+	custom_seed = config.get_value("seed", "custom_seed", custom_seed)
+	show_seed_in_ui = config.get_value("seed", "show_seed_in_ui", show_seed_in_ui)
+	last_used_seed = config.get_value("seed", "last_used_seed", last_used_seed)
 	
 	GLog.debug("Settings loaded successfully")
 	apply_settings()

@@ -16,6 +16,10 @@ var graph: Dictionary = {
 	"start_node": ""  # Starting node ID
 }
 
+# Player tracking for persistence
+var current_player_node_id: String = ""
+var visited_node_ids: Array[String] = []
+
 # Available rules for generation
 var rules: Array[GraphRule] = []
 
@@ -44,11 +48,7 @@ func generate_map(seed: int = -1) -> Dictionary:
 	if seed != -1:
 		generation_seed = seed
 	else:
-		generation_seed = randi()
-	
-	# Set the seed for reproducible generation
-	var rng = RandomNumberGenerator.new()
-	rng.seed = generation_seed
+		generation_seed = SeedManager.get_map_random_int(0, 2147483647)
 	
 	GLog.debug("Generating map with seed: " + str(generation_seed))
 	
@@ -92,6 +92,8 @@ func create_start_node():
 	graph.nodes[start_id] = start_node
 	graph.start_node = start_id
 	graph.player_position = start_id
+	current_player_node_id = start_id
+	visited_node_ids = [start_id]
 	
 	GLog.debug("Created starting node: " + start_id)
 
@@ -110,7 +112,7 @@ func should_continue_generation() -> bool:
 	var progress = float(node_count - min_nodes) / float(max_nodes - min_nodes)
 	var continue_chance = 1.0 - (progress * progress)  # Quadratic decay
 	
-	return randf() < continue_chance
+	return SeedManager.get_map_random_float() < continue_chance
 
 func apply_random_rule() -> bool:
 	# Calculate total weight
@@ -126,7 +128,7 @@ func apply_random_rule() -> bool:
 		return false
 	
 	# Select rule based on weights
-	var random_value = randf() * total_weight
+	var random_value = SeedManager.get_map_random_float() * total_weight
 	var current_weight = 0.0
 	
 	for rule in applicable_rules:
@@ -144,7 +146,7 @@ func try_apply_rule(rule: GraphRule) -> bool:
 		return false
 	
 	# Apply rule to random match
-	var match = matches[randi() % matches.size()]
+	var match = matches[SeedManager.get_map_random_int(0, matches.size() - 1)]
 	return rule.apply(graph, match)
 
 func find_rule_matches(rule: GraphRule) -> Array[Dictionary]:
@@ -194,7 +196,7 @@ func ensure_graph_connectivity():
 	for node_id in all_nodes:
 		if node_id not in reachable:
 			# Connect isolated node to a random reachable node
-			var random_reachable = reachable[randi() % reachable.size()]
+			var random_reachable = reachable[SeedManager.get_map_random_int(0, reachable.size() - 1)]
 			connect_nodes(node_id, random_reachable)
 			GLog.debug("Connected isolated node " + node_id + " to " + random_reachable)
 
@@ -222,7 +224,7 @@ func connect_nodes(node_a: String, node_b: String):
 		return
 	
 	# Create edge
-	var edge = MapEdge.new(node_a, node_b, randi_range(2, 4))
+	var edge = MapEdge.new(node_a, node_b, SeedManager.get_map_random_int(2, 4))
 	graph.edges.append(edge)
 	
 	# Update node connections
@@ -253,7 +255,7 @@ func convert_random_junction_to_type(target_type: MapNode.NodeType):
 			junctions.append(node_id)
 	
 	if not junctions.is_empty():
-		var junction_id = junctions[randi() % junctions.size()]
+		var junction_id = junctions[SeedManager.get_map_random_int(0, junctions.size() - 1)]
 		var junction = graph.nodes[junction_id]
 		junction.type = target_type
 		junction.id = MapNode.NodeType.keys()[target_type].to_lower() + "_" + str(Time.get_ticks_msec())
@@ -288,9 +290,12 @@ func move_player_to_node(target_node_id: String) -> bool:
 	# Move player
 	var old_position = graph.player_position
 	graph.player_position = target_node_id
+	current_player_node_id = target_node_id
 	
 	# Handle discovery and visitation
 	target_node.visit()
+	if target_node_id not in visited_node_ids:
+		visited_node_ids.append(target_node_id)
 	discover_adjacent_nodes(target_node_id)
 	
 	player_moved.emit(old_position, target_node_id)
@@ -329,3 +334,83 @@ func get_available_moves() -> Array[String]:
 
 func get_graph_data() -> Dictionary:
 	return graph.duplicate()
+
+# Serialization methods for map persistence
+func get_serializable_data() -> Dictionary:
+	"""Get map data that can be stored and restored."""
+	var serializable_nodes = {}
+	
+	# Serialize each node
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		serializable_nodes[node_id] = {
+			"type": node.type,
+			"position": [node.position.x, node.position.y],
+			"connections": node.connections.duplicate(),
+			"discovered": node.discovered,
+			"visited": node.visited
+		}
+	
+	var serializable_edges = []
+	for edge in graph.edges:
+		serializable_edges.append({
+			"from": edge.from_node,
+			"to": edge.to_node,
+			"cost": edge.cost
+		})
+	
+	return {
+		"nodes": serializable_nodes,
+		"edges": serializable_edges,
+		"player_position": graph.player_position,
+		"start_node": graph.start_node,
+		"generation_seed": graph.get("generation_seed", generation_seed),
+		"max_nodes": max_nodes,
+		"min_nodes": min_nodes
+	}
+
+func load_from_serializable_data(data: Dictionary):
+	"""Restore map from serialized data."""
+	if not data.has("nodes") or not data.has("edges"):
+		GLog.error("Invalid serializable data - missing nodes or edges")
+		return
+		
+	# Clear current graph
+	graph = {
+		"nodes": {},
+		"edges": [],
+		"player_position": "",
+		"start_node": ""
+	}
+	
+	# Restore generation parameters
+	if data.has("max_nodes"):
+		max_nodes = data.max_nodes
+	if data.has("min_nodes"):
+		min_nodes = data.min_nodes
+	if data.has("generation_seed"):
+		generation_seed = data.generation_seed
+		
+	# Restore nodes
+	for node_id in data.nodes:
+		var node_data = data.nodes[node_id]
+		var position = Vector2(node_data.position[0], node_data.position[1])
+		var node = MapNode.new(node_id, node_data.type, position)
+		
+		node.connections = node_data.connections.duplicate()
+		node.discovered = node_data.discovered
+		node.visited = node_data.visited
+		
+		graph.nodes[node_id] = node
+	
+	# Restore edges
+	for edge_data in data.edges:
+		var edge = MapEdge.new(edge_data.from, edge_data.to, edge_data.cost)
+		graph.edges.append(edge)
+	
+	# Restore graph properties
+	graph.player_position = data.player_position
+	graph.start_node = data.start_node
+	graph.generation_seed = data.get("generation_seed", generation_seed)
+	
+	GLog.debug("Map restored from serializable data: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")

@@ -36,8 +36,13 @@ func setup_graph_system():
 	if map_layers:
 		map_layers.queue_free()
 	
-	# Add visualizer to scroll container
-	map_scroll_container.add_child(map_visualizer)
+	# TEMPORARY: Add MapVisualizer directly to UIContainer to test rendering
+	var ui_container = $UIContainer
+	ui_container.add_child(map_visualizer)
+	
+	# Position it below the header
+	map_visualizer.position = Vector2(0, 80)  # Below header panel
+	map_visualizer.custom_minimum_size = Vector2(800, 500)
 	
 	# Ensure the visualizer is visible
 	map_visualizer.visible = true
@@ -53,10 +58,56 @@ func setup_button_connections():
 	view_deck_button.pressed.connect(_on_view_deck_pressed)
 
 func generate_new_map():
-	# Generate a new map using the current run seed or random
-	var seed = GameManager.current_run_seed if GameManager.is_run_active else -1
+	# Only generate if we don't have a map stored in game_data or if no run is active
+	if GameManager.is_run_active and GameManager.game_data.has("map") and GameManager.game_data.map != null:
+		# Map already exists for this run, restore it instead
+		restore_existing_map()
+		return
+	
+	# Generate a new map using the seeded RNG system
+	var seed = SeedManager.get_map_random_int(0, 2147483647) if GameManager.is_run_active else -1
 	map_generator.generate_map(seed)
 	GLog.info("Generated new map for exploration")
+	
+	# Store the map in game_data for persistence
+	if GameManager.is_run_active:
+		GameManager.game_data.map = {
+			"generator_data": map_generator.get_serializable_data(),
+			"current_player_node": map_generator.current_player_node_id,
+			"visited_nodes": map_generator.visited_node_ids.duplicate()
+		}
+		GLog.debug("Map data stored in GameManager")
+	
+	# Update scroll content size to match the generated map
+	var scroll_content = map_scroll_container.get_child(0)  # Should be our MapScrollContent
+	if scroll_content:
+		var map_bounds = map_visualizer.get_graph_bounds()
+		scroll_content.custom_minimum_size = map_bounds.size
+		scroll_content.size = map_bounds.size
+		GLog.debug("Updated scroll content size to: " + str(map_bounds.size))
+
+func restore_existing_map():
+	# Restore map from stored game data
+	var map_data = GameManager.game_data.map
+	if not map_data or not map_data.has("generator_data"):
+		GLog.warn("Invalid map data found, generating new map")
+		GameManager.game_data.map = null
+		generate_new_map()
+		return
+		
+	# Restore the map generator state
+	map_generator.load_from_serializable_data(map_data.generator_data)
+	
+	# Restore player position and visited nodes
+	if map_data.has("current_player_node"):
+		map_generator.current_player_node_id = map_data.current_player_node
+	if map_data.has("visited_nodes"):
+		map_generator.visited_node_ids = map_data.visited_nodes
+	
+	GLog.info("Restored existing map from game data")
+	
+	# Update visualization
+	map_visualizer.highlight_available_moves()
 
 func _on_view_deck_pressed():
 	GLog.info("View Deck button pressed")
@@ -102,7 +153,7 @@ func handle_mine_arrival(node: MapNode):
 	GLog.info("Arrived at mine: " + node.id)
 	
 	# Random chance of combat at mines
-	if randf() < 0.6:  # 60% chance of combat
+	if SeedManager.get_event_random_float() < 0.6:  # 60% chance of combat
 		GLog.info("Enemy encountered in the mine!")
 		SceneManager.load_scene_by_name("main_game")
 	else:
@@ -120,7 +171,7 @@ func handle_poi_arrival(node: MapNode):
 	GLog.info("Arrived at point of interest: " + node.id)
 	
 	# Random chance of event or combat
-	if randf() < 0.7:  # 70% chance of event
+	if SeedManager.get_event_random_float() < 0.7:  # 70% chance of event
 		SceneManager.load_scene_by_name("event")
 	else:
 		GLog.info("Strange encounter at the mysterious location!")
