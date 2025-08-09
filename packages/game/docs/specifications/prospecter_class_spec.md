@@ -1,5 +1,9 @@
 # Prospector Class Specification
 
+## Implementation Status: âœ… Resource Created
+
+The Prospector character resource has been implemented at `data/characters/prospector.tres` with full class mechanics, abilities, and card accessibility rules defined.
+
 ## Character Overview
 
 The **Prospector** represents the archetypal gold seeker - an independent fortune hunter driven by dreams of striking it rich. They embody the risk/reward nature of speculation and gambling that defined the gold rush era.
@@ -230,8 +234,8 @@ Corruption: 0        # Starts clean, but fortune comes with price
 ### Phase 1 (Current): Core Fortune System
 1.  Basic Fortune cards implemented
 2. = Gold Rush mechanic implementation  
-3. =Ë Risk Tolerance ability implementation
-4. =Ë Balance testing with existing enemies
+3. =ï¿½ Risk Tolerance ability implementation
+4. =ï¿½ Balance testing with existing enemies
 
 ### Phase 2: Complete Card Set
 1. Implement remaining 15 cards

@@ -1,4 +1,60 @@
-# Character Generation Through Graph Grammar
+# Character Generation System
+
+## Implementation Status
+
+### ✅ Character Resources Created
+
+The character class system has been implemented with comprehensive resource files for all 4 primary classes:
+
+#### Character Class Structure (CharacterClass.gd)
+```gdscript
+extends Resource
+class_name CharacterClass
+
+# Basic character information
+@export_group("Character Identity")
+@export var character_class_name: String
+@export var description: String
+@export var mechanical_specialization: String  # Attack/Skill/Power/Fortune
+@export var difficulty_rating: int  # 1=Easy to 4=Expert
+
+# Starting statistics
+@export_group("Starting Stats")
+@export var base_health: int
+@export var base_sanity: int
+@export var base_energy: int
+@export var starting_gold: int
+
+# Starting deck composition
+@export_group("Starting Deck")
+@export var starting_deck: Array[CardData]
+@export var starting_deck_size: int
+
+# Character mechanics and abilities
+@export_group("Class Mechanics")
+@export var passive_abilities: Array[String]
+@export var active_abilities: Array[String]
+@export var unique_resources: Array[String]  # e.g., Ammo, Brew Tokens
+
+# Card accessibility rules
+@export_group("Card Access")
+@export var class_exclusive_cards: Array[String]
+@export var preferred_card_types: Array[String]
+@export var forbidden_card_types: Array[String]
+```
+
+#### Implemented Character Resources
+
+| Class | File | Specialization | Health | Sanity | Gold | Unique Mechanics |
+|-------|------|---------------|--------|--------|------|------------------|
+| **Bushranger** | `data/characters/bushranger.tres` | Attack | 55 | 90 | 10 | Ammo system, Outlaw's Edge |
+| **Prospector** | `data/characters/prospector.tres` | Fortune | 45 | 110 | 25 | Gold Rush, Risk Tolerance |
+| **Tracker** | `data/characters/tracker.tres` | Skill | 50 | 105 | 15 | Setup mechanics, Pathfinding |
+| **Publican** | `data/characters/publican.tres` | Power | 50 | 95 | 20 | Brew Tokens, Social Hub |
+
+---
+
+## Advanced: Character Generation Through Graph Grammar
 
 Yes! Graph grammar is perfect for procedural backstory generation. Each class becomes a **template** for generating unique characters with interconnected story elements.
 

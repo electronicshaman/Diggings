@@ -1,5 +1,9 @@
 # Bushranger Class Specification
 
+## Implementation Status: ✅ Resource Created
+
+The Bushranger character resource has been implemented at `data/characters/bushranger.tres` with full class mechanics, abilities, and card accessibility rules defined.
+
 ## Character Overview
 
 The **Bushranger** represents the archetypal Australian outlaw - a hardened fighter forced into banditry by circumstances, survival, or injustice. They embody aggressive, direct combat with a focus on speed, momentum, and overwhelming firepower.

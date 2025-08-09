@@ -155,7 +155,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 
 ### Technical Implementation
 
-#### Card Data Structure
+#### Card Data Structure (Updated)
 ```gdscript
 # CardData.gd
 extends Resource
@@ -167,11 +167,28 @@ class_name CardData
 @export var description: String  
 @export var flavor_text: String
 @export var card_type: String          # Theme-specific (Gold/Grit/Grog/Gamble)
-@export var mechanical_category: String # Theme-agnostic (Attack/Skill/Power/Fortune)
 @export var card_handling: String      # Behavioral rules
 @export var effects: Array[CardEffect]
 @export var modifiers: Array[String] = []
+
+# Character class relationships (NEW)
+@export_group("Class Accessibility")
+@export var class_affinity: Array[String] = []  # Empty = all classes, populated = restricted
+@export var accessibility_tier: String = "Neutral"  # Starting/Class/Neutral/Rare
+@export var mechanical_category: String = "Attack"  # Attack/Skill/Power/Fortune
 ```
+
+#### Card Accessibility System
+- **Starting Cards**: Appear in character starting decks only
+- **Class Cards**: Character-specific cards found during runs
+- **Neutral Cards**: Available to all characters
+- **Rare Cards**: Special cards with limited availability
+
+#### Class Affinity System
+- Cards can be restricted to specific character classes
+- Empty `class_affinity` array means all classes can use the card
+- Populated array restricts card to listed classes only
+- Characters have `preferred_card_types` and `forbidden_card_types`
 
 #### Card Effect System
 - Each card has array of CardEffect resources
