@@ -15,10 +15,11 @@ const TRANSITION_DURATION: float = 0.5
 const SCENE_PATHS: Dictionary = {
 	"main_menu": "res://scenes/ui/main_menu.tscn",
 	"class_selection": "res://scenes/ui/class_selection.tscn",
-	"main_game": "res://scenes/game/main_game.tscn",
 	"duel": "res://scenes/game/duel.tscn",
 	"map": "res://scenes/game/map.tscn",
 	"shop": "res://scenes/game/shop.tscn",
+	"camp": "res://scenes/game/camp.tscn",
+	"junction": "res://scenes/game/junction.tscn",
 	"rest_site": "res://scenes/game/rest_site.tscn",
 	"event": "res://scenes/game/event.tscn",
 	"game_over": "res://scenes/ui/game_over.tscn",

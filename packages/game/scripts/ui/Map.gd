@@ -128,7 +128,7 @@ func reload_config():
 			GLog.info("Reloaded map configuration")
 			regenerate_map()
 		else:
-			GLog.warning("Config file not found: " + config_path)
+			GLog.warn("Config file not found: " + config_path)
 
 func setup_graph_system():
 	# Create map generator
@@ -213,6 +213,9 @@ func generate_new_map():
 	
 	# Apply consistent visualization setup
 	_setup_map_visualization()
+	
+	# Highlight available moves after everything is set up
+	call_deferred("_highlight_available_moves_after_setup")
 
 func _setup_map_visualization():
 	"""Apply consistent MapVisualizer setup for both new and restored maps"""
@@ -249,6 +252,13 @@ func _setup_map_visualization():
 	
 	GLog.debug("Setup visualizer - size: " + str(map_bounds.size) + ", pos: " + str(map_visualizer.position) + ", edges: " + str(edge_count) + ", buttons: " + str(button_count))
 
+func _highlight_available_moves_after_setup():
+	"""Highlight available moves after all visualization setup is complete"""
+	if map_visualizer:
+		GLog.debug("Highlighting available moves after setup")
+		map_visualizer.update_visibility()
+		map_visualizer.highlight_available_moves()
+
 func restore_existing_map():
 	# Restore map from stored game data
 	var map_data = GameManager.game_data.map
@@ -264,6 +274,8 @@ func restore_existing_map():
 	# Restore player position and visited nodes
 	if map_data.has("current_player_node"):
 		map_generator.current_player_node_id = map_data.current_player_node
+		# Ensure the graph.player_position is synced with current_player_node_id
+		map_generator.graph.player_position = map_data.current_player_node
 	if map_data.has("visited_nodes"):
 		map_generator.visited_node_ids = map_data.visited_nodes
 	
@@ -272,10 +284,12 @@ func restore_existing_map():
 	# Update visualizer with the restored graph data
 	var restored_graph = map_generator.get_graph_data()
 	map_visualizer.visualize_graph(restored_graph)
-	map_visualizer.highlight_available_moves()
 	
 	# Apply the same visualization setup as generate_new_map
 	_setup_map_visualization()
+	
+	# Highlight available moves after everything is set up
+	call_deferred("_highlight_available_moves_after_setup")
 
 func _on_view_deck_pressed():
 	GLog.info("View Deck button pressed")
@@ -300,16 +314,25 @@ func _on_node_clicked(node_id: String):
 	
 	var node = map_generator.graph.nodes.get(node_id)
 	if not node:
+		GLog.error("Node not found in graph: " + node_id)
 		return
+	
+	GLog.debug("Node details - discovered: " + str(node.discovered) + ", visited: " + str(node.visited))
+	GLog.debug("Current player position: " + map_generator.current_player_node_id)
+	GLog.debug("Available moves: " + str(map_generator.get_available_moves()))
 	
 	# Try to move player to this node
 	if map_generator.move_player_to_node(node_id):
+		GLog.info("Successfully moved to node: " + node_id)
 		handle_node_arrival(node_id, node)
 	else:
-		GLog.warning("Cannot move to node: " + node_id)
+		GLog.warn("Cannot move to node: " + node_id)
 
 func handle_node_arrival(node_id: String, node: MapNode):
 	GLog.info("Player arrived at: " + node.get_type_name() + " (" + node_id + ")")
+	
+	# Save the current map state before transitioning to another scene
+	save_current_map_state()
 	
 	# Handle different node types
 	match node.type:
@@ -325,10 +348,9 @@ func handle_node_arrival(node_id: String, node: MapNode):
 			handle_junction_arrival(node)
 
 func handle_camp_arrival(node: MapNode):
-	# Camps offer rest and healing - could show rest options
+	# Camps offer rest and healing - go to camp scene
 	GLog.info("Arrived at camp: " + node.id)
-	# For now, just highlight available moves
-	map_visualizer.highlight_available_moves()
+	SceneManager.load_scene_by_name("camp")
 
 func handle_mine_arrival(node: MapNode):
 	# Mines might trigger combat or resource events
@@ -337,9 +359,12 @@ func handle_mine_arrival(node: MapNode):
 	# Random chance of combat at mines
 	if SeedManager.get_event_random_float() < 0.6:  # 60% chance of combat
 		GLog.info("Enemy encountered in the mine!")
-		SceneManager.load_scene_by_name("main_game")
+		SceneManager.load_scene_by_name("duel")
 	else:
-		map_visualizer.highlight_available_moves()
+		# Safe mine exploration - could go to a mine exploration scene in the future
+		# For now, just trigger combat anyway
+		GLog.info("Exploring the mine...")
+		SceneManager.load_scene_by_name("duel")
 
 func handle_settlement_arrival(node: MapNode):
 	# Settlements offer shops and NPCs
@@ -357,12 +382,12 @@ func handle_poi_arrival(node: MapNode):
 		SceneManager.load_scene_by_name("event")
 	else:
 		GLog.info("Strange encounter at the mysterious location!")
-		SceneManager.load_scene_by_name("main_game")
+		SceneManager.load_scene_by_name("duel")
 
 func handle_junction_arrival(node: MapNode):
-	# Junctions are just pass-through points
+	# Junctions offer path selection and information
 	GLog.info("Arrived at junction: " + node.id)
-	map_visualizer.highlight_available_moves()
+	SceneManager.load_scene_by_name("junction")
 
 func _on_node_hovered(node_id: String):
 	# Could show tooltip or highlight path
@@ -381,6 +406,16 @@ func get_available_destinations() -> Array[String]:
 
 func force_move_to_node(node_id: String) -> bool:
 	return map_generator.move_player_to_node(node_id)
+
+func save_current_map_state():
+	"""Save the current map state to GameManager for persistence"""
+	if GameManager.is_run_active and map_generator:
+		GameManager.game_data.map = {
+			"generator_data": map_generator.get_serializable_data(),
+			"current_player_node": map_generator.current_player_node_id,
+			"visited_nodes": map_generator.visited_node_ids.duplicate()
+		}
+		GLog.debug("Map state saved - player at: " + map_generator.current_player_node_id + ", visited: " + str(map_generator.visited_node_ids.size()) + " nodes")
 
 # Handle returning from other scenes
 func _notification(what):

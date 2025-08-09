@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8qvx2jc4nk5m"]
+
+[ext_resource type="Script" uid="uid://bsbjkeexjmsmg" path="res://scripts/ui/Camp.gd" id="1_camp"]
+
+[node name="Camp" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_camp")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.15, 0.08, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TitleLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+text = "CAMP - Rest and Recovery"
+horizontal_alignment = 1
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+text = "A peaceful campsite where weary travelers can rest and restore their strength.
+Rest options and healing mechanics coming soon..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ReturnToMapButton" type="Button" parent="MainContainer"]
+layout_mode = 2
+text = "Return to Map"

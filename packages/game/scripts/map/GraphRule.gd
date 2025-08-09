@@ -94,7 +94,57 @@ class LinearExtensionRule extends GraphRule:
 		var nodes = graph.get("nodes", {})
 		var edges = graph.get("edges", [])
 		
-		# Create junction node using config
+		# Check if linear_create_junctions is enabled
+		var create_junction = config.linear_create_junctions if config else true
+		
+		if not create_junction:
+			# Skip creating junctions - directly create destination node
+			var dest_type
+			if config:
+				dest_type = config.get_weighted_node_type()
+			else:
+				var dest_types = [MapNode.NodeType.CAMP, MapNode.NodeType.MINE, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.POI]
+				dest_type = dest_types[SeedManager.get_map_random_int(0, dest_types.size() - 1)]
+			
+			var dest_id = MapNode.NodeType.keys()[dest_type].to_lower() + "_" + str(Time.get_ticks_msec())
+			
+			# Position destination using config
+			var angle = config.get_movement_angle() if config else (SeedManager.get_map_random_float() * PI - PI/2)
+			var distance = config.linear_junction_distance if config else (SeedManager.get_map_random_float() * 80 + 100)
+			var dest_pos = nodes[from_node].position + Vector2(cos(angle), sin(angle)) * distance
+			
+			# Find valid position with spacing constraints
+			if config and config.bounds_auto_adjust_spacing:
+				# Try to find a valid position that respects spacing
+				dest_pos = _find_valid_position_with_spacing(graph, dest_pos, angle, distance, from_node)
+			else:
+				# Just clamp to bounds
+				if config:
+					dest_pos = config.clamp_to_bounds(dest_pos)
+			
+			# Check if position is valid for spacing
+			if not _is_position_valid_for_spacing(graph, dest_pos):
+				GLog.debug("LinearExtensionRule: Cannot place node at " + str(dest_pos) + " due to spacing constraints")
+				return false
+			
+			var destination = MapNode.new(dest_id, dest_type, dest_pos)
+			
+			# Add node to graph
+			nodes[dest_id] = destination
+			
+			# Create edge
+			var edge = MapEdge.new(from_node, dest_id, SeedManager.get_map_random_int(1, 4))
+			edges.append(edge)
+			
+			# Connect nodes
+			nodes[from_node].connect_to(dest_id)
+			destination.connect_to(from_node)
+			
+			applications_count += 1
+			GLog.debug("Applied Linear Extension rule (no junction): " + from_node + " -> " + dest_id)
+			return true
+		
+		# Original junction creation logic with spacing validation
 		var junction_id = "junction_" + str(Time.get_ticks_msec())
 		
 		# Use config for positioning if available
@@ -102,12 +152,20 @@ class LinearExtensionRule extends GraphRule:
 		var distance = config.linear_junction_distance if config else (SeedManager.get_map_random_float() * 80 + 100)
 		var junction_pos = nodes[from_node].position + Vector2(cos(angle), sin(angle)) * distance
 		
-		# Clamp to bounds using config
-		if config:
-			junction_pos = config.clamp_to_bounds(junction_pos)
+		# Find valid position with spacing constraints
+		if config and config.bounds_auto_adjust_spacing:
+			junction_pos = _find_valid_position_with_spacing(graph, junction_pos, angle, distance, from_node)
 		else:
-			junction_pos.x = clamp(junction_pos.x, 50, 1230)
-			junction_pos.y = clamp(junction_pos.y, 50, 670)
+			if config:
+				junction_pos = config.clamp_to_bounds(junction_pos)
+			else:
+				junction_pos.x = clamp(junction_pos.x, 50, 1230)
+				junction_pos.y = clamp(junction_pos.y, 50, 670)
+		
+		# Check if position is valid for spacing
+		if not _is_position_valid_for_spacing(graph, junction_pos):
+			GLog.debug("LinearExtensionRule: Cannot place junction at " + str(junction_pos) + " due to spacing constraints")
+			return false
 		
 		var junction = MapNode.new(junction_id, MapNode.NodeType.JUNCTION, junction_pos)
 		
@@ -126,8 +184,17 @@ class LinearExtensionRule extends GraphRule:
 		var dest_distance = config.linear_destination_distance if config else (SeedManager.get_map_random_float() * 80 + 60)
 		var dest_pos = junction_pos + Vector2(cos(dest_angle), sin(dest_angle)) * dest_distance
 		
-		if config:
-			dest_pos = config.clamp_to_bounds(dest_pos)
+		# Find valid position with spacing constraints
+		if config and config.bounds_auto_adjust_spacing:
+			dest_pos = _find_valid_position_with_spacing(graph, dest_pos, dest_angle, dest_distance, junction_id)
+		else:
+			if config:
+				dest_pos = config.clamp_to_bounds(dest_pos)
+		
+		# Check if destination position is valid for spacing
+		if not _is_position_valid_for_spacing(graph, dest_pos, junction_id):
+			GLog.debug("LinearExtensionRule: Cannot place destination at " + str(dest_pos) + " due to spacing constraints")
+			return false
 		
 		var destination = MapNode.new(dest_id, dest_type, dest_pos)
 		
@@ -190,8 +257,17 @@ class BranchCreationRule extends GraphRule:
 		var branch_distance = config.branch_distance if config else (SeedManager.get_map_random_float() * 60 + 80)
 		var dest_pos = base_pos + Vector2(cos(branch_angle), sin(branch_angle)) * branch_distance
 		
-		if config:
-			dest_pos = config.clamp_to_bounds(dest_pos)
+		# Find valid position with spacing constraints
+		if config and config.bounds_auto_adjust_spacing:
+			dest_pos = _find_valid_position_with_spacing(graph, dest_pos, branch_angle, branch_distance, junction_node)
+		else:
+			if config:
+				dest_pos = config.clamp_to_bounds(dest_pos)
+		
+		# Check if position is valid for spacing
+		if not _is_position_valid_for_spacing(graph, dest_pos):
+			GLog.debug("BranchCreationRule: Cannot place branch at " + str(dest_pos) + " due to spacing constraints")
+			return false
 		
 		var destination = MapNode.new(dest_id, dest_type, dest_pos)
 		
@@ -246,3 +322,67 @@ class DestinationPlacementRule extends GraphRule:
 		applications_count += 1
 		GLog.debug("Applied Destination Placement rule: converted junction to " + junction.get_type_name())
 		return true
+
+# Helper functions for spacing validation - now non-static to access config
+func _is_position_valid_for_spacing(graph: Dictionary, new_pos: Vector2, exclude_node_id: String = "") -> bool:
+	"""Check if a position maintains minimum spacing from all existing nodes"""
+	var nodes = graph.get("nodes", {})
+	
+	# Use config spacing if available, otherwise use default
+	var min_spacing = config.spacing_min if config else 100.0
+	
+	for node_id in nodes:
+		if node_id == exclude_node_id:
+			continue
+		
+		var node = nodes[node_id]
+		var distance = new_pos.distance_to(node.position)
+		
+		if distance < min_spacing:
+			return false
+	
+	return true
+
+func _find_valid_position_with_spacing(graph: Dictionary, base_pos: Vector2, preferred_angle: float, preferred_distance: float, source_node_id: String = "") -> Vector2:
+	"""Find a valid position that respects spacing constraints"""
+	var nodes = graph.get("nodes", {})
+	
+	# Use config values if available
+	var min_spacing = config.spacing_min if config else 100.0
+	var max_spacing = config.spacing_max if config else 180.0
+	var max_attempts = 10
+	var angle_step = PI / 6  # 30 degrees
+	
+	# Try the preferred position first
+	if _is_position_valid_for_spacing(graph, base_pos, source_node_id):
+		return base_pos
+	
+	# Auto-adjust spacing enabled - try different positions
+	if config and config.bounds_auto_adjust_spacing:
+		# Try different angles and distances
+		for attempt in range(max_attempts):
+			# Try different angles around the preferred angle
+			for angle_offset in [0, angle_step, -angle_step, angle_step * 2, -angle_step * 2]:
+				var test_angle = preferred_angle + angle_offset
+				
+				# Try different distances (start at preferred, decrease if needed)
+				var distance = preferred_distance
+				while distance >= min_spacing:
+					var test_pos = base_pos + Vector2(cos(test_angle), sin(test_angle)) * distance
+					
+					# Clamp to bounds if config available
+					if config:
+						test_pos = config.clamp_to_bounds(test_pos)
+					
+					if _is_position_valid_for_spacing(graph, test_pos, source_node_id):
+						return test_pos
+					
+					distance *= 0.9  # Reduce distance by 10%
+		
+		GLog.warn("Could not find valid position with auto-adjust spacing, using fallback")
+	
+	# Fallback: clamp to bounds and return
+	if config:
+		return config.clamp_to_bounds(base_pos)
+	else:
+		return base_pos

@@ -50,7 +50,7 @@ func load_default_config():
 	# Validate the config
 	var warnings = layout_config.validate_config()
 	for warning in warnings:
-		GLog.warning("MapLayoutConfig: " + warning)
+		GLog.warn("MapLayoutConfig: " + warning)
 
 func initialize_rules():
 	rules.clear()
@@ -224,6 +224,9 @@ func post_process_graph():
 	
 	# Balance node types
 	balance_node_types()
+	
+	# Enforce connection limits
+	enforce_connection_limits()
 	
 	# Set up fog of war (only start node discovered)
 	setup_fog_of_war()
@@ -407,10 +410,115 @@ func setup_fog_of_war():
 			node.discovered = false
 			node.visited = false
 
+func enforce_connection_limits():
+	"""Ensure no node exceeds the maximum connection limit"""
+	if not layout_config:
+		return
+		
+	var max_connections = layout_config.cleanup_max_connections_per_node
+	
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		if node.connections.size() > max_connections:
+			GLog.debug("Node " + node_id + " has " + str(node.connections.size()) + " connections, limiting to " + str(max_connections))
+			
+			# Sort connections by distance and keep only the closest ones
+			var connections_with_distance = []
+			for connected_id in node.connections:
+				if graph.nodes.has(connected_id):
+					var distance = node.position.distance_to(graph.nodes[connected_id].position)
+					connections_with_distance.append({"id": connected_id, "distance": distance})
+			
+			connections_with_distance.sort_custom(func(a, b): return a.distance < b.distance)
+			
+			# Keep only the closest connections
+			var new_connections = []
+			for i in range(min(max_connections, connections_with_distance.size())):
+				new_connections.append(connections_with_distance[i].id)
+			
+			# Remove excess connections
+			for connected_id in node.connections:
+				if connected_id not in new_connections:
+					remove_connection(node_id, connected_id)
+			
+			node.connections = new_connections
+
+func remove_connection(node_a: String, node_b: String):
+	"""Remove a connection between two nodes"""
+	if graph.nodes.has(node_a):
+		graph.nodes[node_a].connections.erase(node_b)
+	if graph.nodes.has(node_b):
+		graph.nodes[node_b].connections.erase(node_a)
+	
+	# Remove the edge
+	for i in range(graph.edges.size() - 1, -1, -1):
+		var edge = graph.edges[i]
+		if (edge.from_node == node_a and edge.to_node == node_b) or \
+		   (edge.from_node == node_b and edge.to_node == node_a):
+			graph.edges.remove_at(i)
+
+func is_position_valid_for_spacing(new_pos: Vector2, exclude_node_id: String = "") -> bool:
+	"""Check if a position maintains minimum spacing from all existing nodes"""
+	if not layout_config:
+		return true
+	
+	var min_spacing = layout_config.spacing_min
+	
+	for node_id in graph.nodes:
+		if node_id == exclude_node_id:
+			continue
+		
+		var node = graph.nodes[node_id]
+		var distance = new_pos.distance_to(node.position)
+		
+		if distance < min_spacing:
+			return false
+	
+	return true
+
+func find_valid_position_with_spacing(base_pos: Vector2, preferred_angle: float, preferred_distance: float, source_node_id: String = "") -> Vector2:
+	"""Find a valid position that respects spacing constraints"""
+	if not layout_config:
+		return base_pos
+	
+	var min_spacing = layout_config.spacing_min
+	var max_distance = layout_config.spacing_max
+	var auto_adjust = layout_config.bounds_auto_adjust_spacing
+	
+	# Try the preferred position first
+	if is_position_valid_for_spacing(base_pos, source_node_id):
+		return base_pos
+	
+	# If auto-adjust is enabled, try different distances and angles
+	if auto_adjust:
+		var max_attempts = 10
+		var angle_step = PI / 6  # 30 degrees
+		
+		for attempt in range(max_attempts):
+			# Try different angles around the preferred angle
+			for angle_offset in [0, angle_step, -angle_step, angle_step * 2, -angle_step * 2]:
+				var test_angle = preferred_angle + angle_offset
+				
+				# Try different distances (start at preferred, decrease if needed)
+				var distance = preferred_distance
+				while distance >= min_spacing:
+					var test_pos = base_pos + Vector2(cos(test_angle), sin(test_angle)) * distance
+					test_pos = layout_config.clamp_to_bounds(test_pos)
+					
+					if is_position_valid_for_spacing(test_pos, source_node_id):
+						return test_pos
+					
+					distance *= 0.9  # Reduce distance by 10%
+		
+		GLog.warn("Could not find valid position with spacing constraints, using fallback")
+	
+	# Fallback: return the clamped base position even if it violates spacing
+	return layout_config.clamp_to_bounds(base_pos)
+
 # Player movement and exploration
 func move_player_to_node(target_node_id: String) -> bool:
 	if not graph.nodes.has(target_node_id):
-		GLog.warning("Cannot move to non-existent node: " + target_node_id)
+		GLog.warn("Cannot move to non-existent node: " + target_node_id)
 		return false
 	
 	var current_node = graph.nodes[graph.player_position]
@@ -418,7 +526,7 @@ func move_player_to_node(target_node_id: String) -> bool:
 	
 	# Check if nodes are connected
 	if not current_node.is_connected_to(target_node_id):
-		GLog.warning("Cannot move to unconnected node: " + target_node_id)
+		GLog.warn("Cannot move to unconnected node: " + target_node_id)
 		return false
 	
 	# Move player

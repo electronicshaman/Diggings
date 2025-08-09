@@ -64,7 +64,7 @@ Theme-specific types (Gold, Grit, Grog, Gamble) are loaded dynamically via Theme
 
 - **Play current scene**: Use Godot's F6 or the play button
 - **Play main scene**: Use Godot's F5 or `mcp__godot-mcp__play_scene`
-- **Main scene**: `res://scenes/game/main_game.tscn`
+- **Main scene**: `res://scenes/game/duel.tscn` (combat/duel scene)
 
 ### Debugging
 
@@ -97,7 +97,9 @@ Theme-specific types (Gold, Grit, Grog, Gamble) are loaded dynamically via Theme
 
 ### Scenes
 
-- `scenes/game/main_game.tscn` - Main game scene
+- `scenes/game/duel.tscn` - Combat/duel scene (renamed from main_game)
+- `scenes/game/camp.tscn` - Camp rest scene
+- `scenes/game/junction.tscn` - Junction path selection scene
 - `scenes/cards/card.tscn` - Card visual template
 
 ### Documentation

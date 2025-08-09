@@ -13,6 +13,7 @@ var node_text: String = ""
 var is_player_position: bool = false
 var is_highlighted: bool = false
 var is_hoverable: bool = false
+var is_mouse_hovering: bool = false
 var node_data: MapNode
 var node_id: String
 
@@ -68,7 +69,7 @@ func _draw():
 		draw_arc(center, node_radius + pulsed_outline/2, 0, TAU, 64, pulsed_color, pulsed_outline)
 	
 	# Draw hover outline if hoverable and mouse is over
-	if is_hoverable and get_global_rect().has_point(get_global_mouse_position()):
+	if is_hoverable and is_mouse_hovering:
 		var hover_color = Color.YELLOW
 		hover_color.a = 0.8
 		draw_arc(center, node_radius + 3, 0, TAU, 64, hover_color, 2.0)
@@ -110,8 +111,19 @@ func set_highlight(highlight: bool):
 	queue_redraw()
 
 func _process(_delta):
-	# Only process if we need animations (player position pulse or hover effects)
-	if is_player_position or (is_hoverable and get_global_rect().has_point(get_global_mouse_position())):
+	# Handle mouse hover detection
+	if is_hoverable:
+		var mouse_in_area = get_global_rect().has_point(get_global_mouse_position())
+		if mouse_in_area != is_mouse_hovering:
+			is_mouse_hovering = mouse_in_area
+			if is_mouse_hovering:
+				mouse_entered.emit()
+			else:
+				mouse_exited.emit()
+			queue_redraw()
+	
+	# Only queue redraw if we need animations (player position pulse)
+	if is_player_position:
 		queue_redraw()
 
 func _ready():

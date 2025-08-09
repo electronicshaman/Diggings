@@ -15,7 +15,7 @@ func _on_bushranger_selected():
 	GLog.info("Bushranger class selected")
 	# Start new run with Bushranger
 	GameManager.start_new_run("Bushranger")
-	# Will be handled by GameManager transition to main_game scene
+	# Will be handled by GameManager transition to appropriate scene
 
 func _on_back_pressed():
 	GLog.info("Returning to main menu")

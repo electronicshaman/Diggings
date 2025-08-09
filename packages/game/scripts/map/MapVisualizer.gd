@@ -181,8 +181,8 @@ func create_node_visual(node_id: String, node: MapNode):
 	var is_player_position = (graph_data.player_position == node.id)
 	circle_node.set_player_position(is_player_position)
 	
-	# Connect signals
-	circle_node.node_clicked.connect(_on_circular_node_clicked.bind(node_id))
+	# Connect signals - fix parameter binding for node_clicked
+	circle_node.node_clicked.connect(func(event): _on_circular_node_clicked(event, node_id))
 	circle_node.mouse_entered.connect(_on_node_button_hovered.bind(node_id))
 	circle_node.mouse_exited.connect(_on_node_button_unhovered)
 	
@@ -253,8 +253,13 @@ func update_node_interactivity(circle_node: CircularMapNode, node: MapNode):
 		circle_node.update_interactivity(false)  # Can't move to current position
 		circle_node.set_player_position(true)
 		circle_node.modulate = Color(1, 1, 1, discovered_node_alpha)
+	elif node.visited:
+		# Visited nodes are disabled for movement (except current position)
+		circle_node.update_interactivity(false)
+		circle_node.set_player_position(false)
+		circle_node.modulate = Color(0.7, 0.7, 0.7, discovered_node_alpha)  # Dimmed visited nodes
 	elif current_player_node and current_player_node.is_connected_to(node.id):
-		circle_node.update_interactivity(true)  # Can move to connected discovered nodes
+		circle_node.update_interactivity(true)  # Can move to connected unvisited nodes
 		circle_node.set_player_position(false)
 		circle_node.modulate = Color(1, 1, 1, discovered_node_alpha)
 	else:
@@ -331,9 +336,10 @@ func highlight_available_moves():
 	
 	for node_id in node_buttons:
 		var circle_node = node_buttons[node_id]  # Now CircularMapNode
-		var is_available = node_id in available_moves
+		var node = graph_data.nodes[node_id]
+		var is_available = node_id in available_moves and not node.visited and node.discovered
 		
-		# Add visual highlighting for available moves
+		# Add visual highlighting for available moves (only unvisited nodes)
 		circle_node.set_highlight(is_available)
 
 func clear_move_highlights():
