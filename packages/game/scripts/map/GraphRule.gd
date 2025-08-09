@@ -307,7 +307,7 @@ class DestinationPlacementRule extends GraphRule:
 
 # Helper function to safely create connections without duplicates
 func _connect_nodes_safely(graph: Dictionary, node_a: String, node_b: String, travel_time: int = -1, difficulty: int = -1):
-	"""Safely connect two nodes, checking for duplicates first"""
+	"""Safely connect two nodes, checking for duplicates and same-type restrictions first"""
 	var nodes = graph.get("nodes", {})
 	var edges = graph.get("edges", [])
 	
@@ -316,6 +316,25 @@ func _connect_nodes_safely(graph: Dictionary, node_a: String, node_b: String, tr
 		if (edge.from_node == node_a and edge.to_node == node_b) or \
 		   (edge.from_node == node_b and edge.to_node == node_a):
 			GLog.debug("Skipping duplicate edge in rule: " + node_a + " <-> " + node_b)
+			return
+	
+	# Prevent same node types from connecting (camps to camps, settlements to settlements)
+	var node_a_obj = nodes.get(node_a)
+	var node_b_obj = nodes.get(node_b)
+	if node_a_obj and node_b_obj:
+		# Check for same-type restriction (camps and settlements cannot connect to same type)
+		if (node_a_obj.type == MapNode.NodeType.CAMP and node_b_obj.type == MapNode.NodeType.CAMP) or \
+		   (node_a_obj.type == MapNode.NodeType.SETTLEMENT and node_b_obj.type == MapNode.NodeType.SETTLEMENT):
+			GLog.debug("Preventing same-type connection: " + node_a + " (" + node_a_obj.get_type_name() + ") <-> " + node_b + " (" + node_b_obj.get_type_name() + ")")
+			return
+		
+		# Check single connection limit for settlement types (shops)
+		# Each node should only connect to one settlement at most
+		if node_a_obj.type == MapNode.NodeType.SETTLEMENT and _has_settlement_connection(graph, node_b):
+			GLog.debug("Preventing multiple settlement connections: " + node_b + " already connected to a settlement")
+			return
+		if node_b_obj.type == MapNode.NodeType.SETTLEMENT and _has_settlement_connection(graph, node_a):
+			GLog.debug("Preventing multiple settlement connections: " + node_a + " already connected to a settlement")
 			return
 	
 	# Create edge with random values if not specified
@@ -331,6 +350,32 @@ func _connect_nodes_safely(graph: Dictionary, node_a: String, node_b: String, tr
 	if nodes.has(node_a) and nodes.has(node_b):
 		nodes[node_a].connect_to(node_b)
 		nodes[node_b].connect_to(node_a)
+	
+	GLog.debug("Created edge in rule: " + node_a + " <-> " + node_b + " (travel: " + str(travel_time) + ", difficulty: " + str(difficulty) + ")")
+
+# Helper function to check if a node already has a connection to a settlement
+func _has_settlement_connection(graph: Dictionary, node_id: String) -> bool:
+	var nodes = graph.get("nodes", {})
+	var edges = graph.get("edges", [])
+	
+	var target_node = nodes.get(node_id)
+	if not target_node:
+		return false
+	
+	# Check all edges to see if this node connects to any settlement
+	for edge in edges:
+		var connected_node_id: String = ""
+		if edge.from_node == node_id:
+			connected_node_id = edge.to_node
+		elif edge.to_node == node_id:
+			connected_node_id = edge.from_node
+		
+		if connected_node_id != "":
+			var connected_node = nodes.get(connected_node_id)
+			if connected_node and connected_node.type == MapNode.NodeType.SETTLEMENT:
+				return true
+	
+	return false
 
 # Helper functions for spacing validation - now non-static to access config
 func _is_position_valid_for_spacing(graph: Dictionary, new_pos: Vector2, exclude_node_id: String = "") -> bool:

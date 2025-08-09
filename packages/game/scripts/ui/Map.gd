@@ -27,6 +27,10 @@ var initial_map_position = Vector2()
 @onready var map_viewport = $MapViewport
 @onready var map_content = $MapViewport/MapContent
 
+# Tooltip system
+var tooltip_label: Label
+var tooltip_background: Panel
+
 # Graph generation system
 var map_generator: MapGenerator
 var map_visualizer: MapVisualizer
@@ -34,6 +38,7 @@ var map_visualizer: MapVisualizer
 func _ready():
 	setup_graph_system()
 	setup_button_connections()
+	setup_tooltip_system()
 	
 	# Initialize map content with simple centering
 	var viewport_size = get_viewport().get_visible_rect().size
@@ -166,6 +171,45 @@ func setup_button_connections():
 	zoom_in_button.pressed.connect(_on_zoom_in_pressed)
 	zoom_out_button.pressed.connect(_on_zoom_out_pressed)
 	zoom_reset_button.pressed.connect(_on_zoom_reset_pressed)
+
+func setup_tooltip_system():
+	# Create tooltip background panel
+	tooltip_background = Panel.new()
+	tooltip_background.name = "TooltipBackground"
+	
+	# Style the background
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(0, 0, 0, 0.8)  # Semi-transparent black
+	style_box.corner_radius_top_left = 4
+	style_box.corner_radius_top_right = 4
+	style_box.corner_radius_bottom_left = 4
+	style_box.corner_radius_bottom_right = 4
+	style_box.border_width_left = 1
+	style_box.border_width_right = 1
+	style_box.border_width_top = 1
+	style_box.border_width_bottom = 1
+	style_box.border_color = Color.WHITE
+	tooltip_background.add_theme_stylebox_override("panel", style_box)
+	
+	# Create tooltip label
+	tooltip_label = Label.new()
+	tooltip_label.name = "TooltipLabel"
+	tooltip_label.add_theme_color_override("font_color", Color.WHITE)
+	tooltip_label.add_theme_constant_override("outline_size", 1)
+	tooltip_label.add_theme_color_override("font_outline_color", Color.BLACK)
+	
+	# Set up hierarchy and positioning
+	tooltip_background.add_child(tooltip_label)
+	add_child(tooltip_background)
+	
+	# Initially hide tooltip
+	tooltip_background.visible = false
+	tooltip_background.z_index = 1000  # Ensure it appears on top
+	
+	# Position label within background with padding
+	tooltip_label.position = Vector2(6, 4)
+	
+	GLog.debug("Tooltip system initialized")
 
 func generate_new_map():
 	GLog.debug("generate_new_map called - GameManager.is_run_active: " + str(GameManager.is_run_active))
@@ -390,12 +434,54 @@ func handle_junction_arrival(node: MapNode):
 	SceneManager.load_scene_by_name("junction")
 
 func _on_node_hovered(node_id: String):
-	# Could show tooltip or highlight path
-	pass
+	# Show tooltip with node information
+	if not map_generator:
+		return
+		
+	var node = map_generator.graph.nodes.get(node_id)
+	if not node:
+		return
+	
+	# Set tooltip text based on discovery state
+	var tooltip_text: String
+	if node.discovered:
+		tooltip_text = node.get_type_name() + " (" + node_id + ")"
+	else:
+		tooltip_text = "Unknown Location"
+	
+	# Update tooltip content
+	tooltip_label.text = tooltip_text
+	
+	# Resize background to fit text
+	var text_size = tooltip_label.get_theme_font("font").get_string_size(
+		tooltip_text, 
+		HORIZONTAL_ALIGNMENT_LEFT, 
+		-1, 
+		tooltip_label.get_theme_font_size("font_size")
+	)
+	tooltip_background.size = text_size + Vector2(12, 8)  # Add padding
+	
+	# Position tooltip near mouse cursor
+	var mouse_pos = get_global_mouse_position()
+	var tooltip_pos = mouse_pos + Vector2(10, -30)  # Offset from cursor
+	
+	# Keep tooltip within screen bounds
+	var screen_size = get_viewport().get_visible_rect().size
+	if tooltip_pos.x + tooltip_background.size.x > screen_size.x:
+		tooltip_pos.x = mouse_pos.x - tooltip_background.size.x - 10
+	if tooltip_pos.y < 0:
+		tooltip_pos.y = mouse_pos.y + 10
+	
+	tooltip_background.global_position = tooltip_pos
+	tooltip_background.visible = true
+	
+	GLog.debug("Showing tooltip for node: " + node_id + " - " + tooltip_text)
 
 func _on_node_unhovered():
-	# Clear any hover effects
-	pass
+	# Hide tooltip
+	if tooltip_background:
+		tooltip_background.visible = false
+	GLog.debug("Hiding tooltip")
 
 # Public interface for other systems
 func get_current_node() -> MapNode:

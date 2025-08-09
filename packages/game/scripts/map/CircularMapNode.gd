@@ -37,10 +37,19 @@ func setup(id: String, node: MapNode, radius: float, outline_w: float, outline_c
 	
 	# Position so circle is centered on (0,0)
 	pivot_offset = Vector2(radius, radius)
+	
+	# Set up tooltip text based on discovery state
+	update_tooltip_text()
 
 func set_player_position(is_player: bool):
 	is_player_position = is_player
 	queue_redraw()  # Trigger a redraw
+
+func update_tooltip_text():
+	if node_data and node_data.discovered:
+		tooltip_text = node_data.get_type_name() + " (" + node_id + ")"
+	else:
+		tooltip_text = "Unknown Location"
 
 func _draw():
 	var center = Vector2(node_radius, node_radius)
@@ -98,11 +107,11 @@ func update_interactivity(can_interact: bool):
 	is_hoverable = can_interact
 	mouse_filter = MOUSE_FILTER_PASS if can_interact else MOUSE_FILTER_IGNORE
 	
-	# Visual feedback for interactivity
+	# Visual feedback for interactivity - grey out disabled nodes
 	if can_interact:
 		modulate = Color.WHITE
 	else:
-		modulate = Color(0.5, 0.5, 0.5, 0.8)  # Dim non-interactive nodes
+		modulate = Color(0.4, 0.4, 0.4, 0.6)  # Grey with reduced opacity for disabled nodes
 	
 	queue_redraw()
 

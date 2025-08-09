@@ -345,10 +345,12 @@ func update_node_interactivity(circle_node: CircularMapNode, node: MapNode):
 	# For CircularMapNode, we control interactivity through the custom update method
 	if not node.discovered:
 		circle_node.update_interactivity(false)
+		# Set specific undiscovered styling
 		circle_node.modulate = Color(1, 1, 1, undiscovered_node_alpha)
 	elif node.id == graph_data.player_position:
 		circle_node.update_interactivity(false)  # Can't move to current position
 		circle_node.set_player_position(true)
+		# Player position uses normal alpha but CircularMapNode handles special styling
 		circle_node.modulate = Color(1, 1, 1, discovered_node_alpha)
 	elif node.visited:
 		# Type-based revisit logic - camps and settlements can be revisited
@@ -356,20 +358,20 @@ func update_node_interactivity(circle_node: CircularMapNode, node: MapNode):
 		if can_revisit and current_player_node and current_player_node.is_connected_to(node.id):
 			circle_node.update_interactivity(true)  # Allow revisiting camps, settlements, mines
 			circle_node.set_player_position(false)
-			circle_node.modulate = Color(0.9, 0.9, 0.9, discovered_node_alpha)  # Slightly dimmed but still interactive
+			# Let CircularMapNode handle interactive styling
 		else:
 			# POIs and other nodes remain one-time visits
 			circle_node.update_interactivity(false)
 			circle_node.set_player_position(false)
-			circle_node.modulate = Color(0.7, 0.7, 0.7, discovered_node_alpha)  # Dimmed visited nodes
+			# Let CircularMapNode handle disabled styling (grey)
 	elif current_player_node and current_player_node.is_connected_to(node.id):
 		circle_node.update_interactivity(true)  # Can move to connected unvisited nodes
 		circle_node.set_player_position(false)
-		circle_node.modulate = Color(1, 1, 1, discovered_node_alpha)
+		# Let CircularMapNode handle interactive styling
 	else:
 		circle_node.update_interactivity(false)  # Can't move to unconnected nodes
 		circle_node.set_player_position(false)
-		circle_node.modulate = Color(0.5, 0.5, 0.5, discovered_node_alpha)  # Dim unavailable nodes
+		# Let CircularMapNode handle disabled styling (grey)
 
 func update_edge_visibility():
 	for line in edge_lines:
@@ -405,6 +407,12 @@ func _on_map_generated(graph: Dictionary):
 
 func _on_node_discovered(node_id: String):
 	GLog.debug("Node discovered, updating visualization: " + node_id)
+	
+	# Update tooltip for the discovered node
+	var circle_node = node_buttons.get(node_id)
+	if circle_node and circle_node.has_method("update_tooltip_text"):
+		circle_node.update_tooltip_text()
+	
 	update_visibility()
 
 func _on_player_moved(from_node: String, to_node: String):
