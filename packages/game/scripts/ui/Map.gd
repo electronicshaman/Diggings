@@ -40,6 +40,13 @@ func _ready():
 	map_content.position = Vector2.ZERO  # Start at origin of MapViewport
 	GLog.debug("Initialized map content size: " + str(map_content.size) + " at position: " + str(map_content.position))
 	
+	# Initialize game data for development if needed
+	if not GameManager.is_run_active:
+		if not GameManager.game_data:
+			GameManager.game_data = {}
+		# Enable run state for development to allow map persistence
+		GameManager.is_run_active = true
+		
 	generate_new_map()
 
 func _input(event):
@@ -155,11 +162,21 @@ func setup_button_connections():
 	view_deck_button.pressed.connect(_on_view_deck_pressed)
 
 func generate_new_map():
+	GLog.debug("generate_new_map called - GameManager.is_run_active: " + str(GameManager.is_run_active))
+	GLog.debug("GameManager.game_data exists: " + str(GameManager.game_data != null))
+	if GameManager.game_data:
+		GLog.debug("GameManager.game_data.has('map'): " + str(GameManager.game_data.has("map")))
+		if GameManager.game_data.has("map"):
+			GLog.debug("GameManager.game_data.map is null: " + str(GameManager.game_data.map == null))
+	
 	# Only generate if we don't have a map stored in game_data or if no run is active
 	if GameManager.is_run_active and GameManager.game_data.has("map") and GameManager.game_data.map != null:
 		# Map already exists for this run, restore it instead
+		GLog.debug("Restoring existing map from GameManager")
 		restore_existing_map()
 		return
+	
+	GLog.debug("Generating new map - no existing data found")
 	
 	# Generate a new map using a consistent seed for this run
 	var seed: int
@@ -168,9 +185,9 @@ func generate_new_map():
 		seed = SeedManager.master_seed + 12345  # Fixed offset for map generation
 		GLog.debug("Using consistent map seed: " + str(seed) + " (master: " + str(SeedManager.master_seed) + ")")
 	else:
-		# Development mode - use a random seed
-		seed = -1
-		GLog.debug("Using random seed for development")
+		# Development mode - use a fixed seed for consistency during testing
+		seed = 12345  # Fixed seed for development
+		GLog.debug("Using fixed development seed: " + str(seed))
 	
 	map_generator.generate_map(seed)
 	GLog.info("Generated new map for exploration with seed: " + str(seed))
@@ -184,17 +201,43 @@ func generate_new_map():
 		}
 		GLog.debug("Map data stored in GameManager")
 	
-	# Update visualizer size and position it at the top-left of MapContent for debugging
+	# Apply consistent visualization setup
+	_setup_map_visualization()
+
+func _setup_map_visualization():
+	"""Apply consistent MapVisualizer setup for both new and restored maps"""
+	GLog.debug("_setup_map_visualization called")
+	
+	# Update visualizer size and position
 	var map_bounds = map_visualizer.get_graph_bounds()
 	map_visualizer.set_deferred("custom_minimum_size", map_bounds.size)
 	map_visualizer.set_deferred("size", map_bounds.size)
-	# Place at origin for debugging - should definitely be visible
 	map_visualizer.set_deferred("position", Vector2.ZERO)
-	GLog.debug("Positioned visualizer size: " + str(map_bounds.size) + " at origin (0,0)")
 	
-	# Force visibility for debugging
-	map_visualizer.call_deferred("force_visibility")
-	map_visualizer.call_deferred("debug_state")
+	# Ensure visibility for all elements
+	map_visualizer.visible = true
+	map_visualizer.modulate = Color.WHITE
+	var edge_count = 0
+	var button_count = 0
+	for child in map_visualizer.get_children():
+		if child is Line2D:
+			child.visible = true
+			child.modulate = Color.WHITE
+			# Force Line2D to front to ensure visibility
+			child.z_index = 1
+			edge_count += 1
+		elif child is Button:
+			child.visible = true
+			child.modulate = Color.WHITE
+			button_count += 1
+		elif child is ColorRect:
+			child.visible = true
+			child.modulate = Color.WHITE
+	
+	# Ensure MapContent doesn't clip the visualizer
+	map_content.clip_contents = false
+	
+	GLog.debug("Setup visualizer - size: " + str(map_bounds.size) + ", pos: " + str(map_visualizer.position) + ", edges: " + str(edge_count) + ", buttons: " + str(button_count))
 
 func restore_existing_map():
 	# Restore map from stored game data
@@ -220,6 +263,9 @@ func restore_existing_map():
 	var restored_graph = map_generator.get_graph_data()
 	map_visualizer.visualize_graph(restored_graph)
 	map_visualizer.highlight_available_moves()
+	
+	# Apply the same visualization setup as generate_new_map
+	_setup_map_visualization()
 
 func _on_view_deck_pressed():
 	GLog.info("View Deck button pressed")
@@ -315,7 +361,13 @@ func force_move_to_node(node_id: String) -> bool:
 # Handle returning from other scenes
 func _notification(what):
 	if what == NOTIFICATION_VISIBILITY_CHANGED and visible:
+		GLog.debug("Map visibility changed - scene became visible")
 		# Refresh visualization when returning to map
 		if map_visualizer:
+			GLog.debug("GameManager.is_run_active: " + str(GameManager.is_run_active))
+			GLog.debug("GameManager.game_data.has('map'): " + str(GameManager.game_data.has("map") if GameManager.game_data else "no game_data"))
+			# Apply the same visualization setup to ensure consistency
+			_setup_map_visualization()
+			# Update visibility and highlighting after setup
 			map_visualizer.update_visibility()
 			map_visualizer.highlight_available_moves()

@@ -106,22 +106,29 @@ func create_edge_visual(edge: MapEdge):
 	var to_node = graph_data.nodes.get(edge.to_node)
 	
 	if not from_node or not to_node:
+		GLog.debug("Failed to create edge: missing nodes " + edge.from_node + " -> " + edge.to_node)
 		return
 	
 	var line = Line2D.new()
 	# Apply offset to ensure all edges are positioned within positive coordinates
 	var graph_offset = get_meta("graph_offset", Vector2.ZERO)
-	line.add_point(from_node.position - graph_offset)
-	line.add_point(to_node.position - graph_offset)
+	var from_pos = from_node.position - graph_offset
+	var to_pos = to_node.position - graph_offset
+	line.add_point(from_pos)
+	line.add_point(to_pos)
 	line.width = edge_width
 	line.default_color = edge_color
-	line.z_index = -1  # Behind nodes
+	line.z_index = 1  # Above background but below buttons
+	line.visible = true  # Explicitly set visible
+	line.modulate = Color.WHITE  # Ensure full opacity
 	
 	# Store edge reference for updates
 	line.set_meta("edge_data", edge)
 	
 	add_child(line)
 	edge_lines.append(line)
+	
+	GLog.debug("Created edge from " + str(from_pos) + " to " + str(to_pos) + " (width: " + str(edge_width) + ", color: " + str(edge_color) + ")")
 
 func create_nodes():
 	for node_id in graph_data.nodes:
