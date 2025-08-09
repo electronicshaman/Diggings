@@ -7,9 +7,35 @@ const DEBUG_ENABLED: bool = true
 @onready var ui_controller := $UIController
 @onready var input_controller := $InputController
 
+# UI Elements - Direct references using @onready
 @onready var hand_area := $UI/Control/HandArea
 @onready var debug_panel := $UI/Control/DebugPanel
 @onready var end_turn_button := $UI/Control/TurnInfo/EndTurnButton
+
+# Player Stats UI
+@onready var player_health_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/HealthLabel
+@onready var player_energy_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/EnergyLabel
+@onready var player_defense_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/DefenseLabel
+@onready var player_sanity_label := $UI/Control/PlayerArea/PlayerStats/RightColumn/SanityLabel
+@onready var character_name_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/CharacterNameLabel
+@onready var player_gold_label := $UI/Control/PlayerArea/PlayerStats/RightColumn/GoldLabel
+
+# Enemy Stats UI
+@onready var enemy_name_label := $UI/Control/EnemyArea/EnemyStats/EnemyName
+@onready var enemy_health_label := $UI/Control/EnemyArea/EnemyStats/EnemyHealth
+@onready var enemy_defense_label := $UI/Control/EnemyArea/EnemyStats/EnemyDefense
+
+# Game Info UI
+@onready var deck_label := $UI/Control/PileIndicatorsLeft/DeckLabel
+@onready var discard_label := $UI/Control/PileIndicatorsRight/DiscardLabel
+@onready var turn_label := $UI/Control/TurnInfo/TurnLabel
+@onready var phase_label := $UI/Control/TurnInfo/PhaseLabel
+
+# Debug UI
+@onready var add_card_button := $UI/Control/DebugPanel/DebugButtons/AddCardButton
+@onready var set_health_button := $UI/Control/DebugPanel/DebugButtons/SetHealthButton
+@onready var set_energy_button := $UI/Control/DebugPanel/DebugButtons/SetEnergyButton
+@onready var reset_duel_button := $UI/Control/DebugPanel/DebugButtons/ResetDuelButton
 
 var is_initialized: bool = false
 
@@ -38,24 +64,26 @@ func initialize_controllers() -> void:
 
 func get_ui_references() -> Dictionary:
 	return {
-		"player_health": $UI/Control/PlayerArea/PlayerStats/HealthLabel,
-		"player_energy": $UI/Control/PlayerArea/PlayerStats/EnergyLabel,
-		"player_defense": $UI/Control/PlayerArea/PlayerStats/DefenseLabel,
-		"player_sanity": $UI/Control/PlayerArea/PlayerStats/SanityLabel,
-		"enemy_name": $UI/Control/EnemyArea/EnemyStats/EnemyName,
-		"enemy_health": $UI/Control/EnemyArea/EnemyStats/EnemyHealth,
-		"enemy_defense": $UI/Control/EnemyArea/EnemyStats/EnemyDefense,
-		"deck": $UI/Control/PileIndicatorsLeft/DeckLabel,
-		"discard": $UI/Control/PileIndicatorsRight/DiscardLabel,
-		"turn": $UI/Control/TurnInfo/TurnLabel,
-		"phase": $UI/Control/TurnInfo/PhaseLabel,
+		"player_health": player_health_label,
+		"player_energy": player_energy_label,
+		"player_defense": player_defense_label,
+		"player_sanity": player_sanity_label,
+		"player_gold": player_gold_label,
+		"character_name": character_name_label,
+		"enemy_name": enemy_name_label,
+		"enemy_health": enemy_health_label,
+		"enemy_defense": enemy_defense_label,
+		"deck": deck_label,
+		"discard": discard_label,
+		"turn": turn_label,
+		"phase": phase_label,
 		"end_turn_button": end_turn_button,
 		"debug_panel": debug_panel,
 		"hand_area": hand_area,
-		"add_card_button": $UI/Control/DebugPanel/DebugButtons/AddCardButton,
-		"set_health_button": $UI/Control/DebugPanel/DebugButtons/SetHealthButton,
-		"set_energy_button": $UI/Control/DebugPanel/DebugButtons/SetEnergyButton,
-		"reset_duel_button": $UI/Control/DebugPanel/DebugButtons/ResetDuelButton
+		"add_card_button": add_card_button,
+		"set_health_button": set_health_button,
+		"set_energy_button": set_energy_button,
+		"reset_duel_button": reset_duel_button
 	}
 
 func setup_connections() -> void:

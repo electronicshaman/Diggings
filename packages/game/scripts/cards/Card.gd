@@ -146,9 +146,12 @@ func _on_button_clicked():
 
 
 func format_description() -> String:
-	var desc_parts = []
+	# Prefer manual description over auto-generated effects
+	if card_data.description.length() > 0:
+		return card_data.description
 	
-	# Add modular effect descriptions
+	# Fall back to auto-generated effect descriptions if no manual description
+	var desc_parts = []
 	for effect in card_data.effects:
 		if effect:
 			desc_parts.append(effect.get_formatted_description())
@@ -157,13 +160,6 @@ func format_description() -> String:
 	var base_desc = ". ".join(desc_parts)
 	if base_desc.length() > 0:
 		base_desc += "."
-	
-	# Add custom description if provided
-	if card_data.description.length() > 0:
-		if base_desc.length() > 0:
-			return base_desc + " " + card_data.description
-		else:
-			return card_data.description
 	
 	return base_desc
 

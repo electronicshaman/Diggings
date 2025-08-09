@@ -1,0 +1,166 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is a **Gold Rush Lovecraft card battler prototype** built in **Godot 4.4.1**. It's a roguelite card game set in the Australian gold rush with Lovecraftian horror elements, featuring 1v1 duels, hex-based exploration, and a day/night cycle.
+
+## Core Architecture
+
+### MVC Pattern with Autoloads
+
+The game uses a clean MVC architecture with Godot autoloads providing singleton services:
+
+- **MainGameController** (`scripts/combat/MainGameController.gd`) - Main orchestrator
+- **GameController** (`scripts/managers/game_controller.gd`) - Model (game state)
+- **UIController** (`scripts/managers/ui_controller.gd`) - View (UI updates)
+- **InputController** (`scripts/managers/input_controller.gd`) - Controller (input handling)
+- **DuelManager** (`scripts/managers/duel_manager.gd`) - Combat mechanics
+
+### Autoload System (Load Order Critical)
+
+```ini
+GameSettings    # Configuration first
+EventBus        # Communication layer
+SaveSystem      # Persistence
+ResourceManager # Asset loading
+ThemeManager    # Content theming
+GLog           # Logging system
+GameManager    # Game state
+SceneManager   # Scene transitions
+```
+
+### Card System
+
+- **CardData** (`scripts/cards/CardData.gd`) - Data definitions with modular effects
+- **Card** (`scripts/cards/Card.gd`) - Visual representation and interaction
+- **CardEffect** - Modular effect components in `scripts/cards/effects/`
+- **CardEffects** (`scripts/systems/card_effects.gd`) - Centralized effect resolver
+
+### Character Classes
+
+Four classes implemented in `data/characters/`:
+
+- **Bushranger** (Attack specialist) - 55 HP, 90 Sanity, Ammo system
+- **Prospector** (Fortune specialist) - 45 HP, 110 Sanity, Risk/reward
+- **Tracker** (Skill specialist) - 50 HP, 105 Sanity, Setup/counter
+- **Publican** (Power specialist) - 50 HP, 95 Sanity, Brew tokens
+
+## Theme-Agnostic Design
+
+The core systems use **mechanical categories** independent of theme:
+
+- **Attack** - Direct damage cards
+- **Skill** - Utility effects (defense, buffs, card draw)
+- **Power** - Persistent combat upgrades (one per combat)
+- **Fortune** - Random/luck-based effects
+
+Theme-specific types (Gold, Grit, Grog, Gamble) are loaded dynamically via ThemeManager.
+
+## Development Commands
+
+### Running the Game
+
+- **Play current scene**: Use Godot's F6 or the play button
+- **Play main scene**: Use Godot's F5 or `mcp__godot-mcp__play_scene`
+- **Main scene**: `res://scenes/game/main_game.tscn`
+
+### Debugging
+
+- **GLog system**: Use `GLog.debug("message")` - respects per-file `DEBUG_ENABLED` constants
+- **Debug panel**: Available in-game with buttons for testing
+- **Error checking**: Use `mcp__godot-mcp__get_godot_errors` to see current issues
+
+### Testing
+
+- Game automatically loads Bushranger character and starts a test duel
+- Test cards and enemies are loaded from `data/` directory
+- Debug buttons available for adding cards, modifying stats, resetting duels
+
+## Key File Locations
+
+### Core Scripts
+
+- `scripts/autoloads/` - Singleton systems (EventBus, GLog, GameManager, etc.)
+- `scripts/combat/MainGameController.gd` - Main game orchestrator
+- `scripts/managers/` - MVC controllers (game, ui, input, duel)
+- `scripts/cards/` - Card system and effects
+- `scripts/characters/CharacterClass.gd` - Character class definitions
+
+### Data Resources
+
+- `data/cards/` - Card definitions by type (attack, skill, power, fortune)
+- `data/characters/` - Character class resources (.tres files)
+- `data/enemies/` - Enemy definitions
+- `data/game_state/` - Game state data classes
+
+### Scenes
+
+- `scenes/game/main_game.tscn` - Main game scene
+- `scenes/cards/card.tscn` - Card visual template
+
+### Documentation
+
+- `docs/` - Extensive documentation including:
+  - `high_level_summary.md` - Game design overview
+  - `architecture/SYSTEM_ARCHITECTURE.md` - Technical architecture
+  - `architecture/CHARACTER_CARD_RELATIONSHIPS.md` - Character-card system
+  - `GLOG_USAGE_GUIDE.md` - Logging system guide
+
+## Important Patterns
+
+### Event Communication
+
+All systems communicate via EventBus autoload:
+
+```gdscript
+EventBus.card_played.emit(card_data)
+EventBus.damage_dealt.connect(_on_damage_dealt)
+```
+
+### Logging
+
+Use GLog with per-file toggles:
+
+```gdscript
+const DEBUG_ENABLED: bool = true
+GLog.debug("Your message")  # Automatically checks DEBUG_ENABLED
+```
+
+### Character-Card Integration
+
+- Cards have `class_affinity` arrays for character restrictions
+- Characters have preferred/forbidden card types
+- Accessibility tiers: Starting/Class/Neutral/Rare
+
+### Data-Driven Design
+
+- All content defined as Godot Resources (.tres files)
+- Hot-reloadable during development
+- Theme-agnostic core with theme layers
+
+## Common Issues
+
+### Scene Structure
+
+- Some UI node paths in MainGameController may be outdated
+- Missing UI elements cause node-not-found warnings
+- Card scene structure needs visual components properly positioned
+
+### Current Status
+
+- Combat system functional with test content
+- Character classes implemented with starting decks
+- Card effects system in place
+- Some unused signals in EventBus (expected for future features)
+- UI references need updating for current scene structure
+
+## Development Workflow
+
+1. Use GLog extensively for debugging
+2. All new cards should be Resources in `data/cards/`
+3. Follow character-card relationship patterns for class balance
+4. Test with debug panel buttons for rapid iteration
+5. Check `mcp__godot-mcp__get_godot_errors` before commits
+6. Maintain theme-agnostic core design principles

@@ -12,6 +12,8 @@ var player_health_label: Label
 var player_energy_label: Label
 var player_defense_label: Label
 var player_sanity_label: Label
+var player_gold_label: Label
+var character_name_label: Label
 var enemy_name_label: Label
 var enemy_health_label: Label
 var enemy_defense_label: Label
@@ -37,6 +39,8 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	player_energy_label = ui_references.get("player_energy")
 	player_defense_label = ui_references.get("player_defense")
 	player_sanity_label = ui_references.get("player_sanity")
+	player_gold_label = ui_references.get("player_gold")
+	character_name_label = ui_references.get("character_name")
 	enemy_name_label = ui_references.get("enemy_name")
 	enemy_health_label = ui_references.get("enemy_health")
 	enemy_defense_label = ui_references.get("enemy_defense")
@@ -87,26 +91,55 @@ func update_player_ui() -> void:
 		return
 	
 	var p = duel_state.player_data
+	
+	# Update player stats with null safety checks
 	if player_health_label:
 		player_health_label.text = "Health: %d/%d" % [p.current_health, p.max_health]
+	else:
+		GLog.debug("player_health_label is null - UI element missing")
+		
 	if player_energy_label:
 		player_energy_label.text = "Energy: %d/%d" % [p.current_energy, p.max_energy]
+	else:
+		GLog.debug("player_energy_label is null - UI element missing")
+		
 	if player_defense_label:
 		player_defense_label.text = "Defense: %d" % p.defense
+	else:
+		GLog.debug("player_defense_label is null - UI element missing")
+		
 	if player_sanity_label:
 		player_sanity_label.text = "Sanity: %d/%d" % [p.current_sanity, p.max_sanity]
+	else:
+		GLog.debug("player_sanity_label is null - UI element missing")
+		
+	# Optional UI elements (gracefully handle missing)
+	if player_gold_label and p.stats:
+		player_gold_label.text = "Gold: %d" % p.stats.current_gold
+		
+	if character_name_label:
+		character_name_label.text = p.get_display_name()
 
 func update_enemy_ui() -> void:
 	if not duel_state or not duel_state.enemy_data:
 		return
 	
 	var e = duel_state.enemy_data
+	
 	if enemy_name_label:
 		enemy_name_label.text = e.enemy_name
+	else:
+		GLog.debug("enemy_name_label is null - UI element missing")
+		
 	if enemy_health_label:
 		enemy_health_label.text = "Health: %d/%d" % [e.current_health, e.max_health]
+	else:
+		GLog.debug("enemy_health_label is null - UI element missing")
+		
 	if enemy_defense_label:
 		enemy_defense_label.text = "Defense: %d" % e.defense
+	else:
+		GLog.debug("enemy_defense_label is null - UI element missing")
 
 func update_pile_ui() -> void:
 	if not game_controller:
@@ -114,8 +147,13 @@ func update_pile_ui() -> void:
 	
 	if deck_label:
 		deck_label.text = "Deck: %d" % game_controller.get_deck_count()
+	else:
+		GLog.debug("deck_label is null - UI element missing")
+		
 	if discard_label:
 		discard_label.text = "Discard: %d" % game_controller.get_discard_count()
+	else:
+		GLog.debug("discard_label is null - UI element missing")
 
 func update_turn_ui() -> void:
 	if not duel_state:
@@ -123,15 +161,21 @@ func update_turn_ui() -> void:
 	
 	if turn_label:
 		turn_label.text = "Turn: %d" % duel_state.current_turn
+	else:
+		GLog.debug("turn_label is null - UI element missing")
 	
 	if phase_label:
 		if "duel_ended" in duel_state and duel_state.duel_ended:
 			phase_label.text = "Duel Complete"
 		else:
 			phase_label.text = "Player Turn" if duel_state.is_player_turn else "Enemy Turn"
+	else:
+		GLog.debug("phase_label is null - UI element missing")
 	
 	if end_turn_button:
 		end_turn_button.disabled = not duel_state.is_player_turn
+	else:
+		GLog.debug("end_turn_button is null - UI element missing")
 
 func refresh_hand_display() -> void:
 	clear_hand_display()

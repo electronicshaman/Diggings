@@ -70,6 +70,14 @@ class_name Stats
 			defense = max(0, value)
 			_emit_change("defense_changed", old_value, defense)
 
+# Gold (currency)
+@export var current_gold: int = 0:
+	set(value):
+		if current_gold != value:
+			var old_value: int = current_gold
+			current_gold = max(0, value)
+			_emit_change("gold_changed", old_value, current_gold)
+
 # Change tracking system - since Resources don't have signals, we use a callback system
 var _change_listeners: Array[Callable] = []
 
@@ -184,6 +192,22 @@ func gain_defense(amount: int) -> void:
 func lose_defense(amount: int) -> void:
 	if amount > 0:
 		defense = max(0, defense - amount)
+
+# Gain gold
+func gain_gold(amount: int) -> void:
+	if amount > 0:
+		current_gold = current_gold + amount  # Use assignment to trigger setter and signal
+
+# Spend gold if available, returns true if successful
+func spend_gold(amount: int) -> bool:
+	if current_gold >= amount:
+		current_gold -= amount
+		return true
+	return false
+
+# Check if can afford gold cost
+func can_afford_gold(amount: int) -> bool:
+	return current_gold >= amount
 
 # Max stat modification methods
 

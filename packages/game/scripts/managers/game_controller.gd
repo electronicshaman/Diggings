@@ -120,12 +120,14 @@ func apply_character_to_player_data() -> void:
 		player_data.stats.current_sanity = player_character.base_sanity
 		player_data.stats.max_energy = player_character.base_energy
 		player_data.stats.current_energy = player_character.base_energy
+		player_data.stats.current_gold = player_character.starting_gold
 	
-	GLog.debug("Applied %s stats: %d health, %d sanity, %d energy" % [
+	GLog.debug("Applied %s stats: %d health, %d sanity, %d energy, %d gold" % [
 		player_character.character_class_name,
 		player_character.base_health,
 		player_character.base_sanity,
-		player_character.base_energy
+		player_character.base_energy,
+		player_character.starting_gold
 	])
 
 func get_deck_count() -> int:
