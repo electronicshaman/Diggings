@@ -223,8 +223,10 @@ func connect_nodes(node_a: String, node_b: String):
 	if not graph.nodes.has(node_a) or not graph.nodes.has(node_b):
 		return
 	
-	# Create edge
-	var edge = MapEdge.new(node_a, node_b, SeedManager.get_map_random_int(2, 4))
+	# Create edge  
+	var travel_time = SeedManager.get_map_random_int(2, 4)
+	var difficulty = SeedManager.get_map_random_int(1, 3)
+	var edge = MapEdge.new(node_a, node_b, travel_time, difficulty)
 	graph.edges.append(edge)
 	
 	# Update node connections
@@ -356,7 +358,8 @@ func get_serializable_data() -> Dictionary:
 		serializable_edges.append({
 			"from": edge.from_node,
 			"to": edge.to_node,
-			"cost": edge.cost
+			"travel_time": edge.travel_time,
+			"difficulty": edge.difficulty
 		})
 	
 	return {
@@ -405,7 +408,9 @@ func load_from_serializable_data(data: Dictionary):
 	
 	# Restore edges
 	for edge_data in data.edges:
-		var edge = MapEdge.new(edge_data.from, edge_data.to, edge_data.cost)
+		var travel_time = edge_data.get("travel_time", 2)
+		var difficulty = edge_data.get("difficulty", 1)
+		var edge = MapEdge.new(edge_data.from, edge_data.to, travel_time, difficulty)
 		graph.edges.append(edge)
 	
 	# Restore graph properties
