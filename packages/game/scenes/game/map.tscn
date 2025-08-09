@@ -1,0 +1,60 @@
+[gd_scene load_steps=2 format=3 uid="uid://bhjiuflof6tey"]
+
+[ext_resource type="Script" uid="uid://dcs76d07bkntw" path="res://scripts/ui/Map.gd" id="1_3fewy"]
+
+[node name="Map" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_3fewy")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.08, 0.12, 0.08, 1)
+
+[node name="UIContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HeaderPanel" type="Panel" parent="UIContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="HeaderContent" type="HBoxContainer" parent="UIContainer/HeaderPanel"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="FloorLabel" type="Label" parent="UIContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "Floor 1 - Act 1"
+
+[node name="ViewDeckButton" type="Button" parent="UIContainer/HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "View Deck"
+
+[node name="MapScrollContainer" type="ScrollContainer" parent="UIContainer"]
+layout_mode = 2
+
+[node name="MapLayers" type="VBoxContainer" parent="UIContainer/MapScrollContainer"]
+layout_mode = 2
+
+[node name="Layer1" type="HBoxContainer" parent="UIContainer/MapScrollContainer/MapLayers"]
+layout_mode = 2
+
+[node name="StartNode" type="Button" parent="UIContainer/MapScrollContainer/MapLayers/Layer1"]
+layout_mode = 2
+text = "Combat"
+
+[node name="Layer2" type="HBoxContainer" parent="UIContainer/MapScrollContainer/MapLayers"]
+layout_mode = 2
+
+[node name="ShopNode" type="Button" parent="UIContainer/MapScrollContainer/MapLayers/Layer2"]
+layout_mode = 2
+text = "Shop"
+
+[node name="EventNode" type="Button" parent="UIContainer/MapScrollContainer/MapLayers/Layer2"]
+layout_mode = 2
+text = "Event"

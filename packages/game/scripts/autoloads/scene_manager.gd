@@ -14,6 +14,7 @@ var loaded_scenes: Dictionary = {}
 const TRANSITION_DURATION: float = 0.5
 const SCENE_PATHS: Dictionary = {
 	"main_menu": "res://scenes/ui/main_menu.tscn",
+	"class_selection": "res://scenes/ui/class_selection.tscn",
 	"main_game": "res://scenes/game/main_game.tscn",
 	"duel": "res://scenes/game/duel.tscn",
 	"map": "res://scenes/game/map.tscn",
