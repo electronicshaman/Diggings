@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/MultiHitDamage.gd" id="3"]
+
+[sub_resource type="Resource" id="MultiHitDamage_1"]
+script = ExtResource("3")
+damage_per_hit = 3
+hit_count = 3
+ignores_defense = false
+effect_name = "Multi-Hit Damage"
+description = "Deal 3 damage 3 times"
+
+[resource]
+script = ExtResource("1")
+card_name = "Fan the Hammer"
+energy_cost = 2
+description = "Deal 3 damage 3 times."
+card_type = "Gold"
+card_icon = null
+flavor_text = "When precision fails, volume prevails."
+effects = Array[ExtResource("2")]([SubResource("MultiHitDamage_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"

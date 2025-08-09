@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/ConditionalDefense.gd" id="3"]
+
+[sub_resource type="Resource" id="ConditionalDefense_1"]
+script = ExtResource("3")
+base_defense = 6
+bonus_defense = 2
+health_threshold = 0.5
+effect_name = "Conditional Defense"
+description = "Gain 6 Block. If health below 50%, gain +2 Block."
+
+[resource]
+script = ExtResource("1")
+card_name = "Take Cover"
+energy_cost = 1
+description = "Gain 6 Block. If health below 50%, gain +2 Block."
+card_type = "Grit"
+card_icon = null
+flavor_text = "Sometimes the best offense is not dying."
+effects = Array[ExtResource("2")]([SubResource("ConditionalDefense_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Starting"
+mechanical_category = "Skill"

@@ -170,7 +170,7 @@ Each element connects to others, creating a story graph that generates both char
 - _Crime_: Killed her commanding officer to save Aboriginal family
 - _Motivation_: "Make them pay for what they made me do"
 - _Quirk_: Shows mercy - gets bonus gold if enemies survive with <5 HP
-- _Starting Modifier_: Military training (+1 ammo capacity), haunted by ghosts (sanity drains in combat)
+- _Starting Modifier_: Military training (+10 HP), haunted by ghosts (sanity drains in combat)
 
 ---
 

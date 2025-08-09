@@ -73,30 +73,32 @@ These 16 cards can appear in shops, rewards, and events for any class, making ru
 
 ### BUSHRANGER - Starting Deck (10 cards)
 
+Examples only
 **Basic Cards:**
 
-- 3x **Shoot**: 6 damage, uses 1 ammo, 1 cost
+- 3x **Shoot**: 6 damage, 1 cost
 - 2x **Defend**: 5 block, 1 cost
 - 2x **Quick Draw**: 4 damage, If turn 1: draw 1, 1 cost
 
 **Unique Starters:**
 
-- 1x **Reload**: Gain 3 ammo, Draw 1, 1 cost
+- 1x **Reload**: Draw 1, 1 cost
 - 1x **Bounty Mark**: 5 damage, If this kills: gain 10 gold, 1 cost
-- 1x **Duck and Cover**: 4 block, Gain 1 ammo, 1 cost
+- 1x **Duck and Cover**: 4 block, 1 cost
 
 ### Bushranger Specialist Cards
+Examples only
 
 **Common Class Cards:**
 
-- **Fan the Hammer**: Deal 2 damage per ammo (consume all), 1 cost
+- **Fan the Hammer**:Deal 3 damage 3 times, 2 cost
 - **Ambush**: If turn 1: 15 damage, else: 5 damage, 2 cost
 - **Tracking Shot**: 7 damage, Reveal top card of draw pile, 1 cost
 - **Standoff**: Both you and enemy skip next turn, 1 cost
 
 **Rare Class Cards:**
 
-- **Dead Eye**: Your ammo cards deal double damage (Power), 2 cost
+- **Dead Eye**: Your attack cards deal double damage (Power) if your sanity is over 50%, 2 cost
 - **Infamous**: +1 damage for each elite killed this run (Power), 3 cost
 - **High Noon**: For 3 turns, all cards cost 0 but you can only play 1 per turn, 2 cost
 
@@ -105,6 +107,7 @@ These 16 cards can appear in shops, rewards, and events for any class, making ru
 ---
 
 ### TRACKER - Starting Deck (10 cards)
+Examples only
 
 **Basic Cards:**
 
@@ -119,6 +122,7 @@ These 16 cards can appear in shops, rewards, and events for any class, making ru
 - 1x **Bushcraft**: Effect based on node type, 1 cost
 
 ### Tracker Specialist Cards
+Examples only
 
 **Common Class Cards:**
 
@@ -138,6 +142,7 @@ These 16 cards can appear in shops, rewards, and events for any class, making ru
 ---
 
 ### PUBLICAN - Starting Deck (10 cards)
+Examples only
 
 **Basic Cards:**
 
@@ -152,6 +157,7 @@ These 16 cards can appear in shops, rewards, and events for any class, making ru
 - 1x **Liquid Courage**: 8 damage, 8 block, gain Hangover, 2 cost
 
 ### Publican Specialist Cards
+Examples only
 
 **Common Class Cards:**
 

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1")
 character_class_name = "Bushranger"
-description = "Australian outlaw and expert gunfighter. Specializes in aggressive combat with ammo management and high-risk tactics."
+description = "Australian outlaw and expert gunfighter. Specializes in aggressive combat and high-risk tactics."
 mechanical_specialization = "Attack"
 difficulty_rating = 2
 base_health = 55

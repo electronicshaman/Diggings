@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Draw.gd" id="3"]
+
+[sub_resource type="Resource" id="Draw_1"]
+script = ExtResource("3")
+cards_to_draw = 2
+effect_name = "Draw"
+description = "Draw 2 card(s)"
+
+[resource]
+script = ExtResource("1")
+card_name = "Reload"
+energy_cost = 0
+description = "Draw 2 cards."
+card_type = "Grit"
+card_icon = null
+flavor_text = "A quick reload can turn the tide of battle."
+effects = Array[ExtResource("2")]([SubResource("Draw_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Starting"
+mechanical_category = "Skill"

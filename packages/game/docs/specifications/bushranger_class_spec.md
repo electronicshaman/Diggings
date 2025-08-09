@@ -88,29 +88,29 @@ Corruption: 0        # Starts clean but violence corrupts
 
 - **Cost**: 0 Energy
 - **Category**: Skill
-- **Effect**: Gain 3 Ammo. Draw 1 card.
+- **Effect**: Draw 2 cards.
 - **Copies in Deck**: 2
-- **Purpose**: Ammo management and card cycling
+- **Purpose**: Card cycling
 
 ### Signature Attack Cards (8 cards)
 
 #### 4. Six-Shooter
 
-- **Cost**: 1 Energy + 1 Ammo
+- **Cost**: 1 Energy
 - **Category**: Attack
 - **Effect**: Deal 8 damage. Quick Draw: Deal +2 damage.
 - **Copies in Deck**: 2
-- **Purpose**: Core ammo-based attack with Quick Draw synergy
+- **Purpose**: Core attack with Quick Draw synergy
 
 #### 5. Fan the Hammer
 
 - **Cost**: 2 Energy
 - **Category**: Attack
-- **Effect**: Deal 3 damage per Ammo. Consume all Ammo.
+- **Effect**: Deal 3 damage 3 times
 - **Copies in Deck**: 1
-- **Purpose**: High-risk burst damage, ammo dump
+- **Purpose**: Burst damage
 
-#### 6. Ambush Strike
+#### 6. Ambush
 
 - **Cost**: 2 Energy
 - **Category**: Attack
@@ -136,11 +136,11 @@ Corruption: 0        # Starts clean but violence corrupts
 
 #### 9. Wild Shot
 
-- **Cost**: 1 Energy + 1 Ammo  
+- **Cost**: 1 Energy  
 - **Category**: Attack
-- **Effect**: Deal 4-10 damage (random). If max damage, don't consume Ammo.
+- **Effect**: Deal 4-10 damage (random)
 - **Copies in Deck**: 1
-- **Purpose**: Variable damage with potential ammo refund
+- **Purpose**: Variable damage
 
 ### Support Cards (5 cards)
 
@@ -172,9 +172,9 @@ Corruption: 0        # Starts clean but violence corrupts
 
 - **Cost**: 2 Energy
 - **Category**: Power
-- **Effect**: At start of each turn, if you have 2+ Ammo, deal 3 damage to enemy.
+- **Effect**: At start of each turn deal 3 damage to enemy.
 - **Copies in Deck**: 1
-- **Purpose**: Persistent pressure that rewards ammo management
+- **Purpose**: Persistent pressure
 
 #### 14. Last Stand
 

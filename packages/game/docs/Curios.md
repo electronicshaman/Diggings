@@ -16,7 +16,7 @@
 - **Corrupted Compass**: Can move to any revealed node, take 5 corruption
 - **Temporal Pocket Watch**: First card each turn returns to hand
 - **Blood Money**: Gain 5 gold whenever you take damage
-- **Gunslinger's Belt**: +2 ammo at start of combat (great for Bushranger)
+- **Gunslinger's Belt**: +2 damage on all attacks in first round of combat (great for Bushranger)
 - **Prospector's Monocle**: See all gold values on map
 - **Endless Bottle**: Brew tokens don't disappear between combats
 
