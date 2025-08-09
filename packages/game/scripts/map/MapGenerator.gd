@@ -229,17 +229,17 @@ func post_process_graph():
 	setup_fog_of_war()
 
 func ensure_graph_connectivity():
-	# Simple connectivity check - ensure all nodes are reachable from start
+	# Enhanced connectivity check - ensure all nodes are reachable from start
 	var reachable = find_reachable_nodes(graph.start_node)
 	var all_nodes = graph.nodes.keys()
 	
 	for node_id in all_nodes:
 		if node_id not in reachable:
-			# Connect isolated node to the NEAREST reachable node
-			var nearest_reachable = find_nearest_node(node_id, reachable)
-			if nearest_reachable != "":
-				connect_nodes(node_id, nearest_reachable)
-				GLog.debug("Connected isolated node " + node_id + " to " + nearest_reachable)
+			# Find the best local connection instead of just nearest
+			var best_connection = find_best_local_connection(node_id, reachable)
+			if best_connection != "":
+				connect_nodes(node_id, best_connection)
+				GLog.debug("Connected isolated node " + node_id + " to " + best_connection)
 				# Update reachable list
 				reachable.append(node_id)
 
@@ -279,6 +279,53 @@ func find_nearest_node(from_node_id: String, candidate_nodes: Array[String]) -> 
 				nearest_id = candidate_id
 	
 	return nearest_id
+
+func find_best_local_connection(from_node_id: String, candidate_nodes: Array[String]) -> String:
+	"""Find the best connection prioritizing local proximity and reasonable distances"""
+	if candidate_nodes.is_empty() or not graph.nodes.has(from_node_id):
+		return ""
+	
+	var from_node = graph.nodes[from_node_id]
+	var max_reasonable_distance = layout_config.connection_max_distance * 0.7 if layout_config else 175.0
+	var preferred_distance = layout_config.spacing_max if layout_config else 150.0
+	
+	# First, try to find nodes within reasonable distance
+	var local_candidates: Array[String] = []
+	for candidate_id in candidate_nodes:
+		if graph.nodes.has(candidate_id):
+			var candidate_node = graph.nodes[candidate_id]
+			var distance = from_node.position.distance_to(candidate_node.position)
+			
+			# Only consider nodes within reasonable distance
+			if distance <= max_reasonable_distance:
+				local_candidates.append(candidate_id)
+	
+	# If we have local candidates, pick the best one (closest to preferred distance)
+	if not local_candidates.is_empty():
+		var best_id = ""
+		var best_score = INF
+		
+		for candidate_id in local_candidates:
+			var candidate_node = graph.nodes[candidate_id]
+			var distance = from_node.position.distance_to(candidate_node.position)
+			
+			# Score based on how close to preferred distance (lower is better)
+			var distance_score = abs(distance - preferred_distance)
+			
+			# Bonus for nodes with fewer connections (avoid creating hubs)
+			var connection_penalty = candidate_node.connections.size() * 20.0
+			
+			var total_score = distance_score + connection_penalty
+			
+			if total_score < best_score:
+				best_score = total_score
+				best_id = candidate_id
+		
+		return best_id
+	else:
+		# Fallback to nearest node if no local candidates
+		GLog.debug("No local connections found for " + from_node_id + ", using nearest fallback")
+		return find_nearest_node(from_node_id, candidate_nodes)
 
 func connect_nodes(node_a: String, node_b: String):
 	if not graph.nodes.has(node_a) or not graph.nodes.has(node_b):

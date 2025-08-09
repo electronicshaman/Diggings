@@ -167,7 +167,8 @@ func create_node_visual(node_id: String, node: MapNode):
 	# Apply offset to ensure all nodes are positioned within positive coordinates
 	var graph_offset = get_meta("graph_offset", Vector2.ZERO)
 	var adjusted_position = node.position - graph_offset
-	circle_node.position = adjusted_position
+	# Offset by radius to center the circle on the intended position
+	circle_node.position = adjusted_position - Vector2(node_radius, node_radius)
 	circle_node.z_index = 1  # Above edges
 	
 	# Apply discovery visibility
