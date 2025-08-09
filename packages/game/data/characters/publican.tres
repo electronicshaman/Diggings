@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CharacterClass" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/CharacterClass.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+character_class_name = "Publican"
+description = "Pub owner and social hub manager. Specializes in persistent effects, brewing mechanics, and community influence."
+mechanical_specialization = "Power"
+difficulty_rating = 3
+base_health = 50
+base_sanity = 95
+base_energy = 4
+starting_gold = 20
+starting_deck = Array[Resource]([])
+starting_deck_size = 15
+passive_abilities = Array[String](["Social Hub", "House Advantage", "Community Leader"])
+active_abilities = Array[String](["Free Drinks"])
+unique_resources = Array[String](["Brew Tokens"])
+class_exclusive_cards = Array[String](["Serve Grog", "Bar Fight", "Smooth Talk", "Last Orders", "House Rules", "Publican's Authority", "Happy Hour", "Share a Round", "Liquid Courage", "Drinking Contest", "Nightcap", "Social Network"])
+preferred_card_types = Array[String](["Grog"])
+forbidden_card_types = Array[String]([])
+unlocked_by_default = true
+unlock_requirements = Array[String]([])
+unlock_description = ""
+historical_context = "Pub owners, traveling merchants, and social coordinators who served as community centers in isolated goldfield settlements."
+motivation = "Build community connections, maintain social order through hospitality, or profit from providing comfort to desperate souls."
+signature_quotes = Array[String](["First round's on the house, mate.", "Everyone's welcome at my table.", "A good pub's the heart of any town.", "Stories flow better with a bit of grog."])

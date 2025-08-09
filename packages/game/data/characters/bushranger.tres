@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CharacterClass" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/CharacterClass.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+character_class_name = "Bushranger"
+description = "Australian outlaw and expert gunfighter. Specializes in aggressive combat with ammo management and high-risk tactics."
+mechanical_specialization = "Attack"
+difficulty_rating = 2
+base_health = 55
+base_sanity = 90
+base_energy = 3
+starting_gold = 10
+starting_deck = Array[Resource]([])
+starting_deck_size = 15
+passive_abilities = Array[String](["Outlaw's Edge", "Wanted Status"])
+active_abilities = Array[String](["Quick Draw"])
+unique_resources = Array[String](["Ammo"])
+class_exclusive_cards = Array[String](["Six-Shooter", "Fan the Hammer", "Ambush Strike", "Desperado's Gambit", "Bounty Shot", "Wild Shot", "Outlaw's Intuition", "Bush Survival", "Wanted Poster", "Bandit's Code", "Last Stand"])
+preferred_card_types = Array[String](["Gold"])
+forbidden_card_types = Array[String]([])
+unlocked_by_default = true
+unlock_requirements = Array[String]([])
+unlock_description = ""
+historical_context = "1850s-1890s Australian colonial outlaws, often Irish rebels or wrongly accused individuals forced into banditry by harsh frontier justice."
+motivation = "Survival through violence, revenge against corrupt authority, or seeking redemption for past crimes."
+signature_quotes = Array[String](["Justice comes from the barrel of a gun.", "They made me an outlaw - I'll give them one.", "Every bullet has a name on it.", "The bush remembers everything."])

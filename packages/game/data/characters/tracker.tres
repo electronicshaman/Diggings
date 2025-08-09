@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CharacterClass" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/CharacterClass.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+character_class_name = "Tracker"
+description = "Aboriginal guide and frontier scout. Specializes in preparation, survival skills, and information gathering."
+mechanical_specialization = "Skill"
+difficulty_rating = 4
+base_health = 50
+base_sanity = 105
+base_energy = 3
+starting_gold = 15
+starting_deck = Array[Resource]([])
+starting_deck_size = 15
+passive_abilities = Array[String](["Pathfinding", "Bush Medicine", "Sacred Knowledge"])
+active_abilities = Array[String](["Dreamtime Vision"])
+unique_resources = Array[String](["Setup Counter"])
+class_exclusive_cards = Array[String](["Track Prey", "Read the Land", "Camouflage", "Prepare Strike", "Snare Trap", "Survival Kit", "Bushcraft", "Sacred Site", "Spirit Guide", "Ancestral Wisdom", "Dreamwalking", "Master Tracker"])
+preferred_card_types = Array[String](["Grit"])
+forbidden_card_types = Array[String]([])
+unlocked_by_default = true
+unlock_requirements = Array[String]([])
+unlock_description = ""
+historical_context = "Aboriginal guides, frontier scouts, and missing person investigators who understand the land's secrets and the price of survival in harsh terrain."
+motivation = "Protect sacred sites from corruption, find missing people, or uncover forgotten knowledge while navigating between two worlds."
+signature_quotes = Array[String](["The land remembers all who walk upon it.", "Patience, young one. The prey will reveal itself.", "Two worlds, two ways of seeing.", "Some paths should not be taken."])
