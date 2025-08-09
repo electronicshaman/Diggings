@@ -59,6 +59,7 @@ grow_vertical = 2
 
 [node name="LeftColumn" type="VBoxContainer" parent="UI/Control/PlayerArea/PlayerStats"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="CharacterNameLabel" type="Label" parent="UI/Control/PlayerArea/PlayerStats/LeftColumn"]
 layout_mode = 2
@@ -82,6 +83,7 @@ text = "Defense: 0"
 
 [node name="RightColumn" type="VBoxContainer" parent="UI/Control/PlayerArea/PlayerStats"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="SanityLabel" type="Label" parent="UI/Control/PlayerArea/PlayerStats/RightColumn"]
 layout_mode = 2

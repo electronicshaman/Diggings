@@ -95,7 +95,7 @@ func start_new_run(character_class: String, seed: int = -1, mode: GameMode = Gam
 	change_state(GameState.PLAYING)
 	EventBus.game_started.emit()
 	
-	SceneManager.load_scene("res://scenes/game/main_game.tscn")
+	SceneManager.load_scene_by_name("map")
 
 func end_current_run(victory: bool = false) -> void:
 	GLog.debug("Ending run - Victory: " + str(victory))

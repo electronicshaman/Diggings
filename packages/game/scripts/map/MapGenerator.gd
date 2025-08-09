@@ -1,0 +1,331 @@
+extends Node
+class_name MapGenerator
+
+const DEBUG_ENABLED: bool = true
+
+# Generation parameters
+@export var max_nodes: int = 15
+@export var min_nodes: int = 8
+@export var generation_seed: int = -1
+
+# The generated graph
+var graph: Dictionary = {
+	"nodes": {},  # Dictionary of node_id -> MapNode
+	"edges": [],  # Array of MapEdge
+	"player_position": "",  # Current player node ID
+	"start_node": ""  # Starting node ID
+}
+
+# Available rules for generation
+var rules: Array[GraphRule] = []
+
+signal map_generated(graph_data: Dictionary)
+signal node_discovered(node_id: String)
+signal player_moved(from_node: String, to_node: String)
+
+func _init():
+	initialize_rules()
+
+func initialize_rules():
+	rules.clear()
+	
+	# Create rule instances
+	var linear_rule = GraphRule.LinearExtensionRule.new()
+	var branch_rule = GraphRule.BranchCreationRule.new()
+	var destination_rule = GraphRule.DestinationPlacementRule.new()
+	
+	rules.append(linear_rule)
+	rules.append(branch_rule)
+	rules.append(destination_rule)
+	
+	GLog.debug("Initialized " + str(rules.size()) + " graph generation rules")
+
+func generate_map(seed: int = -1) -> Dictionary:
+	if seed != -1:
+		generation_seed = seed
+	else:
+		generation_seed = randi()
+	
+	# Set the seed for reproducible generation
+	var rng = RandomNumberGenerator.new()
+	rng.seed = generation_seed
+	
+	GLog.debug("Generating map with seed: " + str(generation_seed))
+	
+	# Reset graph
+	graph = {
+		"nodes": {},
+		"edges": [],
+		"player_position": "",
+		"start_node": "",
+		"generation_seed": generation_seed
+	}
+	
+	# Reset rule counters
+	for rule in rules:
+		rule.reset()
+	
+	# Create starting node
+	create_start_node()
+	
+	# Generate the rest of the map
+	var generation_steps = 0
+	var max_steps = 50  # Prevent infinite loops
+	
+	while should_continue_generation() and generation_steps < max_steps:
+		apply_random_rule()
+		generation_steps += 1
+	
+	# Post-process the graph
+	post_process_graph()
+	
+	GLog.debug("Map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	map_generated.emit(graph)
+	return graph
+
+func create_start_node():
+	var start_id = "start_camp"
+	var start_node = MapNode.new(start_id, MapNode.NodeType.CAMP, Vector2(50, 50))
+	start_node.discovered = true
+	start_node.visited = true
+	
+	graph.nodes[start_id] = start_node
+	graph.start_node = start_id
+	graph.player_position = start_id
+	
+	GLog.debug("Created starting node: " + start_id)
+
+func should_continue_generation() -> bool:
+	var node_count = graph.nodes.size()
+	
+	# Always continue if we haven't met minimum
+	if node_count < min_nodes:
+		return true
+	
+	# Stop if we've reached maximum
+	if node_count >= max_nodes:
+		return false
+	
+	# Continue with decreasing probability as we approach max
+	var progress = float(node_count - min_nodes) / float(max_nodes - min_nodes)
+	var continue_chance = 1.0 - (progress * progress)  # Quadratic decay
+	
+	return randf() < continue_chance
+
+func apply_random_rule() -> bool:
+	# Calculate total weight
+	var total_weight = 0.0
+	var applicable_rules: Array[GraphRule] = []
+	
+	for rule in rules:
+		if rule.can_apply(graph):
+			applicable_rules.append(rule)
+			total_weight += rule.weight
+	
+	if applicable_rules.is_empty():
+		return false
+	
+	# Select rule based on weights
+	var random_value = randf() * total_weight
+	var current_weight = 0.0
+	
+	for rule in applicable_rules:
+		current_weight += rule.weight
+		if random_value <= current_weight:
+			return try_apply_rule(rule)
+	
+	return false
+
+func try_apply_rule(rule: GraphRule) -> bool:
+	# Find potential matches for this rule
+	var matches = find_rule_matches(rule)
+	
+	if matches.is_empty():
+		return false
+	
+	# Apply rule to random match
+	var match = matches[randi() % matches.size()]
+	return rule.apply(graph, match)
+
+func find_rule_matches(rule: GraphRule) -> Array[Dictionary]:
+	var matches: Array[Dictionary] = []
+	
+	# This is simplified - in a full implementation, you'd have more
+	# sophisticated pattern matching based on the rule type
+	
+	if rule is GraphRule.LinearExtensionRule:
+		# Find nodes with few connections that can be extended
+		for node_id in graph.nodes:
+			var node = graph.nodes[node_id]
+			if node.connections.size() <= 2:
+				matches.append({"from_node": node_id})
+	
+	elif rule is GraphRule.BranchCreationRule:
+		# Find junctions that can have branches added
+		for node_id in graph.nodes:
+			var node = graph.nodes[node_id]
+			if node.type == MapNode.NodeType.JUNCTION and node.connections.size() < 3:
+				matches.append({"junction_node": node_id})
+	
+	elif rule is GraphRule.DestinationPlacementRule:
+		# Find junctions that can be converted to destinations
+		for node_id in graph.nodes:
+			var node = graph.nodes[node_id]
+			if node.type == MapNode.NodeType.JUNCTION and node.connections.size() >= 1:
+				matches.append({"junction_node": node_id})
+	
+	return matches
+
+func post_process_graph():
+	# Ensure connectivity
+	ensure_graph_connectivity()
+	
+	# Balance node types
+	balance_node_types()
+	
+	# Set up fog of war (only start node discovered)
+	setup_fog_of_war()
+
+func ensure_graph_connectivity():
+	# Simple connectivity check - ensure all nodes are reachable from start
+	var reachable = find_reachable_nodes(graph.start_node)
+	var all_nodes = graph.nodes.keys()
+	
+	for node_id in all_nodes:
+		if node_id not in reachable:
+			# Connect isolated node to a random reachable node
+			var random_reachable = reachable[randi() % reachable.size()]
+			connect_nodes(node_id, random_reachable)
+			GLog.debug("Connected isolated node " + node_id + " to " + random_reachable)
+
+func find_reachable_nodes(start_node: String) -> Array[String]:
+	var visited: Array[String] = []
+	var to_visit: Array[String] = [start_node]
+	
+	while not to_visit.is_empty():
+		var current = to_visit.pop_front()
+		if current in visited:
+			continue
+			
+		visited.append(current)
+		
+		# Add connected nodes
+		if graph.nodes.has(current):
+			for connected in graph.nodes[current].connections:
+				if connected not in visited:
+					to_visit.append(connected)
+	
+	return visited
+
+func connect_nodes(node_a: String, node_b: String):
+	if not graph.nodes.has(node_a) or not graph.nodes.has(node_b):
+		return
+	
+	# Create edge
+	var edge = MapEdge.new(node_a, node_b, randi_range(2, 4))
+	graph.edges.append(edge)
+	
+	# Update node connections
+	graph.nodes[node_a].connect_to(node_b)
+	graph.nodes[node_b].connect_to(node_a)
+
+func balance_node_types():
+	# Ensure we have at least one of each important type
+	var type_counts = {}
+	
+	for node_id in graph.nodes:
+		var node_type = graph.nodes[node_id].type
+		type_counts[node_type] = type_counts.get(node_type, 0) + 1
+	
+	# Ensure at least one settlement and one mine
+	if type_counts.get(MapNode.NodeType.SETTLEMENT, 0) == 0:
+		convert_random_junction_to_type(MapNode.NodeType.SETTLEMENT)
+	
+	if type_counts.get(MapNode.NodeType.MINE, 0) == 0:
+		convert_random_junction_to_type(MapNode.NodeType.MINE)
+
+func convert_random_junction_to_type(target_type: MapNode.NodeType):
+	var junctions = []
+	
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		if node.type == MapNode.NodeType.JUNCTION:
+			junctions.append(node_id)
+	
+	if not junctions.is_empty():
+		var junction_id = junctions[randi() % junctions.size()]
+		var junction = graph.nodes[junction_id]
+		junction.type = target_type
+		junction.id = MapNode.NodeType.keys()[target_type].to_lower() + "_" + str(Time.get_ticks_msec())
+		junction._init(junction.id, target_type, junction.position)
+		
+		GLog.debug("Converted junction " + junction_id + " to " + junction.get_type_name())
+
+func setup_fog_of_war():
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		if node_id == graph.start_node:
+			node.discovered = true
+			node.visited = true
+		else:
+			node.discovered = false
+			node.visited = false
+
+# Player movement and exploration
+func move_player_to_node(target_node_id: String) -> bool:
+	if not graph.nodes.has(target_node_id):
+		GLog.warning("Cannot move to non-existent node: " + target_node_id)
+		return false
+	
+	var current_node = graph.nodes[graph.player_position]
+	var target_node = graph.nodes[target_node_id]
+	
+	# Check if nodes are connected
+	if not current_node.is_connected_to(target_node_id):
+		GLog.warning("Cannot move to unconnected node: " + target_node_id)
+		return false
+	
+	# Move player
+	var old_position = graph.player_position
+	graph.player_position = target_node_id
+	
+	# Handle discovery and visitation
+	target_node.visit()
+	discover_adjacent_nodes(target_node_id)
+	
+	player_moved.emit(old_position, target_node_id)
+	GLog.debug("Player moved from " + old_position + " to " + target_node_id)
+	
+	return true
+
+func discover_adjacent_nodes(node_id: String):
+	if not graph.nodes.has(node_id):
+		return
+	
+	var node = graph.nodes[node_id]
+	
+	for connected_id in node.connections:
+		var connected_node = graph.nodes[connected_id]
+		if not connected_node.discovered:
+			connected_node.discover()
+			node_discovered.emit(connected_id)
+
+func get_current_player_node() -> MapNode:
+	return graph.nodes.get(graph.player_position, null)
+
+func get_available_moves() -> Array[String]:
+	var current_node = get_current_player_node()
+	if not current_node:
+		return []
+	
+	var available: Array[String] = []
+	
+	for connected_id in current_node.connections:
+		var connected_node = graph.nodes[connected_id]
+		if connected_node.discovered:  # Can only move to discovered nodes
+			available.append(connected_id)
+	
+	return available
+
+func get_graph_data() -> Dictionary:
+	return graph.duplicate()
