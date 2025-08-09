@@ -2,11 +2,12 @@ extends Node
 class_name DuelManager
 
 # Per-file debug control (GLog will check this)
-const DEBUG_ENABLED = true
+const DEBUG_ENABLED: bool = true
 
+@export_group("Duel Configuration")
 @export var duel_state: DuelState
-@export var initial_hand_size: int = 5
-@export var cards_per_turn_draw: int = 1
+@export_range(3, 10) var initial_hand_size: int = 5
+@export_range(1, 3) var cards_per_turn_draw: int = 1
 
 signal duel_started
 signal turn_started(is_player_turn: bool)
@@ -27,7 +28,7 @@ func _ready():
 	
 	duel_state.add_change_listener(_on_duel_state_changed)
 
-func _on_duel_state_changed(change_type: String, data: Dictionary):
+func _on_duel_state_changed(change_type: String, data: Dictionary) -> void:
 	GLog.debug("DuelState changed: %s" % change_type)
 	
 	match change_type:
@@ -36,7 +37,7 @@ func _on_duel_state_changed(change_type: String, data: Dictionary):
 		"enemy_died":
 			end_duel("player")
 
-func start_new_duel(player_deck: Array[CardData], enemy_data: EnemyState):
+func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	GLog.info("Starting new duel...")
 	
 	duel_state.enemy_data = enemy_data
@@ -59,11 +60,11 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: EnemyState):
 	
 	start_player_turn()
 
-func draw_initial_hand():
+func draw_initial_hand() -> void:
 	var drawn = duel_state.draw_cards(initial_hand_size)
 	GLog.info("Drew initial hand of %d cards" % drawn.size())
 
-func start_player_turn():
+func start_player_turn() -> void:
 	GLog.info("Starting player turn %d" % (duel_state.player_turn_count + 1))
 	
 	duel_state.start_player_turn()
@@ -75,7 +76,7 @@ func start_player_turn():
 	
 	turn_started.emit(true)
 
-func end_player_turn():
+func end_player_turn() -> void:
 	GLog.debug("Ending player turn")
 	
 	duel_state.end_player_turn()

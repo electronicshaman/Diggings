@@ -11,20 +11,25 @@ config_version=5
 [application]
 
 config/name="Card Battler Prototype"
-run/main_scene="res://scenes/main_game.tscn"
+run/main_scene="res://scenes/game/main_game.tscn"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
-ThemeManager="*res://scripts/theme/ThemeManager.gd"
+GameSettings="*res://scripts/autoloads/game_settings.gd"
+EventBus="*res://scripts/autoloads/event_bus.gd"
+SaveSystem="*res://scripts/autoloads/save_system.gd"
+ResourceManager="*res://scripts/autoloads/resource_manager.gd"
+ThemeManager="*res://scripts/autoloads/theme_manager.gd"
+GLog="*res://scripts/autoloads/glog.gd"
+GameManager="*res://scripts/autoloads/game_manager.gd"
+SceneManager="*res://scripts/autoloads/scene_manager.gd"
 GDAIMCPRuntime="*res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd"
-Signal_Debugger="*res://addons/SignalVisualizer/Debugger/SignalDebugger.gd"
-GLog="*res://scripts/debug/GLog.gd"
 
 [debug]
 
-gdscript/warnings/untyped_declaration=1
+gdscript/warnings/untyped_declaration=0
 
 [editor_plugins]
 

@@ -51,11 +51,11 @@ func setup_card_visuals():
 	
 	# Set type symbol
 	if has_node("TypeSymbol"):
-		var type_symbol = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_symbol(card_data.card_type) if ThemeManager else "?"
+		var type_symbol = ThemeManager.get_card_symbol(card_data.card_type) if ThemeManager else "?"
 		$TypeSymbol.text = type_symbol
 	
 	# Set card colors
-	var type_color = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_color(card_data.card_type) if ThemeManager else Color.WHITE
+	var type_color = ThemeManager.get_card_color(card_data.card_type) if ThemeManager else Color.WHITE
 	if has_node("CardBorder"):
 		$CardBorder.color = type_color
 	if has_node("CardBackground"):
@@ -170,7 +170,7 @@ func format_description() -> String:
 func format_card_handling() -> String:
 	if not ThemeManager:
 		return ""
-	var handling_display = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_handling_display_name(card_data.card_handling)
+	var handling_display = ThemeManager.get_card_handling_display_name(card_data.card_handling)
 	return handling_display if handling_display != "Standard" else ""
 
 func _input(event: InputEvent):

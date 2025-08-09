@@ -1,13 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://bkcgmu57xyg4d"]
+[gd_scene load_steps=6 format=3 uid="uid://dkejnvd7wl47w"]
 
-[ext_resource type="Script" uid="uid://cj8u6pjvguqdv" path="res://scripts/combat/DuelManager.gd" id="1_duel_manager"]
 [ext_resource type="Script" uid="uid://duakyltvf8eu6" path="res://scripts/combat/MainGameController.gd" id="2_main_controller"]
+[ext_resource type="Script" uid="uid://c6j7ia2480bri" path="res://scripts/managers/duel_manager.gd" id="2_qgbr3"]
+[ext_resource type="Script" uid="uid://btuf86ovfqnev" path="res://scripts/managers/game_controller.gd" id="3_7qhhq"]
+[ext_resource type="Script" uid="uid://be3e1kesnfgey" path="res://scripts/managers/ui_controller.gd" id="4_noi7s"]
+[ext_resource type="Script" uid="uid://c4lbtms5gghy0" path="res://scripts/managers/input_controller.gd" id="5_p2514"]
 
 [node name="MainGame" type="Node2D"]
 script = ExtResource("2_main_controller")
-
-[node name="DuelManager" type="Node" parent="."]
-script = ExtResource("1_duel_manager")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -140,13 +140,13 @@ text = "Deck: 0"
 
 [node name="PileIndicatorsRight" type="HBoxContainer" parent="UI/Control"]
 layout_mode = 1
-anchors_preset = 2
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 921.0
-offset_top = -60.0
-offset_right = 1121.0
-offset_bottom = -20.0
+offset_left = -208.0
+offset_top = -26.0
 grow_vertical = 0
 theme_override_constants/separation = 20
 
@@ -226,3 +226,15 @@ text = "Add 10 Energy"
 [node name="ResetDuelButton" type="Button" parent="UI/Control/DebugPanel/DebugButtons"]
 layout_mode = 2
 text = "Reset Duel"
+
+[node name="DuelManager" type="Node" parent="."]
+script = ExtResource("2_qgbr3")
+
+[node name="GameController" type="Node" parent="."]
+script = ExtResource("3_7qhhq")
+
+[node name="UIController" type="Node" parent="."]
+script = ExtResource("4_noi7s")
+
+[node name="InputController" type="Node" parent="."]
+script = ExtResource("5_p2514")
