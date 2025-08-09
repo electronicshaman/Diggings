@@ -21,6 +21,9 @@ var initial_map_position = Vector2()
 
 @onready var view_deck_button = $HeaderPanel/HeaderContent/ViewDeckButton
 @onready var floor_label = $HeaderPanel/HeaderContent/FloorLabel
+@onready var zoom_in_button = $HeaderPanel/HeaderContent/MapZoomIn
+@onready var zoom_out_button = $HeaderPanel/HeaderContent/MapZoomOut
+@onready var zoom_reset_button = $HeaderPanel/HeaderContent/MapZoomReset
 @onready var map_viewport = $MapViewport
 @onready var map_content = $MapViewport/MapContent
 
@@ -160,6 +163,9 @@ func setup_graph_system():
 
 func setup_button_connections():
 	view_deck_button.pressed.connect(_on_view_deck_pressed)
+	zoom_in_button.pressed.connect(_on_zoom_in_pressed)
+	zoom_out_button.pressed.connect(_on_zoom_out_pressed)
+	zoom_reset_button.pressed.connect(_on_zoom_reset_pressed)
 
 func generate_new_map():
 	GLog.debug("generate_new_map called - GameManager.is_run_active: " + str(GameManager.is_run_active))
@@ -188,6 +194,10 @@ func generate_new_map():
 		# Development mode - use a fixed seed for consistency during testing
 		seed = 12345  # Fixed seed for development
 		GLog.debug("Using fixed development seed: " + str(seed))
+	
+	# Ensure the SeedManager's map_rng is seeded consistently
+	SeedManager.map_rng.seed = seed
+	GLog.debug("Seeded SeedManager.map_rng with: " + str(seed))
 	
 	map_generator.generate_map(seed)
 	GLog.info("Generated new map for exploration with seed: " + str(seed))
@@ -226,7 +236,7 @@ func _setup_map_visualization():
 			# Force Line2D to front to ensure visibility
 			child.z_index = 1
 			edge_count += 1
-		elif child is Button:
+		elif child.has_method("set_highlight"):  # CircularMapNode check
 			child.visible = true
 			child.modulate = Color.WHITE
 			button_count += 1
@@ -270,6 +280,20 @@ func restore_existing_map():
 func _on_view_deck_pressed():
 	GLog.info("View Deck button pressed")
 	SceneManager.load_scene_by_name("deck_viewer")
+
+func _on_zoom_in_pressed():
+	GLog.debug("Zoom In button pressed")
+	zoom_level = min(zoom_level + zoom_speed, zoom_max)
+	_update_zoom()
+
+func _on_zoom_out_pressed():
+	GLog.debug("Zoom Out button pressed")
+	zoom_level = max(zoom_level - zoom_speed, zoom_min)
+	_update_zoom()
+
+func _on_zoom_reset_pressed():
+	GLog.debug("Zoom Reset button pressed")
+	reset_view()
 
 func _on_node_clicked(node_id: String):
 	GLog.info("Map node clicked: " + node_id)

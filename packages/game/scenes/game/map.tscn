@@ -27,11 +27,23 @@ anchor_bottom = 1.0
 
 [node name="FloorLabel" type="Label" parent="HeaderPanel/HeaderContent"]
 layout_mode = 2
-text = "Floor 1 - Act 1"
+text = "Area 1"
 
 [node name="ViewDeckButton" type="Button" parent="HeaderPanel/HeaderContent"]
 layout_mode = 2
 text = "View Deck"
+
+[node name="MapZoomIn" type="Button" parent="HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "Zoom In"
+
+[node name="MapZoomOut" type="Button" parent="HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "Zoom Out"
+
+[node name="MapZoomReset" type="Button" parent="HeaderPanel/HeaderContent"]
+layout_mode = 2
+text = "Zoom Reset"
 
 [node name="MapViewport" type="Control" parent="."]
 clip_contents = true
