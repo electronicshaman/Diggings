@@ -81,6 +81,12 @@ class_name MapLayoutConfig
 @export_range(0.8, 0.99, 0.01) var physics_cooling_rate: float = 0.95    # How quickly the system cools down (stabilizes)
 @export_range(0.0, 1.0, 0.1) var physics_boundary_strength: float = 0.3  # How strongly nodes are pushed away from boundaries
 
+@export_group("Edge Crossing Minimization", "physics_")
+@export_range(0.0, 2.0, 0.1) var physics_edge_crossing_penalty: float = 0.5        # Weight for edge-crossing reduction forces
+@export_range(0.0, 1.0, 0.1) var physics_angular_distribution_strength: float = 0.3 # How strongly to spread edge angles around nodes
+@export_range(20.0, 100.0, 5.0) var physics_edge_separation_distance: float = 30.0  # Minimum visual distance between parallel edges
+@export_range(25, 100, 5) var physics_crossing_iterations: int = 50                 # Additional iterations focused on edge optimization
+
 ## CURVED PATH LINES ##
 
 @export_group("Path Appearance", "path_")

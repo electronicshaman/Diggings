@@ -17,6 +17,12 @@ var repulsion_strength: float = 1.0
 var attraction_strength: float = 0.8
 var boundary_strength: float = 0.3
 
+# Edge crossing minimization parameters
+var edge_crossing_penalty: float = 0.5
+var angular_distribution_strength: float = 0.3
+var edge_separation_distance: float = 30.0
+var crossing_iterations: int = 50
+
 # Layout bounds
 var bounds: Rect2
 var center_pull_strength: float = 0.1
@@ -36,6 +42,12 @@ func setup(layout_config: MapLayoutConfig = null):
 		attraction_strength = config.physics_attraction_strength
 		cooling_factor = config.physics_cooling_rate
 		boundary_strength = config.physics_boundary_strength
+		
+		# Edge crossing minimization parameters (with fallbacks)
+		edge_crossing_penalty = config.physics_edge_crossing_penalty if "physics_edge_crossing_penalty" in config else 0.5
+		angular_distribution_strength = config.physics_angular_distribution_strength if "physics_angular_distribution_strength" in config else 0.3
+		edge_separation_distance = config.physics_edge_separation_distance if "physics_edge_separation_distance" in config else 30.0
+		crossing_iterations = config.physics_crossing_iterations if "physics_crossing_iterations" in config else 50
 
 func apply_layout(graph: Dictionary) -> Dictionary:
 	GLog.debug("Starting force-directed layout optimization...")
@@ -66,6 +78,11 @@ func apply_layout(graph: Dictionary) -> Dictionary:
 		# Debug output every 50 iterations
 		if iteration % 50 == 0:
 			GLog.debug("Layout iteration " + str(iteration) + "/" + str(iterations) + " - temp: " + str(temperature))
+	
+	# Run additional edge-crossing minimization phase if enabled
+	if edge_crossing_penalty > 0.0 and crossing_iterations > 0:
+		GLog.debug("Starting edge-crossing minimization phase...")
+		minimize_edge_crossings(nodes, edges)
 	
 	# Validate final positions
 	var valid_layout = validate_layout(nodes, original_positions)
@@ -220,6 +237,293 @@ func clamp_to_bounds(pos: Vector2) -> Vector2:
 		clamp(pos.x, bounds.position.x, bounds.position.x + bounds.size.x),
 		clamp(pos.y, bounds.position.y, bounds.position.y + bounds.size.y)
 	)
+
+func minimize_edge_crossings(nodes: Dictionary, edges: Array):
+	"""Additional optimization phase focused on reducing edge crossings"""
+	var crossing_temperature = temperature * 0.5  # Start with lower temperature
+	var initial_crossings = count_edge_crossings(edges, nodes)
+	
+	GLog.debug("Initial edge crossings: " + str(initial_crossings))
+	
+	for iteration in range(crossing_iterations):
+		var forces = calculate_edge_crossing_forces(nodes, edges)
+		
+		# Apply forces with crossing-specific temperature
+		for node_id in nodes:
+			var node = nodes[node_id]
+			var force = forces.get(node_id, Vector2.ZERO)
+			
+			# Limit displacement by crossing temperature
+			var displacement = force.normalized() * min(force.length(), crossing_temperature)
+			node.position += displacement
+			node.position = clamp_to_bounds(node.position)
+		
+		# Cool down crossing temperature
+		crossing_temperature *= cooling_factor
+		
+		if iteration % 25 == 0:
+			var current_crossings = count_edge_crossings(edges, nodes)
+			GLog.debug("Crossing iteration " + str(iteration) + "/" + str(crossing_iterations) + " - crossings: " + str(current_crossings))
+	
+	var final_crossings = count_edge_crossings(edges, nodes)
+	GLog.debug("Final edge crossings: " + str(final_crossings) + " (reduced by " + str(initial_crossings - final_crossings) + ")")
+
+func calculate_edge_crossing_forces(nodes: Dictionary, edges: Array) -> Dictionary:
+	"""Calculate forces to minimize edge crossings and improve angular distribution"""
+	var forces = {}
+	
+	# Initialize forces
+	for node_id in nodes:
+		forces[node_id] = Vector2.ZERO
+	
+	# Edge-crossing forces
+	if edge_crossing_penalty > 0.0:
+		add_crossing_reduction_forces(forces, nodes, edges)
+	
+	# Angular distribution forces
+	if angular_distribution_strength > 0.0:
+		add_angular_distribution_forces(forces, nodes, edges)
+	
+	# Edge separation forces
+	if edge_separation_distance > 0.0:
+		add_edge_separation_forces(forces, nodes, edges)
+	
+	return forces
+
+func add_crossing_reduction_forces(forces: Dictionary, nodes: Dictionary, edges: Array):
+	"""Add forces to reduce edge crossings"""
+	for i in range(edges.size()):
+		var edge1 = edges[i]
+		var node1_a = nodes.get(edge1.from_node)
+		var node1_b = nodes.get(edge1.to_node)
+		
+		if not node1_a or not node1_b:
+			continue
+		
+		for j in range(i + 1, edges.size()):
+			var edge2 = edges[j]
+			var node2_a = nodes.get(edge2.from_node)
+			var node2_b = nodes.get(edge2.to_node)
+			
+			if not node2_a or not node2_b:
+				continue
+			
+			# Skip if edges share a node
+			if edge1.from_node == edge2.from_node or edge1.from_node == edge2.to_node or \
+			   edge1.to_node == edge2.from_node or edge1.to_node == edge2.to_node:
+				continue
+			
+			# Check if edges cross
+			var crossing_point = line_intersection(node1_a.position, node1_b.position, node2_a.position, node2_b.position)
+			if crossing_point != Vector2.ZERO:
+				# Apply forces to reduce crossing
+				var force_magnitude = edge_crossing_penalty * k_constant * 0.5
+				
+				# Calculate force directions to separate the crossing
+				var edge1_mid = (node1_a.position + node1_b.position) * 0.5
+				var edge2_mid = (node2_a.position + node2_b.position) * 0.5
+				var separation_dir = (edge1_mid - edge2_mid).normalized()
+				
+				if separation_dir.length() < 0.1:
+					separation_dir = Vector2(randf() - 0.5, randf() - 0.5).normalized()
+				
+				var force_vec = separation_dir * force_magnitude
+				
+				# Apply forces to edge1 nodes
+				forces[edge1.from_node] += force_vec
+				forces[edge1.to_node] += force_vec
+				
+				# Apply opposite forces to edge2 nodes
+				forces[edge2.from_node] -= force_vec
+				forces[edge2.to_node] -= force_vec
+
+func add_angular_distribution_forces(forces: Dictionary, nodes: Dictionary, edges: Array):
+	"""Add forces to better distribute edge angles around nodes"""
+	for node_id in nodes:
+		var node = nodes[node_id]
+		var connections = []
+		
+		# Find all connections for this node
+		for edge in edges:
+			if edge.from_node == node_id:
+				var other_node = nodes.get(edge.to_node)
+				if other_node:
+					connections.append(other_node)
+			elif edge.to_node == node_id:
+				var other_node = nodes.get(edge.from_node)
+				if other_node:
+					connections.append(other_node)
+		
+		# Apply angular distribution forces if node has multiple connections
+		if connections.size() >= 3:
+			apply_angular_distribution_to_node(forces, nodes, node, connections, node_id)
+
+func apply_angular_distribution_to_node(forces: Dictionary, nodes: Dictionary, center_node: MapNode, connected_nodes: Array, center_id: String):
+	"""Apply forces to distribute connections more evenly around a node"""
+	var angles = []
+	var node_angles = {}
+	
+	# Calculate current angles
+	for connected_node in connected_nodes:
+		var direction = connected_node.position - center_node.position
+		var angle = atan2(direction.y, direction.x)
+		angles.append(angle)
+		node_angles[connected_node] = angle
+	
+	# Sort angles
+	angles.sort()
+	
+	# Calculate ideal angular separation
+	var ideal_separation = TAU / connected_nodes.size()
+	var force_magnitude = angular_distribution_strength * k_constant * 0.3
+	
+	# Apply forces to improve angular distribution
+	for i in range(connected_nodes.size()):
+		var current_angle = angles[i]
+		var next_angle = angles[(i + 1) % angles.size()]
+		var prev_angle = angles[(i - 1) % angles.size()]
+		
+		# Calculate angular gaps
+		var gap_next = angle_difference(current_angle, next_angle)
+		var gap_prev = angle_difference(prev_angle, current_angle)
+		
+		# Find the node with this angle
+		var target_node = null
+		var target_id = ""
+		for node in connected_nodes:
+			if abs(node_angles[node] - current_angle) < 0.1:
+				target_node = node
+				# Find the node ID
+				for node_id in forces:
+					if nodes.get(node_id) == node:
+						target_id = node_id
+						break
+				break
+		
+		if not target_node or target_id == "":
+			continue
+		
+		# Apply force to balance angular spacing
+		var angle_adjustment = 0.0
+		if gap_next < ideal_separation * 0.8:
+			angle_adjustment -= 0.2  # Push away from next
+		if gap_prev < ideal_separation * 0.8:
+			angle_adjustment += 0.2  # Push away from previous
+		
+		if abs(angle_adjustment) > 0.01:
+			var adjusted_angle = current_angle + angle_adjustment
+			var force_direction = Vector2(cos(adjusted_angle), sin(adjusted_angle))
+			var force_vec = force_direction * force_magnitude
+			
+			forces[target_id] += force_vec
+
+func add_edge_separation_forces(forces: Dictionary, nodes: Dictionary, edges: Array):
+	"""Add forces to separate parallel or nearly parallel edges"""
+	for i in range(edges.size()):
+		var edge1 = edges[i]
+		var node1_a = nodes.get(edge1.from_node)
+		var node1_b = nodes.get(edge1.to_node)
+		
+		if not node1_a or not node1_b:
+			continue
+		
+		for j in range(i + 1, edges.size()):
+			var edge2 = edges[j]
+			var node2_a = nodes.get(edge2.from_node)
+			var node2_b = nodes.get(edge2.to_node)
+			
+			if not node2_a or not node2_b:
+				continue
+			
+			# Skip if edges share a node
+			if edge1.from_node == edge2.from_node or edge1.from_node == edge2.to_node or \
+			   edge1.to_node == edge2.from_node or edge1.to_node == edge2.to_node:
+				continue
+			
+			# Check if edges are nearly parallel and close
+			var edge1_dir = (node1_b.position - node1_a.position).normalized()
+			var edge2_dir = (node2_b.position - node2_a.position).normalized()
+			var dot_product = abs(edge1_dir.dot(edge2_dir))
+			
+			if dot_product > 0.8:  # Edges are nearly parallel
+				var edge1_mid = (node1_a.position + node1_b.position) * 0.5
+				var edge2_mid = (node2_a.position + node2_b.position) * 0.5
+				var distance = edge1_mid.distance_to(edge2_mid)
+				
+				if distance < edge_separation_distance:
+					# Apply separation forces
+					var force_magnitude = (edge_separation_distance - distance) / edge_separation_distance * k_constant * 0.3
+					var separation_dir = (edge1_mid - edge2_mid).normalized()
+					
+					if separation_dir.length() < 0.1:
+						separation_dir = Vector2(randf() - 0.5, randf() - 0.5).normalized()
+					
+					var force_vec = separation_dir * force_magnitude
+					
+					forces[edge1.from_node] += force_vec
+					forces[edge1.to_node] += force_vec
+					forces[edge2.from_node] -= force_vec
+					forces[edge2.to_node] -= force_vec
+
+func count_edge_crossings(edges: Array, nodes: Dictionary) -> int:
+	"""Count the number of edge crossings in the current layout"""
+	var crossings = 0
+	
+	for i in range(edges.size()):
+		var edge1 = edges[i]
+		var node1_a = nodes.get(edge1.from_node)
+		var node1_b = nodes.get(edge1.to_node)
+		
+		if not node1_a or not node1_b:
+			continue
+		
+		for j in range(i + 1, edges.size()):
+			var edge2 = edges[j]
+			var node2_a = nodes.get(edge2.from_node)
+			var node2_b = nodes.get(edge2.to_node)
+			
+			if not node2_a or not node2_b:
+				continue
+			
+			# Skip if edges share a node
+			if edge1.from_node == edge2.from_node or edge1.from_node == edge2.to_node or \
+			   edge1.to_node == edge2.from_node or edge1.to_node == edge2.to_node:
+				continue
+			
+			# Check if edges cross
+			var crossing_point = line_intersection(node1_a.position, node1_b.position, node2_a.position, node2_b.position)
+			if crossing_point != Vector2.ZERO:
+				crossings += 1
+	
+	return crossings
+
+func line_intersection(p1: Vector2, p2: Vector2, p3: Vector2, p4: Vector2) -> Vector2:
+	"""Calculate intersection point of two line segments, return Vector2.ZERO if no intersection"""
+	var d1 = p2 - p1
+	var d2 = p4 - p3
+	var d3 = p1 - p3
+	
+	var cross_d1_d2 = d1.x * d2.y - d1.y * d2.x
+	if abs(cross_d1_d2) < 0.001:  # Lines are parallel
+		return Vector2.ZERO
+	
+	var t1 = (d3.x * d2.y - d3.y * d2.x) / cross_d1_d2
+	var t2 = (d3.x * d1.y - d3.y * d1.x) / cross_d1_d2
+	
+	# Check if intersection is within both line segments
+	if t1 >= 0.0 and t1 <= 1.0 and t2 >= 0.0 and t2 <= 1.0:
+		return p1 + t1 * d1
+	
+	return Vector2.ZERO
+
+func angle_difference(angle1: float, angle2: float) -> float:
+	"""Calculate the smaller angle difference between two angles"""
+	var diff = angle2 - angle1
+	while diff > PI:
+		diff -= TAU
+	while diff < -PI:
+		diff += TAU
+	return abs(diff)
 
 func validate_layout(nodes: Dictionary, original_positions: Dictionary) -> bool:
 	# Check if any nodes moved to invalid positions
