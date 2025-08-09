@@ -25,6 +25,8 @@ func _ready():
 func setup_graph_system():
 	# Create map generator
 	map_generator = MapGenerator.new()
+	# TEMPORARY: Enable debug mode to see all nodes for development
+	map_generator.debug_show_all_nodes = true
 	add_child(map_generator)
 	
 	# Create visualizer and add it to the scroll container
@@ -36,15 +38,11 @@ func setup_graph_system():
 	if map_layers:
 		map_layers.queue_free()
 	
-	# TEMPORARY: Add MapVisualizer directly to UIContainer to test rendering
-	var ui_container = $UIContainer
-	ui_container.add_child(map_visualizer)
+	# Properly integrate MapVisualizer with ScrollContainer
+	map_scroll_container.add_child(map_visualizer)
 	
-	# Position it below the header
-	map_visualizer.position = Vector2(0, 80)  # Below header panel
-	map_visualizer.custom_minimum_size = Vector2(800, 500)
-	
-	# Ensure the visualizer is visible
+	# Set up proper anchoring to fill the scroll container
+	map_visualizer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	map_visualizer.visible = true
 	
 	# Connect visualizer signals
@@ -78,13 +76,11 @@ func generate_new_map():
 		}
 		GLog.debug("Map data stored in GameManager")
 	
-	# Update scroll content size to match the generated map
-	var scroll_content = map_scroll_container.get_child(0)  # Should be our MapScrollContent
-	if scroll_content:
-		var map_bounds = map_visualizer.get_graph_bounds()
-		scroll_content.custom_minimum_size = map_bounds.size
-		scroll_content.size = map_bounds.size
-		GLog.debug("Updated scroll content size to: " + str(map_bounds.size))
+	# Update visualizer size to match the generated map bounds
+	var map_bounds = map_visualizer.get_graph_bounds()
+	map_visualizer.custom_minimum_size = map_bounds.size
+	map_visualizer.size = map_bounds.size
+	GLog.debug("Updated visualizer size to: " + str(map_bounds.size))
 
 func restore_existing_map():
 	# Restore map from stored game data

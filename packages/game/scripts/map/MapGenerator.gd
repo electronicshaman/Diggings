@@ -7,6 +7,7 @@ const DEBUG_ENABLED: bool = true
 @export var max_nodes: int = 15
 @export var min_nodes: int = 8
 @export var generation_seed: int = -1
+@export var debug_show_all_nodes: bool = false
 
 # The generated graph
 var graph: Dictionary = {
@@ -271,6 +272,10 @@ func setup_fog_of_war():
 		if node_id == graph.start_node:
 			node.discovered = true
 			node.visited = true
+		elif debug_show_all_nodes:
+			# Debug mode: show all nodes but mark them as unvisited
+			node.discovered = true
+			node.visited = false
 		else:
 			node.discovered = false
 			node.visited = false
