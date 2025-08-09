@@ -2,12 +2,16 @@ extends Node
 class_name MapGenerator
 
 const DEBUG_ENABLED: bool = true
+const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 
-# Generation parameters
-@export var max_nodes: int = 30
-@export var min_nodes: int = 20
+# Map layout configuration
+@export var layout_config: MapLayoutConfig
 @export var generation_seed: int = -1
 @export var debug_show_all_nodes: bool = false
+
+# Fallback values if no config is loaded
+var default_max_nodes: int = 30
+var default_min_nodes: int = 20
 
 # The generated graph
 var graph: Dictionary = {
@@ -29,21 +33,52 @@ signal node_discovered(node_id: String)
 signal player_moved(from_node: String, to_node: String)
 
 func _init():
+	load_default_config()
 	initialize_rules()
+
+func load_default_config():
+	# Try to load the default config
+	var config_path = "res://data/map_layout_config.tres"
+	if ResourceLoader.exists(config_path):
+		layout_config = load(config_path) as MapLayoutConfig
+		GLog.debug("Loaded map layout config from: " + config_path)
+	else:
+		# Create a default config if none exists
+		layout_config = MapLayoutConfig.new()
+		GLog.debug("Created default map layout config")
+	
+	# Validate the config
+	var warnings = layout_config.validate_config()
+	for warning in warnings:
+		GLog.warning("MapLayoutConfig: " + warning)
 
 func initialize_rules():
 	rules.clear()
 	
-	# Create rule instances
+	if not layout_config:
+		load_default_config()
+	
+	# Create rule instances with config
 	var linear_rule = GraphRule.LinearExtensionRule.new()
+	linear_rule.weight = layout_config.linear_weight
+	linear_rule.max_applications = layout_config.linear_max_applications
+	linear_rule.config = layout_config  # Pass config reference
+	
 	var branch_rule = GraphRule.BranchCreationRule.new()
+	branch_rule.weight = layout_config.branch_weight
+	branch_rule.max_applications = layout_config.branch_max_applications
+	branch_rule.config = layout_config
+	
 	var destination_rule = GraphRule.DestinationPlacementRule.new()
+	destination_rule.weight = layout_config.destination_weight
+	destination_rule.max_applications = layout_config.destination_max_applications
+	destination_rule.config = layout_config
 	
 	rules.append(linear_rule)
 	rules.append(branch_rule)
 	rules.append(destination_rule)
 	
-	GLog.debug("Initialized " + str(rules.size()) + " graph generation rules")
+	GLog.debug("Initialized " + str(rules.size()) + " graph generation rules with config")
 
 func generate_map(seed: int = -1) -> Dictionary:
 	if seed != -1:
@@ -86,9 +121,8 @@ func generate_map(seed: int = -1) -> Dictionary:
 
 func create_start_node():
 	var start_id = "start_camp"
-	# Position start node more centrally in the viewport
-	var viewport_size = Vector2(1280, 720)  # Default size, will be adjusted by MapVisualizer
-	var start_pos = Vector2(viewport_size.x * 0.15, viewport_size.y * 0.5)  # Start on left side, vertically centered
+	# Position start node using config
+	var start_pos = layout_config.get_start_position() if layout_config else Vector2(192, 360)
 	var start_node = MapNode.new(start_id, MapNode.NodeType.CAMP, start_pos)
 	start_node.discovered = true
 	start_node.visited = true
@@ -103,6 +137,8 @@ func create_start_node():
 
 func should_continue_generation() -> bool:
 	var node_count = graph.nodes.size()
+	var min_nodes = layout_config.min_nodes if layout_config else default_min_nodes
+	var max_nodes = layout_config.max_nodes if layout_config else default_max_nodes
 	
 	# Always continue if we haven't met minimum
 	if node_count < min_nodes:
@@ -252,12 +288,18 @@ func connect_nodes(node_a: String, node_b: String):
 	if graph.nodes[node_a].is_connected_to(node_b):
 		return
 	
-	# Only connect if distance is reasonable (prevent long stretches)
+	# Use config for distance limits
 	var distance = graph.nodes[node_a].position.distance_to(graph.nodes[node_b].position)
-	var max_connection_distance = 250.0  # Maximum distance for connections
+	var max_distance = layout_config.connection_max_distance if layout_config else 250.0
+	var min_distance = layout_config.connection_min_distance if layout_config else 60.0
 	
-	if distance > max_connection_distance:
-		GLog.debug("Skipping long connection between " + node_a + " and " + node_b + " (distance: " + str(distance) + ")")
+	if distance > max_distance:
+		if layout_config and layout_config.cleanup_remove_long_connections:
+			GLog.debug("Skipping long connection between " + node_a + " and " + node_b + " (distance: " + str(distance) + ")")
+			return
+	
+	if distance < min_distance:
+		GLog.debug("Skipping short connection between " + node_a + " and " + node_b + " (distance: " + str(distance) + ")")
 		return
 	
 	# Create edge  
@@ -411,8 +453,8 @@ func get_serializable_data() -> Dictionary:
 		"player_position": graph.player_position,
 		"start_node": graph.start_node,
 		"generation_seed": graph.get("generation_seed", generation_seed),
-		"max_nodes": max_nodes,
-		"min_nodes": min_nodes
+		"max_nodes": layout_config.max_nodes if layout_config else default_max_nodes,
+		"min_nodes": layout_config.min_nodes if layout_config else default_min_nodes
 	}
 
 func load_from_serializable_data(data: Dictionary):
@@ -429,11 +471,11 @@ func load_from_serializable_data(data: Dictionary):
 		"start_node": ""
 	}
 	
-	# Restore generation parameters
-	if data.has("max_nodes"):
-		max_nodes = data.max_nodes
-	if data.has("min_nodes"):
-		min_nodes = data.min_nodes
+	# Restore generation parameters to config if available
+	if data.has("max_nodes") and layout_config:
+		layout_config.max_nodes = data.max_nodes
+	if data.has("min_nodes") and layout_config:
+		layout_config.min_nodes = data.min_nodes
 	if data.has("generation_seed"):
 		generation_seed = data.generation_seed
 		

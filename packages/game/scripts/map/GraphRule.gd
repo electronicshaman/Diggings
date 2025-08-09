@@ -1,11 +1,14 @@
 extends Resource
 class_name GraphRule
 
+const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
+
 @export var rule_name: String = ""
 @export var weight: float = 1.0  # Probability weight for rule application
 @export var max_applications: int = -1  # -1 for unlimited
 
 var applications_count: int = 0
+var config: MapLayoutConfig  # Reference to layout configuration
 
 # Pattern to match in the graph
 class GraphPattern:
@@ -77,7 +80,7 @@ static func create_destination_rule() -> DestinationPlacementRule:
 class LinearExtensionRule extends GraphRule:
 	func _init():
 		super("Linear Extension", 3.0)
-		max_applications = 20  # Increased to generate more nodes
+		max_applications = 20  # Will be overridden by config
 	
 	func apply(graph: Dictionary, match_info: Dictionary) -> bool:
 		if not can_apply(graph):
@@ -91,29 +94,41 @@ class LinearExtensionRule extends GraphRule:
 		var nodes = graph.get("nodes", {})
 		var edges = graph.get("edges", [])
 		
-		# Create junction node
+		# Create junction node using config
 		var junction_id = "junction_" + str(Time.get_ticks_msec())
-		# Create more varied and interesting layouts with seeded random
-		# Prefer rightward and slightly vertical movement to spread across viewport
-		var angle = SeedManager.get_map_random_float() * PI - PI/2  # -90 to +90 degrees (rightward bias)
-		var distance = SeedManager.get_map_random_float() * 80 + 100  # Distance between 100-180
+		
+		# Use config for positioning if available
+		var angle = config.get_movement_angle() if config else (SeedManager.get_map_random_float() * PI - PI/2)
+		var distance = config.linear_junction_distance if config else (SeedManager.get_map_random_float() * 80 + 100)
 		var junction_pos = nodes[from_node].position + Vector2(cos(angle), sin(angle)) * distance
 		
-		# Keep nodes within reasonable viewport bounds
-		var viewport_size = Vector2(1280, 720)  # Default viewport size
-		junction_pos.x = clamp(junction_pos.x, 50, viewport_size.x - 50)
-		junction_pos.y = clamp(junction_pos.y, 50, viewport_size.y - 50)
+		# Clamp to bounds using config
+		if config:
+			junction_pos = config.clamp_to_bounds(junction_pos)
+		else:
+			junction_pos.x = clamp(junction_pos.x, 50, 1230)
+			junction_pos.y = clamp(junction_pos.y, 50, 670)
 		
 		var junction = MapNode.new(junction_id, MapNode.NodeType.JUNCTION, junction_pos)
 		
-		# Create destination node  
-		var dest_types = [MapNode.NodeType.CAMP, MapNode.NodeType.MINE, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.POI]
-		var dest_type = dest_types[SeedManager.get_map_random_int(0, dest_types.size() - 1)]
+		# Create destination node using config
+		var dest_type
+		if config:
+			dest_type = config.get_weighted_node_type()
+		else:
+			var dest_types = [MapNode.NodeType.CAMP, MapNode.NodeType.MINE, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.POI]
+			dest_type = dest_types[SeedManager.get_map_random_int(0, dest_types.size() - 1)]
+		
 		var dest_id = MapNode.NodeType.keys()[dest_type].to_lower() + "_" + str(Time.get_ticks_msec())
-		# Position destination at another angle from junction
+		
+		# Position destination using config
 		var dest_angle = angle + (SeedManager.get_map_random_float() - 0.5) * PI  # Vary by up to 90 degrees
-		var dest_distance = SeedManager.get_map_random_float() * 80 + 60  # Distance between 60-140
+		var dest_distance = config.linear_destination_distance if config else (SeedManager.get_map_random_float() * 80 + 60)
 		var dest_pos = junction_pos + Vector2(cos(dest_angle), sin(dest_angle)) * dest_distance
+		
+		if config:
+			dest_pos = config.clamp_to_bounds(dest_pos)
+		
 		var destination = MapNode.new(dest_id, dest_type, dest_pos)
 		
 		# Add nodes to graph
@@ -140,7 +155,7 @@ class LinearExtensionRule extends GraphRule:
 class BranchCreationRule extends GraphRule:
 	func _init():
 		super("Branch Creation", 2.0)
-		max_applications = 10  # Increased to generate more branches
+		max_applications = 10  # Will be overridden by config
 	
 	func apply(graph: Dictionary, match_info: Dictionary) -> bool:
 		if not can_apply(graph):
@@ -157,23 +172,37 @@ class BranchCreationRule extends GraphRule:
 		if nodes[junction_node].connections.size() >= 3:
 			return false
 		
-		# Create new branch destination
-		var dest_types = [MapNode.NodeType.MINE, MapNode.NodeType.POI]
-		var dest_type = dest_types[SeedManager.get_map_random_int(0, dest_types.size() - 1)]
+		# Create new branch destination using config
+		var dest_type
+		if config:
+			# Branches prefer mines and POIs
+			var branch_types = [MapNode.NodeType.MINE, MapNode.NodeType.POI]
+			dest_type = branch_types[SeedManager.get_map_random_int(0, branch_types.size() - 1)]
+		else:
+			var dest_types = [MapNode.NodeType.MINE, MapNode.NodeType.POI]
+			dest_type = dest_types[SeedManager.get_map_random_int(0, dest_types.size() - 1)]
+		
 		var dest_id = MapNode.NodeType.keys()[dest_type].to_lower() + "_branch_" + str(Time.get_ticks_msec())
 		var base_pos = nodes[junction_node].position
-		# Create branches at interesting angles
+		
+		# Create branches using config
 		var branch_angle = SeedManager.get_map_random_float() * TAU
-		var branch_distance = SeedManager.get_map_random_float() * 60 + 80  # Distance between 80-140
+		var branch_distance = config.branch_distance if config else (SeedManager.get_map_random_float() * 60 + 80)
 		var dest_pos = base_pos + Vector2(cos(branch_angle), sin(branch_angle)) * branch_distance
+		
+		if config:
+			dest_pos = config.clamp_to_bounds(dest_pos)
+		
 		var destination = MapNode.new(dest_id, dest_type, dest_pos)
 		
 		# Add to graph
 		nodes[dest_id] = destination
 		
-		# Create edge
+		# Create edge using config
 		var edge = MapEdge.new(junction_node, dest_id, SeedManager.get_map_random_int(2, 5))
-		edge.difficulty = SeedManager.get_map_random_int(2, 4)  # Branches are often more dangerous
+		var base_difficulty = SeedManager.get_map_random_int(1, 3)
+		var difficulty_bonus = config.branch_difficulty_bonus if config else 2
+		edge.difficulty = base_difficulty + difficulty_bonus  # Branches are often more dangerous
 		edges.append(edge)
 		
 		# Connect nodes

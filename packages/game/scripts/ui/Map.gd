@@ -8,6 +8,7 @@ const MapNode = preload("res://scripts/map/MapNode.gd")
 const MapEdge = preload("res://scripts/map/MapEdge.gd") 
 const MapGenerator = preload("res://scripts/map/MapGenerator.gd")
 const MapVisualizer = preload("res://scripts/map/MapVisualizer.gd")
+const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 
 @onready var view_deck_button = $HeaderPanel/HeaderContent/ViewDeckButton
 @onready var floor_label = $HeaderPanel/HeaderContent/FloorLabel
@@ -28,6 +29,29 @@ func _ready():
 	GLog.debug("Set ScrollContainer size to: " + str(map_scroll_container.size))
 	
 	generate_new_map()
+
+# Public method to regenerate map (useful for config testing)
+func regenerate_map():
+	GLog.info("Regenerating map...")
+	
+	# Reload config in case it changed
+	if map_generator:
+		map_generator.load_default_config()
+		map_generator.initialize_rules()
+	
+	generate_new_map()
+
+# Hot-reload config for testing
+func reload_config():
+	if map_generator and map_generator.layout_config:
+		var config_path = "res://data/map_layout_config.tres"
+		if ResourceLoader.exists(config_path):
+			map_generator.layout_config = load(config_path) as MapLayoutConfig
+			map_generator.initialize_rules()
+			GLog.info("Reloaded map configuration")
+			regenerate_map()
+		else:
+			GLog.warning("Config file not found: " + config_path)
 
 func setup_graph_system():
 	# Create map generator
