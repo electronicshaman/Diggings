@@ -2,15 +2,14 @@
 
 ## Core Game Identity
 
-**Genre**: Roguelite card battler with hex-based exploration  
+**Genre**: Roguelite card battler   
 **Setting**: Australian gold rush meets Lovecraftian horror  
-**Core Loop**: Explore hex map → Find encounters → 1v1 card duels → Manage resources → Die or complete objectives
+**Core Loop**: Explore map → Find encounters → 1v1 card duels → Manage resources → Die or complete objectives
 
 ## Key Differentiators from Slay the Spire
 
 ### 1. Open Hex Exploration vs Linear Paths
 
-- **Hexagonal world map** with fog of war instead of branching node paths
 - **Player-driven exploration** - choose your own path across the outback
 - **Multiple objectives per run** (claim gold veins, seal breaches, hunt bounties) rather than just "reach the top"
 
