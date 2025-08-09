@@ -9,6 +9,7 @@ var duel_manager: Node
 var test_cards: Array[CardData] = []
 var test_enemies: Array[Resource] = []
 var current_duel_state: Resource
+var player_character: CharacterClass
 
 func _ready() -> void:
 	GLog.debug("GameController initialized - Managing the cosmic game state")
@@ -29,9 +30,25 @@ func initialize(duel_manager_ref: Node) -> void:
 
 func load_test_content() -> void:
 	GLog.debug("Loading test content...")
-	load_test_cards()
+	load_bushranger_character()
 	load_test_enemies()
 	test_content_loaded.emit()
+
+func load_bushranger_character() -> void:
+	GLog.debug("Loading Bushranger character class...")
+	var character_path = "res://data/characters/bushranger.tres"
+	
+	if ResourceLoader.exists(character_path):
+		player_character = load(character_path) as CharacterClass
+		if player_character:
+			GLog.debug("Loaded character: " + player_character.character_class_name)
+			# Load the character's starting deck
+			test_cards = player_character.load_starting_deck()
+			GLog.debug("Loaded %d cards for starting deck" % test_cards.size())
+		else:
+			GLog.error("Failed to load character resource at: " + character_path)
+	else:
+		GLog.error("Character resource not found: " + character_path)
 
 func load_test_cards() -> void:
 	var card_paths := [
@@ -67,7 +84,7 @@ func load_test_enemies() -> void:
 			GLog.warn("Enemy resource not found: " + path)
 
 func start_test_duel() -> void:
-	if test_cards.is_empty() or test_enemies.is_empty():
+	if test_cards.is_empty() or test_enemies.is_empty() or not player_character:
 		GLog.error("Cannot start duel - No test content loaded!")
 		return
 	
@@ -75,14 +92,41 @@ func start_test_duel() -> void:
 		GLog.error("DuelManager not initialized!")
 		return
 	
-	var player_deck: Array[CardData] = []
-	for i in range(15):
-		player_deck.append(test_cards[i % test_cards.size()])
+	# Apply character class to player data
+	apply_character_to_player_data()
 	
+	# Use the character's starting deck (already loaded into test_cards)
+	var player_deck: Array[CardData] = test_cards.duplicate()
 	var enemy := test_enemies[0]
 	
-	GLog.debug("Starting test duel with enemy: " + enemy.enemy_name)
+	GLog.debug("Starting duel as %s with enemy: %s" % [player_character.character_class_name, enemy.enemy_name])
 	duel_manager.start_new_duel(player_deck, enemy)
+
+func apply_character_to_player_data() -> void:
+	if not current_duel_state or not current_duel_state.player_data or not player_character:
+		GLog.error("Cannot apply character - missing player data or character")
+		return
+	
+	var player_data = current_duel_state.player_data
+	
+	# Set the character class
+	player_data.set_character_class(player_character)
+	
+	# Apply base stats from character
+	if player_data.stats:
+		player_data.stats.max_health = player_character.base_health
+		player_data.stats.current_health = player_character.base_health
+		player_data.stats.max_sanity = player_character.base_sanity
+		player_data.stats.current_sanity = player_character.base_sanity
+		player_data.stats.max_energy = player_character.base_energy
+		player_data.stats.current_energy = player_character.base_energy
+	
+	GLog.debug("Applied %s stats: %d health, %d sanity, %d energy" % [
+		player_character.character_class_name,
+		player_character.base_health,
+		player_character.base_sanity,
+		player_character.base_energy
+	])
 
 func get_deck_count() -> int:
 	if duel_manager and duel_manager.has_method("get_deck_count"):

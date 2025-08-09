@@ -17,7 +17,7 @@ class_name CharacterClass
 
 # Starting deck composition
 @export_group("Starting Deck")
-@export var starting_deck: Array[CardData] = []
+@export var starting_deck_paths: Array[String] = []  # Paths to starting cards
 @export var starting_deck_size: int = 15
 
 # Character mechanics and abilities
@@ -103,3 +103,24 @@ func get_all_abilities() -> Array[String]:
 	all_abilities.append_array(passive_abilities)
 	all_abilities.append_array(active_abilities)
 	return all_abilities
+
+func load_starting_deck() -> Array[CardData]:
+	"""Load starting deck cards from their resource paths"""
+	var deck: Array[CardData] = []
+	
+	for card_path in starting_deck_paths:
+		if ResourceLoader.exists(card_path):
+			var card_data = load(card_path) as CardData
+			if card_data:
+				deck.append(card_data)
+			else:
+				GLog.warn("Failed to load card at path: " + card_path)
+		else:
+			GLog.warn("Card resource not found: " + card_path)
+	
+	# Fill deck to required size by repeating cards
+	if deck.size() > 0 and deck.size() < starting_deck_size:
+		while deck.size() < starting_deck_size:
+			deck.append(deck[deck.size() % starting_deck_paths.size()])
+	
+	return deck

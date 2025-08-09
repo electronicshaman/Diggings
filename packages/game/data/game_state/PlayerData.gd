@@ -74,10 +74,8 @@ func set_character_class(new_class: CharacterClass):
 		character_class = new_class
 		if new_class:
 			character_class_name = new_class.character_class_name
-			# Apply class bonuses to stats
-			stats.modify_max_health(new_class.starting_health_bonus)
-			stats.modify_max_energy(new_class.starting_energy_bonus)
-			# Note: sanity_bonus doesn't exist in CharacterClass, removing this line
+			# Note: Character base stats are applied directly in GameController
+			# This method just sets the class reference for card affinity checks
 		_emit_change("character_class_changed", null, new_class)
 
 func get_display_name() -> String:

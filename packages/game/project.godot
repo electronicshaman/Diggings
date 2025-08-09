@@ -27,10 +27,6 @@ GameManager="*res://scripts/autoloads/game_manager.gd"
 SceneManager="*res://scripts/autoloads/scene_manager.gd"
 GDAIMCPRuntime="*res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd"
 
-[debug]
-
-gdscript/warnings/untyped_declaration=0
-
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg")
