@@ -9,9 +9,9 @@ const MapEdge = preload("res://scripts/map/MapEdge.gd")
 const MapGenerator = preload("res://scripts/map/MapGenerator.gd")
 const MapVisualizer = preload("res://scripts/map/MapVisualizer.gd")
 
-@onready var view_deck_button = $UIContainer/HeaderPanel/HeaderContent/ViewDeckButton
-@onready var floor_label = $UIContainer/HeaderPanel/HeaderContent/FloorLabel
-@onready var map_scroll_container = $UIContainer/MapScrollContainer
+@onready var view_deck_button = $HeaderPanel/HeaderContent/ViewDeckButton
+@onready var floor_label = $HeaderPanel/HeaderContent/FloorLabel
+@onready var map_scroll_container = $MapScrollContainer
 
 # Graph generation system
 var map_generator: MapGenerator
@@ -20,6 +20,13 @@ var map_visualizer: MapVisualizer
 func _ready():
 	setup_graph_system()
 	setup_button_connections()
+	
+	# Force ScrollContainer to fill the viewport below header
+	var viewport_size = get_viewport().get_visible_rect().size
+	map_scroll_container.position = Vector2(0, 80)
+	map_scroll_container.size = Vector2(viewport_size.x, viewport_size.y - 80)
+	GLog.debug("Set ScrollContainer size to: " + str(map_scroll_container.size))
+	
 	generate_new_map()
 
 func setup_graph_system():
@@ -29,20 +36,18 @@ func setup_graph_system():
 	map_generator.debug_show_all_nodes = true
 	add_child(map_generator)
 	
+	# ScrollContainer now fills the entire viewport below the header - no special sizing needed!
+	
 	# Create visualizer and add it to the scroll container
 	map_visualizer = MapVisualizer.new()
 	map_visualizer.setup(map_generator)
 	
-	# Clear the old static map layers
-	var map_layers = $UIContainer/MapScrollContainer/MapLayers
-	if map_layers:
-		map_layers.queue_free()
+	# No need to clear static layers since we restructured the scene
 	
-	# Properly integrate MapVisualizer with ScrollContainer
+	# Add MapVisualizer to ScrollContainer (now with proper size flags)
 	map_scroll_container.add_child(map_visualizer)
 	
-	# Set up proper anchoring to fill the scroll container
-	map_visualizer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Make visible
 	map_visualizer.visible = true
 	
 	# Connect visualizer signals
@@ -78,9 +83,14 @@ func generate_new_map():
 	
 	# Update visualizer size to match the generated map bounds
 	var map_bounds = map_visualizer.get_graph_bounds()
-	map_visualizer.custom_minimum_size = map_bounds.size
-	map_visualizer.size = map_bounds.size
+	# Use set_deferred to avoid anchor conflicts
+	map_visualizer.set_deferred("custom_minimum_size", map_bounds.size)
+	map_visualizer.set_deferred("size", map_bounds.size)
 	GLog.debug("Updated visualizer size to: " + str(map_bounds.size))
+	
+	# Force visibility for debugging
+	map_visualizer.call_deferred("force_visibility")
+	map_visualizer.call_deferred("debug_state")
 
 func restore_existing_map():
 	# Restore map from stored game data

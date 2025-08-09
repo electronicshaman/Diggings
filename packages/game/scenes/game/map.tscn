@@ -13,48 +13,26 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.08, 0.12, 0.08, 1)
 
-[node name="UIContainer" type="VBoxContainer" parent="."]
+[node name="MapScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 80.0
 
-[node name="HeaderPanel" type="Panel" parent="UIContainer"]
+[node name="HeaderPanel" type="Panel" parent="."]
 custom_minimum_size = Vector2(0, 80)
-layout_mode = 2
+layout_mode = 0
+anchor_right = 1.0
 
-[node name="HeaderContent" type="HBoxContainer" parent="UIContainer/HeaderPanel"]
+[node name="HeaderContent" type="HBoxContainer" parent="HeaderPanel"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="FloorLabel" type="Label" parent="UIContainer/HeaderPanel/HeaderContent"]
+[node name="FloorLabel" type="Label" parent="HeaderPanel/HeaderContent"]
 layout_mode = 2
 text = "Floor 1 - Act 1"
 
-[node name="ViewDeckButton" type="Button" parent="UIContainer/HeaderPanel/HeaderContent"]
+[node name="ViewDeckButton" type="Button" parent="HeaderPanel/HeaderContent"]
 layout_mode = 2
 text = "View Deck"
-
-[node name="MapScrollContainer" type="ScrollContainer" parent="UIContainer"]
-layout_mode = 2
-
-[node name="MapLayers" type="VBoxContainer" parent="UIContainer/MapScrollContainer"]
-layout_mode = 2
-
-[node name="Layer1" type="HBoxContainer" parent="UIContainer/MapScrollContainer/MapLayers"]
-layout_mode = 2
-
-[node name="StartNode" type="Button" parent="UIContainer/MapScrollContainer/MapLayers/Layer1"]
-layout_mode = 2
-text = "Combat"
-
-[node name="Layer2" type="HBoxContainer" parent="UIContainer/MapScrollContainer/MapLayers"]
-layout_mode = 2
-
-[node name="ShopNode" type="Button" parent="UIContainer/MapScrollContainer/MapLayers/Layer2"]
-layout_mode = 2
-text = "Shop"
-
-[node name="EventNode" type="Button" parent="UIContainer/MapScrollContainer/MapLayers/Layer2"]
-layout_mode = 2
-text = "Event"

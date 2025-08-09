@@ -33,9 +33,11 @@ func _init():
 	name = "MapVisualizer"
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	
-	# Set up layout for scroll container
-	set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	# Set up basic position
 	position = Vector2.ZERO
+	
+	# Debug output
+	GLog.debug("MapVisualizer _init called")
 
 func setup(generator: MapGenerator):
 	map_generator = generator
@@ -52,11 +54,19 @@ func setup(generator: MapGenerator):
 	map_generator.node_discovered.connect(_on_node_discovered)
 	map_generator.player_moved.connect(_on_player_moved)
 	
-	GLog.debug("MapVisualizer setup complete")
+	GLog.debug("MapVisualizer setup complete - connected to generator")
 
 func visualize_graph(graph: Dictionary):
+	GLog.debug("Starting graph visualization...")
+	GLog.debug("Graph has " + str(graph.get("nodes", {}).size()) + " nodes")
+	
 	clear_visualization()
 	graph_data = graph
+	
+	# Ensure we have valid graph data
+	if not graph_data.has("nodes") or graph_data.nodes.is_empty():
+		GLog.debug("No nodes to visualize!")
+		return
 	
 	# Set proper size based on graph bounds
 	setup_container_size()
@@ -67,6 +77,12 @@ func visualize_graph(graph: Dictionary):
 	
 	# Initial update
 	update_visibility()
+	
+	# Force visibility
+	visible = true
+	modulate = Color.WHITE
+	
+	GLog.debug("Graph visualization complete - visible: " + str(visible) + ", children: " + str(get_child_count()))
 
 func clear_visualization():
 	# Remove all node buttons
@@ -93,8 +109,10 @@ func create_edge_visual(edge: MapEdge):
 		return
 	
 	var line = Line2D.new()
-	line.add_point(from_node.position)
-	line.add_point(to_node.position)
+	# Apply offset to ensure all edges are positioned within positive coordinates
+	var graph_offset = get_meta("graph_offset", Vector2.ZERO)
+	line.add_point(from_node.position - graph_offset)
+	line.add_point(to_node.position - graph_offset)
 	line.width = edge_width
 	line.default_color = edge_color
 	line.z_index = -1  # Behind nodes
@@ -111,10 +129,15 @@ func create_nodes():
 
 func create_node_visual(node_id: String, node: MapNode):
 	var button = Button.new()
-	button.custom_minimum_size = Vector2(node_radius * 2, node_radius * 2)
-	button.position = node.position - Vector2(node_radius, node_radius)
+	button.custom_minimum_size = Vector2(node_radius * 4, node_radius * 2)  # Wider for text
+	
+	# Apply offset to ensure all nodes are positioned within positive coordinates
+	var graph_offset = get_meta("graph_offset", Vector2.ZERO)
+	var adjusted_position = node.position - graph_offset - Vector2(node_radius, node_radius)
+	button.position = adjusted_position
+	
 	button.flat = false  # Make buttons visible
-	button.text = node.get_type_name()[0]  # Show first letter of type
+	button.text = node.get_type_name()[0]  # Show full type name
 	
 	# Style the button based on node type
 	style_node_button(button, node)
@@ -271,6 +294,8 @@ func clear_move_highlights():
 func setup_container_size():
 	var bounds = get_graph_bounds()
 	
+	GLog.debug("Graph bounds: " + str(bounds))
+	
 	# Set custom minimum size to contain all nodes
 	custom_minimum_size = bounds.size
 	
@@ -280,36 +305,91 @@ func setup_container_size():
 	if custom_minimum_size.y < 400:
 		custom_minimum_size.y = 400
 	
-	# Set size to match the minimum size
-	size = custom_minimum_size
+	# Use set_deferred to avoid anchor conflicts
+	set_deferred("size", custom_minimum_size)
 	
-	# Add a temporary background for debugging
+	# Remove any existing background before adding new one
+	for child in get_children():
+		if child.name == "Background":
+			child.queue_free()
+	
+	# Add a subtle background
 	var bg = ColorRect.new()
-	bg.color = Color(0.1, 0.1, 0.2, 0.5)  # Semi-transparent blue
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.name = "Background"
+	bg.color = Color(0.05, 0.08, 0.05, 1)  # Dark green background
+	bg.position = Vector2.ZERO
+	bg.size = custom_minimum_size
 	bg.z_index = -10  # Behind everything else
 	add_child(bg)
+	move_child(bg, 0)  # Ensure it's the first child
 	
 	GLog.debug("MapVisualizer size set to: " + str(custom_minimum_size))
+	GLog.debug("Background added, total children: " + str(get_child_count()))
 
-# Utility functions for external access
 func get_graph_bounds() -> Rect2:
-	if graph_data.nodes.is_empty():
+	if not graph_data.has("nodes") or graph_data.nodes.is_empty():
+		GLog.debug("No nodes for bounds calculation, using default")
 		return Rect2(0, 0, 800, 600)
 	
 	var min_pos = Vector2(INF, INF)
 	var max_pos = Vector2(-INF, -INF)
 	
 	for node in graph_data.nodes.values():
-		min_pos.x = min(min_pos.x, node.position.x)
-		min_pos.y = min(min_pos.y, node.position.y)
-		max_pos.x = max(max_pos.x, node.position.x)
-		max_pos.y = max(max_pos.y, node.position.y)
+		if node and node.has_method("get") and node.position:
+			min_pos.x = min(min_pos.x, node.position.x)
+			min_pos.y = min(min_pos.y, node.position.y)
+			max_pos.x = max(max_pos.x, node.position.x)
+			max_pos.y = max(max_pos.y, node.position.y)
 	
 	var padding = node_radius * 2
-	return Rect2(
-		min_pos.x - padding,
-		min_pos.y - padding,
+	# Ensure bounds always start at (0,0) to prevent negative positioning issues
+	var result = Rect2(
+		0,
+		0,
 		max_pos.x - min_pos.x + padding * 2,
 		max_pos.y - min_pos.y + padding * 2
 	)
+	
+	# Store offset for repositioning nodes
+	set_meta("graph_offset", Vector2(min_pos.x - padding, min_pos.y - padding))
+	
+	GLog.debug("Calculated bounds: " + str(result))
+	GLog.debug("Graph offset: " + str(Vector2(min_pos.x - padding, min_pos.y - padding)))
+	return result
+
+# Add a debug method to check current state
+func debug_state():
+	GLog.debug("=== MapVisualizer Debug State ===")
+	GLog.debug("Visible: " + str(visible))
+	GLog.debug("Modulate: " + str(modulate))
+	GLog.debug("Size: " + str(size))
+	GLog.debug("Position: " + str(position))
+	GLog.debug("Children count: " + str(get_child_count()))
+	GLog.debug("Node buttons: " + str(node_buttons.size()))
+	GLog.debug("Edge lines: " + str(edge_lines.size()))
+	GLog.debug("Graph data nodes: " + str(graph_data.get("nodes", {}).size()))
+	GLog.debug("Parent: " + str(get_parent().name if get_parent() else "None"))
+	if get_parent():
+		GLog.debug("Parent size: " + str(get_parent().size))
+		GLog.debug("Parent visible: " + str(get_parent().visible))
+	GLog.debug("================================")
+
+# Force visibility for debugging
+func force_visibility():
+	visible = true
+	modulate = Color.WHITE
+	z_index = 100  # Bring to front
+	
+	# Make all children visible
+	for child in get_children():
+		if child is Button:
+			child.visible = true
+			child.modulate = Color.WHITE
+		elif child is Line2D:
+			child.visible = true
+			child.modulate = Color.WHITE
+		elif child is ColorRect:
+			child.visible = true
+			child.modulate = Color.WHITE
+	
+	GLog.debug("Forced visibility on MapVisualizer and all children")

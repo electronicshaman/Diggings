@@ -77,7 +77,7 @@ static func create_destination_rule() -> DestinationPlacementRule:
 class LinearExtensionRule extends GraphRule:
 	func _init():
 		super("Linear Extension", 3.0)
-		max_applications = 8  # Limit how many times we extend linearly
+		max_applications = 20  # Increased to generate more nodes
 	
 	func apply(graph: Dictionary, match_info: Dictionary) -> bool:
 		if not can_apply(graph):
@@ -93,14 +93,27 @@ class LinearExtensionRule extends GraphRule:
 		
 		# Create junction node
 		var junction_id = "junction_" + str(Time.get_ticks_msec())
-		var junction_pos = nodes[from_node].position + Vector2(randf_range(100, 200), randf_range(-50, 50))
+		# Create more varied and interesting layouts with seeded random
+		# Prefer rightward and slightly vertical movement to spread across viewport
+		var angle = SeedManager.get_map_random_float() * PI - PI/2  # -90 to +90 degrees (rightward bias)
+		var distance = SeedManager.get_map_random_float() * 80 + 100  # Distance between 100-180
+		var junction_pos = nodes[from_node].position + Vector2(cos(angle), sin(angle)) * distance
+		
+		# Keep nodes within reasonable viewport bounds
+		var viewport_size = Vector2(1280, 720)  # Default viewport size
+		junction_pos.x = clamp(junction_pos.x, 50, viewport_size.x - 50)
+		junction_pos.y = clamp(junction_pos.y, 50, viewport_size.y - 50)
+		
 		var junction = MapNode.new(junction_id, MapNode.NodeType.JUNCTION, junction_pos)
 		
 		# Create destination node  
 		var dest_types = [MapNode.NodeType.CAMP, MapNode.NodeType.MINE, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.POI]
-		var dest_type = dest_types[randi() % dest_types.size()]
+		var dest_type = dest_types[SeedManager.get_map_random_int(0, dest_types.size() - 1)]
 		var dest_id = MapNode.NodeType.keys()[dest_type].to_lower() + "_" + str(Time.get_ticks_msec())
-		var dest_pos = junction_pos + Vector2(randf_range(80, 150), randf_range(-40, 40))
+		# Position destination at another angle from junction
+		var dest_angle = angle + (SeedManager.get_map_random_float() - 0.5) * PI  # Vary by up to 90 degrees
+		var dest_distance = SeedManager.get_map_random_float() * 80 + 60  # Distance between 60-140
+		var dest_pos = junction_pos + Vector2(cos(dest_angle), sin(dest_angle)) * dest_distance
 		var destination = MapNode.new(dest_id, dest_type, dest_pos)
 		
 		# Add nodes to graph
@@ -108,8 +121,8 @@ class LinearExtensionRule extends GraphRule:
 		nodes[dest_id] = destination
 		
 		# Create edges
-		var edge1 = MapEdge.new(from_node, junction_id, randi_range(1, 3))
-		var edge2 = MapEdge.new(junction_id, dest_id, randi_range(1, 4))
+		var edge1 = MapEdge.new(from_node, junction_id, SeedManager.get_map_random_int(1, 3))
+		var edge2 = MapEdge.new(junction_id, dest_id, SeedManager.get_map_random_int(1, 4))
 		edges.append(edge1)
 		edges.append(edge2)
 		
@@ -127,7 +140,7 @@ class LinearExtensionRule extends GraphRule:
 class BranchCreationRule extends GraphRule:
 	func _init():
 		super("Branch Creation", 2.0)
-		max_applications = 4
+		max_applications = 10  # Increased to generate more branches
 	
 	func apply(graph: Dictionary, match_info: Dictionary) -> bool:
 		if not can_apply(graph):
@@ -146,18 +159,21 @@ class BranchCreationRule extends GraphRule:
 		
 		# Create new branch destination
 		var dest_types = [MapNode.NodeType.MINE, MapNode.NodeType.POI]
-		var dest_type = dest_types[randi() % dest_types.size()]
+		var dest_type = dest_types[SeedManager.get_map_random_int(0, dest_types.size() - 1)]
 		var dest_id = MapNode.NodeType.keys()[dest_type].to_lower() + "_branch_" + str(Time.get_ticks_msec())
 		var base_pos = nodes[junction_node].position
-		var dest_pos = base_pos + Vector2(randf_range(-100, 100), randf_range(80, 150))
+		# Create branches at interesting angles
+		var branch_angle = SeedManager.get_map_random_float() * TAU
+		var branch_distance = SeedManager.get_map_random_float() * 60 + 80  # Distance between 80-140
+		var dest_pos = base_pos + Vector2(cos(branch_angle), sin(branch_angle)) * branch_distance
 		var destination = MapNode.new(dest_id, dest_type, dest_pos)
 		
 		# Add to graph
 		nodes[dest_id] = destination
 		
 		# Create edge
-		var edge = MapEdge.new(junction_node, dest_id, randi_range(2, 5))
-		edge.difficulty = randi_range(2, 4)  # Branches are often more dangerous
+		var edge = MapEdge.new(junction_node, dest_id, SeedManager.get_map_random_int(2, 5))
+		edge.difficulty = SeedManager.get_map_random_int(2, 4)  # Branches are often more dangerous
 		edges.append(edge)
 		
 		# Connect nodes
@@ -190,7 +206,7 @@ class DestinationPlacementRule extends GraphRule:
 		
 		# Choose new type based on position and existing nearby nodes
 		var new_types = [MapNode.NodeType.CAMP, MapNode.NodeType.SETTLEMENT]
-		var new_type = new_types[randi() % new_types.size()]
+		var new_type = new_types[SeedManager.get_map_random_int(0, new_types.size() - 1)]
 		
 		junction.type = new_type
 		junction.id = MapNode.NodeType.keys()[new_type].to_lower() + "_" + str(Time.get_ticks_msec())

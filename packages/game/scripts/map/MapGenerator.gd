@@ -4,8 +4,8 @@ class_name MapGenerator
 const DEBUG_ENABLED: bool = true
 
 # Generation parameters
-@export var max_nodes: int = 15
-@export var min_nodes: int = 8
+@export var max_nodes: int = 30
+@export var min_nodes: int = 20
 @export var generation_seed: int = -1
 @export var debug_show_all_nodes: bool = false
 
@@ -86,7 +86,10 @@ func generate_map(seed: int = -1) -> Dictionary:
 
 func create_start_node():
 	var start_id = "start_camp"
-	var start_node = MapNode.new(start_id, MapNode.NodeType.CAMP, Vector2(50, 50))
+	# Position start node more centrally in the viewport
+	var viewport_size = Vector2(1280, 720)  # Default size, will be adjusted by MapVisualizer
+	var start_pos = Vector2(viewport_size.x * 0.15, viewport_size.y * 0.5)  # Start on left side, vertically centered
+	var start_node = MapNode.new(start_id, MapNode.NodeType.CAMP, start_pos)
 	start_node.discovered = true
 	start_node.visited = true
 	
@@ -196,10 +199,13 @@ func ensure_graph_connectivity():
 	
 	for node_id in all_nodes:
 		if node_id not in reachable:
-			# Connect isolated node to a random reachable node
-			var random_reachable = reachable[SeedManager.get_map_random_int(0, reachable.size() - 1)]
-			connect_nodes(node_id, random_reachable)
-			GLog.debug("Connected isolated node " + node_id + " to " + random_reachable)
+			# Connect isolated node to the NEAREST reachable node
+			var nearest_reachable = find_nearest_node(node_id, reachable)
+			if nearest_reachable != "":
+				connect_nodes(node_id, nearest_reachable)
+				GLog.debug("Connected isolated node " + node_id + " to " + nearest_reachable)
+				# Update reachable list
+				reachable.append(node_id)
 
 func find_reachable_nodes(start_node: String) -> Array[String]:
 	var visited: Array[String] = []
@@ -220,8 +226,38 @@ func find_reachable_nodes(start_node: String) -> Array[String]:
 	
 	return visited
 
+func find_nearest_node(from_node_id: String, candidate_nodes: Array[String]) -> String:
+	if candidate_nodes.is_empty() or not graph.nodes.has(from_node_id):
+		return ""
+	
+	var from_node = graph.nodes[from_node_id]
+	var min_distance = INF
+	var nearest_id = ""
+	
+	for candidate_id in candidate_nodes:
+		if graph.nodes.has(candidate_id):
+			var candidate_node = graph.nodes[candidate_id]
+			var distance = from_node.position.distance_to(candidate_node.position)
+			if distance < min_distance:
+				min_distance = distance
+				nearest_id = candidate_id
+	
+	return nearest_id
+
 func connect_nodes(node_a: String, node_b: String):
 	if not graph.nodes.has(node_a) or not graph.nodes.has(node_b):
+		return
+	
+	# Check if they're already connected
+	if graph.nodes[node_a].is_connected_to(node_b):
+		return
+	
+	# Only connect if distance is reasonable (prevent long stretches)
+	var distance = graph.nodes[node_a].position.distance_to(graph.nodes[node_b].position)
+	var max_connection_distance = 250.0  # Maximum distance for connections
+	
+	if distance > max_connection_distance:
+		GLog.debug("Skipping long connection between " + node_a + " and " + node_b + " (distance: " + str(distance) + ")")
 		return
 	
 	# Create edge  
@@ -233,6 +269,8 @@ func connect_nodes(node_a: String, node_b: String):
 	# Update node connections
 	graph.nodes[node_a].connect_to(node_b)
 	graph.nodes[node_b].connect_to(node_a)
+	
+	GLog.debug("Connected " + node_a + " to " + node_b + " (distance: " + str(distance) + ")")
 
 func balance_node_types():
 	# Ensure we have at least one of each important type
