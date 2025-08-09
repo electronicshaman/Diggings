@@ -3,6 +3,7 @@ class_name MapGenerator
 
 const DEBUG_ENABLED: bool = true
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
+const ForceDirectedLayout = preload("res://scripts/map/ForceDirectedLayout.gd")
 
 # Map layout configuration
 @export var layout_config: MapLayoutConfig
@@ -74,9 +75,14 @@ func initialize_rules():
 	destination_rule.max_applications = layout_config.destination_max_applications
 	destination_rule.config = layout_config
 	
+	# Add minimum connection rule (cleanup rule, not applied during generation)
+	var min_connection_rule = GraphRule.MinimumConnectionRule.new()
+	min_connection_rule.config = layout_config
+	
 	rules.append(linear_rule)
 	rules.append(branch_rule)
 	rules.append(destination_rule)
+	rules.append(min_connection_rule)
 	
 	GLog.debug("Initialized " + str(rules.size()) + " graph generation rules with config")
 
@@ -222,11 +228,18 @@ func post_process_graph():
 	# Ensure connectivity
 	ensure_graph_connectivity()
 	
+	# Apply minimum connections to prevent dead ends
+	apply_minimum_connections()
+	
 	# Balance node types
 	balance_node_types()
 	
 	# Enforce connection limits
 	enforce_connection_limits()
+	
+	# Apply force-directed layout if enabled
+	if layout_config and layout_config.physics_enabled:
+		apply_force_directed_layout()
 	
 	# Set up fog of war (only start node discovered)
 	setup_fog_of_war()
@@ -659,3 +672,30 @@ func load_from_serializable_data(data: Dictionary):
 	graph.generation_seed = data.get("generation_seed", generation_seed)
 	
 	GLog.debug("Map restored from serializable data: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+
+func apply_minimum_connections():
+	"""Apply the minimum connection rule to prevent dead ends"""
+	# Find the minimum connection rule
+	var min_connection_rule = null
+	for rule in rules:
+		if rule is GraphRule.MinimumConnectionRule:
+			min_connection_rule = rule
+			break
+	
+	if min_connection_rule:
+		GLog.debug("Applying minimum connection rule...")
+		min_connection_rule.apply(graph, {})
+	else:
+		GLog.warn("No minimum connection rule found")
+
+func apply_force_directed_layout():
+	"""Apply force-directed layout to optimize node positions"""
+	GLog.debug("Applying force-directed layout optimization...")
+	
+	var layout_optimizer = ForceDirectedLayout.new()
+	layout_optimizer.setup(layout_config)
+	
+	# Apply the layout optimization
+	graph = layout_optimizer.apply_layout(graph)
+	
+	GLog.debug("Force-directed layout optimization complete")

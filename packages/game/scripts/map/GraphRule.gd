@@ -386,3 +386,82 @@ func _find_valid_position_with_spacing(graph: Dictionary, base_pos: Vector2, pre
 		return config.clamp_to_bounds(base_pos)
 	else:
 		return base_pos
+
+
+# Minimum Connection Rule - ensures nodes have at least 2 connections to prevent dead ends
+class MinimumConnectionRule extends GraphRule:
+	func _init():
+		super("Minimum Connection", 0.0)  # This is a cleanup rule, not weighted
+		max_applications = -1  # Unlimited applications
+	
+	func can_apply(graph_state: Dictionary) -> bool:
+		# Always applicable - this is a cleanup rule
+		return true
+	
+	func apply(graph: Dictionary, match_info: Dictionary) -> bool:
+		var nodes = graph.get("nodes", {})
+		var edges = graph.get("edges", [])
+		var connections_added = 0
+		
+		# Find nodes with insufficient connections
+		var under_connected_nodes = []
+		var min_connections = 2
+		
+		for node_id in nodes:
+			var node = nodes[node_id]
+			# Skip start node and intentional endpoints (some node types should be endpoints)
+			if node_id == graph.get("start_node", "") or node.connections.size() >= min_connections:
+				continue
+			
+			# Allow some node types to be endpoints (like remote mines or special POIs)
+			if node.type == MapNode.NodeType.POI and node.connections.size() >= 1:
+				continue
+			
+			under_connected_nodes.append(node_id)
+		
+		GLog.debug("MinimumConnectionRule: Found " + str(under_connected_nodes.size()) + " under-connected nodes")
+		
+		# Connect under-connected nodes to nearby nodes
+		for node_id in under_connected_nodes:
+			var node = nodes[node_id]
+			var connections_needed = min_connections - node.connections.size()
+			
+			# Find potential connection candidates (nodes not already connected)
+			var candidates = []
+			for other_id in nodes:
+				if other_id == node_id or node.is_connected_to(other_id):
+					continue
+				
+				var other_node = nodes[other_id]
+				var distance = node.position.distance_to(other_node.position)
+				var max_distance = config.connection_max_distance if config else 250.0
+				
+				if distance <= max_distance:
+					candidates.append({"id": other_id, "distance": distance, "connections": other_node.connections.size()})
+			
+			# Sort candidates by distance and existing connection count (prefer less connected nodes)
+			candidates.sort_custom(func(a, b): return a.distance + (a.connections * 20) < b.distance + (b.connections * 20))
+			
+			# Add connections to nearest suitable candidates
+			var connections_to_add = min(connections_needed, candidates.size())
+			for i in range(connections_to_add):
+				var target_id = candidates[i].id
+				var target_node = nodes[target_id]
+				
+				# Create bidirectional connection
+				node.connect_to(target_id)
+				target_node.connect_to(node_id)
+				
+				# Create edge
+				var edge = MapEdge.new(node_id, target_id, SeedManager.get_map_random_int(2, 4), SeedManager.get_map_random_int(1, 3))
+				edges.append(edge)
+				
+				connections_added += 1
+				GLog.debug("MinimumConnectionRule: Connected " + node_id + " to " + target_id + " (distance: " + str(candidates[i].distance) + ")")
+		
+		if connections_added > 0:
+			applications_count += 1
+			GLog.debug("MinimumConnectionRule: Added " + str(connections_added) + " connections to ensure minimum connectivity")
+			return true
+		
+		return false

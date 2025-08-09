@@ -254,10 +254,17 @@ func update_node_interactivity(circle_node: CircularMapNode, node: MapNode):
 		circle_node.set_player_position(true)
 		circle_node.modulate = Color(1, 1, 1, discovered_node_alpha)
 	elif node.visited:
-		# Visited nodes are disabled for movement (except current position)
-		circle_node.update_interactivity(false)
-		circle_node.set_player_position(false)
-		circle_node.modulate = Color(0.7, 0.7, 0.7, discovered_node_alpha)  # Dimmed visited nodes
+		# Type-based revisit logic - camps and settlements can be revisited
+		var can_revisit = node.type in [MapNode.NodeType.CAMP, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.MINE]
+		if can_revisit and current_player_node and current_player_node.is_connected_to(node.id):
+			circle_node.update_interactivity(true)  # Allow revisiting camps, settlements, mines
+			circle_node.set_player_position(false)
+			circle_node.modulate = Color(0.9, 0.9, 0.9, discovered_node_alpha)  # Slightly dimmed but still interactive
+		else:
+			# POIs and other nodes remain one-time visits
+			circle_node.update_interactivity(false)
+			circle_node.set_player_position(false)
+			circle_node.modulate = Color(0.7, 0.7, 0.7, discovered_node_alpha)  # Dimmed visited nodes
 	elif current_player_node and current_player_node.is_connected_to(node.id):
 		circle_node.update_interactivity(true)  # Can move to connected unvisited nodes
 		circle_node.set_player_position(false)

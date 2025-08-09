@@ -71,6 +71,16 @@ class_name MapLayoutConfig
 @export var types_settlement_weight: float = 1.0 # Relative frequency of settlements
 @export var types_poi_weight: float = 1.2        # Relative frequency of points of interest
 
+## FORCE-DIRECTED LAYOUT SYSTEM ##
+
+@export_group("Physics Layout", "physics_")
+@export var physics_enabled: bool = true                                  # Enable force-directed layout optimization
+@export_range(50, 500, 10) var physics_iterations: int = 200             # Number of simulation iterations (more = better layout, slower)
+@export_range(0.1, 3.0, 0.1) var physics_repulsion_strength: float = 1.0 # How strongly nodes push apart
+@export_range(0.1, 3.0, 0.1) var physics_attraction_strength: float = 0.8 # How strongly connected nodes pull together
+@export_range(0.8, 0.99, 0.01) var physics_cooling_rate: float = 0.95    # How quickly the system cools down (stabilizes)
+@export_range(0.0, 1.0, 0.1) var physics_boundary_strength: float = 0.3  # How strongly nodes are pushed away from boundaries
+
 # Helper function to get preferred angle in radians with variation
 func get_movement_angle() -> float:
 	if movement_preferred_angles.is_empty():
