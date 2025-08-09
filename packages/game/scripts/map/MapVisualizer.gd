@@ -20,6 +20,7 @@ var fog_color: Color = Color(0.1, 0.1, 0.1, 0.7)
 # References
 var map_generator: MapGenerator
 var graph_data: Dictionary = {}
+var layout_config: MapLayoutConfig  # Reference to layout config for path settings
 
 # Node buttons for interaction
 var node_buttons: Dictionary = {}  # node_id -> Button
@@ -42,6 +43,7 @@ func _init():
 
 func setup(generator: MapGenerator):
 	map_generator = generator
+	layout_config = generator.layout_config  # Get reference to layout config
 	
 	# Connect to generator signals
 	if map_generator.map_generated.is_connected(_on_map_generated):
@@ -115,9 +117,16 @@ func create_edge_visual(edge: MapEdge):
 	var from_pos = from_node.position - graph_offset
 	var to_pos = to_node.position - graph_offset
 	
-	# Create dashed line using multiple segments
-	var dash_length = 10.0
-	var gap_length = 5.0
+	# Check if curved paths are enabled
+	if layout_config and layout_config.path_enable_curves and layout_config.path_curve_strength > 0.0:
+		create_curved_edge_visual(edge, from_pos, to_pos)
+	else:
+		create_straight_edge_visual(edge, from_pos, to_pos)
+
+func create_straight_edge_visual(edge: MapEdge, from_pos: Vector2, to_pos: Vector2):
+	# Use configurable dash parameters for consistent styling
+	var dash_length = layout_config.path_dash_length if layout_config else 18.0
+	var gap_length = layout_config.path_gap_length if layout_config else 12.0
 	var total_length = from_pos.distance_to(to_pos)
 	var direction = (to_pos - from_pos).normalized()
 	
@@ -152,7 +161,95 @@ func create_edge_visual(edge: MapEdge):
 		distance_covered += segment_length
 		is_dash = !is_dash
 	
-	GLog.debug("Created dashed edge from " + str(from_pos) + " to " + str(to_pos) + " (width: " + str(edge_width) + ", color: " + str(edge_color) + ")")
+	GLog.debug("Created straight edge from " + str(from_pos) + " to " + str(to_pos))
+
+func create_curved_edge_visual(edge: MapEdge, from_pos: Vector2, to_pos: Vector2):
+	# Calculate curve control point
+	var midpoint = (from_pos + to_pos) * 0.5
+	var distance = from_pos.distance_to(to_pos)
+	var perpendicular = Vector2(-(to_pos.y - from_pos.y), to_pos.x - from_pos.x).normalized()
+	
+	# Add randomness and curve strength
+	var curve_offset = distance * layout_config.path_curve_strength * 0.3
+	var randomness = (randf() - 0.5) * layout_config.path_curve_randomness * distance
+	var control_point = midpoint + perpendicular * (curve_offset + randomness)
+	
+	# Create curved path using multiple segments along Bezier curve
+	var segments = max(int(distance / 15.0), 3)  # More segments for longer paths
+	var dash_length = layout_config.path_dash_length if layout_config else 18.0
+	var gap_length = layout_config.path_gap_length if layout_config else 12.0
+	var current_distance = 0.0
+	var total_curve_length = estimate_curve_length(from_pos, control_point, to_pos, segments)
+	
+	for i in range(segments):
+		var t1 = float(i) / float(segments)
+		var t2 = float(i + 1) / float(segments)
+		
+		var segment_start = quadratic_bezier(from_pos, control_point, to_pos, t1)
+		var segment_end = quadratic_bezier(from_pos, control_point, to_pos, t2)
+		var segment_length = segment_start.distance_to(segment_end)
+		
+		# Create dashed segments along the curve
+		create_dashed_line_segment(edge, segment_start, segment_end, current_distance, dash_length, gap_length, total_curve_length)
+		current_distance += segment_length
+
+func quadratic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, t: float) -> Vector2:
+	# Quadratic Bezier curve formula: B(t) = (1-t)²P0 + 2(1-t)tP1 + t²P2
+	var u = 1.0 - t
+	return u * u * p0 + 2.0 * u * t * p1 + t * t * p2
+
+func estimate_curve_length(p0: Vector2, p1: Vector2, p2: Vector2, segments: int) -> float:
+	var length = 0.0
+	var prev_point = p0
+	
+	for i in range(1, segments + 1):
+		var t = float(i) / float(segments)
+		var current_point = quadratic_bezier(p0, p1, p2, t)
+		length += prev_point.distance_to(current_point)
+		prev_point = current_point
+	
+	return length
+
+func create_dashed_line_segment(edge: MapEdge, start_pos: Vector2, end_pos: Vector2, distance_offset: float, dash_length: float, gap_length: float, total_length: float):
+	var segment_length = start_pos.distance_to(end_pos)
+	var direction = (end_pos - start_pos).normalized()
+	
+	var current_pos = start_pos
+	var distance_covered = 0.0
+	var cycle_length = dash_length + gap_length
+	var offset_in_cycle = fmod(distance_offset, cycle_length)
+	
+	# Determine if we start with a dash or gap based on our position in the overall pattern
+	var is_dash = offset_in_cycle < dash_length
+	var remaining_in_current = (dash_length if is_dash else cycle_length) - offset_in_cycle
+	
+	while distance_covered < segment_length:
+		var segment_to_draw = min(remaining_in_current, segment_length - distance_covered)
+		
+		if is_dash and segment_to_draw > 0.5:  # Only draw dashes longer than 0.5 pixels
+			var line = Line2D.new()
+			var dash_end = current_pos + direction * segment_to_draw
+			line.add_point(current_pos)
+			line.add_point(dash_end)
+			line.width = edge_width
+			line.default_color = edge_color
+			line.z_index = -1  # Behind nodes
+			line.visible = true
+			line.modulate = Color.WHITE
+			
+			# Store edge reference for updates
+			line.set_meta("edge_data", edge)
+			line.set_meta("is_curved_segment", true)
+			
+			add_child(line)
+			edge_lines.append(line)
+		
+		current_pos += direction * segment_to_draw
+		distance_covered += segment_to_draw
+		
+		# Switch between dash and gap
+		is_dash = !is_dash
+		remaining_in_current = dash_length if is_dash else gap_length
 
 func create_nodes():
 	for node_id in graph_data.nodes:
@@ -340,13 +437,19 @@ func get_node_position(node_id: String) -> Vector2:
 
 func highlight_available_moves():
 	var available_moves = map_generator.get_available_moves()
+	var current_player_node = graph_data.nodes.get(graph_data.player_position)
 	
 	for node_id in node_buttons:
 		var circle_node = node_buttons[node_id]  # Now CircularMapNode
 		var node = graph_data.nodes[node_id]
-		var is_available = node_id in available_moves and not node.visited and node.discovered
+		var is_available = node_id in available_moves and node.discovered
 		
-		# Add visual highlighting for available moves (only unvisited nodes)
+		# Apply same logic as update_node_interactivity for consistency
+		if node.visited:
+			var can_revisit = node.type in [MapNode.NodeType.CAMP, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.MINE]
+			is_available = is_available and can_revisit and current_player_node and current_player_node.is_connected_to(node.id)
+		
+		# Add visual highlighting for available moves (matches interactivity exactly)
 		circle_node.set_highlight(is_available)
 
 func clear_move_highlights():

@@ -81,6 +81,15 @@ class_name MapLayoutConfig
 @export_range(0.8, 0.99, 0.01) var physics_cooling_rate: float = 0.95    # How quickly the system cools down (stabilizes)
 @export_range(0.0, 1.0, 0.1) var physics_boundary_strength: float = 0.3  # How strongly nodes are pushed away from boundaries
 
+## CURVED PATH LINES ##
+
+@export_group("Path Appearance", "path_")
+@export var path_enable_curves: bool = true                              # Enable curved paths instead of straight lines
+@export_range(0.0, 1.0, 0.1) var path_curve_strength: float = 0.3       # Strength of path curves (0.0 = straight, 1.0 = max curve)
+@export_range(0.0, 0.5, 0.05) var path_curve_randomness: float = 0.15   # Random variation in curve direction
+@export_range(8.0, 30.0, 1.0) var path_dash_length: float = 18.0        # Length of dashes in path lines
+@export_range(6.0, 25.0, 1.0) var path_gap_length: float = 12.0         # Length of gaps between dashes
+
 # Helper function to get preferred angle in radians with variation
 func get_movement_angle() -> float:
 	if movement_preferred_angles.is_empty():

@@ -343,12 +343,26 @@ func find_best_local_connection(from_node_id: String, candidate_nodes: Array[Str
 		GLog.debug("No local connections found for " + from_node_id + ", using nearest fallback")
 		return find_nearest_node(from_node_id, candidate_nodes)
 
+func edge_exists(node_a: String, node_b: String) -> bool:
+	"""Check if an edge already exists between two nodes (bidirectional)"""
+	for edge in graph.edges:
+		if (edge.from_node == node_a and edge.to_node == node_b) or \
+		   (edge.from_node == node_b and edge.to_node == node_a):
+			return true
+	return false
+
 func connect_nodes(node_a: String, node_b: String):
 	if not graph.nodes.has(node_a) or not graph.nodes.has(node_b):
 		return
 	
-	# Check if they're already connected
+	# Check if edge already exists to prevent duplicates
+	if edge_exists(node_a, node_b):
+		GLog.debug("Skipping duplicate edge: " + node_a + " <-> " + node_b)
+		return
+	
+	# Check if they're already connected in node connection lists
 	if graph.nodes[node_a].is_connected_to(node_b):
+		GLog.debug("Nodes already connected in graph: " + node_a + " <-> " + node_b)
 		return
 	
 	# Use config for distance limits
@@ -454,7 +468,10 @@ func enforce_connection_limits():
 				if connected_id not in new_connections:
 					remove_connection(node_id, connected_id)
 			
-			node.connections = new_connections
+			# Clear and rebuild connections array (can't assign directly to Resource property)
+			node.connections.clear()
+			for connection in new_connections:
+				node.connections.append(connection)
 
 func remove_connection(node_a: String, node_b: String):
 	"""Remove a connection between two nodes"""

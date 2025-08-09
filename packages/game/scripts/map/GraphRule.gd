@@ -132,13 +132,8 @@ class LinearExtensionRule extends GraphRule:
 			# Add node to graph
 			nodes[dest_id] = destination
 			
-			# Create edge
-			var edge = MapEdge.new(from_node, dest_id, SeedManager.get_map_random_int(1, 4))
-			edges.append(edge)
-			
-			# Connect nodes
-			nodes[from_node].connect_to(dest_id)
-			destination.connect_to(from_node)
+			# Create edge safely (checks for duplicates)
+			_connect_nodes_safely(graph, from_node, dest_id, SeedManager.get_map_random_int(1, 4))
 			
 			applications_count += 1
 			GLog.debug("Applied Linear Extension rule (no junction): " + from_node + " -> " + dest_id)
@@ -202,17 +197,9 @@ class LinearExtensionRule extends GraphRule:
 		nodes[junction_id] = junction
 		nodes[dest_id] = destination
 		
-		# Create edges
-		var edge1 = MapEdge.new(from_node, junction_id, SeedManager.get_map_random_int(1, 3))
-		var edge2 = MapEdge.new(junction_id, dest_id, SeedManager.get_map_random_int(1, 4))
-		edges.append(edge1)
-		edges.append(edge2)
-		
-		# Connect nodes
-		nodes[from_node].connect_to(junction_id)
-		junction.connect_to(from_node)
-		junction.connect_to(dest_id)
-		destination.connect_to(junction_id)
+		# Create edges safely (checks for duplicates)
+		_connect_nodes_safely(graph, from_node, junction_id, SeedManager.get_map_random_int(1, 3))
+		_connect_nodes_safely(graph, junction_id, dest_id, SeedManager.get_map_random_int(1, 4))
 		
 		applications_count += 1
 		GLog.debug("Applied Linear Extension rule: " + from_node + " -> " + junction_id + " -> " + dest_id)
@@ -274,16 +261,11 @@ class BranchCreationRule extends GraphRule:
 		# Add to graph
 		nodes[dest_id] = destination
 		
-		# Create edge using config
-		var edge = MapEdge.new(junction_node, dest_id, SeedManager.get_map_random_int(2, 5))
+		# Create edge safely with increased difficulty for branches
 		var base_difficulty = SeedManager.get_map_random_int(1, 3)
 		var difficulty_bonus = config.branch_difficulty_bonus if config else 2
-		edge.difficulty = base_difficulty + difficulty_bonus  # Branches are often more dangerous
-		edges.append(edge)
-		
-		# Connect nodes
-		nodes[junction_node].connect_to(dest_id)
-		destination.connect_to(junction_node)
+		var branch_difficulty = base_difficulty + difficulty_bonus
+		_connect_nodes_safely(graph, junction_node, dest_id, SeedManager.get_map_random_int(2, 5), branch_difficulty)
 		
 		applications_count += 1
 		GLog.debug("Applied Branch Creation rule: " + junction_node + " -> " + dest_id)
@@ -322,6 +304,33 @@ class DestinationPlacementRule extends GraphRule:
 		applications_count += 1
 		GLog.debug("Applied Destination Placement rule: converted junction to " + junction.get_type_name())
 		return true
+
+# Helper function to safely create connections without duplicates
+func _connect_nodes_safely(graph: Dictionary, node_a: String, node_b: String, travel_time: int = -1, difficulty: int = -1):
+	"""Safely connect two nodes, checking for duplicates first"""
+	var nodes = graph.get("nodes", {})
+	var edges = graph.get("edges", [])
+	
+	# Check if edge already exists
+	for edge in edges:
+		if (edge.from_node == node_a and edge.to_node == node_b) or \
+		   (edge.from_node == node_b and edge.to_node == node_a):
+			GLog.debug("Skipping duplicate edge in rule: " + node_a + " <-> " + node_b)
+			return
+	
+	# Create edge with random values if not specified
+	if travel_time == -1:
+		travel_time = SeedManager.get_map_random_int(2, 4)
+	if difficulty == -1:
+		difficulty = SeedManager.get_map_random_int(1, 3)
+	
+	var edge = MapEdge.new(node_a, node_b, travel_time, difficulty)
+	edges.append(edge)
+	
+	# Connect nodes bidirectionally
+	if nodes.has(node_a) and nodes.has(node_b):
+		nodes[node_a].connect_to(node_b)
+		nodes[node_b].connect_to(node_a)
 
 # Helper functions for spacing validation - now non-static to access config
 func _is_position_valid_for_spacing(graph: Dictionary, new_pos: Vector2, exclude_node_id: String = "") -> bool:
@@ -448,13 +457,8 @@ class MinimumConnectionRule extends GraphRule:
 				var target_id = candidates[i].id
 				var target_node = nodes[target_id]
 				
-				# Create bidirectional connection
-				node.connect_to(target_id)
-				target_node.connect_to(node_id)
-				
-				# Create edge
-				var edge = MapEdge.new(node_id, target_id, SeedManager.get_map_random_int(2, 4), SeedManager.get_map_random_int(1, 3))
-				edges.append(edge)
+				# Create connection safely (checks for duplicates)
+				_connect_nodes_safely(graph, node_id, target_id, SeedManager.get_map_random_int(2, 4), SeedManager.get_map_random_int(1, 3))
 				
 				connections_added += 1
 				GLog.debug("MinimumConnectionRule: Connected " + node_id + " to " + target_id + " (distance: " + str(candidates[i].distance) + ")")
