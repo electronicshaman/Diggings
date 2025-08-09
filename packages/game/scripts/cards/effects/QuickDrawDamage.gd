@@ -17,7 +17,7 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 		var cards_played = duel_manager.get_cards_played_this_turn()
 		
 		# If this is the first card (Quick Draw is active)
-		if cards_played <= 1:
+		if cards_played == 0:
 			total_damage += quick_draw_bonus
 			print("Quick Draw! Bonus damage applied.")
 			

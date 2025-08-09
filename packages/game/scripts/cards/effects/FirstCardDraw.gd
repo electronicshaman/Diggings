@@ -13,8 +13,8 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 	if duel_manager and duel_manager.has_method("get_cards_played_this_turn"):
 		var cards_played = duel_manager.get_cards_played_this_turn()
 		
-		# If this is the first card (count is 0 or 1 including this card)
-		if cards_played <= 1:
+		# If this is the first card (count should be 0 before incrementing)
+		if cards_played == 0:
 			results.draw += cards_to_draw
 			print("Applied %s effect from %s (first card bonus: +%d draw)" % [effect_name, card_data.card_name, cards_to_draw])
 			

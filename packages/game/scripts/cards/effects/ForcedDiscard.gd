@@ -3,14 +3,12 @@ class_name ForcedDiscard
 
 @export var cards_to_discard: int = 1
 
-var effect_name: String = ""
-var description: String = ""
 
 func _init() -> void:
 	effect_name = "Forced Discard"
 	description = "Must discard %d card(s)" % cards_to_discard
 
-func apply_effect(_duel_manager: DuelManager, card_data: CardData, results: Dictionary) -> void:
+func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add forced discard to results
 	if not results.has("forced_discard"):
 		results.forced_discard = 0

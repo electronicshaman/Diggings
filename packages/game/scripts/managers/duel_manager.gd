@@ -141,12 +141,14 @@ func play_card(card_data: CardData):
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_data.sanity_cost)
 	
+	# Apply effects BEFORE incrementing cards_played_this_turn so effects can check if this is the first card
 	var results = card_effects_processor.apply_card_effects(self, card_data)
 	
 	apply_card_results(results)
 	
-	player.apply_card_cost_reductions()
+	# Now increment the counter and apply cost reductions
 	player.cards_played_this_turn += 1
+	player.apply_card_cost_reductions()
 	
 	duel_state.play_card(card_data)
 	
@@ -199,3 +201,8 @@ func get_deck_count() -> int:
 
 func get_discard_count() -> int:
 	return duel_state.discard_pile.size() if duel_state.discard_pile else 0
+
+func get_cards_played_this_turn() -> int:
+	if duel_state and duel_state.player_data:
+		return duel_state.player_data.cards_played_this_turn
+	return 0

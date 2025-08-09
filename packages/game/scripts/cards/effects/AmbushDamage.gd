@@ -18,7 +18,7 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 		var cards_played = duel_manager.get_cards_played_this_turn()
 		
 		# If this is the first card, apply ambush damage
-		if cards_played <= 1:
+		if cards_played == 0:
 			total_damage = first_card_damage
 			is_ambush = true
 			print("AMBUSH! Caught them off guard!")

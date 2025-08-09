@@ -9,14 +9,12 @@ class_name CostReduction
 @export var affects_all_cards: bool = true   # If false, only affects specific card types
 @export var card_type_filter: String = ""    # Only affects this card type (if affects_all_cards = false)
 
-var effect_name: String = ""
-var description: String = ""
 
 func _init() -> void:
 	effect_name = "Cost Reduction"
 	description = get_formatted_description()
 
-func apply_effect(_duel_manager: DuelManager, card_data: CardData, results: Dictionary) -> void:
+func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add cost reduction to results
 	if not results.has("cost_reduction"):
 		results.cost_reduction = []

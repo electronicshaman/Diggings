@@ -8,14 +8,12 @@ class_name EnemyMissingHealthDamage
 @export var minimum_damage: int = 0         # Minimum damage even at full health
 @export var maximum_damage: int = 999       # Cap to prevent absurd values
 
-var effect_name: String = ""
-var description: String = ""
 
 func _init() -> void:
 	effect_name = "Enemy Missing Health Damage"
 	description = get_formatted_description()
 
-func apply_effect(_duel_manager: DuelManager, card_data: CardData, results: Dictionary) -> void:
+func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add enemy missing health damage to results
 	if not results.has("enemy_missing_health_damage"):
 		results.enemy_missing_health_damage = []

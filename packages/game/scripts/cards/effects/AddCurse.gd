@@ -12,7 +12,7 @@ func _init() -> void:
 	effect_name = "Add Curse"
 	description = get_formatted_description()
 
-func apply_effect(_duel_manager: DuelManager, card_data: CardData, results: Dictionary) -> void:
+func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add curse to results
 	if not results.has("add_curse"):
 		results.add_curse = []
