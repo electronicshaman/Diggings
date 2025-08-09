@@ -106,11 +106,9 @@ func restore_existing_map():
 	
 	GLog.info("Restored existing map from game data")
 	
-	# Clear old visualization and recreate all visual elements for the restored map
-	map_visualizer.clear_visualization()
-	map_visualizer.create_nodes()
-	map_visualizer.create_edges() 
-	map_visualizer.update_visibility()
+	# Update visualizer with the restored graph data
+	var restored_graph = map_generator.get_graph_data()
+	map_visualizer.visualize_graph(restored_graph)
 	map_visualizer.highlight_available_moves()
 
 func _on_view_deck_pressed():
