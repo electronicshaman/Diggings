@@ -2,8 +2,16 @@
   "mcpServers": {
     "godot-mcp": {
       "command": "uv",
-      "args": ["run", "/Users/rob/Projects/dmh1/addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"]
-    }
+      "args": [
+        "run",
+        "/Users/rob/Projects/dmh1/addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "node",
+      "args": [
+        "sequential-thinking.js"
+      ]
     }
   }
 }

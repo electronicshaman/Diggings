@@ -1,6 +1,7 @@
 extends Resource
 class_name MapNode
 
+
 enum NodeType {
 	CITY,      # Central hub - safe haven with all services
 	CAMP,      # Rest and healing locations
@@ -27,12 +28,12 @@ enum NodeState {
 @export var state: NodeState = NodeState.LOCKED
 
 # Configuration resource that defines this node's properties and behavior
-@export var config: NodeConfig
+@export var config: MapNodeConfig
 
 # Available actions for this node (generated from config)  
-@export var actions: Array[NodeAction] = []
+@export var actions: Array[MapNodeAction] = []
 
-func _init(node_id: String = "", pos: Vector2 = Vector2.ZERO, node_config: NodeConfig = null):
+func _init(node_id: String = "", pos: Vector2 = Vector2.ZERO, node_config: MapNodeConfig = null):
 	id = node_id
 	position = pos
 	
@@ -41,9 +42,9 @@ func _init(node_id: String = "", pos: Vector2 = Vector2.ZERO, node_config: NodeC
 		type = config.node_type
 		_generate_actions_from_config()
 	else:
-		GLog.error("MapNode created without NodeConfig - this should not happen in data-driven architecture")
+		GLog.error("MapNode created without MapNodeConfig - this should not happen in data-driven architecture")
 
-func set_config(new_config: NodeConfig):
+func set_config(new_config: MapNodeConfig):
 	"""Set a new configuration for this node"""
 	if not new_config:
 		GLog.error("Attempted to set null config on MapNode")
@@ -54,7 +55,7 @@ func set_config(new_config: NodeConfig):
 	_generate_actions_from_config()
 
 func _generate_actions_from_config():
-	"""Generate NodeAction objects from config data"""
+	"""Generate MapNodeAction objects from config data"""
 	actions.clear()
 	
 	if not config:
@@ -66,9 +67,9 @@ func _generate_actions_from_config():
 		if action:
 			actions.append(action)
 
-func _create_action_from_config(action_name: String) -> NodeAction:
-	"""Create a NodeAction from config data"""
-	var action = NodeAction.new()
+func _create_action_from_config(action_name: String) -> MapNodeAction:
+	"""Create a MapNodeAction from config data"""
+	var action = MapNodeAction.new()
 	action.action_name = action_name
 	
 	# Get action properties from config
@@ -133,14 +134,14 @@ func get_type_name() -> String:
 	if config:
 		return config.get_display_name()
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return "ERROR_NO_CONFIG"
 
 func get_type_color() -> Color:
 	if config:
 		return config.get_type_color()
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return Color.MAGENTA  # Obvious error color
 
 func discover() -> void:
@@ -160,7 +161,7 @@ func get_description() -> String:
 	if config:
 		return config.get_display_description()
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return "ERROR: No configuration data found for this node."
 
 # New state management methods
@@ -188,7 +189,7 @@ func can_revisit() -> bool:
 	if config:
 		return config.can_revisit
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return false
 
 func get_state_alpha() -> float:
@@ -205,10 +206,10 @@ func get_state_alpha() -> float:
 		_:
 			return 1.0
 
-# NodeAction system methods
-func get_available_actions(player_data: Dictionary) -> Array[NodeAction]:
+# MapNodeAction system methods
+func get_available_actions(player_data: Dictionary) -> Array[MapNodeAction]:
 	"""Get all actions that the player can currently perform at this node"""
-	var available: Array[NodeAction] = []
+	var available: Array[MapNodeAction] = []
 	
 	for action in actions:
 		if action.can_execute(player_data, self):
@@ -236,7 +237,7 @@ func has_action(action_name: String) -> bool:
 			return true
 	return false
 
-func add_action(action: NodeAction):
+func add_action(action: MapNodeAction):
 	"""Add a new action to this node"""
 	if not has_action(action.action_name):
 		actions.append(action)
@@ -301,10 +302,10 @@ func set_custom_property(property_name: String, value):
 		config.set_custom_property(property_name, value)
 
 # Factory method for creating nodes - config is required
-static func create_with_config(node_id: String, node_config: NodeConfig, pos: Vector2 = Vector2.ZERO) -> MapNode:
+static func create_with_config(node_id: String, node_config: MapNodeConfig, pos: Vector2 = Vector2.ZERO) -> MapNode:
 	"""Create a MapNode with the provided configuration"""
 	if not node_config:
-		GLog.error("Cannot create MapNode without NodeConfig")
+		GLog.error("Cannot create MapNode without MapNodeConfig")
 		return null
 		
 	var node = MapNode.new()

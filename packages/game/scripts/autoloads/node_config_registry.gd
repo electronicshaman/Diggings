@@ -38,7 +38,7 @@ func _load_configs_from_directory(dir_path: String, category: String):
 	while file_name != "":
 		if file_name.ends_with(".tres"):
 			var full_path = dir_path + file_name
-			var config = load(full_path) as NodeConfig
+			var config = load(full_path) as MapNodeConfig
 			
 			if config:
 				var key = full_path.replace("res://", "")
@@ -88,14 +88,14 @@ func _validate_defaults():
 		if not type_defaults.has(type):
 			GLog.warn("MapNodeRegistry: No default config for node type " + str(type))
 
-func get_config(config_path: String) -> NodeConfig:
+func get_config(config_path: String) -> MapNodeConfig:
 	var key = config_path.replace("res://", "")
 	
 	if node_configs.has(key):
 		return node_configs[key]
 	
 	if ResourceLoader.exists("res://" + key):
-		var config = load("res://" + key) as NodeConfig
+		var config = load("res://" + key) as MapNodeConfig
 		if config:
 			node_configs[key] = config
 			return config
@@ -103,7 +103,7 @@ func get_config(config_path: String) -> NodeConfig:
 	GLog.error("MapNodeRegistry: Config not found: " + config_path)
 	return null
 
-func get_default_config_for_type(node_type: int) -> NodeConfig:
+func get_default_config_for_type(node_type: int) -> MapNodeConfig:
 	if type_defaults.has(node_type):
 		return get_config(type_defaults[node_type])
 	
@@ -114,7 +114,7 @@ func get_default_config_for_type(node_type: int) -> NodeConfig:
 	GLog.error("MapNodeRegistry: No config available for node type " + str(node_type))
 	return null
 
-func get_random_config_for_type(node_type: int) -> NodeConfig:
+func get_random_config_for_type(node_type: int) -> MapNodeConfig:
 	var category = _node_type_to_category(node_type)
 	
 	if random_pools.has(category) and not random_pools[category].is_empty():
@@ -124,7 +124,7 @@ func get_random_config_for_type(node_type: int) -> NodeConfig:
 	
 	return get_default_config_for_type(node_type)
 
-func get_random_config_for_category(category: String) -> NodeConfig:
+func get_random_config_for_category(category: String) -> MapNodeConfig:
 	if random_pools.has(category) and not random_pools[category].is_empty():
 		var pool = random_pools[category]
 		var random_index = randi() % pool.size()
@@ -134,11 +134,11 @@ func get_random_config_for_category(category: String) -> NodeConfig:
 	return null
 
 func create_node(node_id: String, config_or_path, position: Vector2 = Vector2.ZERO) -> MapNode:
-	var config: NodeConfig = null
+	var config: MapNodeConfig = null
 	
 	if config_or_path is String:
 		config = get_config(config_or_path)
-	elif config_or_path is NodeConfig:
+	elif config_or_path is MapNodeConfig:
 		config = config_or_path
 	elif typeof(config_or_path) == TYPE_INT:
 		config = get_default_config_for_type(config_or_path)
@@ -164,8 +164,8 @@ func create_node_with_random_config(node_id: String, node_type: int, position: V
 	
 	return create_node(node_id, config, position)
 
-func get_all_configs_for_type(node_type: int) -> Array[NodeConfig]:
-	var results: Array[NodeConfig] = []
+func get_all_configs_for_type(node_type: int) -> Array[MapNodeConfig]:
+	var results: Array[MapNodeConfig] = []
 	var category = _node_type_to_category(node_type)
 	
 	if random_pools.has(category):

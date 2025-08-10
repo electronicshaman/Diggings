@@ -1,5 +1,5 @@
 extends Resource
-class_name NodeConfig
+class_name MapNodeConfig
 
 # Base configuration class for all map nodes
 # This replaces the hardcoded match statements in MapNode.gd
