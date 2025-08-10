@@ -1,8 +1,9 @@
 [gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/map/NodeConfig.gd" id="1"]
+[ext_resource type="Script" uid="uid://cqv21ssbdrhpk" path="res://scripts/map/MapNodeConfig.gd" id="1"]
 
 [resource]
+script = ExtResource("1")
 resource_local_to_scene = false
 resource_name = ""
 node_type = 6

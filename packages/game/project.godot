@@ -25,9 +25,10 @@ ThemeManager="*res://scripts/autoloads/theme_manager.gd"
 SeedManager="*res://scripts/autoloads/seed_manager.gd"
 GLog="*res://scripts/autoloads/glog.gd"
 GameManager="*res://scripts/autoloads/game_manager.gd"
-MapNodeRegistry="*res://scripts/autoloads/node_config_registry.gd"
 SceneManager="*res://scripts/autoloads/scene_manager.gd"
 GDAIMCPRuntime="*res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd"
+NodeConfigRegistry="*res://scripts/autoloads/node_config_registry.gd"
+MapNodeRegistry="*res://scripts/autoloads/map_node_registry.gd"
 
 [display]
 

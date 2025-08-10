@@ -436,7 +436,10 @@ func convert_random_junction_to_type(target_type: MapNode.NodeType):
 		var junction = graph.nodes[junction_id]
 		junction.type = target_type
 		junction.id = MapNode.NodeType.keys()[target_type].to_lower() + "_" + str(Time.get_ticks_msec())
-		junction._init(junction.id, target_type, junction.position)
+		
+		# Get appropriate config for the new type and set it
+		var new_config = MapNodeRegistry.get_random_config_for_type(target_type)
+		junction.set_config(new_config)
 		
 		GLog.debug("Converted junction " + junction_id + " to " + junction.get_type_name())
 

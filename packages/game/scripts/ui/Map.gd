@@ -282,11 +282,11 @@ func generate_test_map():
 	GLog.info("This is a temporary fallback for testing - remove when map selection is implemented")
 	
 	# Load real NodeConfig resources from data/map_nodes/
-	var city_config = load("res://data/map_nodes/cities/goldfields_city.tres") as NodeConfig
-	var camp_config = load("res://data/map_nodes/camps/prospector_camp.tres") as NodeConfig  
-	var mine_config = load("res://data/map_nodes/mines/abandoned_goldmine.tres") as NodeConfig
-	var settlement_config = load("res://data/map_nodes/settlements/trading_post.tres") as NodeConfig
-	var junction_config = load("res://data/map_nodes/junctions/mountain_pass.tres") as NodeConfig
+	var city_config = load("res://data/map_nodes/cities/goldfields_city.tres") as MapNodeConfig
+	var camp_config = load("res://data/map_nodes/camps/prospector_camp.tres") as MapNodeConfig  
+	var mine_config = load("res://data/map_nodes/mines/abandoned_goldmine.tres") as MapNodeConfig
+	var settlement_config = load("res://data/map_nodes/settlements/trading_post.tres") as MapNodeConfig
+	var junction_config = load("res://data/map_nodes/junctions/mountain_pass.tres") as MapNodeConfig
 	
 	# Create nodes with real resource configs
 	var city_node = MapNodeRegistry.create_node("test_city", city_config, Vector2(400, 300))

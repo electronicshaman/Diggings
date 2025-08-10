@@ -1,7 +1,7 @@
 extends Node
 
-# Ensure NodeConfig class is loaded and registered
-const NodeConfig = preload("res://scripts/map/NodeConfig.gd")
+# Ensure MapNodeConfig class is loaded and registered
+const MapNodeConfig = preload("res://scripts/map/MapNodeConfig.gd")
 
 const DEBUG_ENABLED: bool = true
 

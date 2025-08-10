@@ -8,9 +8,10 @@
       ]
     },
     "sequential-thinking": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "sequential-thinking.js"
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
       ]
     }
   }
