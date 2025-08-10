@@ -289,19 +289,19 @@ func generate_test_map():
 	var junction_config = load("res://data/map_nodes/junctions/mountain_pass.tres") as NodeConfig
 	
 	# Create nodes with real resource configs
-	var city_node = MapNode.new("test_city", MapNode.NodeType.CITY, Vector2(400, 300), city_config)
+	var city_node = MapNodeRegistry.create_node("test_city", city_config, Vector2(400, 300))
 	city_node.set_state(MapNode.NodeState.CURRENT)
 	
-	var camp_node = MapNode.new("test_camp", MapNode.NodeType.CAMP, Vector2(300, 200), camp_config)
+	var camp_node = MapNodeRegistry.create_node("test_camp", camp_config, Vector2(300, 200))
 	camp_node.set_state(MapNode.NodeState.AVAILABLE)
 	
-	var mine_node = MapNode.new("test_mine", MapNode.NodeType.MINE, Vector2(500, 200), mine_config)
+	var mine_node = MapNodeRegistry.create_node("test_mine", mine_config, Vector2(500, 200))
 	mine_node.set_state(MapNode.NodeState.AVAILABLE)
 	
-	var settlement_node = MapNode.new("test_settlement", MapNode.NodeType.SETTLEMENT, Vector2(400, 150), settlement_config)
+	var settlement_node = MapNodeRegistry.create_node("test_settlement", settlement_config, Vector2(400, 150))
 	settlement_node.set_state(MapNode.NodeState.AVAILABLE)
 	
-	var junction_node = MapNode.new("test_junction", MapNode.NodeType.JUNCTION, Vector2(350, 350), junction_config)
+	var junction_node = MapNodeRegistry.create_node("test_junction", junction_config, Vector2(350, 350))
 	junction_node.set_state(MapNode.NodeState.LOCKED)  # Undiscovered
 	
 	# Set up connections
@@ -513,7 +513,7 @@ func _on_node_hovered(node_id: String):
 	tooltip_background.global_position = tooltip_pos
 	tooltip_background.visible = true
 	
-	GLog.debug("Showing tooltip for node: " + node_id + " - " + tooltip_text)
+	GLog.debug("Showing tooltip for node: " + node_id + " - " + tooltip_content)
 
 func _on_node_unhovered():
 	# Hide tooltip

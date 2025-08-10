@@ -22,28 +22,12 @@ var is_highlighted: bool = false
 @export var node_size: Vector2 = Vector2(64, 64)
 @export var label_offset: Vector2 = Vector2(0, 70)
 
-# Colors for different states and types
-var type_colors = {
-	MapNode.NodeType.CITY: Color.GOLD,
-	MapNode.NodeType.CAMP: Color.GREEN,
-	MapNode.NodeType.MINE: Color.ORANGE,
-	MapNode.NodeType.SETTLEMENT: Color.BLUE,
-	MapNode.NodeType.POI: Color.PURPLE,
-	MapNode.NodeType.JUNCTION: Color.GRAY,
-	MapNode.NodeType.BOSS: Color.RED
-}
-
-var state_colors = {
-	MapNode.NodeState.LOCKED: Color(0.3, 0.3, 0.3, 0.5),
-	MapNode.NodeState.AVAILABLE: Color.WHITE,
-	MapNode.NodeState.CURRENT: Color.YELLOW,
-	MapNode.NodeState.COMPLETED: Color(0.8, 0.8, 0.8, 0.8)
-}
+# Data-driven visual system - all colors come from NodeConfig resources
 
 # Signals
 signal node_clicked(node_id: String, event: InputEvent)
 signal node_hovered(node_id: String)
-signal node_unhovered(node_id: String)
+signal node_unhovered()
 signal action_requested(node_id: String, action_name: String)
 
 func _ready():
@@ -115,25 +99,13 @@ func setup_node(id: String, data: MapNode):
 	GLog.debug("MapNodeScene setup complete for: " + node_data.get_type_name() + " (" + id + ")")
 
 func apply_type_customizations():
-	"""Apply visual customizations based on node type and resource properties"""
-	if not node_data:
+	"""Apply visual customizations from node's resource configuration"""
+	if not node_data or not node_data.config:
+		GLog.error("MapNodeScene cannot apply customizations without NodeConfig")
 		return
 	
-	# Get size from resource properties, with fallback to type-based defaults
-	var resource_size = node_data.get_visual_size() if node_data.config else Vector2.ZERO
-	if resource_size != Vector2.ZERO:
-		node_size = resource_size
-	else:
-		# Fallback to type-based sizes for compatibility
-		match node_data.type:
-			MapNode.NodeType.CITY:
-				node_size = Vector2(80, 80)
-			MapNode.NodeType.BOSS:
-				node_size = Vector2(90, 90)
-			MapNode.NodeType.JUNCTION:
-				node_size = Vector2(48, 48)
-			_:
-				node_size = Vector2(64, 64)
+	# All visual properties come from the NodeConfig resource
+	node_size = node_data.get_visual_size()
 	
 	# Apply the size to the control
 	custom_minimum_size = node_size
@@ -174,62 +146,32 @@ func update_visuals():
 
 func update_state_indicator():
 	"""Update the visual state indicator (outline, glow, etc.)"""
-	if not outline or not node_data:
+	if not outline or not node_data or not node_data.config:
 		return
 	
 	var state = node_data.get_state()
-	var base_color = state_colors.get(state, Color.WHITE)
-	
-	# Check if the resource defines a custom glow color
-	var glow_color = node_data.get_glow_color() if node_data.config else Color.TRANSPARENT
+	var glow_color = node_data.get_glow_color()
 	
 	# Handle special states
 	if is_highlighted:
-		base_color = Color.CYAN
-		outline.color = Color(base_color.r, base_color.g, base_color.b, 0.8)
+		outline.color = Color(Color.CYAN.r, Color.CYAN.g, Color.CYAN.b, 0.8)
 	elif state == MapNode.NodeState.CURRENT:
-		if glow_color != Color.TRANSPARENT:
-			outline.color = glow_color
-		else:
-			outline.color = Color(Color.GOLD.r, Color.GOLD.g, Color.GOLD.b, 0.9)
+		outline.color = glow_color
 	elif state == MapNode.NodeState.AVAILABLE and is_interactive:
-		if glow_color != Color.TRANSPARENT:
-			# Use resource glow color but make it more subtle for available state
-			outline.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.6)
-		else:
-			outline.color = Color(Color.WHITE.r, Color.WHITE.g, Color.WHITE.b, 0.6)
+		# Use resource glow color but make it more subtle for available state
+		outline.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.6)
 	elif state == MapNode.NodeState.LOCKED:
 		outline.color = Color.TRANSPARENT
 	else:
 		outline.color = Color.TRANSPARENT
 
 func get_background_color() -> Color:
-	"""Get the background color based on node type, resource properties, and state"""
-	var base_color = Color.WHITE
+	"""Get the background color from the node's resource configuration"""
+	if not node_data or not node_data.config:
+		return Color.WHITE
+		
+	var base_color = node_data.get_type_color()
 	var alpha = node_data.get_state_alpha()
-	
-	# First check if the resource has a custom visual color
-	var resource_color = node_data.get_type_color()
-	if resource_color != Color.TRANSPARENT:
-		base_color = resource_color
-	else:
-		# Fallback to type-based colors
-		base_color = type_colors.get(node_data.type, Color.WHITE)
-		match node_data.type:
-			MapNode.NodeType.CITY:
-				base_color = Color.GOLD
-			MapNode.NodeType.CAMP:
-				base_color = Color.FOREST_GREEN
-			MapNode.NodeType.MINE:
-				base_color = Color.ORANGE
-			MapNode.NodeType.BOSS:
-				base_color = Color.DARK_RED
-			MapNode.NodeType.JUNCTION:
-				base_color = Color.GRAY
-			MapNode.NodeType.POI:
-				base_color = Color.PURPLE
-			MapNode.NodeType.SETTLEMENT:
-				base_color = Color.BLUE
 	
 	return Color(base_color.r, base_color.g, base_color.b, alpha)
 
@@ -239,13 +181,11 @@ func get_icon_color() -> Color:
 	return Color(1.0, 1.0, 1.0, alpha)
 
 func get_label_color() -> Color:
-	"""Get the label color based on node state"""
-	if node_data.state == MapNode.NodeState.LOCKED:
-		return Color(0.5, 0.5, 0.5, 0.7)
-	elif node_data.get_state() == MapNode.NodeState.CURRENT:
-		return Color.YELLOW
-	else:
+	"""Get the label color from the node's resource configuration"""
+	if not node_data or not node_data.config:
 		return Color.WHITE
+		
+	return node_data.config.get_state_color(node_data.get_state())
 
 func update_interactivity():
 	"""Update whether this node can be interacted with"""
@@ -276,42 +216,16 @@ func update_tooltip():
 	
 	var tooltip_content = node_data.get_description()
 	
-	# Add type-specific information
-	match node_data.type:
-		MapNode.NodeType.CITY:
-			if node_data.get_custom_property("has_shop", false):
-				tooltip_content += "\nâ¢ Shop available"
-			if node_data.get_custom_property("has_deck_management", false):
-				tooltip_content += "\nâ¢ Deck management available"
-			if node_data.get_custom_property("heal_to_full", false):
-				tooltip_content += "\nâ¢ Full healing available"
-			tooltip_content += "\nâ¢ Safe haven - always revisitable"
-			
-		MapNode.NodeType.CAMP:
-			var heal_amount = node_data.get_custom_property("heal_amount", 15)
-			var rest_time = node_data.get_custom_property("rest_time", 4)
-			tooltip_content += "\nâ¢ Rest and heal " + str(heal_amount) + " HP"
-			tooltip_content += "\nâ¢ Takes " + str(rest_time) + " hours"
-			tooltip_content += "\nâ¢ Safe location"
-			
-		MapNode.NodeType.MINE:
-			var resource_type = node_data.get_custom_property("resource_type", "gold")
-			var danger_level = node_data.get_custom_property("danger_level", 1)
-			var exploration_time = node_data.get_custom_property("exploration_time", 6)
-			tooltip_content += "\nâ¢ Mine for " + resource_type
-			tooltip_content += "\nâ¢ Danger level: " + str(danger_level) + "/3"
-			tooltip_content += "\nâ¢ Takes " + str(exploration_time) + " hours"
-			tooltip_content += "\nâ¢ Risk vs reward location"
-			
-		MapNode.NodeType.BOSS:
-			var boss_name = node_data.get_custom_property("boss_name", "Boss")
-			var difficulty = node_data.get_custom_property("difficulty", 3)
-			var rewards_legendary = node_data.get_custom_property("rewards_legendary", false)
-			tooltip_content += "\nâ¢ Boss: " + boss_name
-			tooltip_content += "\nâ¢ Difficulty: " + str(difficulty) + "/5"
-			if rewards_legendary:
-				tooltip_content += "\nâ¢ Legendary rewards available"
-			tooltip_content += "\nâ¢ Completing defeats this region"
+	# Add custom properties from the config if they exist
+	if node_data.config:
+		var custom_props = node_data.config.custom_properties
+		
+		# Build tooltip from custom properties dynamically
+		if custom_props.has("tooltip_extras"):
+			var extras = custom_props["tooltip_extras"]
+			if extras is Array:
+				for extra in extras:
+					tooltip_content += "\n- " + str(extra)
 	
 	# Add state information
 	match node_data.get_state():
@@ -355,12 +269,12 @@ func play_select_animation():
 		tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
 		tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.1)
 		
-		# Type-specific selection effects
-		match node_data.type if node_data else MapNode.NodeType.JUNCTION:
-			MapNode.NodeType.BOSS:
-				# Dramatic flash effect for bosses
-				tween.parallel().tween_property(self, "modulate", Color.RED, 0.2)
-				tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
+		# Check for pulse effect from config
+		if node_data and node_data.config and node_data.config.pulse_effect:
+			# Dramatic flash effect for nodes with pulse enabled
+			var pulse_color = node_data.config.visual_color
+			tween.parallel().tween_property(self, "modulate", pulse_color, 0.2)
+			tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
 
 func play_discover_animation():
 	"""Play discovery animation when node becomes visible"""
@@ -392,7 +306,7 @@ func _on_mouse_entered():
 
 func _on_mouse_exited():
 	"""Handle mouse hover exit"""
-	node_unhovered.emit(node_id)
+	node_unhovered.emit()
 	
 	# Reset visual feedback
 	var tween = create_tween()

@@ -129,7 +129,8 @@ func create_start_node():
 	var start_id = "start_camp"
 	# Position start node using config
 	var start_pos = layout_config.get_start_position() if layout_config else Vector2(192, 360)
-	var start_node = MapNode.new(start_id, MapNode.NodeType.CAMP, start_pos)
+	var start_config = MapNodeRegistry.get_default_config_for_type(1)  # CAMP
+	var start_node = MapNodeRegistry.create_node(start_id, start_config, start_pos)
 	start_node.set_state(MapNode.NodeState.CURRENT)
 	
 	graph.nodes[start_id] = start_node
@@ -143,7 +144,8 @@ func create_start_node():
 
 func create_city_node(city_name: String, city_position: Vector2):
 	var city_id = "city_" + city_name.to_lower().replace(" ", "_")
-	var city_node = MapNode.new(city_id, MapNode.NodeType.CITY, city_position)
+	var city_config = MapNodeRegistry.get_default_config_for_type(0)  # CITY
+	var city_node = MapNodeRegistry.create_node(city_id, city_config, city_position)
 	city_node.set_state(MapNode.NodeState.CURRENT)  # City is current position since player starts there
 	city_node.set_custom_property("city_name", city_name)
 	
@@ -684,7 +686,8 @@ func load_from_serializable_data(data: Dictionary):
 	for node_id in data.nodes:
 		var node_data = data.nodes[node_id]
 		var position = Vector2(node_data.position[0], node_data.position[1])
-		var node = MapNode.new(node_id, node_data.type, position)
+		var node_config = MapNodeRegistry.get_random_config_for_type(node_data.type)
+		var node = MapNodeRegistry.create_node(node_id, node_config, position)
 		
 		node.connections = node_data.connections.duplicate()
 		node.set_state(node_data.state)
@@ -813,7 +816,8 @@ func generate_radial_paths_from_city(config: MapRegionConfig):
 			# Create node with region-appropriate type
 			var node_type = config.get_random_node_type(SeedManager.map_rng)
 			var node_id = MapNode.NodeType.keys()[node_type].to_lower() + "_" + str(Time.get_ticks_msec()) + "_" + str(i) + "_" + str(j)
-			var new_node = MapNode.new(node_id, node_type, new_pos)
+			var node_config = MapNodeRegistry.get_random_config_for_type(node_type)
+			var new_node = MapNodeRegistry.create_node(node_id, node_config, new_pos)
 			
 			graph.nodes[node_id] = new_node
 			
@@ -855,7 +859,8 @@ func add_boss_node(config: MapRegionConfig):
 	var boss_pos = config.get_boss_position()
 	var boss_id = "boss_" + config.region_id
 	
-	var boss_node = MapNode.new(boss_id, MapNode.NodeType.BOSS, boss_pos)
+	var boss_config = MapNodeRegistry.get_random_config_for_type(6)  # BOSS
+	var boss_node = MapNodeRegistry.create_node(boss_id, boss_config, boss_pos)
 	boss_node.set_custom_property("boss_name", config.boss_name)
 	boss_node.set_custom_property("boss_enemy_id", config.boss_enemy_id)
 	

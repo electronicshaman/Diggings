@@ -32,82 +32,26 @@ enum NodeState {
 # Available actions for this node (generated from config)  
 @export var actions: Array[NodeAction] = []
 
-func _init(node_id: String = "", node_type: NodeType = NodeType.JUNCTION, pos: Vector2 = Vector2.ZERO, node_config: NodeConfig = null):
+func _init(node_id: String = "", pos: Vector2 = Vector2.ZERO, node_config: NodeConfig = null):
 	id = node_id
-	type = node_type
 	position = pos
-	config = node_config
 	
-	# If no config provided, create a default one based on type
-	if config == null:
-		config = _create_default_config(type)
-	
-	# Generate actions from config
-	_generate_actions_from_config()
+	if node_config:
+		config = node_config
+		type = config.node_type
+		_generate_actions_from_config()
+	else:
+		GLog.error("MapNode created without NodeConfig - this should not happen in data-driven architecture")
 
 func set_config(new_config: NodeConfig):
 	"""Set a new configuration for this node"""
+	if not new_config:
+		GLog.error("Attempted to set null config on MapNode")
+		return
+		
 	config = new_config
-	if config:
-		type = config.node_type
-		_generate_actions_from_config()
-
-func _create_default_config(node_type: NodeType) -> NodeConfig:
-	"""Create a basic default config if none is provided"""
-	var config = NodeConfig.new()
-	config.node_type = node_type
-	
-	# Set basic defaults based on type
-	match node_type:
-		NodeType.CITY:
-			config.node_name = "City"
-			config.visual_color = Color.GOLD
-			config.visual_size = Vector2(80, 80)
-			config.safe = true
-			config.always_accessible = true
-			config.available_actions.append("rest")
-			config.available_actions.append("shop")
-		NodeType.CAMP:
-			config.node_name = "Camp"
-			config.visual_color = Color.FOREST_GREEN
-			config.visual_size = Vector2(64, 64)
-			config.safe = true
-			config.available_actions.append("rest")
-		NodeType.MINE:
-			config.node_name = "Mine"
-			config.visual_color = Color.ORANGE
-			config.visual_size = Vector2(70, 70)
-			config.available_actions.append("mine")
-			config.available_actions.append("explore")
-		NodeType.SETTLEMENT:
-			config.node_name = "Settlement"
-			config.visual_color = Color.BLUE
-			config.visual_size = Vector2(68, 68)
-			config.safe = true
-			config.available_actions.append("shop")
-			config.available_actions.append("trade")
-			config.available_actions.append("rest")
-		NodeType.POI:
-			config.node_name = "Point of Interest"
-			config.visual_color = Color.PURPLE
-			config.visual_size = Vector2(66, 66)
-			config.one_time_only = true
-			config.available_actions.append("investigate")
-		NodeType.JUNCTION:
-			config.node_name = "Junction"
-			config.visual_color = Color.GRAY
-			config.visual_size = Vector2(48, 48)
-			config.safe = true
-			config.available_actions.append("survey_paths")
-		NodeType.BOSS:
-			config.node_name = "Boss"
-			config.visual_color = Color.DARK_RED
-			config.visual_size = Vector2(90, 90)
-			config.one_time_only = true
-			config.can_revisit = false
-			config.available_actions.append("challenge")
-	
-	return config
+	type = config.node_type
+	_generate_actions_from_config()
 
 func _generate_actions_from_config():
 	"""Generate NodeAction objects from config data"""
@@ -356,21 +300,17 @@ func set_custom_property(property_name: String, value):
 	if config:
 		config.set_custom_property(property_name, value)
 
-# Static helper method for loading node configs from .tres files
-static func load_config_from_file(file_path: String) -> NodeConfig:
-	"""Load a NodeConfig from a .tres file"""
-	if ResourceLoader.exists(file_path):
-		return load(file_path) as NodeConfig
-	else:
-		GLog.debug("NodeConfig file not found: " + file_path)
+# Factory method for creating nodes - config is required
+static func create_with_config(node_id: String, node_config: NodeConfig, pos: Vector2 = Vector2.ZERO) -> MapNode:
+	"""Create a MapNode with the provided configuration"""
+	if not node_config:
+		GLog.error("Cannot create MapNode without NodeConfig")
 		return null
-
-# Factory method for creating nodes with config files
-static func create_from_config_file(node_id: String, config_path: String, pos: Vector2 = Vector2.ZERO) -> MapNode:
-	"""Create a MapNode with configuration loaded from a .tres file"""
-	var node_config = load_config_from_file(config_path)
-	if node_config:
-		return MapNode.new(node_id, node_config.node_type, pos, node_config)
-	else:
-		GLog.debug("Failed to create node from config: " + config_path)
-		return MapNode.new(node_id, NodeType.JUNCTION, pos)
+		
+	var node = MapNode.new()
+	node.id = node_id
+	node.position = pos
+	node.config = node_config
+	node.type = node_config.node_type
+	node._generate_actions_from_config()
+	return node

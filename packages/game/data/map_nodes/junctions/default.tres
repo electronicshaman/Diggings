@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="NodeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/NodeConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+node_type = 5
+node_name = "Junction"
+description = "A crossroads leading to other destinations."
+visual_size = Vector2(48, 48)
+visual_color = Color(0.5, 0.5, 0.5, 1)
+glow_color = Color(0.7, 0.7, 0.7, 0.5)
+state_color_locked = Color(0.3, 0.3, 0.3, 0.5)
+state_color_available = Color(0.5, 0.5, 0.5, 1)
+state_color_current = Color(0.7, 0.7, 0.7, 1)
+state_color_completed = Color(0.4, 0.4, 0.4, 0.8)
+safe = true
+can_revisit = true
+available_actions = Array[String](["survey_paths"])
+action_properties = {
+"survey_paths": {
+"description": "Survey the available paths ahead.",
+"time_cost_hours": 0
+}
+}
+custom_properties = {
+"junction_type": "standard"
+}

@@ -1,6 +1,8 @@
-[gd_resource type="NodeConfig" format=3]
+[gd_resource type="NodeConfig" format=3 uid="uid://d0pefxfggi2n"]
 
 [resource]
+resource_local_to_scene = false
+resource_name = ""
 node_type = 6
 node_name = "The Goldfields Wraith"
 description = "A massive spectral entity formed from the collective greed and desperation of hundreds of prospectors who died in these hills. Its eyes burn with the golden fire of unfulfilled dreams."
@@ -14,39 +16,39 @@ one_time_only = true
 available_actions = Array[String](["challenge", "study_opponent", "prepare"])
 custom_properties = {
 "boss_name": "The Goldfields Wraith",
-"difficulty": 3,
-"challenge_rating": "high",
 "boss_type": "eldritch_horror",
-"rewards_legendary": true,
-"unlocks_region": true,
+"challenge_rating": "high",
 "combat_mechanics": "spectral",
+"difficulty": 3,
 "origin": "collective_greed",
-"weaknesses": ["silver_items", "pure_intentions"],
-"special_abilities": ["gold_manipulation", "spectral_form", "greed_inducement"]
+"rewards_legendary": true,
+"special_abilities": ["gold_manipulation", "spectral_form", "greed_inducement"],
+"unlocks_region": true,
+"weaknesses": ["silver_items", "pure_intentions"]
 }
 action_properties = {
 "challenge": {
-"description": "Face the Goldfields Wraith in a battle that will determine your worthiness to leave this cursed region.",
 "combat_type": "boss",
-"stakes": "extremely_high",
+"description": "Face the Goldfields Wraith in a battle that will determine your worthiness to leave this cursed region.",
+"environmental_hazards": true,
 "retreat_allowed": false,
-"environmental_hazards": true
-},
-"study_opponent": {
-"description": "Observe the wraith's patterns and learn about its connection to the gold in these hills.",
-"time_cost_hours": 2,
-"sanity_change": -12,
-"one_time_only": true,
-"combat_bonus": true,
-"info_type": "tactical",
-"reveals_weakness": true
+"stakes": "extremely_high"
 },
 "prepare": {
-"description": "Make final preparations, perhaps purifying yourself of greed before the battle.",
-"time_cost_hours": 4,
-"cost_gold": 50,
 "buff_duration": "combat",
+"cost_gold": 50,
+"description": "Make final preparations, perhaps purifying yourself of greed before the battle.",
 "preparation_type": "spiritual",
-"special_requirement": "donate_gold"
+"special_requirement": "donate_gold",
+"time_cost_hours": 4
+},
+"study_opponent": {
+"combat_bonus": true,
+"description": "Observe the wraith's patterns and learn about its connection to the gold in these hills.",
+"info_type": "tactical",
+"one_time_only": true,
+"reveals_weakness": true,
+"sanity_change": -12,
+"time_cost_hours": 2
 }
 }

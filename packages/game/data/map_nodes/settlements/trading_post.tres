@@ -1,6 +1,9 @@
-[gd_resource type="NodeConfig" format=3]
+[gd_resource type="Resource" script_class="NodeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/NodeConfig.gd" id="1"]
 
 [resource]
+script = ExtResource("1")
 node_type = 3
 node_name = "Murphy's Trading Post"
 description = "A bustling trading post run by the Irish prospector 'Lucky' Murphy. Known for fair deals and good information about the surrounding area."

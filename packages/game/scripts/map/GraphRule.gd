@@ -129,7 +129,8 @@ class LinearExtensionRule extends GraphRule:
 				GLog.debug("LinearExtensionRule: Cannot place node at " + str(dest_pos) + " due to spacing constraints")
 				return false
 			
-			var destination = MapNode.new(dest_id, dest_type, dest_pos)
+			var dest_config = MapNodeRegistry.get_random_config_for_type(dest_type)
+			var destination = MapNodeRegistry.create_node(dest_id, dest_config, dest_pos)
 			
 			# Add node to graph
 			nodes[dest_id] = destination
@@ -164,7 +165,8 @@ class LinearExtensionRule extends GraphRule:
 			GLog.debug("LinearExtensionRule: Cannot place junction at " + str(junction_pos) + " due to spacing constraints")
 			return false
 		
-		var junction = MapNode.new(junction_id, MapNode.NodeType.JUNCTION, junction_pos)
+		var junction_config = MapNodeRegistry.get_default_config_for_type(5)  # JUNCTION
+		var junction = MapNodeRegistry.create_node(junction_id, junction_config, junction_pos)
 		
 		# Create destination node using config
 		var dest_type
@@ -193,7 +195,8 @@ class LinearExtensionRule extends GraphRule:
 			GLog.debug("LinearExtensionRule: Cannot place destination at " + str(dest_pos) + " due to spacing constraints")
 			return false
 		
-		var destination = MapNode.new(dest_id, dest_type, dest_pos)
+		var dest_config = MapNodeRegistry.get_random_config_for_type(dest_type)
+		var destination = MapNodeRegistry.create_node(dest_id, dest_config, dest_pos)
 		
 		# Add nodes to graph
 		nodes[junction_id] = junction
@@ -258,7 +261,8 @@ class BranchCreationRule extends GraphRule:
 			GLog.debug("BranchCreationRule: Cannot place branch at " + str(dest_pos) + " due to spacing constraints")
 			return false
 		
-		var destination = MapNode.new(dest_id, dest_type, dest_pos)
+		var dest_config = MapNodeRegistry.get_random_config_for_type(dest_type)
+		var destination = MapNodeRegistry.create_node(dest_id, dest_config, dest_pos)
 		
 		# Add to graph
 		nodes[dest_id] = destination

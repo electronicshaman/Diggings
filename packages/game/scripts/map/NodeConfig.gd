@@ -18,6 +18,13 @@ class_name NodeConfig
 @export var icon_texture: Texture2D
 @export var background_texture: Texture2D
 
+# State-specific colors (optional overrides)
+@export_group("State Colors")
+@export var state_color_locked: Color = Color(0.3, 0.3, 0.3, 0.5)
+@export var state_color_available: Color = Color.WHITE
+@export var state_color_current: Color = Color.YELLOW
+@export var state_color_completed: Color = Color(0.8, 0.8, 0.8, 0.8)
+
 # Gameplay properties
 @export_group("Gameplay Properties") 
 @export var safe: bool = false
@@ -49,6 +56,15 @@ func get_display_description() -> String:
 func get_type_color() -> Color:
 	"""Get the color associated with this node type"""
 	return visual_color
+
+func get_state_color(state: int) -> Color:
+	"""Get the color for a specific node state"""
+	match state:
+		0: return state_color_locked     # NodeState.LOCKED
+		1: return state_color_available  # NodeState.AVAILABLE
+		2: return state_color_current    # NodeState.CURRENT
+		3: return state_color_completed  # NodeState.COMPLETED
+		_: return Color.WHITE
 
 func _get_default_name() -> String:
 	"""Override in subclasses to provide default names"""
