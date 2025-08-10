@@ -11,6 +11,8 @@ const DEBUG_ENABLED: bool = true
 @onready var hand_area := $UI/Control/HandArea
 @onready var debug_panel := $UI/Control/DebugPanel
 @onready var end_turn_button := $UI/Control/TurnInfo/EndTurnButton
+@onready var win_duel_button := $UI/Control/TurnInfo/WinDuel
+@onready var lose_duel_button := $UI/Control/TurnInfo/LoseDuel
 
 # Player Stats UI
 @onready var player_health_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/HealthLabel
@@ -90,6 +92,10 @@ func setup_connections() -> void:
 	game_controller.test_content_loaded.connect(_on_test_content_loaded)
 	ui_controller.ui_refresh_requested.connect(_on_ui_refresh_requested)
 	input_controller.input_action_triggered.connect(_on_input_action_triggered)
+	
+	# Connect testing buttons
+	win_duel_button.pressed.connect(_on_win_duel_pressed)
+	lose_duel_button.pressed.connect(_on_lose_duel_pressed)
 
 func start_initial_duel() -> void:
 	if game_controller and game_controller.test_cards.size() > 0:
@@ -109,6 +115,24 @@ func _on_ui_refresh_requested() -> void:
 func _on_input_action_triggered(action: String) -> void:
 	GLog.debug("Input action: " + action)
 	EventBus.emit_game_event("input_" + action)
+
+func _on_win_duel_pressed() -> void:
+	GLog.debug("Test win button pressed - ending duel as player victory")
+	if duel_manager:
+		duel_manager.end_duel("player")
+	
+	# Return to map after a brief delay
+	await get_tree().create_timer(1.0).timeout
+	SceneManager.load_scene("res://scenes/game/map.tscn")
+
+func _on_lose_duel_pressed() -> void:
+	GLog.debug("Test lose button pressed - ending duel as player defeat")
+	if duel_manager:
+		duel_manager.end_duel("enemy")
+	
+	# Go to game over after a brief delay
+	await get_tree().create_timer(1.0).timeout
+	SceneManager.load_scene("res://scenes/ui/game_over.tscn")
 
 func get_game_controller() -> Node:
 	return game_controller

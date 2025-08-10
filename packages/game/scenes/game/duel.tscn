@@ -205,6 +205,16 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "End Turn"
 
+[node name="WinDuel" type="Button" parent="UI/Control/TurnInfo"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Win Duel"
+
+[node name="LoseDuel" type="Button" parent="UI/Control/TurnInfo"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Lose Duel"
+
 [node name="DebugPanel" type="Panel" parent="UI/Control"]
 visible = false
 modulate = Color(1, 1, 1, 0.8)
