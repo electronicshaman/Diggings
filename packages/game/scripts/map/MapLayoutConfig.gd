@@ -9,7 +9,7 @@ class_name MapLayoutConfig
 @export_group("Generation Limits")
 @export_range(5, 50, 1) var min_nodes: int = 20
 @export_range(5, 50, 1) var max_nodes: int = 30
-@export var viewport_size: Vector2 = Vector2(1280, 720)
+@export var viewport_size: Vector2 = Vector2(1920, 900)
 
 @export_group("Starting Position")
 @export_range(0.05, 0.5, 0.05) var start_x_ratio: float = 0.15  # How far from left edge (0.15 = 15% from left)

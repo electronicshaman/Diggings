@@ -156,9 +156,6 @@ class LinearExtensionRule extends GraphRule:
 		else:
 			if config:
 				junction_pos = config.clamp_to_bounds(junction_pos)
-			else:
-				junction_pos.x = clamp(junction_pos.x, 50, 1230)
-				junction_pos.y = clamp(junction_pos.y, 50, 670)
 		
 		# Check if position is valid for spacing
 		if not _is_position_valid_for_spacing(graph, junction_pos):
@@ -305,7 +302,8 @@ class DestinationPlacementRule extends GraphRule:
 		junction.id = MapNode.NodeType.keys()[new_type].to_lower() + "_" + str(Time.get_ticks_msec())
 		
 		# Update properties based on new type
-		junction._init(junction.id, new_type, junction.position)
+		var new_config = MapNodeRegistry.get_default_config_for_type(new_type)
+		junction.set_config(new_config)
 		
 		applications_count += 1
 		GLog.debug("Applied Destination Placement rule: converted junction to " + junction.get_type_name())
@@ -469,12 +467,8 @@ class MinimumConnectionRule extends GraphRule:
 		
 		for node_id in nodes:
 			var node = nodes[node_id]
-			# Skip start node and intentional endpoints (some node types should be endpoints)
-			if node_id == graph.get("start_node", "") or node.connections.size() >= min_connections:
-				continue
-			
-			# Allow some node types to be endpoints (like remote mines or special POIs)
-			if node.type == MapNode.NodeType.POI and node.connections.size() >= 1:
+			# Skip nodes that already have enough connections
+			if node.connections.size() >= min_connections:
 				continue
 			
 			under_connected_nodes.append(node_id)

@@ -2,7 +2,7 @@ extends Control
 class_name MapController
 
 const DEBUG_ENABLED: bool = true
-const DEBUG_MAP_SHOW_ALL_NODES: bool = true
+const DEBUG_MAP_SHOW_ALL_NODES: bool = false
 
 # Import our map system classes
 const MapNode = preload("res://scripts/map/MapNode.gd")

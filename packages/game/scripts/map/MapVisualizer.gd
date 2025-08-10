@@ -7,7 +7,7 @@ const DEBUG_ENABLED: bool = true
 const MapNodeScene = preload("res://scenes/map/MapNodeScene.tscn")
 
 # Visual settings
-@export var node_radius: float = 20.0
+@export var node_radius: float = 16.0
 @export var edge_width: float = 3.0
 @export var player_node_outline: float = 4.0
 
@@ -325,6 +325,9 @@ func update_node_interactivity(node_scene: MapNodeScene, node: MapNode):
 	node_scene.refresh()
 
 func update_edge_visibility():
+	var current_player_node_id = graph_data.get("player_position", "")
+	var available_moves = map_generator.get_available_moves() if map_generator else []
+	
 	for line in edge_lines:
 		var edge = line.get_meta("edge_data", null) as MapEdge
 		if not edge:
@@ -336,8 +339,15 @@ func update_edge_visibility():
 		if not from_node or not to_node:
 			continue
 		
-		# Show edge if either node is not locked (visible)
-		if from_node.state != MapNode.NodeState.LOCKED or to_node.state != MapNode.NodeState.LOCKED:
+		# Show edge only if it connects current player position to an available destination
+		var connects_current_to_available = false
+		
+		if edge.from_node == current_player_node_id and edge.to_node in available_moves:
+			connects_current_to_available = true
+		elif edge.to_node == current_player_node_id and edge.from_node in available_moves:
+			connects_current_to_available = true
+		
+		if connects_current_to_available:
 			line.default_color = edge_visible_color
 			line.visible = true
 		else:

@@ -11,7 +11,7 @@ class_name MapNodeConfig
 
 # Visual properties
 @export_group("Visual Properties")
-@export var visual_size: Vector2 = Vector2(64, 64)
+@export var visual_size: Vector2 = Vector2(32, 32)
 @export var visual_color: Color = Color.GRAY
 @export var glow_color: Color = Color(0.7, 0.7, 0.7, 0.5)
 @export var pulse_effect: bool = false
@@ -20,11 +20,11 @@ class_name MapNodeConfig
 
 #State Colors
 @export_group("State Colors")
-@export var state_color_locked: Color = Color(0.3, 0.3, 0.3, 0.5)  # Locked state color
+@export var state_color_locked: Color = Color.DARK_GRAY  # Locked state color
 @export var state_color_available: Color = Color.WHITE  # Available state color
 @export var state_color_current: Color = Color.YELLOW  # Current state color
-@export var state_color_completed: Color = Color(0.8, 0.8, 0.8, 0.8)  # Completed state color
-@export var state_color_known: Color = Color(0.5, 0.5, 0.5, 0.5)  # Known state color
+@export var state_color_completed: Color = Color.CADET_BLUE  # Completed state color
+@export var state_color_known: Color = Color.BISQUE  # Known state color
 
 
 # Gameplay properties

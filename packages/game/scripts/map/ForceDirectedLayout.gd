@@ -4,7 +4,7 @@ class_name ForceDirectedLayout
 # Fruchterman-Reingold force-directed layout algorithm
 # Optimizes node positions for better visual appearance
 
-const DEBUG_ENABLED: bool = false
+const DEBUG_ENABLED: bool = true
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 
 # Simulation parameters
@@ -15,7 +15,7 @@ var temperature: float = 0.0  # Current "heat" for movement
 var cooling_factor: float = 0.95
 var repulsion_strength: float = 1.0
 var attraction_strength: float = 0.8
-var boundary_strength: float = 0.3
+var boundary_strength: float = 0.05  # Further reduced for very gentle edge repulsion
 
 # Edge crossing minimization parameters
 var edge_crossing_penalty: float = 0.5
@@ -25,7 +25,7 @@ var crossing_iterations: int = 50
 
 # Layout bounds
 var bounds: Rect2
-var center_pull_strength: float = 0.1
+var center_pull_strength: float = 0.3  # Further increased for stronger interior attraction
 
 # Reference to configuration
 var config: MapLayoutConfig
@@ -62,22 +62,56 @@ func apply_layout(graph: Dictionary) -> Dictionary:
 	# Setup simulation parameters
 	setup_simulation(nodes)
 	
-	# Store original positions for fallback
+	# Store original positions for fallback and position tracking
 	var original_positions = {}
+	var position_changes = {}
 	for node_id in nodes:
 		original_positions[node_id] = nodes[node_id].position
+		position_changes[node_id] = 0.0
+	
+	GLog.debug("Starting physics simulation with " + str(nodes.size()) + " nodes")
+	GLog.debug("Bounds: " + str(bounds) + ", k_constant: " + str(k_constant))
+	
+	# Log some initial positions
+	var node_ids = nodes.keys()
+	if node_ids.size() > 0:
+		GLog.debug("Sample initial positions:")
+		for i in range(min(3, node_ids.size())):
+			GLog.debug("  " + node_ids[i] + ": " + str(nodes[node_ids[i]].position))
 	
 	# Run force-directed simulation
 	for iteration in range(iterations):
 		var forces = calculate_forces(nodes, edges)
+		
+		# Track position changes for debugging
+		var total_movement = 0.0
+		var max_force = 0.0
+		
+		for node_id in nodes:
+			var force = forces.get(node_id, Vector2.ZERO)
+			max_force = max(max_force, force.length())
+			var old_pos = nodes[node_id].position
+			
 		apply_forces(nodes, forces)
+		
+		# Calculate total movement this iteration
+		for node_id in nodes:
+			var movement = nodes[node_id].position.distance_to(original_positions[node_id])
+			position_changes[node_id] = movement
+			total_movement += movement
 		
 		# Cool down the system
 		temperature *= cooling_factor
 		
-		# Debug output every 50 iterations
+		# Enhanced debug output
 		if iteration % 50 == 0:
-			GLog.debug("Layout iteration " + str(iteration) + "/" + str(iterations) + " - temp: " + str(temperature))
+			var avg_movement = total_movement / nodes.size() if nodes.size() > 0 else 0.0
+			GLog.debug("Iteration " + str(iteration) + "/" + str(iterations) + " - temp: " + str(temperature) + ", avg movement: " + str(avg_movement) + ", max force: " + str(max_force))
+			
+			# Log some current positions
+			if node_ids.size() > 0:
+				for i in range(min(2, node_ids.size())):
+					GLog.debug("  " + node_ids[i] + ": " + str(nodes[node_ids[i]].position) + " (moved: " + str(position_changes[node_ids[i]]) + ")")
 	
 	# Run additional edge-crossing minimization phase if enabled
 	if edge_crossing_penalty > 0.0 and crossing_iterations > 0:
@@ -92,17 +126,35 @@ func apply_layout(graph: Dictionary) -> Dictionary:
 		for node_id in nodes:
 			nodes[node_id].position = original_positions[node_id]
 	
-	GLog.debug("Force-directed layout complete")
+	# Final summary
+	var total_final_movement = 0.0
+	for node_id in nodes:
+		total_final_movement += nodes[node_id].position.distance_to(original_positions[node_id])
+	var avg_final_movement = total_final_movement / nodes.size() if nodes.size() > 0 else 0.0
+	
+	GLog.debug("Force-directed layout complete - average node movement: " + str(avg_final_movement))
+	
+	# Log final positions of sample nodes
+	if node_ids.size() > 0:
+		GLog.debug("Sample final positions:")
+		for i in range(min(3, node_ids.size())):
+			var final_pos = nodes[node_ids[i]].position
+			var original_pos = original_positions[node_ids[i]]
+			var movement = final_pos.distance_to(original_pos)
+			GLog.debug("  " + node_ids[i] + ": " + str(final_pos) + " (moved " + str(movement) + " from " + str(original_pos) + ")")
+	
 	return graph
 
 func setup_simulation(nodes: Dictionary):
 	# Calculate layout area from node positions or use config bounds
 	if config and config.bounds_enforce_viewport:
+		# Use a smaller effective margin for force-directed layout to allow better distribution
+		var layout_margin = 20.0  # Override config.bounds_margin (50px) with smaller margin
 		bounds = Rect2(
-			Vector2(config.bounds_margin, config.bounds_margin),
+			Vector2(layout_margin, layout_margin),
 			Vector2(
-				config.viewport_size.x - 2 * config.bounds_margin,
-				config.viewport_size.y - 2 * config.bounds_margin
+				config.viewport_size.x - 2 * layout_margin,
+				config.viewport_size.y - 2 * layout_margin
 			)
 		)
 		area = bounds.size.x * bounds.size.y
@@ -124,7 +176,8 @@ func setup_simulation(nodes: Dictionary):
 		area = size.x * size.y
 	
 	# Calculate optimal distance between nodes (Fruchterman-Reingold formula)
-	k_constant = sqrt(area / nodes.size())
+	# Scale up by 1.8x to support larger spacing configurations
+	k_constant = sqrt(area / nodes.size()) * 1.8
 	
 	# Initialize temperature (controls initial movement range)
 	temperature = sqrt(area) / 10.0
@@ -194,27 +247,42 @@ func calculate_attractive_force(node_a: MapNode, node_b: MapNode) -> Vector2:
 func calculate_boundary_force(node: MapNode) -> Vector2:
 	var force = Vector2.ZERO
 	var pos = node.position
-	var margin = 50.0  # Distance from boundary where force starts
+	var margin = 20.0  # Reduced from 50.0 - smaller boundary zone
 	
+	# Calculate gradual boundary forces with quadratic falloff
 	# Left boundary
 	if pos.x < bounds.position.x + margin:
 		var distance = bounds.position.x + margin - pos.x
-		force.x += (distance / margin) * boundary_strength * k_constant
+		var strength = (distance / margin) * (distance / margin)  # Quadratic - stronger when very close
+		force.x += strength * boundary_strength * k_constant
 	
 	# Right boundary
 	if pos.x > bounds.position.x + bounds.size.x - margin:
 		var distance = pos.x - (bounds.position.x + bounds.size.x - margin)
-		force.x -= (distance / margin) * boundary_strength * k_constant
+		var strength = (distance / margin) * (distance / margin)
+		force.x -= strength * boundary_strength * k_constant
 	
 	# Top boundary
 	if pos.y < bounds.position.y + margin:
 		var distance = bounds.position.y + margin - pos.y
-		force.y += (distance / margin) * boundary_strength * k_constant
+		var strength = (distance / margin) * (distance / margin)
+		force.y += strength * boundary_strength * k_constant
 	
 	# Bottom boundary
 	if pos.y > bounds.position.y + bounds.size.y - margin:
 		var distance = pos.y - (bounds.position.y + bounds.size.y - margin)
-		force.y -= (distance / margin) * boundary_strength * k_constant
+		var strength = (distance / margin) * (distance / margin)
+		force.y -= strength * boundary_strength * k_constant
+	
+	# Add center attraction force to encourage interior distribution
+	var center = bounds.position + bounds.size * 0.5
+	var to_center = center - pos
+	var center_distance = to_center.length()
+	
+	# Apply center attraction (stronger than boundary forces for interior distribution)
+	if center_distance > 0.01:
+		var center_force = to_center.normalized() * center_pull_strength * k_constant
+		force += center_force
 	
 	return force
 
@@ -229,8 +297,16 @@ func apply_forces(nodes: Dictionary, forces: Dictionary):
 		# Apply displacement
 		node.position += displacement
 		
-		# Keep nodes within bounds (hard constraint)
-		node.position = clamp_to_bounds(node.position)
+		# Soft boundary constraint - only clamp if nodes go far outside reasonable bounds
+		# Allow some overshoot to prevent hard clustering at boundaries
+		var overshoot_margin = 50.0
+		var soft_bounds = Rect2(
+			bounds.position - Vector2(overshoot_margin, overshoot_margin),
+			bounds.size + Vector2(overshoot_margin * 2, overshoot_margin * 2)
+		)
+		
+		if not soft_bounds.has_point(node.position):
+			node.position = clamp_to_bounds(node.position)
 
 func clamp_to_bounds(pos: Vector2) -> Vector2:
 	return Vector2(

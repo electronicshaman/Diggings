@@ -1,13 +1,13 @@
 extends Control
 class_name MapNodeScene
 
-const DEBUG_ENABLED: bool = true
+const DEBUG_ENABLED: bool = false
 
 # Node references
 @onready var node_button: Button = $NodeButton
 @onready var background_icon: TextureRect = $BackgroundIcon
 @onready var node_icon: TextureRect = $NodeIcon
-@onready var node_label: Label = $NodeLabel
+# @onready var node_label: Label = $NodeLabel  # Removed - using tooltips instead
 @onready var state_indicator: Control = $StateIndicator
 @onready var outline: ColorRect = $StateIndicator/Outline
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -19,8 +19,8 @@ var is_interactive: bool = false
 var is_highlighted: bool = false
 
 # Visual settings
-@export var node_size: Vector2 = Vector2(64, 64)
-@export var label_offset: Vector2 = Vector2(0, 70)
+@export var node_size: Vector2 = Vector2(32, 32)
+# @export var label_offset: Vector2 = Vector2(0, 70)  # Removed - no longer needed
 
 # Data-driven visual system - all colors come from NodeConfig resources
 
@@ -58,11 +58,7 @@ func setup_visual_hierarchy():
 		node_icon.size = node_size * 0.7  # Slightly smaller than background
 		node_icon.position = node_size * 0.15  # Center it
 	
-	if node_label:
-		node_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		node_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		node_label.position = label_offset
-		node_label.size = Vector2(node_size.x + 40, 20)  # Wider for text
+	# Label configuration removed - using tooltips instead
 	
 	if state_indicator:
 		state_indicator.size = node_size + Vector2(8, 8)  # Slightly larger
@@ -119,10 +115,7 @@ func update_visuals():
 	if not node_data:
 		return
 	
-	# Update label
-	if node_label:
-		node_label.text = node_data.get_type_name()
-		node_label.modulate = get_label_color()
+	# Label removed - using tooltips instead
 	
 	# Update background based on type
 	if background_icon:
@@ -179,12 +172,8 @@ func get_icon_color() -> Color:
 	var alpha = node_data.get_state_alpha()
 	return Color(1.0, 1.0, 1.0, alpha)
 
-func get_label_color() -> Color:
-	"""Get the label color from the node's resource configuration"""
-	if not node_data or not node_data.config:
-		return Color.WHITE
-		
-	return node_data.config.get_state_color(node_data.get_state())
+# func get_label_color() -> Color:
+	# Removed - no longer using labels
 
 func get_current_resource_modulate() -> Color:
 	"""Get the current modulate color using resource-defined state colors exactly"""
