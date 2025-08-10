@@ -1,0 +1,39 @@
+[gd_resource type="NodeConfig" format=3]
+
+[resource]
+node_type = 5
+node_name = "Eagle's Pass"
+description = "A high mountain pass that offers excellent views of the surrounding valleys. Multiple paths wind down from this elevated crossroads."
+visual_size = Vector2(48, 48)
+visual_color = Color(0.501961, 0.501961, 0.501961, 1)
+glow_color = Color(0.7, 0.7, 0.7, 0.5)
+safe = true
+can_revisit = true
+available_actions = Array[String](["survey_paths", "brief_rest"])
+custom_properties = {
+"junction_type": "pass",
+"path_count": 4,
+"visibility_bonus": true,
+"pass_through": true,
+"landmark_quality": "major",
+"elevation": "high",
+"weather_exposed": true,
+"scenic_value": "excellent"
+}
+action_properties = {
+"survey_paths": {
+"description": "From this high vantage point, you can see far into the valleys below.",
+"time_cost_hours": 1,
+"reveals_connections": true,
+"reveals_distant_nodes": true,
+"info_type": "navigation",
+"visibility_range": "excellent"
+},
+"brief_rest": {
+"description": "Rest at this scenic overlook, though the mountain air is thin.",
+"heal_amount": 2,
+"sanity_change": 5,
+"time_cost_hours": 1,
+"scenic_bonus": true
+}
+}

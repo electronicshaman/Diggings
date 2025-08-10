@@ -1,0 +1,52 @@
+[gd_resource type="NodeConfig" format=3]
+
+[resource]
+node_type = 3
+node_name = "Murphy's Trading Post"
+description = "A bustling trading post run by the Irish prospector 'Lucky' Murphy. Known for fair deals and good information about the surrounding area."
+visual_size = Vector2(68, 68)
+visual_color = Color(0, 0, 1, 1)
+glow_color = Color(0, 0.4, 0.8, 0.6)
+safe = true
+can_revisit = true
+available_actions = Array[String](["shop", "trade", "rest", "gather_info"])
+custom_properties = {
+"population": "small",
+"prosperity": "good",
+"settlement_type": "trading_post",
+"specialty": "information",
+"safety_rating": 0.9,
+"hospitality": "very_friendly",
+"owner": "Lucky Murphy",
+"reputation": "honest_dealing",
+"local_knowledge": "excellent"
+}
+action_properties = {
+"shop": {
+"description": "Murphy's got a good selection of quality goods at fair prices.",
+"shop_tier": 2,
+"item_variety": "high",
+"price_modifier": 0.95,
+"special_items": ["local_maps", "quality_supplies"]
+},
+"trade": {
+"description": "Murphy knows the value of goods and offers excellent trade deals.",
+"accepts_goods": true,
+"trade_bonus": 0.15,
+"special_items": true
+},
+"rest": {
+"description": "Stay in Murphy's comfortable guest room above the trading post.",
+"heal_amount": 12,
+"sanity_change": 10,
+"time_cost_hours": 3,
+"cost_gold": 3
+},
+"gather_info": {
+"description": "Murphy knows everyone and everything that happens in these parts.",
+"info_quality": "excellent",
+"time_cost_hours": 1,
+"reveals_nearby": true,
+"reveals_secrets": true
+}
+}

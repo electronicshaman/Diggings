@@ -1,6 +1,8 @@
 extends Resource
 class_name GraphRule
 
+const DEBUG_ENABLED: bool = false
+
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 
 @export var rule_name: String = ""

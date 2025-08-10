@@ -1,0 +1,52 @@
+[gd_resource type="NodeConfig" format=3]
+
+[resource]
+node_type = 6
+node_name = "The Goldfields Wraith"
+description = "A massive spectral entity formed from the collective greed and desperation of hundreds of prospectors who died in these hills. Its eyes burn with the golden fire of unfulfilled dreams."
+visual_size = Vector2(90, 90)
+visual_color = Color(0.545098, 0, 0, 1)
+glow_color = Color(0.8, 0, 0, 0.9)
+pulse_effect = true
+safe = false
+can_revisit = false
+one_time_only = true
+available_actions = Array[String](["challenge", "study_opponent", "prepare"])
+custom_properties = {
+"boss_name": "The Goldfields Wraith",
+"difficulty": 3,
+"challenge_rating": "high",
+"boss_type": "eldritch_horror",
+"rewards_legendary": true,
+"unlocks_region": true,
+"combat_mechanics": "spectral",
+"origin": "collective_greed",
+"weaknesses": ["silver_items", "pure_intentions"],
+"special_abilities": ["gold_manipulation", "spectral_form", "greed_inducement"]
+}
+action_properties = {
+"challenge": {
+"description": "Face the Goldfields Wraith in a battle that will determine your worthiness to leave this cursed region.",
+"combat_type": "boss",
+"stakes": "extremely_high",
+"retreat_allowed": false,
+"environmental_hazards": true
+},
+"study_opponent": {
+"description": "Observe the wraith's patterns and learn about its connection to the gold in these hills.",
+"time_cost_hours": 2,
+"sanity_change": -12,
+"one_time_only": true,
+"combat_bonus": true,
+"info_type": "tactical",
+"reveals_weakness": true
+},
+"prepare": {
+"description": "Make final preparations, perhaps purifying yourself of greed before the battle.",
+"time_cost_hours": 4,
+"cost_gold": 50,
+"buff_duration": "combat",
+"preparation_type": "spiritual",
+"special_requirement": "donate_gold"
+}
+}

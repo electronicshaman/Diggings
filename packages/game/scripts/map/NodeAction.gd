@@ -10,7 +10,7 @@ class_name NodeAction
 @export var enabled: bool = true
 
 # Optional requirements for this action to be available
-@export var requires_items: Array[String] = []
+@export var requires_items: Array = []
 @export var requires_stats: Dictionary = {}  # stat_name -> minimum_value
 @export var cooldown_hours: int = 0
 @export var one_time_only: bool = false

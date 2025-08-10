@@ -1,0 +1,49 @@
+[gd_resource type="NodeConfig" format=3]
+
+[resource]
+node_type = 2
+node_name = "Abandoned Glory Mine"
+description = "Once a productive gold mine, now abandoned after a mysterious incident. The entrance is partially collapsed but still accessible to the brave."
+visual_size = Vector2(70, 70)
+visual_color = Color(1, 0.647059, 0, 1)
+glow_color = Color(1, 0.5, 0, 0.7)
+safe = false
+can_revisit = true
+available_actions = Array[String](["mine", "explore", "quick_search"])
+custom_properties = {
+"mine_type": "gold",
+"depth": "deep",
+"structural_integrity": "poor",
+"previous_activity": "abandoned",
+"monster_presence": "moderate",
+"resource_quality": "high",
+"abandonment_reason": "mysterious_incident",
+"danger_signs": ["collapsed_sections", "strange_sounds", "cold_spots"]
+}
+action_properties = {
+"mine": {
+"description": "Carefully extract gold from the unstable mine shafts.",
+"gold_min": 20,
+"gold_max": 55,
+"danger_level": 3,
+"time_cost_hours": 6,
+"encounter_chance": 0.4
+},
+"explore": {
+"description": "Venture into the deepest sections where the best gold might remain.",
+"gold_min": 35,
+"gold_max": 80,
+"danger_level": 4,
+"time_cost_hours": 8,
+"card_find_chance": 0.4,
+"encounter_chance": 0.6
+},
+"quick_search": {
+"description": "Search near the entrance for easy pickings left behind.",
+"gold_min": 8,
+"gold_max": 20,
+"danger_level": 2,
+"time_cost_hours": 2,
+"encounter_chance": 0.2
+}
+}

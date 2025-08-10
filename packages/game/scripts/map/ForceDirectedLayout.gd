@@ -4,7 +4,7 @@ class_name ForceDirectedLayout
 # Fruchterman-Reingold force-directed layout algorithm
 # Optimizes node positions for better visual appearance
 
-const DEBUG_ENABLED: bool = true
+const DEBUG_ENABLED: bool = false
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 
 # Simulation parameters

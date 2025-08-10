@@ -120,7 +120,7 @@ func apply_type_customizations():
 		return
 	
 	# Get size from resource properties, with fallback to type-based defaults
-	var resource_size = node_data.properties.get("visual_size", Vector2.ZERO)
+	var resource_size = node_data.get_visual_size() if node_data.config else Vector2.ZERO
 	if resource_size != Vector2.ZERO:
 		node_size = resource_size
 	else:
@@ -181,7 +181,7 @@ func update_state_indicator():
 	var base_color = state_colors.get(state, Color.WHITE)
 	
 	# Check if the resource defines a custom glow color
-	var glow_color = node_data.properties.get("glow_color", Color.TRANSPARENT)
+	var glow_color = node_data.get_glow_color() if node_data.config else Color.TRANSPARENT
 	
 	# Handle special states
 	if is_highlighted:
@@ -209,7 +209,7 @@ func get_background_color() -> Color:
 	var alpha = node_data.get_state_alpha()
 	
 	# First check if the resource has a custom visual color
-	var resource_color = node_data.properties.get("visual_color", Color.TRANSPARENT)
+	var resource_color = node_data.get_type_color()
 	if resource_color != Color.TRANSPARENT:
 		base_color = resource_color
 	else:
@@ -279,34 +279,34 @@ func update_tooltip():
 	# Add type-specific information
 	match node_data.type:
 		MapNode.NodeType.CITY:
-			if node_data.properties.get("has_shop", false):
+			if node_data.get_custom_property("has_shop", false):
 				tooltip_content += "\nâ¢ Shop available"
-			if node_data.properties.get("has_deck_management", false):
+			if node_data.get_custom_property("has_deck_management", false):
 				tooltip_content += "\nâ¢ Deck management available"
-			if node_data.properties.get("heal_to_full", false):
+			if node_data.get_custom_property("heal_to_full", false):
 				tooltip_content += "\nâ¢ Full healing available"
 			tooltip_content += "\nâ¢ Safe haven - always revisitable"
 			
 		MapNode.NodeType.CAMP:
-			var heal_amount = node_data.properties.get("heal_amount", 15)
-			var rest_time = node_data.properties.get("rest_time", 4)
+			var heal_amount = node_data.get_custom_property("heal_amount", 15)
+			var rest_time = node_data.get_custom_property("rest_time", 4)
 			tooltip_content += "\nâ¢ Rest and heal " + str(heal_amount) + " HP"
 			tooltip_content += "\nâ¢ Takes " + str(rest_time) + " hours"
 			tooltip_content += "\nâ¢ Safe location"
 			
 		MapNode.NodeType.MINE:
-			var resource_type = node_data.properties.get("resource_type", "gold")
-			var danger_level = node_data.properties.get("danger_level", 1)
-			var exploration_time = node_data.properties.get("exploration_time", 6)
+			var resource_type = node_data.get_custom_property("resource_type", "gold")
+			var danger_level = node_data.get_custom_property("danger_level", 1)
+			var exploration_time = node_data.get_custom_property("exploration_time", 6)
 			tooltip_content += "\nâ¢ Mine for " + resource_type
 			tooltip_content += "\nâ¢ Danger level: " + str(danger_level) + "/3"
 			tooltip_content += "\nâ¢ Takes " + str(exploration_time) + " hours"
 			tooltip_content += "\nâ¢ Risk vs reward location"
 			
 		MapNode.NodeType.BOSS:
-			var boss_name = node_data.properties.get("boss_name", "Boss")
-			var difficulty = node_data.properties.get("difficulty", 3)
-			var rewards_legendary = node_data.properties.get("rewards_legendary", false)
+			var boss_name = node_data.get_custom_property("boss_name", "Boss")
+			var difficulty = node_data.get_custom_property("difficulty", 3)
+			var rewards_legendary = node_data.get_custom_property("rewards_legendary", false)
 			tooltip_content += "\nâ¢ Boss: " + boss_name
 			tooltip_content += "\nâ¢ Difficulty: " + str(difficulty) + "/5"
 			if rewards_legendary:

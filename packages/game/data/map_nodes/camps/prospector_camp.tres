@@ -1,0 +1,41 @@
+[gd_resource type="NodeConfig" format=3]
+
+[resource]
+node_type = 1
+node_name = "Prospector's Rest"
+description = "A well-used camping spot favored by prospectors. The fire pit shows signs of recent use and there are carved messages from previous visitors."
+visual_size = Vector2(64, 64)
+visual_color = Color(0.133333, 0.545098, 0.133333, 1)
+glow_color = Color(0, 0.8, 0.2, 0.7)
+safe = true
+can_revisit = true
+available_actions = Array[String](["rest", "quick_rest", "tend_fire"])
+custom_properties = {
+"camp_type": "improved",
+"fire_quality": "excellent",
+"shelter_quality": "good",
+"water_source": true,
+"visibility": "good",
+"previous_visitors": ["prospectors", "traders"],
+"carved_messages": true
+}
+action_properties = {
+"rest": {
+"description": "Rest by the excellent campfire with good shelter from the elements.",
+"heal_amount": 18,
+"sanity_change": 12,
+"time_cost_hours": 4
+},
+"quick_rest": {
+"description": "Take advantage of the good shelter for a brief rest.",
+"heal_amount": 10,
+"sanity_change": 8,
+"time_cost_hours": 2
+},
+"tend_fire": {
+"description": "The well-maintained fire pit provides excellent warmth and comfort.",
+"heal_amount": 0,
+"sanity_change": 18,
+"time_cost_hours": 1
+}
+}

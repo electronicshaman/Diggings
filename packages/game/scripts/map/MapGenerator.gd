@@ -1,7 +1,7 @@
 extends Node
 class_name MapGenerator
 
-const DEBUG_ENABLED: bool = true
+const DEBUG_ENABLED: bool = false
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 const ForceDirectedLayout = preload("res://scripts/map/ForceDirectedLayout.gd")
 
@@ -147,7 +147,7 @@ func create_city_node(city_name: String, city_position: Vector2):
 	var city_node = MapNode.new(city_id, MapNode.NodeType.CITY, city_position)
 	city_node.discovered = true
 	city_node.visited = true  # City is visited since player starts there
-	city_node.properties["city_name"] = city_name
+	city_node.set_custom_property("city_name", city_name)
 	
 	graph.nodes[city_id] = city_node
 	graph.start_node = city_id
@@ -858,8 +858,8 @@ func add_boss_node(config: MapRegionConfig):
 	var boss_id = "boss_" + config.region_id
 	
 	var boss_node = MapNode.new(boss_id, MapNode.NodeType.BOSS, boss_pos)
-	boss_node.properties["boss_name"] = config.boss_name
-	boss_node.properties["boss_enemy_id"] = config.boss_enemy_id
+	boss_node.set_custom_property("boss_name", config.boss_name)
+	boss_node.set_custom_property("boss_enemy_id", config.boss_enemy_id)
 	
 	graph.nodes[boss_id] = boss_node
 	

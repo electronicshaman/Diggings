@@ -1,0 +1,45 @@
+[gd_resource type="NodeConfig" format=3]
+
+[resource]
+node_type = 0
+node_name = "Goldfields Central"
+description = "The bustling heart of the goldfields region. A major city where fortune-seekers gather to trade, rest, and plan their next venture into the wilderness."
+visual_size = Vector2(80, 80)
+visual_color = Color(1, 0.843137, 0, 1)
+glow_color = Color(1, 0.8, 0, 0.8)
+safe = true
+can_revisit = true
+always_accessible = true
+available_actions = Array[String](["rest", "shop", "deck_management"])
+custom_properties = {
+"city_name": "Goldfields Central",
+"city_type": "major",
+"has_bank": true,
+"has_inn": true,
+"has_blacksmith": true,
+"has_library": true,
+"population": "large",
+"prosperity": "high",
+"safety_rating": 1.0,
+"specialties": ["mining_equipment", "maps", "provisions"]
+}
+action_properties = {
+"deck_management": {
+"can_remove_cards": true,
+"can_upgrade_cards": true,
+"description": "Visit the card scholars at the university to refine your deck.",
+"upgrade_cost_modifier": 0.8
+},
+"rest": {
+"description": "Stay at the Grand Goldfields Hotel and recover completely.",
+"heal_to_full": true,
+"sanity_to_full": true,
+"time_cost_hours": 0
+},
+"shop": {
+"description": "Browse the finest equipment and supplies in the region.",
+"has_all_items": true,
+"shop_tier": 3,
+"special_items": ["legendary_equipment", "rare_cards"]
+}
+}

@@ -1,0 +1,52 @@
+[gd_resource type="NodeConfig" format=3]
+
+[resource]
+node_type = 4
+node_name = "Whispering Stones"
+description = "A circle of ancient stones that seem to whisper in languages long forgotten. The air around them shimmers with otherworldly energy."
+visual_size = Vector2(66, 66)
+visual_color = Color(0.501961, 0, 0.501961, 1)
+glow_color = Color(0.8, 0, 0.8, 0.7)
+safe = false
+can_revisit = false
+one_time_only = true
+available_actions = Array[String](["investigate", "explore", "observe"])
+custom_properties = {
+"poi_type": "shrine",
+"mystery_rating": "high",
+"requires_light": false,
+"eldritch_influence": "moderate",
+"historical_significance": "ancient",
+"accessibility": "moderate",
+"stone_count": 7,
+"inscriptions": "unknown_language",
+"energy_type": "eldritch",
+"local_legends": ["portal_to_other_realm", "communication_with_ancient_ones"]
+}
+action_properties = {
+"investigate": {
+"description": "Study the ancient inscriptions and try to understand their meaning.",
+"mystery_level": 2,
+"sanity_cost": 8,
+"time_cost_hours": 3,
+"reward_type": "rare_card",
+"possible_rewards": ["eldritch_knowledge", "ancient_blessing"]
+},
+"explore": {
+"description": "Touch the stones and open yourself to their otherworldly influence.",
+"mystery_level": 3,
+"sanity_cost": 15,
+"time_cost_hours": 5,
+"reward_type": "legendary_card",
+"danger_level": 3,
+"possible_rewards": ["cosmic_revelation", "cursed_knowledge"]
+},
+"observe": {
+"description": "Watch the stones from a safe distance and note their behavior.",
+"mystery_level": 1,
+"sanity_cost": 3,
+"time_cost_hours": 1,
+"reward_type": "information",
+"reveals_pattern": true
+}
+}
