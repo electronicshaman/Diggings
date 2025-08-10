@@ -23,17 +23,13 @@ enum NodeState {
 @export var position: Vector2 = Vector2.ZERO
 @export var connections: Array[String] = []
 
-# Legacy state flags (kept for compatibility, will be phased out)
-@export var discovered: bool = false
-@export var visited: bool = false
-
-# New unified state system
+# Unified state system
 @export var state: NodeState = NodeState.LOCKED
 
 # Configuration resource that defines this node's properties and behavior
 @export var config: NodeConfig
 
-# Available actions for this node (generated from config)
+# Available actions for this node (generated from config)  
 @export var actions: Array[NodeAction] = []
 
 func _init(node_id: String = "", node_type: NodeType = NodeType.JUNCTION, pos: Vector2 = Vector2.ZERO, node_config: NodeConfig = null):
@@ -192,69 +188,36 @@ func is_connected_to(other_node_id: String) -> bool:
 func get_type_name() -> String:
 	if config:
 		return config.get_display_name()
-	
-	# Fallback if no config
-	match type:
-		NodeType.CITY: return "City"
-		NodeType.CAMP: return "Camp"
-		NodeType.MINE: return "Mine"
-		NodeType.SETTLEMENT: return "Settlement"
-		NodeType.POI: return "Point of Interest"
-		NodeType.JUNCTION: return "Junction"
-		NodeType.BOSS: return "Boss"
-		_: return "Unknown"
+	else:
+		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		return "ERROR_NO_CONFIG"
 
 func get_type_color() -> Color:
 	if config:
 		return config.get_type_color()
-	
-	# Fallback if no config
-	match type:
-		NodeType.CITY: return Color.GOLD
-		NodeType.CAMP: return Color.GREEN
-		NodeType.MINE: return Color.ORANGE
-		NodeType.SETTLEMENT: return Color.BLUE
-		NodeType.POI: return Color.PURPLE
-		NodeType.JUNCTION: return Color.GRAY
-		NodeType.BOSS: return Color.RED
-		_: return Color.WHITE
+	else:
+		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		return Color.MAGENTA  # Obvious error color
 
 func discover() -> void:
-	discovered = true
+	if state == NodeState.LOCKED:
+		set_state(NodeState.AVAILABLE)
 	GLog.debug("Node discovered: " + get_type_name() + " (" + id + ")")
 
 func visit() -> void:
-	if not discovered:
-		discover()
-	visited = true
+	discover()  # Ensure discovered first
+	set_state(NodeState.CURRENT)
 	GLog.debug("Node visited: " + get_type_name() + " (" + id + ")")
 
 func get_description() -> String:
-	if not discovered:
+	if state == NodeState.LOCKED:
 		return "Unexplored Location"
 	
 	if config:
 		return config.get_display_description()
-	
-	# Fallback if no config
-	var desc = get_type_name()
-	match type:
-		NodeType.CITY:
-			desc += "\nThe central hub of the region. Safe haven with all services."
-		NodeType.CAMP:
-			desc += "\nA safe place to rest and recover."
-		NodeType.MINE:
-			desc += "\nRich in resources but dangerous to explore."
-		NodeType.SETTLEMENT:
-			desc += "\nA bustling community with shops and traders."
-		NodeType.POI:
-			desc += "\nA mysterious location worth investigating."
-		NodeType.JUNCTION:
-			desc += "\nA crossroads leading to other destinations."
-		NodeType.BOSS:
-			desc += "\nA powerful enemy guards the exit from this region."
-	
-	return desc
+	else:
+		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		return "ERROR: No configuration data found for this node."
 
 # New state management methods
 func get_state() -> NodeState:
@@ -262,25 +225,13 @@ func get_state() -> NodeState:
 
 func set_state(new_state: NodeState):
 	state = new_state
-	# Update legacy flags for compatibility
-	match state:
-		NodeState.LOCKED:
-			discovered = false
-			visited = false
-		NodeState.AVAILABLE:
-			discovered = true
-			visited = false
-		NodeState.CURRENT:
-			discovered = true  
-			visited = true
-		NodeState.COMPLETED:
-			discovered = true
-			visited = true
 
 func is_interactive() -> bool:
 	"""Returns true if the node can be clicked/selected"""
 	match state:
 		NodeState.AVAILABLE:
+			return true
+		NodeState.CURRENT:
 			return true
 		NodeState.COMPLETED:
 			# Some completed nodes can be revisited
@@ -292,15 +243,9 @@ func can_revisit() -> bool:
 	"""Returns true if this node type can be visited multiple times"""
 	if config:
 		return config.can_revisit
-	
-	# Fallback if no config
-	match type:
-		NodeType.CITY, NodeType.CAMP, NodeType.SETTLEMENT, NodeType.MINE:
-			return true
-		NodeType.POI, NodeType.JUNCTION, NodeType.BOSS:
-			return false
-		_:
-			return false
+	else:
+		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		return false
 
 func get_state_alpha() -> float:
 	"""Returns the visual alpha for this node's current state"""

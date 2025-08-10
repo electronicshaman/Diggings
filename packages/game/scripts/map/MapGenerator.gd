@@ -130,8 +130,7 @@ func create_start_node():
 	# Position start node using config
 	var start_pos = layout_config.get_start_position() if layout_config else Vector2(192, 360)
 	var start_node = MapNode.new(start_id, MapNode.NodeType.CAMP, start_pos)
-	start_node.discovered = true
-	start_node.visited = true
+	start_node.set_state(MapNode.NodeState.CURRENT)
 	
 	graph.nodes[start_id] = start_node
 	graph.start_node = start_id
@@ -145,8 +144,7 @@ func create_start_node():
 func create_city_node(city_name: String, city_position: Vector2):
 	var city_id = "city_" + city_name.to_lower().replace(" ", "_")
 	var city_node = MapNode.new(city_id, MapNode.NodeType.CITY, city_position)
-	city_node.discovered = true
-	city_node.visited = true  # City is visited since player starts there
+	city_node.set_state(MapNode.NodeState.CURRENT)  # City is current position since player starts there
 	city_node.set_custom_property("city_name", city_name)
 	
 	graph.nodes[city_id] = city_node
@@ -258,7 +256,7 @@ func post_process_graph():
 	if layout_config and layout_config.physics_enabled:
 		apply_force_directed_layout()
 	
-	# Set up fog of war (only start node discovered)
+	# Set up fog of war (only start node visible)
 	setup_fog_of_war()
 
 func ensure_graph_connectivity():
@@ -444,15 +442,12 @@ func setup_fog_of_war():
 	for node_id in graph.nodes:
 		var node = graph.nodes[node_id]
 		if node_id == graph.start_node:
-			node.discovered = true
-			node.visited = true
+			node.set_state(MapNode.NodeState.CURRENT)
 		elif debug_show_all_nodes:
-			# Debug mode: show all nodes but mark them as unvisited
-			node.discovered = true
-			node.visited = false
+			# Debug mode: show all nodes but mark them as available (not current)
+			node.set_state(MapNode.NodeState.AVAILABLE)
 		else:
-			node.discovered = false
-			node.visited = false
+			node.set_state(MapNode.NodeState.LOCKED)
 
 func enforce_connection_limits():
 	"""Ensure no node exceeds the maximum connection limit"""
@@ -581,8 +576,13 @@ func move_player_to_node(target_node_id: String) -> bool:
 	graph.player_position = target_node_id
 	current_player_node_id = target_node_id
 	
-	# Handle discovery and visitation
-	target_node.visit()
+	# Handle state transitions and visitation tracking
+	target_node.set_state(MapNode.NodeState.CURRENT)
+	# Update previous current node to visited/completed state
+	var previous_node = graph.nodes[old_position] 
+	if previous_node:
+		previous_node.set_state(MapNode.NodeState.COMPLETED)
+	
 	if target_node_id not in visited_node_ids:
 		visited_node_ids.append(target_node_id)
 	discover_adjacent_nodes(target_node_id)
@@ -600,8 +600,8 @@ func discover_adjacent_nodes(node_id: String):
 	
 	for connected_id in node.connections:
 		var connected_node = graph.nodes[connected_id]
-		if not connected_node.discovered:
-			connected_node.discover()
+		if connected_node.state == MapNode.NodeState.LOCKED:
+			connected_node.set_state(MapNode.NodeState.AVAILABLE)
 			node_discovered.emit(connected_id)
 
 func get_current_player_node() -> MapNode:
@@ -616,7 +616,7 @@ func get_available_moves() -> Array[String]:
 	
 	for connected_id in current_node.connections:
 		var connected_node = graph.nodes[connected_id]
-		if connected_node.discovered:  # Can only move to discovered nodes
+		if connected_node.state != MapNode.NodeState.LOCKED:  # Can only move to available nodes
 			available.append(connected_id)
 	
 	return available
@@ -636,8 +636,7 @@ func get_serializable_data() -> Dictionary:
 			"type": node.type,
 			"position": [node.position.x, node.position.y],
 			"connections": node.connections.duplicate(),
-			"discovered": node.discovered,
-			"visited": node.visited
+			"state": node.state
 		}
 	
 	var serializable_edges = []
@@ -688,8 +687,7 @@ func load_from_serializable_data(data: Dictionary):
 		var node = MapNode.new(node_id, node_data.type, position)
 		
 		node.connections = node_data.connections.duplicate()
-		node.discovered = node_data.discovered
-		node.visited = node_data.visited
+		node.set_state(node_data.state)
 		
 		graph.nodes[node_id] = node
 	

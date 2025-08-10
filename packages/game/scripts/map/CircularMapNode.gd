@@ -46,7 +46,7 @@ func set_player_position(is_player: bool):
 	queue_redraw()  # Trigger a redraw
 
 func update_tooltip_text():
-	if node_data and node_data.discovered:
+	if node_data and node_data.state != MapNode.NodeState.LOCKED:
 		tooltip_text = node_data.get_type_name() + " (" + node_id + ")"
 	else:
 		tooltip_text = "Unknown Location"

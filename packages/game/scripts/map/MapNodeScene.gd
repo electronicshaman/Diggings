@@ -156,15 +156,15 @@ func update_visuals():
 	if background_icon:
 		background_icon.modulate = get_background_color()
 		# Set background texture if available
-		if node_data.background_texture:
-			background_icon.texture = node_data.background_texture
+		if node_data.config and node_data.config.background_texture:
+			background_icon.texture = node_data.config.background_texture
 	
 	# Update main icon
 	if node_icon:
 		node_icon.modulate = get_icon_color()
 		# Set icon texture if available
-		if node_data.icon_texture:
-			node_icon.texture = node_data.icon_texture
+		if node_data.config and node_data.config.icon_texture:
+			node_icon.texture = node_data.config.icon_texture
 	
 	# Update state indicator
 	update_state_indicator()
@@ -240,7 +240,7 @@ func get_icon_color() -> Color:
 
 func get_label_color() -> Color:
 	"""Get the label color based on node state"""
-	if not node_data.discovered:
+	if node_data.state == MapNode.NodeState.LOCKED:
 		return Color(0.5, 0.5, 0.5, 0.7)
 	elif node_data.get_state() == MapNode.NodeState.CURRENT:
 		return Color.YELLOW

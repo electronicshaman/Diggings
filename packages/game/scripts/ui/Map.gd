@@ -46,6 +46,11 @@ func _ready():
 	# Set MapContent to a reasonable size and center it in the viewport
 	map_content.size = map_viewport_size  # Match viewport size
 	map_content.position = Vector2.ZERO  # Start at origin of MapViewport
+	
+	# Ensure mouse input passes through to child nodes
+	map_viewport.mouse_filter = Control.MOUSE_FILTER_PASS
+	map_content.mouse_filter = Control.MOUSE_FILTER_PASS
+	
 	GLog.debug("Initialized map content size: " + str(map_content.size) + " at position: " + str(map_content.position))
 	
 	# Display the current map
@@ -190,12 +195,14 @@ func display_current_map():
 	GLog.debug("Displaying current map")
 	
 	if not GameManager.game_data or not GameManager.game_data.has("maps"):
-		GLog.error("No maps data in GameManager")
+		GLog.warn("No maps data in GameManager - generating test map for development")
+		generate_test_map()
 		return
 	
 	var current_region = GameManager.game_data.get("current_map", "")
 	if current_region.is_empty():
-		GLog.error("No current map selected")
+		GLog.warn("No current map selected - generating test map for development")
+		generate_test_map()
 		return
 	
 	var map_data = GameManager.game_data.maps.get(current_region, {})
@@ -269,6 +276,76 @@ func _highlight_available_moves_after_setup():
 		map_visualizer.update_visibility()
 		map_visualizer.highlight_available_moves()
 
+# TEMPORARY: Generate a simple test map using real resources for development
+func generate_test_map():
+	GLog.info("=== GENERATING RESOURCE-DRIVEN TEST MAP FOR DEVELOPMENT ===")
+	GLog.info("This is a temporary fallback for testing - remove when map selection is implemented")
+	
+	# Load real NodeConfig resources from data/map_nodes/
+	var city_config = load("res://data/map_nodes/cities/goldfields_city.tres") as NodeConfig
+	var camp_config = load("res://data/map_nodes/camps/prospector_camp.tres") as NodeConfig  
+	var mine_config = load("res://data/map_nodes/mines/abandoned_goldmine.tres") as NodeConfig
+	var settlement_config = load("res://data/map_nodes/settlements/trading_post.tres") as NodeConfig
+	var junction_config = load("res://data/map_nodes/junctions/mountain_pass.tres") as NodeConfig
+	
+	# Create nodes with real resource configs
+	var city_node = MapNode.new("test_city", MapNode.NodeType.CITY, Vector2(400, 300), city_config)
+	city_node.set_state(MapNode.NodeState.CURRENT)
+	
+	var camp_node = MapNode.new("test_camp", MapNode.NodeType.CAMP, Vector2(300, 200), camp_config)
+	camp_node.set_state(MapNode.NodeState.AVAILABLE)
+	
+	var mine_node = MapNode.new("test_mine", MapNode.NodeType.MINE, Vector2(500, 200), mine_config)
+	mine_node.set_state(MapNode.NodeState.AVAILABLE)
+	
+	var settlement_node = MapNode.new("test_settlement", MapNode.NodeType.SETTLEMENT, Vector2(400, 150), settlement_config)
+	settlement_node.set_state(MapNode.NodeState.AVAILABLE)
+	
+	var junction_node = MapNode.new("test_junction", MapNode.NodeType.JUNCTION, Vector2(350, 350), junction_config)
+	junction_node.set_state(MapNode.NodeState.LOCKED)  # Undiscovered
+	
+	# Set up connections
+	city_node.connect_to("test_camp")
+	city_node.connect_to("test_mine")
+	city_node.connect_to("test_junction")
+	camp_node.connect_to("test_city")
+	camp_node.connect_to("test_settlement")
+	mine_node.connect_to("test_city")
+	settlement_node.connect_to("test_camp")
+	junction_node.connect_to("test_city")
+	
+	# Create simple graph structure
+	var test_graph = {
+		"nodes": {
+			"test_city": city_node,
+			"test_camp": camp_node,
+			"test_mine": mine_node,
+			"test_settlement": settlement_node,
+			"test_junction": junction_node
+		},
+		"edges": [],  # We'll skip edge objects for simplicity
+		"player_position": "test_city",
+		"start_node": "test_city"
+	}
+	
+	# Update map generator state
+	map_generator.graph = test_graph
+	map_generator.current_player_node_id = "test_city"
+	map_generator.visited_node_ids = ["test_city"]
+	
+	GLog.info("Generated resource-driven test map with 5 nodes")
+	GLog.info("All nodes loaded from .tres configuration files")
+	GLog.info("Player starting at city node")
+	
+	# Visualize the test graph
+	map_visualizer.visualize_graph(test_graph)
+	
+	# Apply visualization setup
+	_setup_map_visualization()
+	
+	# Highlight available moves after everything is set up
+	call_deferred("_highlight_available_moves_after_setup")
+
 # Update the current map state in GameManager
 func save_map_state():
 	var current_region = GameManager.game_data.get("current_map", "")
@@ -307,7 +384,7 @@ func _on_node_clicked(node_id: String):
 		GLog.error("Node not found in graph: " + node_id)
 		return
 	
-	GLog.debug("Node details - discovered: " + str(node.discovered) + ", visited: " + str(node.visited))
+	GLog.debug("Node details - state: " + str(node.state))
 	GLog.debug("Current player position: " + map_generator.current_player_node_id)
 	GLog.debug("Available moves: " + str(map_generator.get_available_moves()))
 	
@@ -403,9 +480,9 @@ func _on_node_hovered(node_id: String):
 	if not node:
 		return
 	
-	# Set tooltip text based on discovery state
+	# Set tooltip text based on node state
 	var tooltip_content: String
-	if node.discovered:
+	if node.state != MapNode.NodeState.LOCKED:
 		tooltip_content = node.get_type_name() + " (" + node_id + ")"
 	else:
 		tooltip_content = "Unknown Location"

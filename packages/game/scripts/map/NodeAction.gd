@@ -28,7 +28,7 @@ func _init(name: String = "", display: String = ""):
 	action_name = name
 	display_text = display if not display.is_empty() else name
 
-func can_execute(player_data: Dictionary, node: MapNode) -> bool:
+func can_execute(player_data: Dictionary, node: Resource) -> bool:
 	"""Check if this action can be executed by the player at this node"""
 	
 	if not enabled:
@@ -70,7 +70,7 @@ func can_execute(player_data: Dictionary, node: MapNode) -> bool:
 	
 	return true
 
-func execute(player_data: Dictionary, node: MapNode) -> Dictionary:
+func execute(player_data: Dictionary, node: Resource) -> Dictionary:
 	"""Execute the action and return results"""
 	var result = {
 		"success": false,
@@ -130,7 +130,7 @@ func execute(player_data: Dictionary, node: MapNode) -> Dictionary:
 	
 	return result
 
-func get_description(player_data: Dictionary, node: MapNode) -> String:
+func get_description(player_data: Dictionary, node: Resource) -> String:
 	"""Get a detailed description of what this action does"""
 	var desc = display_text
 	

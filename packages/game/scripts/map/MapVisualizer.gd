@@ -9,14 +9,14 @@ const MapNodeScene = preload("res://scenes/map/MapNodeScene.tscn")
 # Visual settings
 @export var node_radius: float = 20.0
 @export var edge_width: float = 3.0
-@export var discovered_node_alpha: float = 1.0
-@export var undiscovered_node_alpha: float = 0.3
+@export var visible_node_alpha: float = 1.0
+@export var locked_node_alpha: float = 0.3
 @export var player_node_outline: float = 4.0
 
 # Colors
 var player_color: Color = Color.GOLD
 var edge_color: Color = Color.WHITE
-var edge_discovered_color: Color = Color.LIGHT_GRAY
+var edge_visible_color: Color = Color.LIGHT_GRAY
 var fog_color: Color = Color(0.1, 0.1, 0.1, 0.7)
 
 # References
@@ -271,11 +271,11 @@ func create_node_visual(node_id: String, node: MapNode):
 	node_scene.set_position_centered(adjusted_position)
 	node_scene.z_index = 1  # Above edges
 	
-	# Apply discovery visibility
-	if not node.discovered:
-		node_scene.modulate.a = undiscovered_node_alpha
+	# Apply visibility based on state
+	if node.state == MapNode.NodeState.LOCKED:
+		node_scene.modulate.a = locked_node_alpha
 	else:
-		node_scene.modulate.a = discovered_node_alpha
+		node_scene.modulate.a = visible_node_alpha
 	
 	# Connect signals
 	node_scene.node_clicked.connect(_on_node_scene_clicked)
@@ -309,11 +309,11 @@ func style_node_button(button: Button, node: MapNode):
 	style_box.corner_radius_bottom_left = node_radius
 	style_box.corner_radius_bottom_right = node_radius
 	
-	# Apply discovery visibility
-	if not node.discovered:
-		style_box.bg_color.a = undiscovered_node_alpha
+	# Apply visibility based on state
+	if node.state == MapNode.NodeState.LOCKED:
+		style_box.bg_color.a = locked_node_alpha
 	else:
-		style_box.bg_color.a = discovered_node_alpha
+		style_box.bg_color.a = visible_node_alpha
 	
 	# Player position outline
 	if graph_data.player_position == node.id:
@@ -329,7 +329,7 @@ func style_node_button(button: Button, node: MapNode):
 	button.add_theme_stylebox_override("pressed", style_box.duplicate())
 	
 	# Tooltip
-	if node.discovered:
+	if node.state != MapNode.NodeState.LOCKED:
 		button.tooltip_text = node.get_description()
 	else:
 		button.tooltip_text = "Unexplored location"
@@ -351,29 +351,28 @@ func update_node_interactivity(node_scene: MapNodeScene, node: MapNode):
 	var is_current_position = (node.id == graph_data.player_position)
 	
 	# Update the node's state based on game logic
-	if not node.discovered:
-		node.set_state(MapNode.NodeState.LOCKED)
-		node_scene.modulate = Color(1, 1, 1, undiscovered_node_alpha)
+	if node.state == MapNode.NodeState.LOCKED:
+		node_scene.modulate = Color(1, 1, 1, locked_node_alpha)
 	elif is_current_position:
 		node.set_state(MapNode.NodeState.CURRENT)
-		node_scene.modulate = Color(1, 1, 1, discovered_node_alpha)
+		node_scene.modulate = Color(1, 1, 1, visible_node_alpha)
 	elif current_player_node and current_player_node.is_connected_to(node.id):
 		# Check if this node can be visited
 		var can_visit = true
 		
-		if node.visited:
+		if node.state == MapNode.NodeState.COMPLETED:
 			# Use the node's can_revisit logic
 			can_visit = node.can_revisit()
 		
 		if can_visit:
 			node.set_state(MapNode.NodeState.AVAILABLE)
-			node_scene.modulate = Color(1, 1, 1, discovered_node_alpha)
+			node_scene.modulate = Color(1, 1, 1, visible_node_alpha)
 		else:
 			node.set_state(MapNode.NodeState.COMPLETED)
 			node_scene.modulate = Color(1, 1, 1, 0.6)
 	else:
 		# Not connected or not accessible
-		if node.visited:
+		if node.state == MapNode.NodeState.COMPLETED:
 			node.set_state(MapNode.NodeState.COMPLETED)
 		else:
 			node.set_state(MapNode.NodeState.LOCKED)
@@ -394,15 +393,15 @@ func update_edge_visibility():
 		if not from_node or not to_node:
 			continue
 		
-		# Show edge if either node is discovered
-		if from_node.discovered or to_node.discovered:
-			line.default_color = edge_discovered_color
+		# Show edge if either node is not locked (visible)
+		if from_node.state != MapNode.NodeState.LOCKED or to_node.state != MapNode.NodeState.LOCKED:
+			line.default_color = edge_visible_color
 			line.visible = true
 		else:
 			line.visible = false
 
 func _draw():
-	# Draw fog of war overlay for undiscovered areas
+	# Draw fog of war overlay for locked areas
 	if not graph_data.has("nodes"):
 		return
 	
@@ -415,9 +414,9 @@ func _on_map_generated(graph: Dictionary):
 	visualize_graph(graph)
 
 func _on_node_discovered(node_id: String):
-	GLog.debug("Node discovered, updating visualization: " + node_id)
+	GLog.debug("Node revealed, updating visualization: " + node_id)
 	
-	# Update the discovered node
+	# Update the revealed node
 	var node_scene = node_scenes.get(node_id)
 	if node_scene:
 		node_scene.play_discover_animation()
@@ -460,10 +459,10 @@ func highlight_available_moves():
 	for node_id in node_scenes:
 		var node_scene = node_scenes[node_id]
 		var node = graph_data.nodes[node_id]
-		var is_available = node_id in available_moves and node.discovered
+		var is_available = node_id in available_moves and node.state != MapNode.NodeState.LOCKED
 		
 		# Apply same logic as update_node_interactivity for consistency
-		if node.visited:
+		if node.state == MapNode.NodeState.COMPLETED:
 			var can_revisit = node.can_revisit()
 			is_available = is_available and can_revisit and current_player_node and current_player_node.is_connected_to(node.id)
 		
