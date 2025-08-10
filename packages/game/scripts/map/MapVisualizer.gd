@@ -9,8 +9,6 @@ const MapNodeScene = preload("res://scenes/map/MapNodeScene.tscn")
 # Visual settings
 @export var node_radius: float = 20.0
 @export var edge_width: float = 3.0
-@export var visible_node_alpha: float = 1.0
-@export var locked_node_alpha: float = 0.3
 @export var player_node_outline: float = 4.0
 
 # Colors
@@ -271,11 +269,8 @@ func create_node_visual(node_id: String, node: MapNode):
 	node_scene.set_position_centered(adjusted_position)
 	node_scene.z_index = 1  # Above edges
 	
-	# Apply visibility based on state
-	if node.state == MapNode.NodeState.LOCKED:
-		node_scene.modulate.a = locked_node_alpha
-	else:
-		node_scene.modulate.a = visible_node_alpha
+	# Apply resource-based colors properly
+	apply_node_colors(node_scene, node)
 	
 	# Connect signals
 	node_scene.node_clicked.connect(_on_node_scene_clicked)
@@ -299,40 +294,13 @@ func create_node_scene_for_type(node_type: MapNode.NodeType) -> MapNodeScene:
 	# when setup_node() is called with the actual MapNode data
 	return scene_instance
 
-func style_node_button(button: Button, node: MapNode):
-	var style_box = StyleBoxFlat.new()
+func apply_node_colors(node_scene: MapNodeScene, node: MapNode):
+	"""Apply colors to node using resource-defined state colors exactly"""
+	if not node or not node_scene or not node.config:
+		return
 	
-	# Base color from node type
-	style_box.bg_color = node.get_type_color()
-	style_box.corner_radius_top_left = node_radius
-	style_box.corner_radius_top_right = node_radius
-	style_box.corner_radius_bottom_left = node_radius
-	style_box.corner_radius_bottom_right = node_radius
-	
-	# Apply visibility based on state
-	if node.state == MapNode.NodeState.LOCKED:
-		style_box.bg_color.a = locked_node_alpha
-	else:
-		style_box.bg_color.a = visible_node_alpha
-	
-	# Player position outline
-	if graph_data.player_position == node.id:
-		style_box.border_width_left = player_node_outline
-		style_box.border_width_right = player_node_outline
-		style_box.border_width_top = player_node_outline
-		style_box.border_width_bottom = player_node_outline
-		style_box.border_color = player_color
-	
-	# Different styles for different states
-	button.add_theme_stylebox_override("normal", style_box)
-	button.add_theme_stylebox_override("hover", style_box.duplicate())
-	button.add_theme_stylebox_override("pressed", style_box.duplicate())
-	
-	# Tooltip
-	if node.state != MapNode.NodeState.LOCKED:
-		button.tooltip_text = node.get_description()
-	else:
-		button.tooltip_text = "Unexplored location"
+	# Use the state color exactly as defined in the MapNodeConfig resource
+	node_scene.modulate = node.get_state_color()
 
 func update_visibility():
 	# Update all node visibilities
@@ -350,26 +318,8 @@ func update_node_interactivity(node_scene: MapNodeScene, node: MapNode):
 	# IMPORTANT: Do NOT override node states - respect the persistent discovery system
 	# Only update visual styling based on the node's current state
 	
-	var alpha = node.get_state_alpha()
-	node_scene.modulate = Color(1, 1, 1, alpha)
-	
-	# Update visual styling based on node state
-	match node.state:
-		MapNode.NodeState.LOCKED:
-			# Hidden/locked nodes (should not be visible)
-			node_scene.modulate = Color(1, 1, 1, locked_node_alpha)
-		MapNode.NodeState.KNOWN:
-			# Visible but unreachable - use dimmed appearance
-			node_scene.modulate = Color(0.8, 0.8, 1.0, 0.7)  # Slightly blue-tinted and dimmed
-		MapNode.NodeState.AVAILABLE:
-			# Fully visible and interactive
-			node_scene.modulate = Color(1, 1, 1, visible_node_alpha)
-		MapNode.NodeState.CURRENT:
-			# Current position - highlighted
-			node_scene.modulate = Color(1.2, 1.2, 0.8, visible_node_alpha)  # Slightly warm/bright
-		MapNode.NodeState.COMPLETED:
-			# Previously visited
-			node_scene.modulate = Color(1, 1, 1, 0.6)
+	# Apply resource-based colors properly
+	apply_node_colors(node_scene, node)
 	
 	# Refresh the scene's visuals and interactivity
 	node_scene.refresh()

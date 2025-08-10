@@ -166,14 +166,12 @@ func update_state_indicator():
 		outline.color = Color.TRANSPARENT
 
 func get_background_color() -> Color:
-	"""Get the background color from the node's resource configuration"""
+	"""Get the background color using resource-defined state colors exactly"""
 	if not node_data or not node_data.config:
 		return Color.WHITE
-		
-	var base_color = node_data.get_type_color()
-	var alpha = node_data.get_state_alpha()
 	
-	return Color(base_color.r, base_color.g, base_color.b, alpha)
+	# Use the state color exactly as defined in the MapNodeConfig resource
+	return node_data.get_state_color()
 
 func get_icon_color() -> Color:
 	"""Get the icon color based on node state"""
@@ -186,6 +184,14 @@ func get_label_color() -> Color:
 		return Color.WHITE
 		
 	return node_data.config.get_state_color(node_data.get_state())
+
+func get_current_resource_modulate() -> Color:
+	"""Get the current modulate color using resource-defined state colors exactly"""
+	if not node_data or not node_data.config:
+		return Color.WHITE
+	
+	# Use the state color exactly as defined in the MapNodeConfig resource
+	return node_data.get_state_color()
 
 func update_interactivity():
 	"""Update whether this node can be interacted with"""
@@ -263,18 +269,23 @@ func play_select_animation():
 	if animation_player and animation_player.has_animation("select"):
 		animation_player.play("select")
 	else:
+		# Get the proper resource-based color to restore to
+		var base_color = get_current_resource_modulate()
+		
 		# Fallback animation using tween
 		var tween = create_tween()
 		tween.parallel().tween_property(self, "scale", Vector2(1.2, 1.2), 0.1)
 		tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
 		tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.1)
+		tween.parallel().tween_property(self, "modulate", base_color, 0.1)
 		
 		# Check for pulse effect from config
 		if node_data and node_data.config and node_data.config.pulse_effect:
-			# Dramatic flash effect for nodes with pulse enabled
+			# Dramatic flash effect for nodes with pulse enabled - blend with resource color
 			var pulse_color = node_data.config.visual_color
-			tween.parallel().tween_property(self, "modulate", pulse_color, 0.2)
-			tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
+			var blended_pulse = Color(pulse_color.r, pulse_color.g, pulse_color.b, base_color.a)
+			tween.parallel().tween_property(self, "modulate", blended_pulse, 0.2)
+			tween.parallel().tween_property(self, "modulate", base_color, 0.1)
 
 func play_discover_animation():
 	"""Play discovery animation when node becomes visible"""

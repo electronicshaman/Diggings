@@ -196,21 +196,29 @@ func can_revisit() -> bool:
 		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return false
 
+func get_state_color() -> Color:
+	"""Returns the full color for this node's current state from resource configuration"""
+	if config:
+		return config.get_state_color(get_state())
+	else:
+		# Fallback to basic colors if no config (should not happen in normal operation)
+		match state:
+			NodeState.LOCKED:
+				return Color(0.3, 0.3, 0.3, 0.3)
+			NodeState.KNOWN:
+				return Color(0.5, 0.5, 1.0, 0.7)  # Blue tinted
+			NodeState.AVAILABLE:
+				return Color.WHITE
+			NodeState.CURRENT:
+				return Color.YELLOW
+			NodeState.COMPLETED:
+				return Color(0.8, 0.8, 0.8, 0.8)
+			_:
+				return Color.WHITE
+
 func get_state_alpha() -> float:
-	"""Returns the visual alpha for this node's current state"""
-	match state:
-		NodeState.LOCKED:
-			return 0.3
-		NodeState.KNOWN:
-			return 0.7
-		NodeState.AVAILABLE:
-			return 1.0
-		NodeState.CURRENT:
-			return 1.0
-		NodeState.COMPLETED:
-			return 0.8 if can_revisit() else 0.6
-		_:
-			return 1.0
+	"""Returns the visual alpha for this node's current state from resource configuration"""
+	return get_state_color().a
 
 # MapNodeAction system methods
 func get_available_actions(player_data: Dictionary) -> Array[MapNodeAction]:
