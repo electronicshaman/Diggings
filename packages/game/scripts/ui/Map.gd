@@ -213,7 +213,7 @@ func display_current_map():
 	# Load the map from stored data
 	map_generator.load_from_serializable_data(map_data.generator_data)
 	
-	# Restore player position and visited nodes
+	# Restore player position, visited nodes, and discovered nodes
 	if map_data.has("current_player_node"):
 		map_generator.current_player_node_id = map_data.current_player_node
 		map_generator.graph.player_position = map_data.current_player_node
@@ -221,8 +221,15 @@ func display_current_map():
 		map_generator.visited_node_ids.clear()
 		for node_id in map_data.visited_nodes:
 			map_generator.visited_node_ids.append(node_id)
+	if map_data.has("discovered_nodes"):
+		map_generator.discovered_node_ids.clear()
+		for node_id in map_data.discovered_nodes:
+			map_generator.discovered_node_ids.append(node_id)
 	
 	GLog.info("Loaded map for region: " + current_region)
+	
+	# Restore visibility based on discovered and visited nodes
+	map_generator.restore_persistent_visibility()
 	
 	# Visualize the loaded graph
 	var graph = map_generator.get_graph_data()
@@ -337,6 +344,9 @@ func generate_test_map():
 	GLog.info("All nodes loaded from .tres configuration files")
 	GLog.info("Player starting at city node")
 	
+	# Set up initial visibility and discover adjacent nodes
+	map_generator.discover_adjacent_nodes("test_city", 2)
+	
 	# Visualize the test graph
 	map_visualizer.visualize_graph(test_graph)
 	
@@ -355,6 +365,7 @@ func save_map_state():
 	if GameManager.game_data.maps.has(current_region):
 		GameManager.game_data.maps[current_region].current_player_node = map_generator.current_player_node_id
 		GameManager.game_data.maps[current_region].visited_nodes = map_generator.visited_node_ids.duplicate()
+		GameManager.game_data.maps[current_region].discovered_nodes = map_generator.discovered_node_ids.duplicate()
 		GameManager.game_data.maps[current_region].generator_data = map_generator.get_serializable_data()
 		GLog.debug("Map state saved for region: " + current_region)
 

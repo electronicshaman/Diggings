@@ -25,6 +25,7 @@ var graph: Dictionary = {
 # Player tracking for persistence
 var current_player_node_id: String = ""
 var visited_node_ids: Array[String] = []
+var discovered_node_ids: Array[String] = []
 
 # Available rules for generation
 var rules: Array[GraphRule] = []
@@ -139,6 +140,8 @@ func create_start_node():
 	current_player_node_id = start_id
 	visited_node_ids.clear()
 	visited_node_ids.append(start_id)
+	discovered_node_ids.clear()
+	discovered_node_ids.append(start_id)
 	
 	GLog.debug("Created starting node: " + start_id)
 
@@ -155,6 +158,8 @@ func create_city_node(city_name: String, city_position: Vector2):
 	current_player_node_id = city_id
 	visited_node_ids.clear()
 	visited_node_ids.append(city_id)
+	discovered_node_ids.clear()
+	discovered_node_ids.append(city_id)
 	
 	GLog.debug("Created city node: " + city_name + " at " + str(city_position))
 
@@ -259,7 +264,7 @@ func post_process_graph():
 		apply_force_directed_layout()
 	
 	# Set up fog of war (only start node visible)
-	setup_fog_of_war()
+	#setup_fog_of_war()
 
 func ensure_graph_connectivity():
 	# Enhanced connectivity check - ensure all nodes are reachable from start
@@ -590,27 +595,93 @@ func move_player_to_node(target_node_id: String) -> bool:
 	
 	if target_node_id not in visited_node_ids:
 		visited_node_ids.append(target_node_id)
-	discover_adjacent_nodes(target_node_id)
+	discover_adjacent_nodes(target_node_id, 2)
 	
 	player_moved.emit(old_position, target_node_id)
 	GLog.debug("Player moved from " + old_position + " to " + target_node_id)
 	
 	return true
 
-func discover_adjacent_nodes(node_id: String):
+func discover_adjacent_nodes(node_id: String, max_distance: int = 1):
 	if not graph.nodes.has(node_id):
 		return
 	
-	var node = graph.nodes[node_id]
+	var current_round: Array[String] = [node_id]
+	var processed: Array[String] = [node_id]  # Don't rediscover starting node
 	
-	for connected_id in node.connections:
-		var connected_node = graph.nodes[connected_id]
-		if connected_node.state == MapNode.NodeState.LOCKED:
-			connected_node.set_state(MapNode.NodeState.AVAILABLE)
-			node_discovered.emit(connected_id)
+	for distance in range(1, max_distance + 1):
+		var next_round: Array[String] = []
+		
+		for current_node_id in current_round:
+			var current_node = graph.nodes[current_node_id]
+			
+			for connected_id in current_node.connections:
+				if connected_id not in processed:
+					var connected_node = graph.nodes[connected_id]
+					
+					# Only reveal nodes that haven't been discovered yet
+					if not is_node_discovered(connected_id):
+						connected_node.set_state(MapNode.NodeState.AVAILABLE)
+						add_discovered_node(connected_id)
+						node_discovered.emit(connected_id)
+					
+					next_round.append(connected_id)
+					processed.append(connected_id)
+		
+		current_round = next_round
+		if current_round.is_empty():
+			break  # No more nodes to discover
 
 func get_current_player_node() -> MapNode:
 	return graph.nodes.get(graph.player_position, null)
+
+# Discovery tracking methods
+func add_discovered_node(node_id: String):
+	"""Mark a node as permanently discovered"""
+	if node_id not in discovered_node_ids:
+		discovered_node_ids.append(node_id)
+		GLog.debug("Node permanently discovered: " + node_id)
+
+func is_node_discovered(node_id: String) -> bool:
+	"""Check if a node has been discovered"""
+	return node_id in discovered_node_ids
+
+func is_node_visited(node_id: String) -> bool:
+	"""Check if a node has been visited"""
+	return node_id in visited_node_ids
+
+func is_currently_reachable(node_id: String) -> bool:
+	"""Check if a node is currently reachable from the player's position"""
+	var current_node = get_current_player_node()
+	if not current_node:
+		return false
+	return current_node.is_connected_to(node_id)
+
+func restore_persistent_visibility():
+	"""Restore proper visibility for all nodes based on discovery and visit status"""
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		
+		if node_id == current_player_node_id:
+			# Current player position
+			node.set_state(MapNode.NodeState.CURRENT)
+		elif is_node_visited(node_id):
+			# Previously visited nodes - check if still reachable
+			if is_currently_reachable(node_id):
+				node.set_state(MapNode.NodeState.AVAILABLE if node.can_revisit() else MapNode.NodeState.COMPLETED)
+			else:
+				node.set_state(MapNode.NodeState.COMPLETED)
+		elif is_node_discovered(node_id):
+			# Discovered but not visited nodes - check if currently reachable
+			if is_currently_reachable(node_id):
+				node.set_state(MapNode.NodeState.AVAILABLE)
+			else:
+				node.set_state(MapNode.NodeState.KNOWN)  # NEW: Visible but unreachable
+		else:
+			# Unknown nodes remain locked
+			node.set_state(MapNode.NodeState.LOCKED)
+	
+	GLog.debug("Restored persistent visibility - " + str(discovered_node_ids.size()) + " discovered, " + str(visited_node_ids.size()) + " visited")
 
 func get_available_moves() -> Array[String]:
 	var current_node = get_current_player_node()
@@ -621,7 +692,8 @@ func get_available_moves() -> Array[String]:
 	
 	for connected_id in current_node.connections:
 		var connected_node = graph.nodes[connected_id]
-		if connected_node.state != MapNode.NodeState.LOCKED:  # Can only move to available nodes
+		if connected_node.state == MapNode.NodeState.AVAILABLE or \
+		   (connected_node.state == MapNode.NodeState.COMPLETED and connected_node.can_revisit()):
 			available.append(connected_id)
 	
 	return available
@@ -660,7 +732,9 @@ func get_serializable_data() -> Dictionary:
 		"start_node": graph.start_node,
 		"generation_seed": graph.get("generation_seed", generation_seed),
 		"max_nodes": layout_config.max_nodes if layout_config else default_max_nodes,
-		"min_nodes": layout_config.min_nodes if layout_config else default_min_nodes
+		"min_nodes": layout_config.min_nodes if layout_config else default_min_nodes,
+		"visited_nodes": visited_node_ids.duplicate(),
+		"discovered_nodes": discovered_node_ids.duplicate()
 	}
 
 func load_from_serializable_data(data: Dictionary):
@@ -709,7 +783,20 @@ func load_from_serializable_data(data: Dictionary):
 	graph.start_node = data.start_node
 	graph.generation_seed = data.get("generation_seed", generation_seed)
 	
+	# Restore tracking arrays
+	current_player_node_id = data.player_position
+	if data.has("visited_nodes"):
+		visited_node_ids = data.visited_nodes.duplicate()
+	else:
+		visited_node_ids = []
+	
+	if data.has("discovered_nodes"):
+		discovered_node_ids = data.discovered_nodes.duplicate()
+	else:
+		discovered_node_ids = []
+	
 	GLog.debug("Map restored from serializable data: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	GLog.debug("Restored " + str(visited_node_ids.size()) + " visited nodes, " + str(discovered_node_ids.size()) + " discovered nodes")
 
 func apply_minimum_connections():
 	"""Apply the minimum connection rule to prevent dead ends"""
@@ -779,7 +866,7 @@ func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
 	post_process_graph()
 	
 	# Discover adjacent nodes from the starting city so they become selectable
-	discover_adjacent_nodes(graph.start_node)
+	discover_adjacent_nodes(graph.start_node, 2)
 	
 	# Ensure player position sync
 	ensure_player_position_sync()

@@ -347,36 +347,29 @@ func update_visibility():
 	update_edge_visibility()
 
 func update_node_interactivity(node_scene: MapNodeScene, node: MapNode):
-	var current_player_node = graph_data.nodes.get(graph_data.player_position)
-	var is_current_position = (node.id == graph_data.player_position)
+	# IMPORTANT: Do NOT override node states - respect the persistent discovery system
+	# Only update visual styling based on the node's current state
 	
-	# Update the node's state based on game logic
-	if node.state == MapNode.NodeState.LOCKED:
-		node_scene.modulate = Color(1, 1, 1, locked_node_alpha)
-	elif is_current_position:
-		node.set_state(MapNode.NodeState.CURRENT)
-		node_scene.modulate = Color(1, 1, 1, visible_node_alpha)
-	elif current_player_node and current_player_node.is_connected_to(node.id):
-		# Check if this node can be visited
-		var can_visit = true
-		
-		if node.state == MapNode.NodeState.COMPLETED:
-			# Use the node's can_revisit logic
-			can_visit = node.can_revisit()
-		
-		if can_visit:
-			node.set_state(MapNode.NodeState.AVAILABLE)
+	var alpha = node.get_state_alpha()
+	node_scene.modulate = Color(1, 1, 1, alpha)
+	
+	# Update visual styling based on node state
+	match node.state:
+		MapNode.NodeState.LOCKED:
+			# Hidden/locked nodes (should not be visible)
+			node_scene.modulate = Color(1, 1, 1, locked_node_alpha)
+		MapNode.NodeState.KNOWN:
+			# Visible but unreachable - use dimmed appearance
+			node_scene.modulate = Color(0.8, 0.8, 1.0, 0.7)  # Slightly blue-tinted and dimmed
+		MapNode.NodeState.AVAILABLE:
+			# Fully visible and interactive
 			node_scene.modulate = Color(1, 1, 1, visible_node_alpha)
-		else:
-			node.set_state(MapNode.NodeState.COMPLETED)
+		MapNode.NodeState.CURRENT:
+			# Current position - highlighted
+			node_scene.modulate = Color(1.2, 1.2, 0.8, visible_node_alpha)  # Slightly warm/bright
+		MapNode.NodeState.COMPLETED:
+			# Previously visited
 			node_scene.modulate = Color(1, 1, 1, 0.6)
-	else:
-		# Not connected or not accessible
-		if node.state == MapNode.NodeState.COMPLETED:
-			node.set_state(MapNode.NodeState.COMPLETED)
-		else:
-			node.set_state(MapNode.NodeState.LOCKED)
-		node_scene.modulate = Color(1, 1, 1, 0.6)
 	
 	# Refresh the scene's visuals and interactivity
 	node_scene.refresh()

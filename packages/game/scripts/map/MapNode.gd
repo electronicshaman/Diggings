@@ -13,10 +13,11 @@ enum NodeType {
 }
 
 enum NodeState {
-	LOCKED,      # Not accessible - grey/hidden
-	AVAILABLE,   # Can be visited - normal appearance  
+	LOCKED,      # Not visible - completely unknown
+	KNOWN,       # Visible but not reachable - discovered but can't travel  
+	AVAILABLE,   # Visible and clickable - can travel there now
 	CURRENT,     # Player's current location - highlighted
-	COMPLETED    # Already visited - contextual appearance
+	COMPLETED    # Previously visited - contextual appearance
 }
 
 @export var id: String = ""
@@ -181,6 +182,9 @@ func is_interactive() -> bool:
 		NodeState.COMPLETED:
 			# Some completed nodes can be revisited
 			return can_revisit()
+		NodeState.KNOWN:
+			# Visible but not interactive - discovered but unreachable
+			return false
 		_:
 			return false
 
@@ -197,6 +201,8 @@ func get_state_alpha() -> float:
 	match state:
 		NodeState.LOCKED:
 			return 0.3
+		NodeState.KNOWN:
+			return 0.7
 		NodeState.AVAILABLE:
 			return 1.0
 		NodeState.CURRENT:
