@@ -1,34 +1,25 @@
-[gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3 uid="uid://dr7ypx5tgo8hf"]
 
 [ext_resource type="Script" uid="uid://cqv21ssbdrhpk" path="res://scripts/map/MapNodeConfig.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
-resource_local_to_scene = false
-resource_name = ""
-node_type = 6
 node_name = "The Goldfields Wraith"
 description = "A massive spectral entity formed from the collective greed and desperation of hundreds of prospectors who died in these hills. Its eyes burn with the golden fire of unfulfilled dreams."
+node_type = 6
 visual_size = Vector2(90, 90)
 visual_color = Color(0.545098, 0, 0, 1)
 glow_color = Color(0.8, 0, 0, 0.9)
 pulse_effect = true
-safe = false
+state_color_locked = Color(0.3, 0.3, 0.3, 0.5)
+state_color_available = Color(1, 1, 1, 1)
+state_color_current = Color(1, 1, 0, 1)
+state_color_completed = Color(0.8, 0.8, 0.8, 0.8)
+safe = true
 can_revisit = false
 one_time_only = true
+always_accessible = false
 available_actions = Array[String](["challenge", "study_opponent", "prepare"])
-custom_properties = {
-"boss_name": "The Goldfields Wraith",
-"boss_type": "eldritch_horror",
-"challenge_rating": "high",
-"combat_mechanics": "spectral",
-"difficulty": 3,
-"origin": "collective_greed",
-"rewards_legendary": true,
-"special_abilities": ["gold_manipulation", "spectral_form", "greed_inducement"],
-"unlocks_region": true,
-"weaknesses": ["silver_items", "pure_intentions"]
-}
 action_properties = {
 "challenge": {
 "combat_type": "boss",
@@ -54,4 +45,16 @@ action_properties = {
 "sanity_change": -12,
 "time_cost_hours": 2
 }
+}
+custom_properties = {
+"boss_name": "The Goldfields Wraith",
+"boss_type": "eldritch_horror",
+"challenge_rating": "high",
+"combat_mechanics": "spectral",
+"difficulty": 3,
+"origin": "collective_greed",
+"rewards_legendary": true,
+"special_abilities": ["gold_manipulation", "spectral_form", "greed_inducement"],
+"unlocks_region": true,
+"weaknesses": ["silver_items", "pure_intentions"]
 }
