@@ -404,18 +404,18 @@ func _on_node_hovered(node_id: String):
 		return
 	
 	# Set tooltip text based on discovery state
-	var tooltip_text: String
+	var tooltip_content: String
 	if node.discovered:
-		tooltip_text = node.get_type_name() + " (" + node_id + ")"
+		tooltip_content = node.get_type_name() + " (" + node_id + ")"
 	else:
-		tooltip_text = "Unknown Location"
+		tooltip_content = "Unknown Location"
 	
 	# Update tooltip content
-	tooltip_label.text = tooltip_text
+	tooltip_label.text = tooltip_content
 	
 	# Resize background to fit text
 	var text_size = tooltip_label.get_theme_font("font").get_string_size(
-		tooltip_text, 
+		tooltip_content, 
 		HORIZONTAL_ALIGNMENT_LEFT, 
 		-1, 
 		tooltip_label.get_theme_font_size("font_size")

@@ -274,62 +274,62 @@ func update_tooltip():
 	if not node_button or not node_data:
 		return
 	
-	var tooltip_text = node_data.get_description()
+	var tooltip_content = node_data.get_description()
 	
 	# Add type-specific information
 	match node_data.type:
 		MapNode.NodeType.CITY:
 			if node_data.properties.get("has_shop", false):
-				tooltip_text += "\nâ¢ Shop available"
+				tooltip_content += "\nâ¢ Shop available"
 			if node_data.properties.get("has_deck_management", false):
-				tooltip_text += "\nâ¢ Deck management available"
+				tooltip_content += "\nâ¢ Deck management available"
 			if node_data.properties.get("heal_to_full", false):
-				tooltip_text += "\nâ¢ Full healing available"
-			tooltip_text += "\nâ¢ Safe haven - always revisitable"
+				tooltip_content += "\nâ¢ Full healing available"
+			tooltip_content += "\nâ¢ Safe haven - always revisitable"
 			
 		MapNode.NodeType.CAMP:
 			var heal_amount = node_data.properties.get("heal_amount", 15)
 			var rest_time = node_data.properties.get("rest_time", 4)
-			tooltip_text += "\nâ¢ Rest and heal " + str(heal_amount) + " HP"
-			tooltip_text += "\nâ¢ Takes " + str(rest_time) + " hours"
-			tooltip_text += "\nâ¢ Safe location"
+			tooltip_content += "\nâ¢ Rest and heal " + str(heal_amount) + " HP"
+			tooltip_content += "\nâ¢ Takes " + str(rest_time) + " hours"
+			tooltip_content += "\nâ¢ Safe location"
 			
 		MapNode.NodeType.MINE:
 			var resource_type = node_data.properties.get("resource_type", "gold")
 			var danger_level = node_data.properties.get("danger_level", 1)
 			var exploration_time = node_data.properties.get("exploration_time", 6)
-			tooltip_text += "\nâ¢ Mine for " + resource_type
-			tooltip_text += "\nâ¢ Danger level: " + str(danger_level) + "/3"
-			tooltip_text += "\nâ¢ Takes " + str(exploration_time) + " hours"
-			tooltip_text += "\nâ¢ Risk vs reward location"
+			tooltip_content += "\nâ¢ Mine for " + resource_type
+			tooltip_content += "\nâ¢ Danger level: " + str(danger_level) + "/3"
+			tooltip_content += "\nâ¢ Takes " + str(exploration_time) + " hours"
+			tooltip_content += "\nâ¢ Risk vs reward location"
 			
 		MapNode.NodeType.BOSS:
 			var boss_name = node_data.properties.get("boss_name", "Boss")
 			var difficulty = node_data.properties.get("difficulty", 3)
 			var rewards_legendary = node_data.properties.get("rewards_legendary", false)
-			tooltip_text += "\nâ¢ Boss: " + boss_name
-			tooltip_text += "\nâ¢ Difficulty: " + str(difficulty) + "/5"
+			tooltip_content += "\nâ¢ Boss: " + boss_name
+			tooltip_content += "\nâ¢ Difficulty: " + str(difficulty) + "/5"
 			if rewards_legendary:
-				tooltip_text += "\nâ¢ Legendary rewards available"
-			tooltip_text += "\nâ¢ Completing defeats this region"
+				tooltip_content += "\nâ¢ Legendary rewards available"
+			tooltip_content += "\nâ¢ Completing defeats this region"
 	
 	# Add state information
 	match node_data.get_state():
 		MapNode.NodeState.LOCKED:
-			tooltip_text += "\n[Locked - Cannot access]"
+			tooltip_content += "\n[Locked - Cannot access]"
 		MapNode.NodeState.CURRENT:
-			tooltip_text += "\n[Current Location]"
+			tooltip_content += "\n[Current Location]"
 		MapNode.NodeState.COMPLETED:
 			if node_data.can_revisit():
-				tooltip_text += "\n[Can revisit]"
+				tooltip_content += "\n[Can revisit]"
 			else:
-				tooltip_text += "\n[Already completed]"
+				tooltip_content += "\n[Already completed]"
 	
 	# Add available actions (simplified)
 	if is_interactive and node_data.actions.size() > 0:
-		tooltip_text += "\n\nAvailable actions: " + str(node_data.actions.size())
+		tooltip_content += "\n\nAvailable actions: " + str(node_data.actions.size())
 	
-	node_button.tooltip_text = tooltip_text
+	node_button.tooltip_text = tooltip_content
 
 func set_highlight(highlighted: bool):
 	"""Set whether this node should be highlighted"""
