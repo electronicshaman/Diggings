@@ -3,7 +3,7 @@ class_name MapGenerator
 
 const DEBUG_ENABLED: bool = false
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
-const ForceDirectedLayout = preload("res://scripts/map/ForceDirectedLayout.gd")
+const PoissonDiskLayout = preload("res://scripts/map/PoissonDiskLayout.gd")
 
 # Map layout configuration
 @export var layout_config: MapLayoutConfig
@@ -44,10 +44,13 @@ func load_default_config():
 	if ResourceLoader.exists(config_path):
 		layout_config = load(config_path) as MapLayoutConfig
 		GLog.debug("Loaded map layout config from: " + config_path)
+		GLog.debug("Config viewport_size: " + str(layout_config.viewport_size))
+		GLog.debug("Config spacing_min: " + str(layout_config.spacing_min) + ", spacing_max: " + str(layout_config.spacing_max))
 	else:
 		# Create a default config if none exists
 		layout_config = MapLayoutConfig.new()
 		GLog.debug("Created default map layout config")
+		GLog.debug("Fallback viewport_size: " + str(layout_config.viewport_size))
 	
 	# Validate the config
 	var warnings = layout_config.validate_config()
@@ -120,7 +123,9 @@ func generate_map(seed: int = -1) -> Dictionary:
 		generation_steps += 1
 	
 	# Post-process the graph
+	GLog.debug("Starting post-processing...")
 	post_process_graph()
+	GLog.debug("Post-processing complete")
 	
 	GLog.debug("Map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
 	map_generated.emit(graph)
@@ -259,9 +264,9 @@ func post_process_graph():
 	# Enforce connection limits
 	enforce_connection_limits()
 	
-	# Apply force-directed layout if enabled
-	if layout_config and layout_config.physics_enabled:
-		apply_force_directed_layout()
+	# Apply Poisson Disk Sampling layout for even distribution
+	GLog.debug("Starting Poisson Disk Sampling layout...")
+	apply_poisson_disk_layout()
 	
 	# Set up fog of war (only start node visible, or all nodes in debug mode)
 	setup_fog_of_war()
@@ -826,17 +831,17 @@ func apply_minimum_connections():
 	else:
 		GLog.warn("No minimum connection rule found")
 
-func apply_force_directed_layout():
-	"""Apply force-directed layout to optimize node positions"""
-	GLog.debug("Applying force-directed layout optimization...")
+func apply_poisson_disk_layout():
+	"""Apply Poisson Disk Sampling for even node distribution"""
+	GLog.debug("Applying Poisson Disk Sampling layout...")
 	
-	var layout_optimizer = ForceDirectedLayout.new()
+	var layout_optimizer = PoissonDiskLayout.new()
 	layout_optimizer.setup(layout_config)
 	
 	# Apply the layout optimization
 	graph = layout_optimizer.apply_layout(graph)
 	
-	GLog.debug("Force-directed layout optimization complete")
+	GLog.debug("Poisson Disk layout complete")
 
 func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
 	"""Generate a complete map for a specific region"""

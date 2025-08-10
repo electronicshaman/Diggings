@@ -45,18 +45,19 @@ func _ready():
 	setup_button_connections()
 	setup_tooltip_system()
 	
-	# Initialize map content with simple centering
-	var viewport_size = get_viewport().get_visible_rect().size
-	var map_viewport_size = Vector2(viewport_size.x, viewport_size.y - 80)
-	# Set MapContent to a reasonable size and center it in the viewport
-	map_content.size = map_viewport_size  # Match viewport size
+	# Initialize map content with map generation size, not screen viewport size
+	var config_viewport_size = Vector2(1920, 900)  # Default from map_layout_config.tres
+	# Note: We'll set the final size in _setup_map_visualization when we have access to map_generator.layout_config
+	
+	# For now, set to a reasonable size - will be updated when map loads
+	map_content.size = config_viewport_size
 	map_content.position = Vector2.ZERO  # Start at origin of MapViewport
 	
 	# Ensure mouse input passes through to child nodes
 	map_viewport.mouse_filter = Control.MOUSE_FILTER_PASS
 	map_content.mouse_filter = Control.MOUSE_FILTER_PASS
 	
-	GLog.debug("Initialized map content size: " + str(map_content.size) + " at position: " + str(map_content.position))
+	GLog.debug("Initialized map content with config size: " + str(map_content.size) + " at position: " + str(map_content.position))
 	
 	# Display the current map
 	display_current_map()
@@ -212,13 +213,10 @@ func display_current_map():
 	
 	var map_data = GameManager.game_data.maps.get(current_region, {})
 	if not map_data or not map_data.has("generator_data"):
-		if DEBUG_MAP_SHOW_ALL_NODES:
-			GLog.debug("DEBUG MAP MODE: No map data for debug region, generating full procedural map")
-			generate_debug_procedural_map()
-			return
-		else:
-			GLog.error("No map data for region: " + current_region)
-			return
+		# Use regular procedural generation with our configuration
+		GLog.debug("No map data for region, generating procedural map with current config")
+		generate_procedural_map_with_config()
+		return
 	
 	# Load the map from stored data
 	map_generator.load_from_serializable_data(map_data.generator_data)
@@ -255,10 +253,19 @@ func _setup_map_visualization():
 	"""Apply consistent MapVisualizer setup for both new and restored maps"""
 	GLog.debug("_setup_map_visualization called")
 	
-	# Update visualizer size and position
-	var map_bounds = map_visualizer.get_graph_bounds()
-	map_visualizer.set_deferred("custom_minimum_size", map_bounds.size)
-	map_visualizer.set_deferred("size", map_bounds.size)
+	# Update visualizer size and position - use config viewport size instead of node bounds
+	var config_viewport_size = Vector2(1920, 900)  # From map_layout_config.tres
+	if map_generator and map_generator.layout_config:
+		config_viewport_size = map_generator.layout_config.viewport_size
+	
+	GLog.debug("Using config viewport size: " + str(config_viewport_size) + " instead of calculated bounds")
+	
+	# Update MapContent size to match the map generation viewport
+	map_content.size = config_viewport_size
+	GLog.debug("Set map_content size to: " + str(config_viewport_size))
+	
+	map_visualizer.set_deferred("custom_minimum_size", config_viewport_size)
+	map_visualizer.set_deferred("size", config_viewport_size)
 	map_visualizer.set_deferred("position", Vector2.ZERO)
 	
 	# Ensure visibility for all elements
@@ -284,7 +291,7 @@ func _setup_map_visualization():
 	# Ensure MapContent doesn't clip the visualizer
 	map_content.clip_contents = false
 	
-	GLog.debug("Setup visualizer - size: " + str(map_bounds.size) + ", pos: " + str(map_visualizer.position) + ", edges: " + str(edge_count) + ", buttons: " + str(button_count))
+	GLog.debug("Setup visualizer - size: " + str(config_viewport_size) + ", pos: " + str(map_visualizer.position) + ", edges: " + str(edge_count) + ", buttons: " + str(button_count))
 
 func _highlight_available_moves_after_setup():
 	"""Highlight available moves after all visualization setup is complete"""
@@ -375,26 +382,24 @@ func generate_test_map():
 	# Highlight available moves after everything is set up
 	call_deferred("_highlight_available_moves_after_setup")
 
-func generate_debug_procedural_map():
-	"""Generate a full procedural map with 20-30 nodes for debug layout testing"""
-	GLog.info("=== GENERATING DEBUG PROCEDURAL MAP WITH 20-30 NODES ===")
-	GLog.info("DEBUG MODE: Using full procedural generation for comprehensive layout testing")
+func generate_procedural_map_with_config():
+	"""Generate a procedural map using our current configuration"""
+	GLog.info("=== GENERATING PROCEDURAL MAP WITH CURRENT CONFIG ===")
+	GLog.info("Using regular generation system with configuration from map_layout_config.tres")
 	
-	# Use procedural generation with a fixed seed for consistent debugging
-	var debug_seed = 12345
-	var generated_graph = map_generator.generate_map(debug_seed)
+	# Use procedural generation with a random seed to see our config changes
+	var generated_graph = map_generator.generate_map()
 	
 	if not generated_graph or generated_graph.get("nodes", {}).is_empty():
-		GLog.error("DEBUG MAP MODE: Procedural generation failed, falling back to test map")
+		GLog.error("Procedural generation failed, falling back to test map")
 		generate_test_map()
 		return
 	
-	GLog.info("Generated procedural debug map with " + str(generated_graph.nodes.size()) + " nodes")
-	GLog.info("DEBUG MODE: All nodes will be set to AVAILABLE for layout testing")
+	GLog.info("Generated procedural map with " + str(generated_graph.nodes.size()) + " nodes using current config")
 	
-	# Apply debug fog of war to make all nodes available
-	if map_generator.debug_show_all_nodes:
-		GLog.debug("DEBUG MAP MODE: Setting up fog of war for procedural map")
+	# Apply debug fog of war to make all nodes available if in debug mode
+	if DEBUG_MAP_SHOW_ALL_NODES and map_generator.debug_show_all_nodes:
+		GLog.debug("DEBUG MODE: Setting up fog of war to show all nodes")
 		map_generator.setup_fog_of_war()
 	
 	# Visualize the generated graph
@@ -574,13 +579,11 @@ func _on_node_hovered(node_id: String):
 	tooltip_background.global_position = tooltip_pos
 	tooltip_background.visible = true
 	
-	GLog.debug("Showing tooltip for node: " + node_id + " - " + tooltip_content)
 
 func _on_node_unhovered():
 	# Hide tooltip
 	if tooltip_background:
 		tooltip_background.visible = false
-	GLog.debug("Hiding tooltip")
 
 # Public interface for other systems
 func get_current_node() -> MapNode:
