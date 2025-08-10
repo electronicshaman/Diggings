@@ -302,16 +302,3 @@ func set_custom_property(property_name: String, value):
 		config.set_custom_property(property_name, value)
 
 # Factory method for creating nodes - config is required
-static func create_with_config(node_id: String, node_config: MapNodeConfig, pos: Vector2 = Vector2.ZERO) -> MapNode:
-	"""Create a MapNode with the provided configuration"""
-	if not node_config:
-		GLog.error("Cannot create MapNode without MapNodeConfig")
-		return null
-		
-	var node = MapNode.new()
-	node.id = node_id
-	node.position = pos
-	node.config = node_config
-	node.type = node_config.node_type
-	node._generate_actions_from_config()
-	return node

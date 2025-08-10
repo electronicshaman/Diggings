@@ -147,13 +147,7 @@ func create_node(node_id: String, config_or_path, position: Vector2 = Vector2.ZE
 		GLog.error("MapNodeRegistry: Cannot create node without valid config")
 		return null
 	
-	var node = MapNode.new()
-	node.id = node_id
-	node.position = position
-	node.config = config
-	node.type = config.node_type
-	
-	node._generate_actions_from_config()
+	var node = MapNode.new(node_id, position, config)
 	
 	return node
 
