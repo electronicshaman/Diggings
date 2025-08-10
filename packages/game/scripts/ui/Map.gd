@@ -48,14 +48,8 @@ func _ready():
 	map_content.position = Vector2.ZERO  # Start at origin of MapViewport
 	GLog.debug("Initialized map content size: " + str(map_content.size) + " at position: " + str(map_content.position))
 	
-	# Initialize game data for development if needed
-	if not GameManager.is_run_active:
-		if not GameManager.game_data:
-			GameManager.game_data = {}
-		# Enable run state for development to allow map persistence
-		GameManager.is_run_active = true
-		
-	generate_new_map()
+	# Display the current map
+	display_current_map()
 
 func _input(event):
 	# Only handle input when the map scene is active
@@ -109,31 +103,12 @@ func reset_view():
 	map_content.position = Vector2.ZERO
 	GLog.debug("View reset to origin with 1.0 zoom")
 
-# Public method to regenerate map (useful for config testing)
-func regenerate_map():
-	GLog.info("Regenerating map...")
-	
-	# Reload config in case it changed
-	if map_generator:
-		map_generator.load_default_config()
-		map_generator.initialize_rules()
-	
-	generate_new_map()
-	
-	# Reset view to center the new map
+# Refresh the current map display
+func refresh_map_display():
+	GLog.info("Refreshing map display")
+	display_current_map()
+	# Reset view to center the map
 	call_deferred("reset_view")
-
-# Hot-reload config for testing
-func reload_config():
-	if map_generator and map_generator.layout_config:
-		var config_path = "res://data/map_layout_config.tres"
-		if ResourceLoader.exists(config_path):
-			map_generator.layout_config = load(config_path) as MapLayoutConfig
-			map_generator.initialize_rules()
-			GLog.info("Reloaded map configuration")
-			regenerate_map()
-		else:
-			GLog.warn("Config file not found: " + config_path)
 
 func setup_graph_system():
 	# Create map generator
@@ -211,51 +186,42 @@ func setup_tooltip_system():
 	
 	GLog.debug("Tooltip system initialized")
 
-func generate_new_map():
-	GLog.debug("generate_new_map called - GameManager.is_run_active: " + str(GameManager.is_run_active))
-	GLog.debug("GameManager.game_data exists: " + str(GameManager.game_data != null))
-	if GameManager.game_data:
-		GLog.debug("GameManager.game_data.has('map'): " + str(GameManager.game_data.has("map")))
-		if GameManager.game_data.has("map"):
-			GLog.debug("GameManager.game_data.map is null: " + str(GameManager.game_data.map == null))
+func display_current_map():
+	GLog.debug("Displaying current map")
 	
-	# Only generate if we don't have a map stored in game_data or if no run is active
-	if GameManager.is_run_active and GameManager.game_data.has("map") and GameManager.game_data.map != null:
-		# Map already exists for this run, restore it instead
-		GLog.debug("Restoring existing map from GameManager")
-		restore_existing_map()
+	if not GameManager.game_data or not GameManager.game_data.has("maps"):
+		GLog.error("No maps data in GameManager")
 		return
 	
-	GLog.debug("Generating new map - no existing data found")
+	var current_region = GameManager.game_data.get("current_map", "")
+	if current_region.is_empty():
+		GLog.error("No current map selected")
+		return
 	
-	# Generate a new map using a consistent seed for this run
-	var seed: int
-	if GameManager.is_run_active:
-		# Use the run's master seed + a map-specific offset to ensure consistency
-		seed = SeedManager.master_seed + 12345  # Fixed offset for map generation
-		GLog.debug("Using consistent map seed: " + str(seed) + " (master: " + str(SeedManager.master_seed) + ")")
-	else:
-		# Development mode - use a fixed seed for consistency during testing
-		seed = 12345  # Fixed seed for development
-		GLog.debug("Using fixed development seed: " + str(seed))
+	var map_data = GameManager.game_data.maps.get(current_region, {})
+	if not map_data or not map_data.has("generator_data"):
+		GLog.error("No map data for region: " + current_region)
+		return
 	
-	# Ensure the SeedManager's map_rng is seeded consistently
-	SeedManager.map_rng.seed = seed
-	GLog.debug("Seeded SeedManager.map_rng with: " + str(seed))
+	# Load the map from stored data
+	map_generator.load_from_serializable_data(map_data.generator_data)
 	
-	map_generator.generate_map(seed)
-	GLog.info("Generated new map for exploration with seed: " + str(seed))
+	# Restore player position and visited nodes
+	if map_data.has("current_player_node"):
+		map_generator.current_player_node_id = map_data.current_player_node
+		map_generator.graph.player_position = map_data.current_player_node
+	if map_data.has("visited_nodes"):
+		map_generator.visited_node_ids.clear()
+		for node_id in map_data.visited_nodes:
+			map_generator.visited_node_ids.append(node_id)
 	
-	# Store the map in game_data for persistence
-	if GameManager.is_run_active:
-		GameManager.game_data.map = {
-			"generator_data": map_generator.get_serializable_data(),
-			"current_player_node": map_generator.current_player_node_id,
-			"visited_nodes": map_generator.visited_node_ids.duplicate()
-		}
-		GLog.debug("Map data stored in GameManager")
+	GLog.info("Loaded map for region: " + current_region)
 	
-	# Apply consistent visualization setup
+	# Visualize the loaded graph
+	var graph = map_generator.get_graph_data()
+	map_visualizer.visualize_graph(graph)
+	
+	# Apply visualization setup
 	_setup_map_visualization()
 	
 	# Highlight available moves after everything is set up
@@ -303,37 +269,17 @@ func _highlight_available_moves_after_setup():
 		map_visualizer.update_visibility()
 		map_visualizer.highlight_available_moves()
 
-func restore_existing_map():
-	# Restore map from stored game data
-	var map_data = GameManager.game_data.map
-	if not map_data or not map_data.has("generator_data"):
-		GLog.warn("Invalid map data found, generating new map")
-		GameManager.game_data.map = null
-		generate_new_map()
+# Update the current map state in GameManager
+func save_map_state():
+	var current_region = GameManager.game_data.get("current_map", "")
+	if current_region.is_empty():
 		return
-		
-	# Restore the map generator state
-	map_generator.load_from_serializable_data(map_data.generator_data)
 	
-	# Restore player position and visited nodes
-	if map_data.has("current_player_node"):
-		map_generator.current_player_node_id = map_data.current_player_node
-		# Ensure the graph.player_position is synced with current_player_node_id
-		map_generator.graph.player_position = map_data.current_player_node
-	if map_data.has("visited_nodes"):
-		map_generator.visited_node_ids = map_data.visited_nodes
-	
-	GLog.info("Restored existing map from game data")
-	
-	# Update visualizer with the restored graph data
-	var restored_graph = map_generator.get_graph_data()
-	map_visualizer.visualize_graph(restored_graph)
-	
-	# Apply the same visualization setup as generate_new_map
-	_setup_map_visualization()
-	
-	# Highlight available moves after everything is set up
-	call_deferred("_highlight_available_moves_after_setup")
+	if GameManager.game_data.maps.has(current_region):
+		GameManager.game_data.maps[current_region].current_player_node = map_generator.current_player_node_id
+		GameManager.game_data.maps[current_region].visited_nodes = map_generator.visited_node_ids.duplicate()
+		GameManager.game_data.maps[current_region].generator_data = map_generator.get_serializable_data()
+		GLog.debug("Map state saved for region: " + current_region)
 
 func _on_view_deck_pressed():
 	GLog.info("View Deck button pressed")
@@ -376,10 +322,12 @@ func handle_node_arrival(node_id: String, node: MapNode):
 	GLog.info("Player arrived at: " + node.get_type_name() + " (" + node_id + ")")
 	
 	# Save the current map state before transitioning to another scene
-	save_current_map_state()
+	save_map_state()
 	
 	# Handle different node types
 	match node.type:
+		MapNode.NodeType.CITY:
+			handle_city_arrival(node)
 		MapNode.NodeType.CAMP:
 			handle_camp_arrival(node)
 		MapNode.NodeType.MINE:
@@ -390,6 +338,8 @@ func handle_node_arrival(node_id: String, node: MapNode):
 			handle_poi_arrival(node)
 		MapNode.NodeType.JUNCTION:
 			handle_junction_arrival(node)
+		MapNode.NodeType.BOSS:
+			handle_boss_arrival(node)
 
 func handle_camp_arrival(node: MapNode):
 	# Camps offer rest and healing - go to camp scene
@@ -432,6 +382,17 @@ func handle_junction_arrival(node: MapNode):
 	# Junctions offer path selection and information
 	GLog.info("Arrived at junction: " + node.id)
 	SceneManager.load_scene_by_name("junction")
+
+func handle_city_arrival(node: MapNode):
+	# Cities are safe havens with all services
+	GLog.info("Arrived at city: " + node.get_type_name())
+	SceneManager.load_scene_by_name("city_hub")
+
+func handle_boss_arrival(node: MapNode):
+	# Boss encounters - defeating them completes the map
+	GLog.info("Boss encounter: " + node.properties.get("boss_name", "Unknown Boss"))
+	# TODO: Pass boss enemy ID to duel scene
+	SceneManager.load_scene_by_name("duel")
 
 func _on_node_hovered(node_id: String):
 	# Show tooltip with node information
@@ -493,26 +454,11 @@ func get_available_destinations() -> Array[String]:
 func force_move_to_node(node_id: String) -> bool:
 	return map_generator.move_player_to_node(node_id)
 
-func save_current_map_state():
-	"""Save the current map state to GameManager for persistence"""
-	if GameManager.is_run_active and map_generator:
-		GameManager.game_data.map = {
-			"generator_data": map_generator.get_serializable_data(),
-			"current_player_node": map_generator.current_player_node_id,
-			"visited_nodes": map_generator.visited_node_ids.duplicate()
-		}
-		GLog.debug("Map state saved - player at: " + map_generator.current_player_node_id + ", visited: " + str(map_generator.visited_node_ids.size()) + " nodes")
 
 # Handle returning from other scenes
 func _notification(what):
 	if what == NOTIFICATION_VISIBILITY_CHANGED and visible:
 		GLog.debug("Map visibility changed - scene became visible")
-		# Refresh visualization when returning to map
+		# Reload and refresh map when returning
 		if map_visualizer:
-			GLog.debug("GameManager.is_run_active: " + str(GameManager.is_run_active))
-			GLog.debug("GameManager.game_data.has('map'): " + str(GameManager.game_data.has("map") if GameManager.game_data else "no game_data"))
-			# Apply the same visualization setup to ensure consistency
-			_setup_map_visualization()
-			# Update visibility and highlighting after setup
-			map_visualizer.update_visibility()
-			map_visualizer.highlight_available_moves()
+			display_current_map()

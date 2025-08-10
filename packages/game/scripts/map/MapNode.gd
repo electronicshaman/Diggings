@@ -2,11 +2,13 @@ extends Resource
 class_name MapNode
 
 enum NodeType {
+	CITY,      # Central hub - safe haven with all services
 	CAMP,      # Rest and healing locations
 	MINE,      # Resource gathering with danger
 	SETTLEMENT, # Trading posts and NPCs
 	POI,       # Points of interest, mysteries
-	JUNCTION   # Simple path connectors
+	JUNCTION,  # Simple path connectors
+	BOSS       # Boss encounter - map completion
 }
 
 @export var id: String = ""
@@ -26,6 +28,15 @@ func _init(node_id: String = "", node_type: NodeType = NodeType.JUNCTION, pos: V
 	
 	# Set default properties based on type
 	match type:
+		NodeType.CITY:
+			properties = {
+				"city_name": "City",
+				"heal_to_full": true,
+				"has_shop": true,
+				"has_deck_management": true,
+				"safe": true,
+				"always_accessible": true
+			}
 		NodeType.CAMP:
 			properties = {
 				"heal_amount": 15,
@@ -54,6 +65,13 @@ func _init(node_id: String = "", node_type: NodeType = NodeType.JUNCTION, pos: V
 			properties = {
 				"pass_through": true
 			}
+		NodeType.BOSS:
+			properties = {
+				"boss_name": "Region Boss",
+				"difficulty": 3,
+				"one_time": true,
+				"rewards_legendary": true
+			}
 
 func connect_to(other_node_id: String) -> void:
 	if other_node_id not in connections:
@@ -67,20 +85,24 @@ func is_connected_to(other_node_id: String) -> bool:
 
 func get_type_name() -> String:
 	match type:
+		NodeType.CITY: return properties.get("city_name", "City")
 		NodeType.CAMP: return "Camp"
 		NodeType.MINE: return "Mine"
 		NodeType.SETTLEMENT: return "Settlement"
 		NodeType.POI: return "Point of Interest"
 		NodeType.JUNCTION: return "Junction"
+		NodeType.BOSS: return properties.get("boss_name", "Boss")
 		_: return "Unknown"
 
 func get_type_color() -> Color:
 	match type:
+		NodeType.CITY: return Color.GOLD
 		NodeType.CAMP: return Color.GREEN
 		NodeType.MINE: return Color.ORANGE
 		NodeType.SETTLEMENT: return Color.BLUE
 		NodeType.POI: return Color.PURPLE
 		NodeType.JUNCTION: return Color.GRAY
+		NodeType.BOSS: return Color.RED
 		_: return Color.WHITE
 
 func discover() -> void:
@@ -99,6 +121,8 @@ func get_description() -> String:
 		return "Unexplored Location"
 	
 	match type:
+		NodeType.CITY:
+			desc += "\nThe central hub of the region. Safe haven with all services."
 		NodeType.CAMP:
 			desc += "\nA safe place to rest and recover."
 		NodeType.MINE:
@@ -109,5 +133,7 @@ func get_description() -> String:
 			desc += "\nA mysterious location worth investigating."
 		NodeType.JUNCTION:
 			desc += "\nA crossroads leading to other destinations."
+		NodeType.BOSS:
+			desc += "\nA powerful enemy guards the exit from this region."
 	
 	return desc

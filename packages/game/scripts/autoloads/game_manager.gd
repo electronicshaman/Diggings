@@ -54,7 +54,10 @@ func initialize_game_data() -> void:
 		"corruption": 0,
 		"deck": [],
 		"curios": [],
-		"map": null
+		"maps": {},  # Multiple maps, one per region
+		"current_map": "",  # Current region being explored
+		"completed_maps": [],  # List of completed region IDs
+		"available_maps": []  # List of available region IDs
 	}
 	
 	reset_run_statistics()
@@ -102,10 +105,14 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	initialize_game_data()
 	reset_run_statistics()
 	
+	# Generate all maps for this run
+	generate_all_maps()
+	
 	change_state(GameState.PLAYING)
 	EventBus.game_started.emit()
 	
-	SceneManager.load_scene_by_name("map")
+	# Go to map selection screen instead of directly to map
+	SceneManager.load_scene_by_name("map_selection")
 
 func end_current_run(victory: bool = false) -> void:
 	GLog.debug("Ending run - Victory: " + str(victory))
@@ -209,6 +216,88 @@ func get_run_time() -> float:
 
 func get_session_time() -> float:
 	return (Time.get_ticks_msec() / 1000.0) - session_start_time
+
+func generate_all_maps() -> void:
+	GLog.debug("Generating all maps for new run")
+	
+	var regions = ["goldfields", "outback", "mountains", "coast"]
+	game_data.available_maps = regions.duplicate()
+	game_data.completed_maps = []
+	
+	# Create a map generator instance
+	var map_generator = preload("res://scripts/map/MapGenerator.gd").new()
+	
+	for region_id in regions:
+		var config_path = "res://data/maps/" + region_id + "_config.tres"
+		if not ResourceLoader.exists(config_path):
+			GLog.error("Map config not found: " + config_path)
+			continue
+			
+		var config = load(config_path) as MapRegionConfig
+		if not config:
+			GLog.error("Failed to load map config: " + config_path)
+			continue
+		
+		# Generate map for this region with a unique seed offset
+		var region_seed = current_run_seed + region_id.hash()
+		var map_data = map_generator.generate_map_for_region(config, region_seed)
+		
+		if not map_data or map_data.is_empty():
+			GLog.error("Failed to generate map for region: " + region_id)
+			continue
+		
+		# Store the generated map
+		game_data.maps[region_id] = {
+			"generator_data": map_data,
+			"config": config,
+			"completed": false,
+			"current_player_node": map_data.start_node if map_data.has("start_node") else "",
+			"visited_nodes": [map_data.start_node] if map_data.has("start_node") else []
+		}
+		
+		GLog.debug("Generated map for region: " + region_id + " with " + str(map_data.get("nodes", {}).size()) + " nodes")
+	
+	# Clean up the temporary generator
+	map_generator.queue_free()
+	
+	GLog.info("All maps generated successfully")
+
+func select_map(region_id: String) -> void:
+	if not game_data.maps.has(region_id):
+		GLog.error("Trying to select non-existent map: " + region_id)
+		return
+		
+	if region_id in game_data.completed_maps:
+		GLog.warn("Trying to select already completed map: " + region_id)
+		return
+	
+	game_data.current_map = region_id
+	GLog.info("Selected map: " + region_id)
+	
+	# Load the map scene
+	SceneManager.load_scene_by_name("map")
+
+func complete_current_map() -> void:
+	var current = game_data.current_map
+	if current.is_empty():
+		GLog.error("No current map to complete")
+		return
+	
+	# Mark as completed
+	game_data.completed_maps.append(current)
+	game_data.available_maps.erase(current)
+	if game_data.maps.has(current):
+		game_data.maps[current].completed = true
+	
+	GLog.info("Completed map: " + current)
+	
+	# Check for victory
+	if game_data.available_maps.is_empty():
+		GLog.info("All maps completed! Victory!")
+		end_current_run(true)
+	else:
+		# Return to map selection
+		SceneManager.load_scene_by_name("map_selection")
 
 func is_game_paused() -> bool:
 	return current_state == GameState.PAUSED

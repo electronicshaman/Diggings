@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://bs21h4i0t41d"]
+
+[ext_resource type="Script" uid="uid://cvvk13p0m73ks" path="res://scripts/ui/CityHub.gd" id="1_5msik"]
+
+[node name="CityHub" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_5msik")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.08, 0.05, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+
+[node name="CityNameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ReturnButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2

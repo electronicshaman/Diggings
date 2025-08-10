@@ -137,9 +137,26 @@ func create_start_node():
 	graph.start_node = start_id
 	graph.player_position = start_id
 	current_player_node_id = start_id
-	visited_node_ids = [start_id]
+	visited_node_ids.clear()
+	visited_node_ids.append(start_id)
 	
 	GLog.debug("Created starting node: " + start_id)
+
+func create_city_node(city_name: String, city_position: Vector2):
+	var city_id = "city_" + city_name.to_lower().replace(" ", "_")
+	var city_node = MapNode.new(city_id, MapNode.NodeType.CITY, city_position)
+	city_node.discovered = true
+	city_node.visited = false
+	city_node.properties["city_name"] = city_name
+	
+	graph.nodes[city_id] = city_node
+	graph.start_node = city_id
+	graph.player_position = city_id
+	current_player_node_id = city_id
+	visited_node_ids.clear()
+	visited_node_ids.append(city_id)
+	
+	GLog.debug("Created city node: " + city_name + " at " + str(city_position))
 
 func should_continue_generation() -> bool:
 	var node_count = graph.nodes.size()
@@ -716,3 +733,172 @@ func apply_force_directed_layout():
 	graph = layout_optimizer.apply_layout(graph)
 	
 	GLog.debug("Force-directed layout optimization complete")
+
+func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
+	"""Generate a complete map for a specific region"""
+	GLog.debug("Generating map for region: " + config.region_id)
+	
+	# Set up configuration
+	layout_config = MapLayoutConfig.new()
+	layout_config.min_nodes = config.min_nodes
+	layout_config.max_nodes = config.max_nodes
+	layout_config.viewport_size = config.region_bounds
+	
+	# Initialize RNG with region-specific seed
+	generation_seed = seed
+	SeedManager.map_rng.seed = seed
+	
+	# Reset graph
+	graph = {
+		"nodes": {},
+		"edges": [],
+		"player_position": "",
+		"start_node": "",
+		"generation_seed": generation_seed,
+		"region_id": config.region_id
+	}
+	
+	# Reset rule counters
+	for rule in rules:
+		rule.reset()
+	
+	# Create city node at center
+	create_city_node(config.city_name, config.city_position)
+	
+	# Generate nodes radiating from city
+	generate_radial_paths_from_city(config)
+	
+	# Add boss node at edge
+	add_boss_node(config)
+	
+	# Post-process the graph
+	post_process_graph()
+	
+	# Ensure player position sync
+	ensure_player_position_sync()
+	
+	GLog.debug("Region map complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	
+	# Return serializable data
+	return get_serializable_data()
+
+func generate_radial_paths_from_city(config: MapRegionConfig):
+	"""Generate paths radiating outward from the central city"""
+	var city_id = graph.start_node
+	var city_pos = graph.nodes[city_id].position
+	
+	# Create 3-5 main paths from city
+	var num_paths = SeedManager.get_map_random_int(3, 5)
+	var angle_step = TAU / num_paths
+	var base_angle = SeedManager.get_map_random_float() * TAU
+	
+	for i in range(num_paths):
+		var angle = base_angle + (i * angle_step)
+		var path_length = SeedManager.get_map_random_int(3, 5)
+		var last_node_id = city_id
+		
+		for j in range(path_length):
+			var distance = 80 + (j * 60) + SeedManager.get_map_random_float() * 30
+			var angle_variance = (SeedManager.get_map_random_float() - 0.5) * 0.3
+			var final_angle = angle + angle_variance
+			
+			var new_pos = city_pos + Vector2(cos(final_angle), sin(final_angle)) * distance
+			new_pos = find_valid_position_with_spacing(new_pos, final_angle, distance, last_node_id)
+			
+			# Clamp to bounds
+			new_pos.x = clamp(new_pos.x, 50, config.region_bounds.x - 50)
+			new_pos.y = clamp(new_pos.y, 50, config.region_bounds.y - 50)
+			
+			# Create node with region-appropriate type
+			var node_type = config.get_random_node_type(SeedManager.map_rng)
+			var node_id = MapNode.NodeType.keys()[node_type].to_lower() + "_" + str(Time.get_ticks_msec()) + "_" + str(i) + "_" + str(j)
+			var new_node = MapNode.new(node_id, node_type, new_pos)
+			
+			graph.nodes[node_id] = new_node
+			
+			# Connect to previous node
+			connect_nodes(last_node_id, node_id)
+			
+			# Occasionally create branches or connections
+			if j > 0 and SeedManager.get_map_random_float() < 0.3:
+				create_branch_connection(node_id, config)
+			
+			last_node_id = node_id
+
+func create_branch_connection(from_node_id: String, config: MapRegionConfig):
+	"""Create a branch or cross-connection from a node"""
+	var from_node = graph.nodes[from_node_id]
+	
+	# Find nearby nodes to potentially connect to
+	var max_distance = 150.0
+	var candidates = []
+	
+	for node_id in graph.nodes:
+		if node_id == from_node_id:
+			continue
+		var node = graph.nodes[node_id]
+		var distance = from_node.position.distance_to(node.position)
+		
+		if distance <= max_distance and not from_node.is_connected_to(node_id):
+			# Don't connect to the city directly from branches
+			if node.type != MapNode.NodeType.CITY:
+				candidates.append(node_id)
+	
+	# Connect to a random candidate if available
+	if not candidates.is_empty():
+		var target_id = candidates[SeedManager.get_map_random_int(0, candidates.size() - 1)]
+		connect_nodes(from_node_id, target_id)
+
+func add_boss_node(config: MapRegionConfig):
+	"""Add the boss node at the edge of the map"""
+	var boss_pos = config.get_boss_position()
+	var boss_id = "boss_" + config.region_id
+	
+	var boss_node = MapNode.new(boss_id, MapNode.NodeType.BOSS, boss_pos)
+	boss_node.properties["boss_name"] = config.boss_name
+	boss_node.properties["boss_enemy_id"] = config.boss_enemy_id
+	
+	graph.nodes[boss_id] = boss_node
+	
+	# Connect boss to the furthest nodes from city
+	var city_pos = graph.nodes[graph.start_node].position
+	var far_nodes = []
+	
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		if node.type != MapNode.NodeType.CITY and node.type != MapNode.NodeType.BOSS:
+			var distance_from_city = node.position.distance_to(city_pos)
+			if distance_from_city > config.boss_distance_from_city * 0.7:
+				far_nodes.append({"id": node_id, "distance": distance_from_city})
+	
+	# Sort by distance and connect to 2-3 furthest nodes
+	far_nodes.sort_custom(func(a, b): return a.distance > b.distance)
+	var connections_made = 0
+	var max_connections = min(3, far_nodes.size())
+	
+	for i in range(min(max_connections, far_nodes.size())):
+		connect_nodes(far_nodes[i].id, boss_id)
+		connections_made += 1
+	
+	GLog.debug("Boss node added with " + str(connections_made) + " connections")
+
+func ensure_player_position_sync():
+	"""Ensure player position is always synchronized"""
+	# Make sure graph.player_position matches current_player_node_id
+	if current_player_node_id.is_empty() or not graph.nodes.has(current_player_node_id):
+		current_player_node_id = graph.start_node
+	
+	graph.player_position = current_player_node_id
+	
+	# Validate visited nodes
+	var valid_visited: Array[String] = []
+	for node_id in visited_node_ids:
+		if graph.nodes.has(node_id):
+			valid_visited.append(node_id)
+	visited_node_ids = valid_visited
+	
+	# Ensure start node is in visited list
+	if graph.start_node not in visited_node_ids:
+		visited_node_ids.insert(0, graph.start_node)
+	
+	GLog.debug("Player position synced: " + current_player_node_id)

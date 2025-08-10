@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="MapRegionConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/MapRegionConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+region_id = "mountains"
+region_name = "The Alpine Reaches"
+city_name = "Mount Hotham"
+city_position = Vector2(350, 300)
+theme_color = Color(0.5, 0.7, 0.9, 1)
+region_bounds = Vector2(750, 600)
+min_nodes = 16
+max_nodes = 24
+boss_distance_from_city = 320.0
+difficulty_modifier = 1.5
+gold_reward_multiplier = 1.0
+enemy_health_multiplier = 1.3
+node_type_weights = {
+"camp": 1.2,
+"junction": 1.8,
+"mine": 0.8,
+"poi": 1.8,
+"settlement": 0.6
+}
+special_encounters = ["avalanche", "whiteout"]
+unique_items = []
+environmental_hazards = ["altitude_sickness", "blizzard", "ice_cave"]
+boss_name = "The Frozen Horror"
+boss_enemy_id = "boss_mountains"
+boss_rewards = ["ice_heart", "mountain_cloak"]
+region_description = "High in the alpine reaches, where the air grows thin and cold whispers carry on the wind. The mountains hide ancient secrets frozen in time, waiting to be awakened."
+city_description = "Mount Hotham settlement clings to the mountainside, a haven of warmth in the frozen peaks. Those who live here have learned to respect the mountain's moods and the things that dwell in the ice."
+completion_unlocks = ["coast"]
