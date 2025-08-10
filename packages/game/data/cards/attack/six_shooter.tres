@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://chu5ebm20duwo"]
 
-[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
-[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/QuickDrawDamage.gd" id="3"]
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" uid="uid://cjfng8cj5drp1" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" uid="uid://baaoskycgt6vc" path="res://scripts/cards/effects/QuickDrawDamage.gd" id="3"]
 
 [sub_resource type="Resource" id="QuickDrawDamage_1"]
 script = ExtResource("3")
@@ -18,7 +18,6 @@ card_name = "Six-Shooter"
 energy_cost = 1
 description = "Deal 8 damage. Quick Draw: Deal +2 damage."
 card_type = "Gold"
-card_icon = null
 flavor_text = "Six shots, six chances to make your point."
 effects = Array[ExtResource("2")]([SubResource("QuickDrawDamage_1")])
 sanity_cost = 0

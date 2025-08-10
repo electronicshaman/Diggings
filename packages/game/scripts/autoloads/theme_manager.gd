@@ -18,7 +18,7 @@ static func get_card_color(card_type: String) -> Color:
 static func get_card_symbol(card_type: String) -> String:
 	match card_type:
 		"Gold":
-			return "⛏"
+			return "🔫"
 		"Grit":
 			return "🛡"
 		"Grog":

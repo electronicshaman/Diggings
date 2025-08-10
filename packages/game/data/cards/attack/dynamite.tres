@@ -1,14 +1,15 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://xq1kjxp00w5w"]
 
-[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/cards/effects/MultipleDamage.gd" id="2"]
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" uid="uid://cjfng8cj5drp1" path="res://data/CardEffect.gd" id="1_bhtlf"]
+[ext_resource type="Script" uid="uid://ncqd3d8d0lnh" path="res://scripts/cards/effects/MultipleDamage.gd" id="2"]
 
 [sub_resource type="Resource" id="MultipleDamage_1"]
 script = ExtResource("2")
-effect_name = "Multiple Damage"
-description = "Deal %s damage %s times" % [damage_amount, number_of_hits]
-damage_amount = 2
+damage_amount = 1
 number_of_hits = 3
+effect_name = "Multiple Damage"
+description = "Deal %s damage %s times"
 
 [resource]
 script = ExtResource("1")
@@ -16,8 +17,12 @@ card_name = "Dynamite Blast"
 energy_cost = 2
 description = ""
 card_type = "Gold"
-effects = [SubResource("MultipleDamage_1")]
+flavor_text = ""
+effects = Array[ExtResource("1_bhtlf")]([SubResource("MultipleDamage_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
 luck_modifier = 0.0
+class_affinity = Array[String]([])
+accessibility_tier = "Neutral"
+mechanical_category = "Attack"
