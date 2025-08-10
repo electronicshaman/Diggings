@@ -115,28 +115,32 @@ func setup_node(id: String, data: MapNode):
 	GLog.debug("MapNodeScene setup complete for: " + node_data.get_type_name() + " (" + id + ")")
 
 func apply_type_customizations():
-	"""Apply visual customizations based on node type"""
+	"""Apply visual customizations based on node type and resource properties"""
 	if not node_data:
 		return
-		
-	match node_data.type:
-		MapNode.NodeType.CITY:
-			# Cities are larger and more prominent
-			node_size = Vector2(80, 80)
-			custom_minimum_size = node_size
-			size = node_size
-			
-		MapNode.NodeType.BOSS:
-			# Bosses are also larger and imposing
-			node_size = Vector2(90, 90)
-			custom_minimum_size = node_size
-			size = node_size
-			
-		_:
-			# Default size for other types
-			node_size = Vector2(64, 64)
-			custom_minimum_size = node_size
-			size = node_size
+	
+	# Get size from resource properties, with fallback to type-based defaults
+	var resource_size = node_data.properties.get("visual_size", Vector2.ZERO)
+	if resource_size != Vector2.ZERO:
+		node_size = resource_size
+	else:
+		# Fallback to type-based sizes for compatibility
+		match node_data.type:
+			MapNode.NodeType.CITY:
+				node_size = Vector2(80, 80)
+			MapNode.NodeType.BOSS:
+				node_size = Vector2(90, 90)
+			MapNode.NodeType.JUNCTION:
+				node_size = Vector2(48, 48)
+			_:
+				node_size = Vector2(64, 64)
+	
+	# Apply the size to the control
+	custom_minimum_size = node_size
+	size = node_size
+	
+	# Update child node sizes to match
+	setup_visual_hierarchy()
 
 func update_visuals():
 	"""Update all visual elements based on current node data and state"""
@@ -176,34 +180,56 @@ func update_state_indicator():
 	var state = node_data.get_state()
 	var base_color = state_colors.get(state, Color.WHITE)
 	
+	# Check if the resource defines a custom glow color
+	var glow_color = node_data.properties.get("glow_color", Color.TRANSPARENT)
+	
 	# Handle special states
 	if is_highlighted:
 		base_color = Color.CYAN
 		outline.color = Color(base_color.r, base_color.g, base_color.b, 0.8)
 	elif state == MapNode.NodeState.CURRENT:
-		outline.color = Color(Color.GOLD.r, Color.GOLD.g, Color.GOLD.b, 0.9)
+		if glow_color != Color.TRANSPARENT:
+			outline.color = glow_color
+		else:
+			outline.color = Color(Color.GOLD.r, Color.GOLD.g, Color.GOLD.b, 0.9)
 	elif state == MapNode.NodeState.AVAILABLE and is_interactive:
-		outline.color = Color(Color.WHITE.r, Color.WHITE.g, Color.WHITE.b, 0.6)
+		if glow_color != Color.TRANSPARENT:
+			# Use resource glow color but make it more subtle for available state
+			outline.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.6)
+		else:
+			outline.color = Color(Color.WHITE.r, Color.WHITE.g, Color.WHITE.b, 0.6)
 	elif state == MapNode.NodeState.LOCKED:
 		outline.color = Color.TRANSPARENT
 	else:
 		outline.color = Color.TRANSPARENT
 
 func get_background_color() -> Color:
-	"""Get the background color based on node type and state"""
-	var base_color = type_colors.get(node_data.type, Color.WHITE)
+	"""Get the background color based on node type, resource properties, and state"""
+	var base_color = Color.WHITE
 	var alpha = node_data.get_state_alpha()
 	
-	# Type-specific color modifications
-	match node_data.type:
-		MapNode.NodeType.CITY:
-			base_color = Color.GOLD
-		MapNode.NodeType.CAMP:
-			base_color = Color.FOREST_GREEN
-		MapNode.NodeType.MINE:
-			base_color = Color.ORANGE
-		MapNode.NodeType.BOSS:
-			base_color = Color.DARK_RED
+	# First check if the resource has a custom visual color
+	var resource_color = node_data.properties.get("visual_color", Color.TRANSPARENT)
+	if resource_color != Color.TRANSPARENT:
+		base_color = resource_color
+	else:
+		# Fallback to type-based colors
+		base_color = type_colors.get(node_data.type, Color.WHITE)
+		match node_data.type:
+			MapNode.NodeType.CITY:
+				base_color = Color.GOLD
+			MapNode.NodeType.CAMP:
+				base_color = Color.FOREST_GREEN
+			MapNode.NodeType.MINE:
+				base_color = Color.ORANGE
+			MapNode.NodeType.BOSS:
+				base_color = Color.DARK_RED
+			MapNode.NodeType.JUNCTION:
+				base_color = Color.GRAY
+			MapNode.NodeType.POI:
+				base_color = Color.PURPLE
+			MapNode.NodeType.SETTLEMENT:
+				base_color = Color.BLUE
 	
 	return Color(base_color.r, base_color.g, base_color.b, alpha)
 
