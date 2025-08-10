@@ -154,7 +154,8 @@ func update_state_indicator():
 	
 	# Handle special states
 	if is_highlighted:
-		outline.color = Color(Color.CYAN.r, Color.CYAN.g, Color.CYAN.b, 0.8)
+		# Use resource-defined glow color instead of hardcoded cyan
+		outline.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.8)
 	elif state == MapNode.NodeState.CURRENT:
 		outline.color = glow_color
 	elif state == MapNode.NodeState.AVAILABLE and is_interactive:
