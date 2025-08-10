@@ -2,6 +2,7 @@ extends Control
 class_name MapController
 
 const DEBUG_ENABLED: bool = true
+const DEBUG_MAP_SHOW_ALL_NODES: bool = true
 
 # Import our map system classes
 const MapNode = preload("res://scripts/map/MapNode.gd")
@@ -36,6 +37,10 @@ var map_generator: MapGenerator
 var map_visualizer: MapVisualizer
 
 func _ready():
+	# Enhanced debug initialization for standalone testing
+	if DEBUG_MAP_SHOW_ALL_NODES:
+		ensure_debug_game_state()
+	
 	setup_graph_system()
 	setup_button_connections()
 	setup_tooltip_system()
@@ -118,8 +123,8 @@ func refresh_map_display():
 func setup_graph_system():
 	# Create map generator
 	map_generator = MapGenerator.new()
-	# TEMPORARY: Enable debug mode to see all nodes for development
-	map_generator.debug_show_all_nodes = true
+	# Set debug mode to show all nodes as available for layout debugging
+	map_generator.debug_show_all_nodes = DEBUG_MAP_SHOW_ALL_NODES
 	add_child(map_generator)
 	
 	# Debug: Check if map_content is valid
@@ -207,8 +212,13 @@ func display_current_map():
 	
 	var map_data = GameManager.game_data.maps.get(current_region, {})
 	if not map_data or not map_data.has("generator_data"):
-		GLog.error("No map data for region: " + current_region)
-		return
+		if DEBUG_MAP_SHOW_ALL_NODES:
+			GLog.debug("DEBUG MAP MODE: No map data for debug region, generating test map")
+			generate_test_map()
+			return
+		else:
+			GLog.error("No map data for region: " + current_region)
+			return
 	
 	# Load the map from stored data
 	map_generator.load_from_serializable_data(map_data.generator_data)
@@ -285,8 +295,12 @@ func _highlight_available_moves_after_setup():
 
 # TEMPORARY: Generate a simple test map using real resources for development
 func generate_test_map():
-	GLog.info("=== GENERATING RESOURCE-DRIVEN TEST MAP FOR DEVELOPMENT ===")
-	GLog.info("This is a temporary fallback for testing - remove when map selection is implemented")
+	if DEBUG_MAP_SHOW_ALL_NODES:
+		GLog.info("=== GENERATING DEBUG TEST MAP WITH ALL NODES AVAILABLE ===")
+		GLog.info("DEBUG MODE: All nodes will be set to AVAILABLE for layout testing")
+	else:
+		GLog.info("=== GENERATING RESOURCE-DRIVEN TEST MAP FOR DEVELOPMENT ===")
+		GLog.info("This is a temporary fallback for testing - remove when map selection is implemented")
 	
 	# Load real NodeConfig resources from data/map_nodes/
 	var city_config = load("res://data/map_nodes/cities/goldfields_city.tres") as MapNodeConfig
@@ -346,6 +360,11 @@ func generate_test_map():
 	
 	# Set up initial visibility and discover adjacent nodes
 	map_generator.discover_adjacent_nodes("test_city", 2)
+	
+	# Apply debug mode if enabled
+	if map_generator.debug_show_all_nodes:
+		GLog.debug("DEBUG MAP MODE: Setting up fog of war for test map")
+		map_generator.setup_fog_of_war()
 	
 	# Visualize the test graph
 	map_visualizer.visualize_graph(test_graph)
@@ -542,6 +561,29 @@ func get_available_destinations() -> Array[String]:
 func force_move_to_node(node_id: String) -> bool:
 	return map_generator.move_player_to_node(node_id)
 
+func ensure_debug_game_state():
+	"""Initialize game state for standalone map debugging when opened directly"""
+	GLog.debug("DEBUG MAP MODE: Ensuring game state is initialized for standalone testing")
+	
+	# Check if GameManager.game_data exists and is properly initialized
+	if not GameManager.game_data or GameManager.game_data.is_empty():
+		GLog.debug("DEBUG MAP MODE: Initializing GameManager game data")
+		GameManager.initialize_game_data()
+	
+	# Ensure we have the maps structure
+	if not GameManager.game_data.has("maps"):
+		GLog.debug("DEBUG MAP MODE: Adding maps structure to game data")
+		GameManager.game_data["maps"] = {}
+	
+	# Ensure we have current_map set (will trigger test map generation)
+	if not GameManager.game_data.has("current_map") or GameManager.game_data["current_map"].is_empty():
+		GLog.debug("DEBUG MAP MODE: Setting up test map region")
+		GameManager.game_data["current_map"] = "debug_region"
+	
+	# Initialize SeedManager for consistent debug behavior
+	if not SeedManager.is_initialized:
+		GLog.debug("DEBUG MAP MODE: Initializing SeedManager with debug seed")
+		SeedManager.set_master_seed(12345)  # Fixed seed for consistent debug layout
 
 # Handle returning from other scenes
 func _notification(what):

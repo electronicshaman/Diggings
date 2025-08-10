@@ -263,8 +263,8 @@ func post_process_graph():
 	if layout_config and layout_config.physics_enabled:
 		apply_force_directed_layout()
 	
-	# Set up fog of war (only start node visible)
-	#setup_fog_of_war()
+	# Set up fog of war (only start node visible, or all nodes in debug mode)
+	setup_fog_of_war()
 
 func ensure_graph_connectivity():
 	# Enhanced connectivity check - ensure all nodes are reachable from start
@@ -449,6 +449,9 @@ func convert_random_junction_to_type(target_type: MapNode.NodeType):
 		GLog.debug("Converted junction " + junction_id + " to " + junction.get_type_name())
 
 func setup_fog_of_war():
+	if debug_show_all_nodes:
+		GLog.debug("DEBUG MAP MODE: All nodes set to AVAILABLE for layout debugging")
+	
 	for node_id in graph.nodes:
 		var node = graph.nodes[node_id]
 		if node_id == graph.start_node:
@@ -659,6 +662,16 @@ func is_currently_reachable(node_id: String) -> bool:
 
 func restore_persistent_visibility():
 	"""Restore proper visibility for all nodes based on discovery and visit status"""
+	if debug_show_all_nodes:
+		GLog.debug("DEBUG MAP MODE: Overriding persistent visibility - all nodes set to AVAILABLE")
+		for node_id in graph.nodes:
+			var node = graph.nodes[node_id]
+			if node_id == current_player_node_id:
+				node.set_state(MapNode.NodeState.CURRENT)
+			else:
+				node.set_state(MapNode.NodeState.AVAILABLE)
+		return
+	
 	for node_id in graph.nodes:
 		var node = graph.nodes[node_id]
 		
