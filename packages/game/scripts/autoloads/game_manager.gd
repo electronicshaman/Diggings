@@ -1,5 +1,8 @@
 extends Node
 
+# Ensure NodeConfig class is loaded and registered
+const NodeConfig = preload("res://scripts/map/NodeConfig.gd")
+
 const DEBUG_ENABLED: bool = true
 
 enum GameState {
