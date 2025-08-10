@@ -213,8 +213,8 @@ func display_current_map():
 	var map_data = GameManager.game_data.maps.get(current_region, {})
 	if not map_data or not map_data.has("generator_data"):
 		if DEBUG_MAP_SHOW_ALL_NODES:
-			GLog.debug("DEBUG MAP MODE: No map data for debug region, generating test map")
-			generate_test_map()
+			GLog.debug("DEBUG MAP MODE: No map data for debug region, generating full procedural map")
+			generate_debug_procedural_map()
 			return
 		else:
 			GLog.error("No map data for region: " + current_region)
@@ -368,6 +368,37 @@ func generate_test_map():
 	
 	# Visualize the test graph
 	map_visualizer.visualize_graph(test_graph)
+	
+	# Apply visualization setup
+	_setup_map_visualization()
+	
+	# Highlight available moves after everything is set up
+	call_deferred("_highlight_available_moves_after_setup")
+
+func generate_debug_procedural_map():
+	"""Generate a full procedural map with 20-30 nodes for debug layout testing"""
+	GLog.info("=== GENERATING DEBUG PROCEDURAL MAP WITH 20-30 NODES ===")
+	GLog.info("DEBUG MODE: Using full procedural generation for comprehensive layout testing")
+	
+	# Use procedural generation with a fixed seed for consistent debugging
+	var debug_seed = 12345
+	var generated_graph = map_generator.generate_map(debug_seed)
+	
+	if not generated_graph or generated_graph.get("nodes", {}).is_empty():
+		GLog.error("DEBUG MAP MODE: Procedural generation failed, falling back to test map")
+		generate_test_map()
+		return
+	
+	GLog.info("Generated procedural debug map with " + str(generated_graph.nodes.size()) + " nodes")
+	GLog.info("DEBUG MODE: All nodes will be set to AVAILABLE for layout testing")
+	
+	# Apply debug fog of war to make all nodes available
+	if map_generator.debug_show_all_nodes:
+		GLog.debug("DEBUG MAP MODE: Setting up fog of war for procedural map")
+		map_generator.setup_fog_of_war()
+	
+	# Visualize the generated graph
+	map_visualizer.visualize_graph(generated_graph)
 	
 	# Apply visualization setup
 	_setup_map_visualization()
@@ -575,10 +606,10 @@ func ensure_debug_game_state():
 		GLog.debug("DEBUG MAP MODE: Adding maps structure to game data")
 		GameManager.game_data["maps"] = {}
 	
-	# Ensure we have current_map set (will trigger test map generation)
+	# Ensure we have current_map set (will trigger procedural map generation)
 	if not GameManager.game_data.has("current_map") or GameManager.game_data["current_map"].is_empty():
-		GLog.debug("DEBUG MAP MODE: Setting up test map region")
-		GameManager.game_data["current_map"] = "debug_region"
+		GLog.debug("DEBUG MAP MODE: Setting up debug region for procedural generation")
+		GameManager.game_data["current_map"] = "debug_procedural"
 	
 	# Initialize SeedManager for consistent debug behavior
 	if not SeedManager.is_initialized:
