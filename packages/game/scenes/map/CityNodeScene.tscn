@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://d3mxkcm8o8x88"]
+
+[ext_resource type="Script" uid="uid://dbqq7n8snpokm" path="res://scripts/map/CityNodeScene.gd" id="1_s2tte"]
+[ext_resource type="PackedScene" uid="uid://dxwewo6tk2xo6" path="res://scenes/map/MapNodeScene.tscn" id="2_bui40"]
+[ext_resource type="Script" uid="uid://cobhsqjxjdpst" path="res://scripts/map/MapNodeScene.gd" id="3_5lo2y"]
+
+[node name="CityNodeScene" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_s2tte")
+
+[node name="BaseNodeScene" type="Control" parent="." instance=ExtResource("2_bui40")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("3_5lo2y")

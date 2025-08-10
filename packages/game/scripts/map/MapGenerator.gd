@@ -146,7 +146,7 @@ func create_city_node(city_name: String, city_position: Vector2):
 	var city_id = "city_" + city_name.to_lower().replace(" ", "_")
 	var city_node = MapNode.new(city_id, MapNode.NodeType.CITY, city_position)
 	city_node.discovered = true
-	city_node.visited = false
+	city_node.visited = true  # City is visited since player starts there
 	city_node.properties["city_name"] = city_name
 	
 	graph.nodes[city_id] = city_node
@@ -773,6 +773,9 @@ func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
 	
 	# Post-process the graph
 	post_process_graph()
+	
+	# Discover adjacent nodes from the starting city so they become selectable
+	discover_adjacent_nodes(graph.start_node)
 	
 	# Ensure player position sync
 	ensure_player_position_sync()

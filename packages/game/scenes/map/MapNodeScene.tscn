@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3 uid="uid://dxwewo6tk2xo6"]
+
+[ext_resource type="Script" uid="uid://cobhsqjxjdpst" path="res://scripts/map/MapNodeScene.gd" id="1_ebne8"]
+
+[node name="MapNodeScene" type="Control"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ebne8")
+
+[node name="NodeButton" type="Button" parent="."]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 0
+flat = true
+
+[node name="BackgroundIcon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+stretch_mode = 4
+
+[node name="NodeIcon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 9.5
+offset_top = 9.5
+offset_right = 54.5
+offset_bottom = 54.5
+stretch_mode = 4
+
+[node name="NodeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = -20.0
+offset_top = 70.0
+offset_right = 84.0
+offset_bottom = 93.0
+horizontal_alignment = 1
+
+[node name="StateIndicator" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -4.0
+offset_top = -4.0
+offset_right = -4.0
+offset_bottom = -4.0
+
+[node name="Outline" type="ColorRect" parent="StateIndicator"]
+layout_mode = 0
+offset_right = 72.0
+offset_bottom = 72.0
+color = Color(0, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

@@ -2,7 +2,9 @@ extends Control
 class_name MapVisualizer
 
 const DEBUG_ENABLED: bool = true
-const CircularMapNode = preload("res://scripts/map/CircularMapNode.gd")
+
+# Scene-based node preload
+const MapNodeScene = preload("res://scenes/map/MapNodeScene.tscn")
 
 # Visual settings
 @export var node_radius: float = 20.0
@@ -22,8 +24,8 @@ var map_generator: MapGenerator
 var graph_data: Dictionary = {}
 var layout_config: MapLayoutConfig  # Reference to layout config for path settings
 
-# Node buttons for interaction
-var node_buttons: Dictionary = {}  # node_id -> Button
+# Node scenes for interaction
+var node_scenes: Dictionary = {}  # node_id -> MapNodeScene
 var edge_lines: Array[Line2D] = []
 
 # Signals
@@ -88,11 +90,11 @@ func visualize_graph(graph: Dictionary):
 	GLog.debug("Graph visualization complete - visible: " + str(visible) + ", children: " + str(get_child_count()))
 
 func clear_visualization():
-	# Remove all node buttons
-	for button in node_buttons.values():
-		if button and is_instance_valid(button):
-			button.queue_free()
-	node_buttons.clear()
+	# Remove all node scenes
+	for scene in node_scenes.values():
+		if scene and is_instance_valid(scene):
+			scene.queue_free()
+	node_scenes.clear()
 	
 	# Remove all edge lines
 	for line in edge_lines:
@@ -256,41 +258,46 @@ func create_nodes():
 		create_node_visual(node_id, graph_data.nodes[node_id])
 
 func create_node_visual(node_id: String, node: MapNode):
-	# Create custom circular node with Control that draws itself
-	var circle_node = CircularMapNode.new()
-	circle_node.setup(node_id, node, node_radius, player_node_outline, player_color)
-	circle_node.name = "MapNode_" + node_id
+	# Create appropriate scene based on node type
+	var node_scene = create_node_scene_for_type(node.type)
+	node_scene.name = "MapNode_" + node_id
 	
 	# Apply offset to ensure all nodes are positioned within positive coordinates
 	var graph_offset = get_meta("graph_offset", Vector2.ZERO)
 	var adjusted_position = node.position - graph_offset
-	# Offset by radius to center the circle on the intended position
-	circle_node.position = adjusted_position - Vector2(node_radius, node_radius)
-	circle_node.z_index = 1  # Above edges
+	
+	# Set up the node scene
+	node_scene.setup_node(node_id, node)
+	node_scene.set_position_centered(adjusted_position)
+	node_scene.z_index = 1  # Above edges
 	
 	# Apply discovery visibility
 	if not node.discovered:
-		circle_node.modulate.a = undiscovered_node_alpha
+		node_scene.modulate.a = undiscovered_node_alpha
 	else:
-		circle_node.modulate.a = discovered_node_alpha
+		node_scene.modulate.a = discovered_node_alpha
 	
-	# Check if this is the player's current position
-	var is_player_position = (graph_data.player_position == node.id)
-	circle_node.set_player_position(is_player_position)
-	
-	# Connect signals - fix parameter binding for node_clicked
-	circle_node.node_clicked.connect(func(event): _on_circular_node_clicked(event, node_id))
-	circle_node.mouse_entered.connect(_on_node_button_hovered.bind(node_id))
-	circle_node.mouse_exited.connect(_on_node_button_unhovered)
+	# Connect signals
+	node_scene.node_clicked.connect(_on_node_scene_clicked)
+	node_scene.node_hovered.connect(_on_node_button_hovered)
+	node_scene.node_unhovered.connect(_on_node_button_unhovered)
 	
 	# Store reference and metadata
-	circle_node.set_meta("node_id", node_id)
-	circle_node.set_meta("node_data", node)
+	node_scene.set_meta("node_id", node_id)
+	node_scene.set_meta("node_data", node)
 	
-	add_child(circle_node)
-	node_buttons[node_id] = circle_node  # Keep same dictionary name for compatibility
+	add_child(node_scene)
+	node_scenes[node_id] = node_scene
 	
 	GLog.debug("Created node visual: " + node_id + " at " + str(node.position) + " (" + node.get_type_name() + ")")
+
+func create_node_scene_for_type(node_type: MapNode.NodeType) -> MapNodeScene:
+	"""Create the appropriate scene based on node type"""
+	var scene_instance = MapNodeScene.instantiate()
+	
+	# The MapNodeScene will adapt its behavior based on the node data
+	# when setup_node() is called with the actual MapNode data
+	return scene_instance
 
 func style_node_button(button: Button, node: MapNode):
 	var style_box = StyleBoxFlat.new()
@@ -329,49 +336,51 @@ func style_node_button(button: Button, node: MapNode):
 
 func update_visibility():
 	# Update all node visibilities
-	for node_id in node_buttons:
-		var circle_node = node_buttons[node_id]  # Now CircularMapNode
+	for node_id in node_scenes:
+		var node_scene = node_scenes[node_id]
 		var node = graph_data.nodes[node_id]
 		
-		if circle_node and node:
-			update_node_interactivity(circle_node, node)
+		if node_scene and node:
+			update_node_interactivity(node_scene, node)
 	
 	# Update edge visibilities
 	update_edge_visibility()
 
-func update_node_interactivity(circle_node: CircularMapNode, node: MapNode):
+func update_node_interactivity(node_scene: MapNodeScene, node: MapNode):
 	var current_player_node = graph_data.nodes.get(graph_data.player_position)
+	var is_current_position = (node.id == graph_data.player_position)
 	
-	# For CircularMapNode, we control interactivity through the custom update method
+	# Update the node's state based on game logic
 	if not node.discovered:
-		circle_node.update_interactivity(false)
-		# Set specific undiscovered styling
-		circle_node.modulate = Color(1, 1, 1, undiscovered_node_alpha)
-	elif node.id == graph_data.player_position:
-		circle_node.update_interactivity(false)  # Can't move to current position
-		circle_node.set_player_position(true)
-		# Player position uses normal alpha but CircularMapNode handles special styling
-		circle_node.modulate = Color(1, 1, 1, discovered_node_alpha)
-	elif node.visited:
-		# Type-based revisit logic - camps and settlements can be revisited
-		var can_revisit = node.type in [MapNode.NodeType.CAMP, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.MINE]
-		if can_revisit and current_player_node and current_player_node.is_connected_to(node.id):
-			circle_node.update_interactivity(true)  # Allow revisiting camps, settlements, mines
-			circle_node.set_player_position(false)
-			# Let CircularMapNode handle interactive styling
-		else:
-			# POIs and other nodes remain one-time visits
-			circle_node.update_interactivity(false)
-			circle_node.set_player_position(false)
-			# Let CircularMapNode handle disabled styling (grey)
+		node.set_state(MapNode.NodeState.LOCKED)
+		node_scene.modulate = Color(1, 1, 1, undiscovered_node_alpha)
+	elif is_current_position:
+		node.set_state(MapNode.NodeState.CURRENT)
+		node_scene.modulate = Color(1, 1, 1, discovered_node_alpha)
 	elif current_player_node and current_player_node.is_connected_to(node.id):
-		circle_node.update_interactivity(true)  # Can move to connected unvisited nodes
-		circle_node.set_player_position(false)
-		# Let CircularMapNode handle interactive styling
+		# Check if this node can be visited
+		var can_visit = true
+		
+		if node.visited:
+			# Use the node's can_revisit logic
+			can_visit = node.can_revisit()
+		
+		if can_visit:
+			node.set_state(MapNode.NodeState.AVAILABLE)
+			node_scene.modulate = Color(1, 1, 1, discovered_node_alpha)
+		else:
+			node.set_state(MapNode.NodeState.COMPLETED)
+			node_scene.modulate = Color(1, 1, 1, 0.6)
 	else:
-		circle_node.update_interactivity(false)  # Can't move to unconnected nodes
-		circle_node.set_player_position(false)
-		# Let CircularMapNode handle disabled styling (grey)
+		# Not connected or not accessible
+		if node.visited:
+			node.set_state(MapNode.NodeState.COMPLETED)
+		else:
+			node.set_state(MapNode.NodeState.LOCKED)
+		node_scene.modulate = Color(1, 1, 1, 0.6)
+	
+	# Refresh the scene's visuals and interactivity
+	node_scene.refresh()
 
 func update_edge_visibility():
 	for line in edge_lines:
@@ -408,10 +417,11 @@ func _on_map_generated(graph: Dictionary):
 func _on_node_discovered(node_id: String):
 	GLog.debug("Node discovered, updating visualization: " + node_id)
 	
-	# Update tooltip for the discovered node
-	var circle_node = node_buttons.get(node_id)
-	if circle_node and circle_node.has_method("update_tooltip_text"):
-		circle_node.update_tooltip_text()
+	# Update the discovered node
+	var node_scene = node_scenes.get(node_id)
+	if node_scene:
+		node_scene.play_discover_animation()
+		node_scene.refresh()
 	
 	update_visibility()
 
@@ -419,8 +429,8 @@ func _on_player_moved(from_node: String, to_node: String):
 	GLog.debug("Player moved, updating visualization: " + from_node + " -> " + to_node)
 	update_visibility()
 
-func _on_circular_node_clicked(event: InputEvent, node_id: String):
-	GLog.debug("Circular node clicked: " + node_id)
+func _on_node_scene_clicked(node_id: String, event: InputEvent):
+	GLog.debug("Node scene clicked: " + node_id)
 	node_clicked.emit(node_id)
 
 func _on_node_area_input(event: InputEvent, node_id: String):
@@ -447,18 +457,18 @@ func highlight_available_moves():
 	var available_moves = map_generator.get_available_moves()
 	var current_player_node = graph_data.nodes.get(graph_data.player_position)
 	
-	for node_id in node_buttons:
-		var circle_node = node_buttons[node_id]  # Now CircularMapNode
+	for node_id in node_scenes:
+		var node_scene = node_scenes[node_id]
 		var node = graph_data.nodes[node_id]
 		var is_available = node_id in available_moves and node.discovered
 		
 		# Apply same logic as update_node_interactivity for consistency
 		if node.visited:
-			var can_revisit = node.type in [MapNode.NodeType.CAMP, MapNode.NodeType.SETTLEMENT, MapNode.NodeType.MINE]
+			var can_revisit = node.can_revisit()
 			is_available = is_available and can_revisit and current_player_node and current_player_node.is_connected_to(node.id)
 		
-		# Add visual highlighting for available moves (matches interactivity exactly)
-		circle_node.set_highlight(is_available)
+		# Add visual highlighting for available moves
+		node_scene.set_highlight(is_available)
 
 func clear_move_highlights():
 	update_visibility()  # This will reset all styling
@@ -537,7 +547,7 @@ func debug_state():
 	GLog.debug("Size: " + str(size))
 	GLog.debug("Position: " + str(position))
 	GLog.debug("Children count: " + str(get_child_count()))
-	GLog.debug("Node buttons: " + str(node_buttons.size()))
+	GLog.debug("Node scenes: " + str(node_scenes.size()))
 	GLog.debug("Edge lines: " + str(edge_lines.size()))
 	GLog.debug("Graph data nodes: " + str(graph_data.get("nodes", {}).size()))
 	GLog.debug("Parent: " + str(get_parent().name if get_parent() else "None"))
@@ -554,7 +564,7 @@ func force_visibility():
 	
 	# Make all children visible
 	for child in get_children():
-		if child is Button:
+		if child is MapNodeScene:
 			child.visible = true
 			child.modulate = Color.WHITE
 		elif child is Line2D:

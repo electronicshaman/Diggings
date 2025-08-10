@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://ci7p4oj7a2aen"]
+
+[ext_resource type="Script" uid="uid://bd1tabfiv426v" path="res://scripts/map/MineNodeScene.gd" id="1_ehph8"]
+[ext_resource type="PackedScene" uid="uid://dxwewo6tk2xo6" path="res://scenes/map/MapNodeScene.tscn" id="1_fcr0f"]
+[ext_resource type="Script" uid="uid://cobhsqjxjdpst" path="res://scripts/map/MapNodeScene.gd" id="2_ehph8"]
+
+[node name="MineNodeScene" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ehph8")
+
+[node name="BaseNodeScene" type="Control" parent="." instance=ExtResource("1_fcr0f")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("2_ehph8")

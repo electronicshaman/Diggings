@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://c1ktxaliq7uiq"]
+
+[ext_resource type="PackedScene" uid="uid://dxwewo6tk2xo6" path="res://scenes/map/MapNodeScene.tscn" id="1_dtih6"]
+[ext_resource type="Script" uid="uid://byaao75rmvmwj" path="res://scripts/map/CampNodeScene.gd" id="1_oevso"]
+[ext_resource type="Script" uid="uid://cobhsqjxjdpst" path="res://scripts/map/MapNodeScene.gd" id="2_oevso"]
+
+[node name="CampNodeScene" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_oevso")
+
+[node name="BaseNodeScene" type="Control" parent="." instance=ExtResource("1_dtih6")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("2_oevso")
