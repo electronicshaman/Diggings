@@ -38,7 +38,7 @@ func get_formatted_description() -> String:
 	return base_text
 
 # Static helper function for calculating damage
-static func calculate_enemy_missing_health_damage(enemy: PatternedEnemy, params: Dictionary) -> int:
+static func calculate_enemy_missing_health_damage(enemy: EnemyState, params: Dictionary) -> int:
 	if not enemy or not enemy.is_alive():
 		return 0
 	
@@ -47,7 +47,7 @@ static func calculate_enemy_missing_health_damage(enemy: PatternedEnemy, params:
 	var max_damage: int = params.get("maximum_damage", 999)
 	
 	# Calculate missing health
-	var missing_health: int = enemy.enemy_data.max_health - enemy.current_health
+	var missing_health: int = enemy.max_health - enemy.current_health
 	var calculated_damage: int = int(missing_health * multiplier)
 	
 	# Apply minimum and maximum bounds

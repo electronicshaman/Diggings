@@ -352,6 +352,12 @@ func get_energy_percentage() -> float:
 func get_sanity_percentage() -> float:
 	return stats.get_sanity_percentage() if stats else 0.0
 
+func get_missing_health_percentage() -> float:
+	return stats.get_missing_health_percentage() if stats else 0.0
+
+func get_damage_taken_this_duel() -> int:
+	return damage_taken_this_turn
+
 # Serialization support
 func get_save_data() -> Dictionary:
 	var data = {

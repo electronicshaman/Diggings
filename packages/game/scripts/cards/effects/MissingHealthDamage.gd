@@ -51,7 +51,7 @@ func get_formatted_description() -> String:
 			return "Deal damage based on wounds"
 
 # Static helper function for calculating damage
-static func calculate_missing_health_damage(player_state: PlayerState, params: Dictionary) -> int:
+static func calculate_missing_health_damage(player_data: PlayerData, params: Dictionary) -> int:
 	var mode: DamageMode = params.get("mode", DamageMode.PERCENTAGE_BASED)
 	var min_damage: int = params.get("minimum_damage", 0)
 	var max_damage: int = params.get("maximum_damage", 999)
@@ -60,12 +60,12 @@ static func calculate_missing_health_damage(player_state: PlayerState, params: D
 	match mode:
 		DamageMode.PERCENTAGE_BASED:
 			var dmg_per_10_percent: int = params.get("damage_per_10_percent", 1)
-			var missing_percent: float = player_state.get_missing_health_percentage()
+			var missing_percent: float = player_data.get_missing_health_percentage()
 			var ten_percent_chunks: int = int(missing_percent * 10)  # Convert to chunks of 10%
 			calculated_damage = ten_percent_chunks * dmg_per_10_percent
 		DamageMode.ACCUMULATION_BASED:
 			var dmg_per_5_taken: int = params.get("damage_per_5_taken", 1)
-			var damage_taken: int = player_state.get_damage_taken_this_duel()
+			var damage_taken: int = player_data.get_damage_taken_this_duel()
 			var five_damage_chunks: int = roundi(damage_taken / 5.0)  # Convert to chunks of 5 damage
 			calculated_damage = five_damage_chunks * dmg_per_5_taken
 	

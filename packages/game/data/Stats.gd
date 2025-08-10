@@ -134,6 +134,13 @@ func get_sanity_percentage() -> float:
 		return 0.0
 	return float(current_sanity) / float(max_sanity)
 
+# Get missing health as percentage (0.0 to 1.0)
+func get_missing_health_percentage() -> float:
+	if max_health <= 0:
+		return 0.0
+	var missing_health = max_health - current_health
+	return float(missing_health) / float(max_health)
+
 # Stat modification methods
 
 # Take damage, returns actual damage taken after defense
