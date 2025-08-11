@@ -2,7 +2,7 @@ extends Control
 class_name MapController
 
 const DEBUG_ENABLED: bool = true
-const DEBUG_MAP_SHOW_ALL_NODES: bool = false
+const DEBUG_MAP_SHOW_ALL_NODES: bool = true
 
 # Import our map system classes
 const MapNode = preload("res://scripts/map/MapNode.gd")
@@ -13,12 +13,12 @@ const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 
 # Zoom and pan system
 var zoom_level = 1.0
-var zoom_min = 0.3
+var zoom_min = 1
 var zoom_max = 3.0
 var zoom_speed = 0.1
 var dragging = false
 var drag_start_position = Vector2()
-var initial_map_position = Vector2()
+var initial_map_position = Vector2(500,200)
 
 @onready var view_deck_button = $HeaderPanel/HeaderContent/ViewDeckButton
 @onready var floor_label = $HeaderPanel/HeaderContent/FloorLabel
@@ -397,10 +397,18 @@ func generate_procedural_map_with_config():
 	
 	GLog.info("Generated procedural map with " + str(generated_graph.nodes.size()) + " nodes using current config")
 	
+	# Discover adjacent nodes from the starting position so they become available
+	map_generator.discover_adjacent_nodes(map_generator.graph.start_node, 2)
+	
 	# Apply debug fog of war to make all nodes available if in debug mode
 	if DEBUG_MAP_SHOW_ALL_NODES and map_generator.debug_show_all_nodes:
-		GLog.debug("DEBUG MODE: Setting up fog of war to show all nodes")
-		map_generator.setup_fog_of_war()
+		GLog.debug("DEBUG MODE: Overriding discovery system - all nodes set to AVAILABLE")
+		for node_id in map_generator.graph.nodes:
+			var node = map_generator.graph.nodes[node_id]
+			if node_id == map_generator.current_player_node_id:
+				node.set_state(MapNode.NodeState.CURRENT)
+			else:
+				node.set_state(MapNode.NodeState.AVAILABLE)
 	
 	# Visualize the generated graph
 	map_visualizer.visualize_graph(generated_graph)

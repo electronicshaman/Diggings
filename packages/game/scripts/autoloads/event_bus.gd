@@ -50,6 +50,11 @@ signal shop_entered()
 signal shop_exited()
 signal item_purchased(item: Resource, cost: int)
 
+signal curio_acquired(curio: Resource)
+signal curio_removed(curio: Resource)
+signal curio_triggered(curio: Resource, effect_name: String)
+signal curio_stack_changed(curio: Resource, new_count: int)
+
 signal node_selected(node: Node)
 signal map_generated()
 signal floor_completed(floor: int)

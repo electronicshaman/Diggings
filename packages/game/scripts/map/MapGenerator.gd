@@ -268,8 +268,7 @@ func post_process_graph():
 	GLog.debug("Starting Poisson Disk Sampling layout...")
 	apply_poisson_disk_layout()
 	
-	# Set up fog of war (only start node visible, or all nodes in debug mode)
-	setup_fog_of_war()
+
 
 func ensure_graph_connectivity():
 	# Enhanced connectivity check - ensure all nodes are reachable from start
@@ -453,19 +452,7 @@ func convert_random_junction_to_type(target_type: MapNode.NodeType):
 		
 		GLog.debug("Converted junction " + junction_id + " to " + junction.get_type_name())
 
-func setup_fog_of_war():
-	if debug_show_all_nodes:
-		GLog.debug("DEBUG MAP MODE: All nodes set to AVAILABLE for layout debugging")
-	
-	for node_id in graph.nodes:
-		var node = graph.nodes[node_id]
-		if node_id == graph.start_node:
-			node.set_state(MapNode.NodeState.CURRENT)
-		elif debug_show_all_nodes:
-			# Debug mode: show all nodes but mark them as available (not current)
-			node.set_state(MapNode.NodeState.AVAILABLE)
-		else:
-			node.set_state(MapNode.NodeState.LOCKED)
+
 
 func enforce_connection_limits():
 	"""Ensure no node exceeds the maximum connection limit"""
