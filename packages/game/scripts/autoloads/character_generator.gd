@@ -2,6 +2,8 @@ extends Node
 
 # CharacterGenerator - Handles procedural character generation using seed-based randomization
 
+const DEBUG_ENABLED: bool = true
+
 var backstory_pools: Dictionary = {}
 var name_pools: Dictionary = {}
 var generation_rules: Dictionary = {}
@@ -9,6 +11,7 @@ var generation_rules: Dictionary = {}
 func _ready():
 	load_name_pools()
 	load_generation_rules()
+	load_backstory_pools()
 
 func load_name_pools():
 	"""Load name pools from JSON file"""
@@ -42,31 +45,147 @@ func load_generation_rules():
 	else:
 		GLog.error("Failed to load generation_rules.json")
 
+func load_backstory_pools():
+	"""Load all backstory element resources from their directories"""
+	backstory_pools = {
+		"origins": [],
+		"tragedies": [],
+		"motivations": [],
+		"quirks": []
+	}
+	
+	# Load each category of backstory elements
+	_load_backstory_category("origins", "res://data/character_generation/backstory_resources/origins/")
+	_load_backstory_category("tragedies", "res://data/character_generation/backstory_resources/tragedies/")
+	_load_backstory_category("motivations", "res://data/character_generation/backstory_resources/motivations/")
+	_load_backstory_category("quirks", "res://data/character_generation/backstory_resources/quirks/")
+	
+	GLog.info("Loaded backstory pools - Origins: %d, Tragedies: %d, Motivations: %d, Quirks: %d" % [
+		backstory_pools.origins.size(),
+		backstory_pools.tragedies.size(), 
+		backstory_pools.motivations.size(),
+		backstory_pools.quirks.size()
+	])
+
+func _load_backstory_category(category_name: String, directory_path: String):
+	"""Load all .tres files from a backstory category directory"""
+	var dir = DirAccess.open(directory_path)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		
+		while file_name != "":
+			if file_name.ends_with(".tres"):
+				var resource_path = directory_path + file_name
+				var element = load(resource_path) as BackstoryElement
+				if element:
+					backstory_pools[category_name].append(element)
+					GLog.debug("Loaded backstory element: " + element.element_id + " (" + category_name + ")")
+				else:
+					GLog.error("Failed to load backstory element: " + resource_path)
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		GLog.error("Failed to open backstory directory: " + directory_path)
+
 func generate_character(character_class: String) -> GeneratedCharacter:
 	"""Generate a character for the given class using current seed"""
 	var character = GeneratedCharacter.new()
 	character.character_class = character_class
 	
-	# Generate simple names for now
-	var first_name = generate_simple_name(character_class)
-	character.nickname = generate_simple_nickname()
-	character.full_name = first_name
-	character.formatted_name = first_name + " '" + character.nickname + "'"
+	# Generate backstory chain first
+	var backstory_chain = generate_backstory_chain(character_class)
 	
-	# Apply base stats for class with some random variation
+	# Assign backstory elements to character
+	for element in backstory_chain:
+		match element.element_type:
+			"origin":
+				character.origin = element
+				character.origin_id = element.element_id
+			"tragedy":
+				character.tragedy = element
+				character.tragedy_id = element.element_id
+			"motivation":
+				character.motivation = element
+				character.motivation_id = element.element_id
+			"quirk":
+				character.quirk = element
+				character.quirk_id = element.element_id
+	
+	# Generate names based on backstory and class
+	var first_name = generate_first_name(character_class, backstory_chain)
+	var surname = generate_surname(character_class)
+	character.nickname = generate_nickname(backstory_chain)
+	character.full_name = first_name + (" " + surname if surname != "" else "")
+	character.formatted_name = character.full_name + (" '" + character.nickname + "'" if character.nickname != "" else "")
+	
+	# Apply base stats for class
 	var base_stats = get_base_character_stats(character_class)
-	character.max_health = base_stats.get("max_health", 50) + SeedManager.get_character_random_int(-5, 10)
-	character.max_sanity = base_stats.get("max_sanity", 100) + SeedManager.get_character_random_int(-10, 5)
+	character.max_health = base_stats.get("max_health", 50)
+	character.max_sanity = base_stats.get("max_sanity", 100)
 	character.max_energy = base_stats.get("max_energy", 3)
-	character.starting_gold = base_stats.get("starting_gold", 10) + SeedManager.get_character_random_int(-2, 8)
+	character.starting_gold = base_stats.get("starting_gold", 10)
+	character.starting_corruption = 0
 	
-	# Load a random starting curio
-	character.starting_curio = load_random_starting_curio()
+	# Apply backstory modifiers
+	var stat_mods = calculate_stat_modifiers(backstory_chain)
+	var percent_mods = calculate_percentage_modifiers(backstory_chain)
+	var special_mods = calculate_special_modifiers(backstory_chain)
 	
-	# Generate simple backstory summary
-	character.backstory_summary = "A " + character_class.to_lower() + " seeking fortune in the goldfields."
+	# Apply stat modifiers
+	for stat in stat_mods:
+		match stat:
+			"max_health":
+				character.max_health += stat_mods[stat]
+			"max_sanity":
+				character.max_sanity += stat_mods[stat]
+			"max_energy":
+				character.max_energy += stat_mods[stat]
+			"starting_gold":
+				character.starting_gold += stat_mods[stat]
+			"starting_corruption":
+				character.starting_corruption += stat_mods[stat]
+	
+	# Store modifiers in character
+	character.stat_modifiers = stat_mods
+	character.percentage_modifiers = percent_mods
+	character.special_modifiers = special_mods
+	
+	# Collect gameplay rules from all backstory elements
+	var all_rules: Array[String] = []
+	for element in backstory_chain:
+		all_rules.append_array(element.gameplay_rules)
+	character.gameplay_rules = all_rules
+	
+	# Select starting curio based on backstory
+	character.starting_curio = select_starting_curio(character_class, backstory_chain)
+	character.starting_curio_id = _get_curio_id_from_resource(character.starting_curio)
+	
+	# Generate rich backstory summary
+	character.backstory_summary = character.generate_backstory_summary()
+	
+	# Check for objectives from backstory elements
+	for element in backstory_chain:
+		if element.adds_objective:
+			character.has_special_objective = true
+			character.objective_type = element.objective_type
+			character.objective_value = element.objective_value
+			character.objective_reward = element.objective_reward
+			character.objective_description = element.description
+			break
+	
+	# Add some random variation within bounds
+	character.max_health += SeedManager.get_character_random_int(-3, 5)
+	character.max_sanity += SeedManager.get_character_random_int(-5, 5)
+	character.starting_gold += SeedManager.get_character_random_int(-2, 5)
+	
+	# Ensure minimum values
+	character.max_health = max(character.max_health, 25)
+	character.max_sanity = max(character.max_sanity, 50)
+	character.starting_gold = max(character.starting_gold, 0)
 	
 	GLog.info("Generated character: " + character.formatted_name + " the " + character_class)
+	GLog.debug("Backstory chain length: " + str(backstory_chain.size()))
 	
 	return character
 
@@ -169,13 +288,21 @@ func generate_first_name(character_class: String, backstory_chain: Array) -> Str
 		return "Unknown"
 	
 	var class_names = name_pools[character_class.to_lower()]
+	if not class_names.has("first_names"):
+		return "Unknown"
+		
+	var first_names = class_names["first_names"]
 	
 	# Determine cultural background from backstory
-	var culture_key = "generic"
+	var culture_key = "english"  # Default culture
 	
 	for element in backstory_chain:
 		if element.element_id == "aboriginal_guide":
-			culture_key = "aboriginal"
+			# For tracker class, check if we have aboriginal names
+			if character_class.to_lower() == "tracker" and first_names.has("aboriginal"):
+				culture_key = "aboriginal"
+			elif first_names.has("mixed"):
+				culture_key = "mixed"
 			break
 		elif element.element_id == "failed_banker":
 			culture_key = "irish"
@@ -187,15 +314,46 @@ func generate_first_name(character_class: String, backstory_chain: Array) -> Str
 			culture_key = "english"
 			break
 	
+	# Check for class-specific culture preferences
+	if character_class.to_lower() == "tracker":
+		# Tracker has special name categories
+		if first_names.has("frontier"):
+			culture_key = "frontier"
+		elif first_names.has("aboriginal"):
+			culture_key = "aboriginal"
+	elif character_class.to_lower() == "publican":
+		# Publican might use working_class names
+		if first_names.has("working_class"):
+			culture_key = "working_class"
+	elif character_class.to_lower() == "bushranger":
+		# Bushranger might use australian_born names
+		if first_names.has("australian_born"):
+			culture_key = "australian_born"
+	elif character_class.to_lower() == "prospector":
+		# Prospector has many cultural options, keep backstory-determined culture
+		pass
+	
 	# Select from appropriate cultural pool
-	if class_names.has(culture_key) and not class_names[culture_key].is_empty():
-		var names = class_names[culture_key]
+	if first_names.has(culture_key) and not first_names[culture_key].is_empty():
+		var names = first_names[culture_key]
 		return names[SeedManager.get_character_random_int(0, names.size() - 1)]
-	elif class_names.has("generic") and not class_names["generic"].is_empty():
-		var names = class_names["generic"]
+	elif first_names.has("english") and not first_names["english"].is_empty():
+		var names = first_names["english"]
 		return names[SeedManager.get_character_random_int(0, names.size() - 1)]
 	
 	return "Unknown"
+
+func generate_surname(character_class: String) -> String:
+	"""Generate surname based on character class"""
+	if not name_pools.has(character_class.to_lower()):
+		return ""
+	
+	var class_names = name_pools[character_class.to_lower()]
+	if not class_names.has("surnames") or class_names["surnames"].is_empty():
+		return ""
+	
+	var surnames = class_names["surnames"]
+	return surnames[SeedManager.get_character_random_int(0, surnames.size() - 1)]
 
 func generate_nickname(backstory_chain: Array) -> String:
 	"""Generate nickname from backstory elements"""
@@ -322,3 +480,16 @@ func load_random_starting_curio() -> Resource:
 	]
 	var curio_path = curios[SeedManager.get_character_random_int(0, curios.size() - 1)]
 	return load(curio_path)
+
+func _get_curio_id_from_resource(curio_resource: Resource) -> String:
+	"""Extract curio ID from resource path"""
+	if not curio_resource:
+		return ""
+	
+	var resource_path = curio_resource.resource_path
+	if resource_path == "":
+		return ""
+	
+	# Extract filename without extension from path like "res://data/curios/starting/lucky_nugget.tres"
+	var filename = resource_path.get_file().get_basename()
+	return filename

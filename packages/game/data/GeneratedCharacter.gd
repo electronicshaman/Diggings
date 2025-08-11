@@ -86,9 +86,36 @@ func apply_backstory_modifiers() -> void:
 	"""Apply all backstory element modifiers to this character."""
 	var elements = [origin, tragedy, motivation, quirk]
 	
+	# Apply stat modifiers from each element
 	for element in elements:
 		if element and element is BackstoryElement:
-			element.apply_modifiers(get_modifier_dict())
+			# Apply stat modifiers
+			for stat in element.stat_modifiers:
+				match stat:
+					"max_health":
+						max_health += element.stat_modifiers[stat]
+					"max_sanity":
+						max_sanity += element.stat_modifiers[stat]
+					"max_energy":
+						max_energy += element.stat_modifiers[stat]
+					"starting_gold":
+						starting_gold += element.stat_modifiers[stat]
+					"starting_corruption":
+						starting_corruption += element.stat_modifiers[stat]
+			
+			# Merge percentage modifiers
+			for modifier in element.percentage_modifiers:
+				if percentage_modifiers.has(modifier):
+					percentage_modifiers[modifier] += element.percentage_modifiers[modifier]
+				else:
+					percentage_modifiers[modifier] = element.percentage_modifiers[modifier]
+			
+			# Merge special modifiers
+			for modifier in element.special_modifiers:
+				special_modifiers[modifier] = element.special_modifiers[modifier]
+			
+			# Append gameplay rules
+			gameplay_rules.append_array(element.gameplay_rules)
 
 func get_modifier_dict() -> Dictionary:
 	"""Get a dictionary representation of all modifiers for processing."""
@@ -133,19 +160,25 @@ func apply_modifier_dict(mod_dict: Dictionary) -> void:
 
 func generate_backstory_summary() -> String:
 	"""Generate a narrative summary from backstory elements."""
-	var summary = ""
+	var parts: Array[String] = []
 	
 	if origin:
-		summary += origin.description + " "
+		parts.append(origin.description)
 	
 	if tragedy:
-		summary += tragedy.description + " "
+		parts.append(tragedy.description)
 	
 	if motivation:
-		summary += "Driven by: " + motivation.description + " "
+		parts.append("Now driven by " + motivation.description.to_lower())
 	
 	if quirk:
-		summary += "Known for being " + quirk.description
+		parts.append("Known for " + quirk.description.to_lower())
+	
+	var summary = ". ".join(parts)
+	if summary != "":
+		summary += "."
+	else:
+		summary = "A " + character_class.to_lower() + " seeking fortune in the goldfields."
 	
 	backstory_summary = summary
 	return summary
