@@ -31,6 +31,9 @@ var card_scene: PackedScene
 func _ready() -> void:
 	GLog.debug("UIController initialized - Managing the mortal interface")
 	card_scene = preload("res://scenes/cards/card.tscn")
+	
+	# Connect to UI notification events
+	EventBus.ui_notification.connect(_on_ui_notification)
 
 func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	game_controller = game_controller_ref
@@ -246,3 +249,12 @@ func _on_set_energy_pressed() -> void:
 func _on_reset_duel_pressed() -> void:
 	if game_controller:
 		game_controller.start_test_duel()
+
+func _on_ui_notification(message: String, type: String) -> void:
+	"""Handle UI notifications like curio rewards"""
+	GLog.info("🎉 UI Notification [%s]: %s" % [type, message])
+	
+	# For now, just show in debug panel or console
+	# Later we can add popup notifications
+	if type == "reward":
+		GLog.info("Curio reward notification displayed!")

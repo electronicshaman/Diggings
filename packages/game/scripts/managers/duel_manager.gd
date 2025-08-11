@@ -255,7 +255,29 @@ func apply_card_results(results: Dictionary):
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
 	duel_state.end_duel(winner)
+	
+	# Check for curio rewards on player victory
+	if winner == "player":
+		_check_curio_reward()
+	
 	duel_ended.emit(winner)
+
+func _check_curio_reward():
+	# Simple curio reward system - 30% chance on victory
+	if randf() < 0.3:
+		var curio_names = ["Lucky Nugget", "Thick Leather", "Old Compass", "Sharpened Blade"]
+		var random_curio = curio_names[randi() % curio_names.size()]
+		GLog.info("🏆 Curio Reward: You found a %s!" % random_curio)
+		
+		# For now, just show a message - we'll integrate with CurioManager later
+		# Try to add to CurioManager if it exists
+		if has_node("/root/CurioManager"):
+			var cm = get_node("/root/CurioManager")
+			# We'll implement this once we have actual curio resources
+			GLog.debug("CurioManager available for reward: %s" % random_curio)
+		
+		# Emit a reward event for UI display
+		EventBus.ui_notification.emit("Found curio: %s" % random_curio, "reward")
 
 func get_hand_cards() -> Array[CardData]:
 	return duel_state.hand.cards if duel_state.hand else []
