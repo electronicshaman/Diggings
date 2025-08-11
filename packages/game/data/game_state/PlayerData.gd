@@ -323,8 +323,8 @@ func add_curio(curio: Resource) -> void:
 	"""Add a curio to the player's collection"""
 	if curio and curio not in curios:
 		curios.append(curio)
-		if curio.get("stackable"):
-			var curio_name = curio.get("curio_name")
+		if curio.stackable if curio.has("stackable") else false:
+			var curio_name = curio.curio_name if curio.has("curio_name") else ""
 			var current = curio_stacks.get(curio_name, 0)
 			curio_stacks[curio_name] = current + 1
 		_emit_change("curio_added", null, curio)
@@ -333,7 +333,7 @@ func remove_curio(curio: Resource) -> void:
 	"""Remove a curio from the player's collection"""
 	if curio and curio in curios:
 		curios.erase(curio)
-		var curio_name = curio.get("curio_name")
+		var curio_name = curio.curio_name if curio.has("curio_name") else ""
 		if curio_stacks.has(curio_name):
 			curio_stacks.erase(curio_name)
 		_emit_change("curio_removed", curio, null)
@@ -341,7 +341,8 @@ func remove_curio(curio: Resource) -> void:
 func has_curio(curio_name: String) -> bool:
 	"""Check if player has a specific curio"""
 	for curio in curios:
-		if curio.get("curio_name") == curio_name:
+		var check_name = curio.curio_name if curio.has("curio_name") else ""
+		if check_name == curio_name:
 			return true
 	return false
 
