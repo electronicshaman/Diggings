@@ -50,6 +50,9 @@ func generate_simple_map():
 	# Create Delaunay edges and filter them
 	var filtered_edges = get_filtered_edges(edges_data, node_positions)
 	
+	# Ensure graph connectivity before finalizing
+	filtered_edges = ensure_graph_connectivity(filtered_edges, edges_data, node_positions)
+	
 	# Detect dead-ends and reassign them as mines
 	var final_assignments = reassign_dead_ends_as_mines(node_positions, filtered_edges, initial_assignments)
 	
@@ -216,7 +219,20 @@ func assign_node_types_to_positions(positions: Array[Vector2]) -> Array:
 	# Step 2: Find edge positions for settlements
 	var edge_indices = find_edge_position_indices(positions, map_size)
 	
-	# Step 3: Assign types
+	# Step 3: Find the furthest position from city for boss placement
+	var boss_index = find_furthest_position_from_city(positions, city_index, edge_indices)
+	
+	# Step 4: Calculate how many interior nodes we need to assign (excluding boss)
+	var interior_indices = []
+	for i in range(positions.size()):
+		if i != city_index and i not in edge_indices and i != boss_index:
+			interior_indices.append(i)
+	
+	# Step 5: Distribute interior node types using MapConfig limits (excluding boss)
+	var interior_assignments = distribute_interior_node_types_excluding_boss(interior_indices.size())
+	
+	# Step 6: Assign types to all positions
+	var interior_assignment_index = 0
 	for i in range(positions.size()):
 		var assignment = {}
 		
@@ -225,23 +241,31 @@ func assign_node_types_to_positions(positions: Array[Vector2]) -> Array:
 			assignment.type = "city"
 			assignment.type_name = "City"
 			assignment.config = node_configs.city
+		elif i == boss_index:
+			# Furthest node becomes boss
+			assignment.type = "boss"
+			assignment.type_name = "Boss"
+			assignment.config = node_configs.boss
 		elif i in edge_indices:
 			# Edge settlement
 			assignment.type = "settlement"
 			assignment.type_name = "Settlement" 
 			assignment.config = node_configs.settlement
 		else:
-			# Interior content - distribute randomly
-			var interior_type = choose_interior_node_type()
+			# Interior content - use distributed assignments
+			var interior_type = interior_assignments[interior_assignment_index]
 			assignment.type = interior_type
 			assignment.type_name = interior_type.capitalize()
 			assignment.config = node_configs[interior_type]
+			interior_assignment_index += 1
 		
 		assignments.append(assignment)
 	
 	if DEBUG_ENABLED:
 		print("Assigned city to index:", city_index)
+		print("Assigned boss to index:", boss_index, "(furthest from city)")
 		print("Assigned settlements to indices:", edge_indices)
+		print("Interior node distribution:", _count_node_types(interior_assignments))
 	
 	return assignments
 
@@ -296,21 +320,160 @@ func find_edge_position_indices(positions: Array[Vector2], map_size: Vector2) ->
 	
 	return edge_indices
 
-func choose_interior_node_type() -> String:
-	"""Randomly choose an interior node type with weighted distribution"""
-	var rand = SeedManager.get_map_random_float()
+func distribute_interior_node_types(interior_count: int) -> Array[String]:
+	"""Distribute interior node types respecting MapConfig min/max limits"""
+	var types = ["camp", "mine", "poi", "junction", "boss"]
+	var assignments: Array[String] = []
 	
-	# Weighted distribution for interior nodes
-	if rand < 0.35:		# 35% camps
-		return "camp"
-	elif rand < 0.55:	# 20% mines  
-		return "mine"
-	elif rand < 0.70:	# 15% POIs
-		return "poi"
-	elif rand < 0.90:	# 20% junctions
-		return "junction"
-	else:				# 10% boss (but we should limit to 1)
-		return "boss"
+	# Get min/max for each type from config
+	var type_limits = {
+		"camp": {"min": map_config.min_camps, "max": map_config.max_camps},
+		"mine": {"min": map_config.min_mines, "max": map_config.max_mines},
+		"poi": {"min": map_config.min_pois, "max": map_config.max_pois},
+		"junction": {"min": map_config.min_junctions, "max": map_config.max_junctions},
+		"boss": {"min": map_config.min_bosses, "max": map_config.max_bosses}
+	}
+	
+	# Validate that we have enough slots for minimum requirements
+	var total_mins = 0
+	for type in types:
+		total_mins += type_limits[type].min
+	
+	if total_mins > interior_count:
+		if DEBUG_ENABLED:
+			print("WARNING: Total minimum requirements (", total_mins, ") exceed interior slots (", interior_count, ")")
+		# Scale down minimums proportionally
+		for type in types:
+			type_limits[type].min = int(type_limits[type].min * float(interior_count) / float(total_mins))
+	
+	# Step 1: Assign minimums for each type
+	var type_counts = {}
+	for type in types:
+		type_counts[type] = type_limits[type].min
+		for i in range(type_limits[type].min):
+			assignments.append(type)
+	
+	# Step 2: Distribute remaining slots randomly within max limits
+	var remaining_slots = interior_count - assignments.size()
+	
+	for i in range(remaining_slots):
+		# Find types that haven't reached their maximum
+		var available_types = []
+		for type in types:
+			if type_counts[type] < type_limits[type].max:
+				available_types.append(type)
+		
+		if available_types.is_empty():
+			# All types at max, break early
+			break
+		
+		# Randomly pick from available types
+		var chosen_type = available_types[SeedManager.get_map_random_int(0, available_types.size() - 1)]
+		assignments.append(chosen_type)
+		type_counts[chosen_type] += 1
+	
+	# Step 3: Shuffle the assignments to randomize placement
+	for i in range(assignments.size()):
+		var j = SeedManager.get_map_random_int(0, assignments.size() - 1)
+		var temp = assignments[i]
+		assignments[i] = assignments[j]
+		assignments[j] = temp
+	
+	if DEBUG_ENABLED:
+		print("Interior distribution for", interior_count, "slots:", type_counts)
+	
+	return assignments
+
+func _count_node_types(assignments: Array) -> Dictionary:
+	"""Helper function to count node types in an assignment array"""
+	var counts = {}
+	for type in assignments:
+		counts[type] = counts.get(type, 0) + 1
+	return counts
+
+func find_furthest_position_from_city(positions: Array[Vector2], city_index: int, edge_indices: Array) -> int:
+	"""Find the position furthest from the city (excluding edges and city itself)"""
+	var city_pos = positions[city_index]
+	var furthest_index = -1
+	var max_distance = -1.0
+	
+	for i in range(positions.size()):
+		# Skip city, edge settlements, and invalid indices
+		if i == city_index or i in edge_indices:
+			continue
+			
+		var distance = positions[i].distance_to(city_pos)
+		if distance > max_distance:
+			max_distance = distance
+			furthest_index = i
+	
+	if DEBUG_ENABLED:
+		print("Boss placed at index", furthest_index, "with distance", max_distance, "from city")
+	
+	return furthest_index
+
+func distribute_interior_node_types_excluding_boss(interior_count: int) -> Array[String]:
+	"""Distribute interior node types respecting MapConfig min/max limits, excluding boss"""
+	var types = ["camp", "mine", "poi", "junction"]  # Removed "boss" since it's predetermined
+	var assignments: Array[String] = []
+	
+	# Get min/max for each type from config (excluding boss)
+	var type_limits = {
+		"camp": {"min": map_config.min_camps, "max": map_config.max_camps},
+		"mine": {"min": map_config.min_mines, "max": map_config.max_mines},
+		"poi": {"min": map_config.min_pois, "max": map_config.max_pois},
+		"junction": {"min": map_config.min_junctions, "max": map_config.max_junctions}
+	}
+	
+	# Validate that we have enough slots for minimum requirements
+	var total_mins = 0
+	for type in types:
+		total_mins += type_limits[type].min
+	
+	if total_mins > interior_count:
+		if DEBUG_ENABLED:
+			print("WARNING: Total minimum requirements (", total_mins, ") exceed interior slots (", interior_count, ")")
+		# Scale down minimums proportionally
+		for type in types:
+			type_limits[type].min = int(type_limits[type].min * float(interior_count) / float(total_mins))
+	
+	# Step 1: Assign minimums for each type
+	var type_counts = {}
+	for type in types:
+		type_counts[type] = type_limits[type].min
+		for i in range(type_limits[type].min):
+			assignments.append(type)
+	
+	# Step 2: Distribute remaining slots randomly within max limits
+	var remaining_slots = interior_count - assignments.size()
+	
+	for i in range(remaining_slots):
+		# Find types that haven't reached their maximum
+		var available_types = []
+		for type in types:
+			if type_counts[type] < type_limits[type].max:
+				available_types.append(type)
+		
+		if available_types.is_empty():
+			# All types at max, break early
+			break
+		
+		# Randomly pick from available types
+		var chosen_type = available_types[SeedManager.get_map_random_int(0, available_types.size() - 1)]
+		assignments.append(chosen_type)
+		type_counts[chosen_type] += 1
+	
+	# Step 3: Shuffle the assignments to randomize placement
+	for i in range(assignments.size()):
+		var j = SeedManager.get_map_random_int(0, assignments.size() - 1)
+		var temp = assignments[i]
+		assignments[i] = assignments[j]
+		assignments[j] = temp
+	
+	if DEBUG_ENABLED:
+		print("Interior distribution for", interior_count, "slots (excluding boss):", type_counts)
+	
+	return assignments
 
 func find_city_node() -> String:
 	"""Find the node ID of the city"""
@@ -432,6 +595,87 @@ func validate_graph_connectivity(edge_list: Array) -> bool:
 		print("Connectivity check failed: visited", visited.size(), "of", nodes.size(), "nodes")
 	
 	return all_connected
+
+func ensure_graph_connectivity(filtered_edges: Array, all_edges_data: Array, positions: Array[Vector2]) -> Array:
+	"""Ensure all nodes are connected by adding minimum necessary edges"""
+	# Convert positions to indices for easier lookup
+	var position_to_index = {}
+	for i in range(positions.size()):
+		position_to_index[str(positions[i])] = i
+	
+	# Build current connectivity graph from filtered edges
+	var connectivity_graph = {}
+	for i in range(positions.size()):
+		connectivity_graph[i] = []
+	
+	# Add filtered edges to connectivity graph
+	for edge in filtered_edges:
+		var from_idx = edge.from_idx
+		var to_idx = edge.to_idx
+		connectivity_graph[from_idx].append(to_idx)
+		connectivity_graph[to_idx].append(from_idx)
+	
+	# Find connected components using BFS
+	var visited = {}
+	var components = []
+	
+	for i in range(positions.size()):
+		if not visited.has(i):
+			var component = []
+			var queue = [i]
+			visited[i] = true
+			
+			while not queue.is_empty():
+				var current = queue.pop_front()
+				component.append(current)
+				
+				for neighbor in connectivity_graph[current]:
+					if not visited.has(neighbor):
+						visited[neighbor] = true
+						queue.append(neighbor)
+			
+			components.append(component)
+	
+	if DEBUG_ENABLED:
+		var comp_sizes = []
+		for comp in components:
+			comp_sizes.append(comp.size())
+		print("Found", components.size(), "connected components with sizes:", comp_sizes)
+	
+	# If we have more than one component, we need to connect them
+	if components.size() > 1:
+		var result_edges = filtered_edges.duplicate()
+		
+		# Find the largest component (usually contains the city)
+		var largest_component = components[0]
+		for comp in components:
+			if comp.size() > largest_component.size():
+				largest_component = comp
+		
+		# Connect all other components to the largest one
+		for comp in components:
+			if comp == largest_component:
+				continue
+			
+			# Find the shortest edge between this component and the largest component
+			var shortest_edge = null
+			var shortest_distance = float('inf')
+			
+			for from_idx in comp:
+				for to_idx in largest_component:
+					var distance = positions[from_idx].distance_to(positions[to_idx])
+					if distance < shortest_distance:
+						shortest_distance = distance
+						shortest_edge = {"from_idx": from_idx, "to_idx": to_idx, "distance": distance}
+			
+			if shortest_edge:
+				result_edges.append(shortest_edge)
+				if DEBUG_ENABLED:
+					print("Connected component of size", comp.size(), "to main component with edge length", shortest_distance)
+		
+		return result_edges
+	
+	return filtered_edges
 
 func create_connections_from_edges(edges_data: Array):
 	"""Create visual connections from Delaunay edges with type-based filtering"""

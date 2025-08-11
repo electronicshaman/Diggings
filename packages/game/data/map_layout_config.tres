@@ -52,3 +52,7 @@ path_curve_strength = 0.3
 path_curve_randomness = 0.15
 path_dash_length = 18.0
 path_gap_length = 12.0
+use_planar_graph_generation = true
+planar_pruning_intensity = 0.6
+auto_fix_crossings = true
+validate_planarity = true

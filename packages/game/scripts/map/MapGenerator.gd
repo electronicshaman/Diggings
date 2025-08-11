@@ -4,6 +4,9 @@ class_name MapGenerator
 const DEBUG_ENABLED: bool = false
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
 const PoissonDiskLayout = preload("res://scripts/map/PoissonDiskLayout.gd")
+const DelaunayTriangulator = preload("res://scripts/map/DelaunayTriangulator.gd")
+const EdgePruner = preload("res://scripts/map/EdgePruner.gd")
+const PlanarGraphValidator = preload("res://scripts/map/PlanarGraphValidator.gd")
 
 # Map layout configuration
 @export var layout_config: MapLayoutConfig
@@ -107,6 +110,13 @@ func generate_map(seed: int = -1) -> Dictionary:
 		"generation_seed": generation_seed
 	}
 	
+	# Check if planar graph generation is enabled
+	if layout_config and layout_config.use_planar_graph_generation:
+		return generate_planar_map()
+	else:
+		return generate_traditional_map()
+
+func generate_traditional_map() -> Dictionary:
 	# Reset rule counters
 	for rule in rules:
 		rule.reset()
@@ -114,7 +124,7 @@ func generate_map(seed: int = -1) -> Dictionary:
 	# Create starting node
 	create_start_node()
 	
-	# Generate the rest of the map
+	# Generate the rest of the map using traditional rule-based approach
 	var generation_steps = 0
 	var max_steps = 50  # Prevent infinite loops
 	
@@ -123,11 +133,41 @@ func generate_map(seed: int = -1) -> Dictionary:
 		generation_steps += 1
 	
 	# Post-process the graph
-	GLog.debug("Starting post-processing...")
+	GLog.debug("Starting traditional post-processing...")
 	post_process_graph()
 	GLog.debug("Post-processing complete")
 	
-	GLog.debug("Map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	GLog.debug("Traditional map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	map_generated.emit(graph)
+	return graph
+
+func generate_planar_map() -> Dictionary:
+	GLog.debug("Using planar graph generation with Delaunay triangulation")
+	
+	# Create starting node
+	create_start_node()
+	
+	# Generate additional nodes using Poisson Disk Sampling for positioning
+	generate_nodes_with_poisson_sampling()
+	
+	# Create Delaunay triangulation for planar connectivity
+	apply_delaunay_triangulation()
+	
+	# Prune edges to match game design requirements
+	prune_triangulation_edges()
+	
+	# Post-process with planar graph constraints
+	GLog.debug("Starting planar post-processing...")
+	post_process_planar_graph()
+	GLog.debug("Planar post-processing complete")
+	
+	GLog.debug("Planar map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	
+	# Validate planarity
+	if DEBUG_ENABLED:
+		var planarity_report = PlanarGraphValidator.generate_planarity_report(graph)
+		GLog.debug("Planarity report: " + str(planarity_report))
+	
 	map_generated.emit(graph)
 	return graph
 
@@ -829,6 +869,191 @@ func apply_poisson_disk_layout():
 	graph = layout_optimizer.apply_layout(graph)
 	
 	GLog.debug("Poisson Disk layout complete")
+
+# New planar graph generation methods
+
+func generate_nodes_with_poisson_sampling():
+	"""Generate nodes using Poisson Disk Sampling for even distribution"""
+	var target_count = SeedManager.get_map_random_int(
+		layout_config.min_nodes if layout_config else default_min_nodes,
+		layout_config.max_nodes if layout_config else default_max_nodes
+	)
+	
+	# We already have the start node, so generate target_count - 1 more
+	var additional_nodes = target_count - 1
+	
+	GLog.debug("Generating " + str(additional_nodes) + " additional nodes with Poisson sampling")
+	
+	# Use Poisson Disk Sampling to get well-distributed positions
+	var layout_optimizer = PoissonDiskLayout.new()
+	layout_optimizer.setup(layout_config)
+	
+	# Generate positions for all nodes (including start)
+	var all_positions = layout_optimizer.generate_poisson_positions(target_count)
+	
+	# First position goes to start node (might adjust it)
+	if all_positions.size() > 0:
+		var start_node = graph.nodes[graph.start_node]
+		start_node.position = all_positions[0]
+	
+	# Create additional nodes at remaining positions
+	for i in range(1, min(all_positions.size(), target_count)):
+		var node_id = "node_" + str(i)
+		var node_type = layout_config.get_weighted_node_type() if layout_config else MapNode.NodeType.POI
+		var node_config = MapNodeRegistry.get_random_config_for_type(node_type)
+		var new_node = MapNodeRegistry.create_node(node_id, node_config, all_positions[i])
+		
+		graph.nodes[node_id] = new_node
+	
+	GLog.debug("Created " + str(graph.nodes.size()) + " nodes with Poisson distribution")
+
+func apply_delaunay_triangulation():
+	"""Apply Delaunay triangulation to create planar connectivity"""
+	GLog.debug("Applying Delaunay triangulation...")
+	
+	# Generate triangulation
+	graph = DelaunayTriangulator.triangulate_map_nodes(graph)
+	
+	if DEBUG_ENABLED:
+		var edge_count = graph.get("edges", []).size()
+		GLog.debug("Delaunay triangulation created " + str(edge_count) + " edges")
+		
+		# Validate that the result is actually planar
+		if PlanarGraphValidator.is_graph_planar(graph):
+			GLog.debug("✓ Triangulation is planar (no edge crossings)")
+		else:
+			GLog.warn("✗ Triangulation has edge crossings - this shouldn't happen!")
+
+func prune_triangulation_edges():
+	"""Intelligently prune edges from triangulation to match game design"""
+	GLog.debug("Pruning triangulation edges...")
+	
+	# Create pruning configuration
+	var pruning_config = EdgePruner.PruningConfig.new()
+	
+	if layout_config:
+		pruning_config.max_edge_length = layout_config.connection_max_distance
+		pruning_config.min_edge_length = layout_config.connection_min_distance
+		pruning_config.max_connections_per_node = layout_config.cleanup_max_connections_per_node
+		pruning_config.pruning_intensity = layout_config.planar_pruning_intensity
+	
+	# Apply intelligent pruning
+	graph = EdgePruner.prune_triangulation(graph, pruning_config)
+	
+	if DEBUG_ENABLED:
+		var edge_count = graph.get("edges", []).size()
+		GLog.debug("Pruning complete: " + str(edge_count) + " edges remaining")
+		
+		# Validate planarity is preserved
+		if PlanarGraphValidator.is_graph_planar(graph):
+			GLog.debug("✓ Graph remains planar after pruning")
+		else:
+			GLog.warn("✗ Graph has crossings after pruning!")
+
+func post_process_planar_graph():
+	"""Post-process a planar graph while maintaining planarity"""
+	# Balance node types (this doesn't affect connectivity)
+	balance_node_types()
+	
+	# Check connectivity and add minimal connections if needed (with planarity checking)
+	ensure_planar_connectivity()
+	
+	# Final planarity validation
+	validate_final_planarity()
+
+func ensure_planar_connectivity():
+	"""Ensure graph connectivity while maintaining planarity"""
+	var reachable = find_reachable_nodes(graph.start_node)
+	var all_nodes = graph.nodes.keys()
+	
+	for node_id in all_nodes:
+		if node_id not in reachable:
+			# Find a connection that won't create crossings
+			var best_connection = find_planar_connection(node_id, reachable)
+			if best_connection != "":
+				connect_nodes_if_planar(node_id, best_connection)
+				GLog.debug("Connected isolated node " + node_id + " to " + best_connection + " (planar)")
+				reachable.append(node_id)
+			else:
+				GLog.warn("Could not find planar connection for isolated node: " + node_id)
+
+func find_planar_connection(from_node_id: String, candidate_nodes: Array[String]) -> String:
+	"""Find the best connection that won't create edge crossings"""
+	if candidate_nodes.is_empty() or not graph.nodes.has(from_node_id):
+		return ""
+	
+	var from_node = graph.nodes[from_node_id]
+	var max_distance = layout_config.connection_max_distance if layout_config else 250.0
+	
+	# Find all candidates within reasonable distance
+	var valid_candidates: Array = []
+	
+	for candidate_id in candidate_nodes:
+		if graph.nodes.has(candidate_id):
+			var candidate_node = graph.nodes[candidate_id]
+			var distance = from_node.position.distance_to(candidate_node.position)
+			
+			if distance <= max_distance:
+				# Check if this connection would create crossings
+				if not PlanarGraphValidator.would_edge_create_crossing(graph, from_node_id, candidate_id):
+					valid_candidates.append({"id": candidate_id, "distance": distance})
+	
+	if valid_candidates.is_empty():
+		return ""
+	
+	# Sort by distance and return closest
+	valid_candidates.sort_custom(func(a, b): return a.distance < b.distance)
+	return valid_candidates[0].id
+
+func connect_nodes_if_planar(node_a: String, node_b: String) -> bool:
+	"""Connect two nodes only if it won't create edge crossings"""
+	if PlanarGraphValidator.would_edge_create_crossing(graph, node_a, node_b):
+		return false
+	
+	# Use the existing connect_nodes method but skip distance checks since we already validated
+	if not graph.nodes.has(node_a) or not graph.nodes.has(node_b):
+		return false
+	
+	# Check if already connected
+	if edge_exists(node_a, node_b):
+		return false
+	
+	# Create edge
+	var travel_time = SeedManager.get_map_random_int(2, 4)
+	var difficulty = SeedManager.get_map_random_int(1, 3)
+	var edge = MapEdge.new(node_a, node_b, travel_time, difficulty)
+	graph.edges.append(edge)
+	
+	# Update node connections
+	graph.nodes[node_a].connect_to(node_b)
+	graph.nodes[node_b].connect_to(node_a)
+	
+	GLog.debug("Connected " + node_a + " to " + node_b + " (planar)")
+	return true
+
+func validate_final_planarity():
+	"""Validate that the final graph is planar and log any issues"""
+	var report = PlanarGraphValidator.generate_planarity_report(graph)
+	
+	if report.is_planar:
+		GLog.debug("✓ Final graph is planar with " + str(report.total_nodes) + " nodes and " + str(report.total_edges) + " edges")
+	else:
+		GLog.warn("✗ Final graph has " + str(report.total_crossings) + " edge crossings!")
+		
+		if DEBUG_ENABLED:
+			for crossing in report.crossing_details:
+				GLog.debug("  Crossing: " + crossing.edge1 + " ✗ " + crossing.edge2)
+		
+		# Attempt to fix crossings
+		if layout_config and layout_config.auto_fix_crossings:
+			GLog.debug("Attempting to fix crossings...")
+			graph = PlanarGraphValidator.make_graph_planar_greedy(graph)
+			
+			var fixed_report = PlanarGraphValidator.generate_planarity_report(graph)
+			if fixed_report.is_planar:
+				GLog.debug("✓ Fixed all crossings - graph is now planar")
+			else:
+				GLog.warn("✗ Still have " + str(fixed_report.total_crossings) + " crossings after fix attempt")
 
 func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
 	"""Generate a complete map for a specific region"""

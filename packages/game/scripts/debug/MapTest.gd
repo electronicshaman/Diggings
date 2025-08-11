@@ -70,54 +70,149 @@ func generate_test_map():
 	test_probability_distribution()
 	test_deterministic_behavior()
 	
-	# Generate map with a specific seed for debugging
+	# Test both traditional and planar graph generation
+	test_traditional_generation()
+	test_planar_generation()
+	
+	print("=== TEST COMPLETE ===")
+
+func test_traditional_generation():
+	print("=== TESTING TRADITIONAL GENERATION ===")
+	
+	# Ensure traditional generation is used
+	if map_generator.layout_config:
+		map_generator.layout_config.use_planar_graph_generation = false
+	
 	var test_seed = 42
 	print("Using integer seed: ", test_seed)
-	
-	# Also demonstrate hash seed usage
-	var hash_seed = SeedManager.generate_hash_seed(str(test_seed))
-	print("Generated hash seed: ", hash_seed)
 	
 	var generated_graph = map_generator.generate_map(test_seed)
 	
 	if not generated_graph or generated_graph.get("nodes", {}).is_empty():
-		print("ERROR: Map generation failed!")
+		print("ERROR: Traditional map generation failed!")
 		return
 	
-	print("Map generated successfully!")
+	print("Traditional map generated successfully!")
 	print("  Node count: ", generated_graph.nodes.size())
 	print("  Edge count: ", generated_graph.edges.size())
 	
-	# Test that the same results are produced with equivalent hash seed
-	test_seed_equivalence(test_seed, hash_seed)
+	# Test for edge crossings in traditional generation
+	test_planarity(generated_graph, "Traditional")
+	
+	# Print node positions and connections
+	print_graph_details(generated_graph, "TRADITIONAL")
+	
+	# Visualize the traditional map
+	map_visualizer.visualize_graph(generated_graph)
+
+func test_planar_generation():
+	print("=== TESTING PLANAR GENERATION ===")
+	
+	# Enable planar graph generation
+	if map_generator.layout_config:
+		map_generator.layout_config.use_planar_graph_generation = true
+		map_generator.layout_config.planar_pruning_intensity = 0.6
+		map_generator.layout_config.auto_fix_crossings = true
+		map_generator.layout_config.validate_planarity = true
+	
+	var test_seed = 43  # Different seed for variety
+	print("Using integer seed for planar generation: ", test_seed)
+	
+	var generated_graph = map_generator.generate_map(test_seed)
+	
+	if not generated_graph or generated_graph.get("nodes", {}).is_empty():
+		print("ERROR: Planar map generation failed!")
+		return
+	
+	print("Planar map generated successfully!")
+	print("  Node count: ", generated_graph.nodes.size())
+	print("  Edge count: ", generated_graph.edges.size())
+	
+	# Test planarity
+	test_planarity(generated_graph, "Planar")
+	
+	# Print detailed planarity report
+	test_detailed_planarity_analysis(generated_graph)
+	
+	# Print node positions and connections
+	print_graph_details(generated_graph, "PLANAR")
+	
+	# Wait a moment then visualize the planar map
+	await get_tree().create_timer(1.0).timeout
+	map_visualizer.visualize_graph(generated_graph)
+
+func test_planarity(graph: Dictionary, generation_type: String):
+	print("=== PLANARITY TEST FOR " + generation_type.to_upper() + " ===")
+	
+	# Import the validator
+	const PlanarGraphValidator = preload("res://scripts/map/PlanarGraphValidator.gd")
+	
+	var is_planar = PlanarGraphValidator.is_graph_planar(graph)
+	var crossings = PlanarGraphValidator.find_edge_crossings(graph)
+	
+	if is_planar:
+		print("  ✓ Graph is PLANAR (no edge crossings)")
+	else:
+		print("  ✗ Graph has CROSSINGS: ", crossings.size(), " intersections found")
+		
+		# Print details of first few crossings
+		var max_details = min(5, crossings.size())
+		for i in range(max_details):
+			var crossing = crossings[i]
+			print("    Crossing ", i+1, ": ", crossing.edge1.from_node, "->", crossing.edge1.to_node, 
+				  " ✗ ", crossing.edge2.from_node, "->", crossing.edge2.to_node, 
+				  " at ", crossing.intersection_point)
+
+func test_detailed_planarity_analysis(graph: Dictionary):
+	print("=== DETAILED PLANARITY ANALYSIS ===")
+	
+	const PlanarGraphValidator = preload("res://scripts/map/PlanarGraphValidator.gd")
+	
+	var report = PlanarGraphValidator.generate_planarity_report(graph)
+	
+	print("  Total nodes: ", report.total_nodes)
+	print("  Total edges: ", report.total_edges)
+	print("  Planar upper bound: ", report.planar_upper_bound, " edges")
+	print("  Exceeds planar bound: ", report.exceeds_planar_bound)
+	print("  Is planar: ", report.is_planar)
+	print("  Total crossings: ", report.total_crossings)
+	print("  Edges with crossings: ", report.edges_with_crossings)
+	
+	if report.total_crossings > 0:
+		print("  Crossing details:")
+		for detail in report.crossing_details:
+			print("    ", detail.edge1, " ✗ ", detail.edge2, " at ", detail.intersection_point)
+
+func print_graph_details(graph: Dictionary, generation_type: String):
+	print("=== " + generation_type + " GRAPH DETAILS ===")
 	
 	# Print all node positions
-	print("=== NODE POSITIONS ===")
-	for node_id in generated_graph.nodes:
-		var node = generated_graph.nodes[node_id]
-		print("  ", node_id, ": ", node.position, " (", node.get_type_name(), ")")
+	print("NODE POSITIONS:")
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		print("  ", node_id, ": ", node.position, " (", node.get_type_name(), ") - ", node.connections.size(), " connections")
+	
+	# Print all edges
+	print("EDGES:")
+	for edge in graph.get("edges", []):
+		print("  ", edge.from_node, " <-> ", edge.to_node)
 	
 	# Calculate actual bounds
 	var min_pos = Vector2(INF, INF)
 	var max_pos = Vector2(-INF, -INF)
 	
-	for node in generated_graph.nodes.values():
+	for node in graph.nodes.values():
 		min_pos.x = min(min_pos.x, node.position.x)
 		min_pos.y = min(min_pos.y, node.position.y)
 		max_pos.x = max(max_pos.x, node.position.x)
 		max_pos.y = max(max_pos.y, node.position.y)
 	
 	var actual_size = max_pos - min_pos
-	print("=== ACTUAL MAP BOUNDS ===")
+	print("BOUNDS:")
 	print("  Min position: ", min_pos)
 	print("  Max position: ", max_pos)
 	print("  Actual size: ", actual_size)
 	print("  Utilization: ", actual_size.x, "x", actual_size.y, " of expected 1920x900")
-	
-	# Visualize the map
-	map_visualizer.visualize_graph(generated_graph)
-	
-	print("=== TEST COMPLETE ===")
 
 func test_hash_seeds():
 	print("=== TESTING DUAL SEED SYSTEM ===")
@@ -231,5 +326,24 @@ func _input(event):
 		if event.keycode == KEY_SPACE:
 			print("Regenerating map...")
 			generate_test_map()
+		elif event.keycode == KEY_T:
+			print("Testing traditional generation only...")
+			test_traditional_generation()
+		elif event.keycode == KEY_P:
+			print("Testing planar generation only...")
+			test_planar_generation()
+		elif event.keycode == KEY_C:
+			print("Testing crossings in current map...")
+			test_current_map_crossings()
 		elif event.keycode == KEY_ESCAPE:
 			get_tree().quit()
+
+func test_current_map_crossings():
+	var current_graph = map_generator.get_graph_data()
+	if current_graph.get("nodes", {}).is_empty():
+		print("No current map to test")
+		return
+	
+	print("=== CURRENT MAP CROSSING TEST ===")
+	test_planarity(current_graph, "Current")
+	test_detailed_planarity_analysis(current_graph)
