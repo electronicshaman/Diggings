@@ -95,6 +95,14 @@ func start_test_duel() -> void:
 	# Apply character class to player data
 	apply_character_to_player_data()
 	
+	# Add some test curios for debugging if we don't have any
+	if CurioManager and CurioManager.get_active_curios().is_empty():
+		GLog.debug("Adding test curios for debugging")
+		# Try to add a few test curios
+		CurioManager.debug_add_curio("Lucky Nugget")
+		CurioManager.debug_add_curio("Iron Horseshoe")
+		CurioManager.debug_add_curio("Bush Tea")
+	
 	# Use the character's starting deck (already loaded into test_cards)
 	var player_deck: Array[CardData] = test_cards.duplicate()
 	var enemy := test_enemies[0]

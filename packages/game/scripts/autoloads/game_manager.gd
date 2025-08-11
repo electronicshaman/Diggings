@@ -211,7 +211,7 @@ func apply_character_data() -> void:
 	if base_stats.has("starting_gold"):
 		game_data["gold"] = base_stats["starting_gold"]
 	
-	# Add starting curio (TODO: Re-enable when CurioManager is working)
+	# Add starting curio
 	if selected_character.starting_curio:
 		var curio_resource = selected_character.starting_curio
 		if curio_resource:
@@ -220,11 +220,11 @@ func apply_character_data() -> void:
 				curio_name = curio_resource.curio_name
 			
 			GLog.info("Character has starting curio: " + curio_name)
-			# var success = CurioManager.add_curio(curio_resource)
-			# if success:
-			#	GLog.info("Added starting curio: " + curio_name)
-			# else:
-			#	GLog.warn("Failed to add starting curio: " + curio_name)
+			var success = CurioManager.add_curio(curio_resource)
+			if success:
+				GLog.info("Added starting curio: " + curio_name)
+			else:
+				GLog.warn("Failed to add starting curio: " + curio_name)
 	
 	# Store character in game data for access by other systems
 	game_data["character"] = selected_character

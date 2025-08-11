@@ -58,16 +58,16 @@ func add_curio(curio: Resource) -> bool:
 		GLog.error("Attempted to add null curio")
 		return false
 	
-	var curio_name_str = curio.curio_name if curio.has("curio_name") else "Unknown"
+	var curio_name_str = curio.curio_name if curio.curio_name else "Unknown"
 	GLog.debug("Adding curio: " + curio_name_str)
 	
 	# Check if this curio can stack with existing ones
-	var curio_name = curio.curio_name if curio.has("curio_name") else ""
-	var is_stackable = curio.stackable if curio.has("stackable") else false
+	var curio_name = curio.curio_name if curio.curio_name else ""
+	var is_stackable = curio.stackable if curio.stackable != null else false
 	if is_stackable:
 		if curio_stacks.has(curio_name):
 			var current_stacks = curio_stacks[curio_name]
-			var max_stacks = curio.max_stacks if curio.has("max_stacks") else 1
+			var max_stacks = curio.max_stacks if curio.max_stacks != null else 1
 			if current_stacks < max_stacks:
 				curio_stacks[curio_name] = current_stacks + 1
 				curio_stack_changed.emit(curio, current_stacks + 1)
@@ -84,7 +84,7 @@ func add_curio(curio: Resource) -> bool:
 	active_curios.append(curio)
 	
 	# Apply corruption cost if any
-	var corruption_cost = curio.corruption_cost if curio.has("corruption_cost") else 0
+	var corruption_cost = curio.corruption_cost if curio.corruption_cost != null else 0
 	if corruption_cost > 0 and game_manager:
 		game_manager.add_corruption(corruption_cost)
 		GLog.debug("Added %d corruption from curio" % corruption_cost)
@@ -108,11 +108,11 @@ func remove_curio(curio: Resource) -> void:
 	if not curio:
 		return
 	
-	var curio_name = curio.curio_name if curio.has("curio_name") else "Unknown"
+	var curio_name = curio.curio_name if curio.curio_name else "Unknown"
 	GLog.debug("Removing curio: " + curio_name)
 	
 	# Handle stacked curios
-	var is_stackable = curio.stackable if curio.has("stackable") else false
+	var is_stackable = curio.stackable if curio.stackable != null else false
 	if is_stackable and curio_stacks.has(curio_name):
 		var current_stacks = curio_stacks[curio_name]
 		if current_stacks > 1:
@@ -134,7 +134,7 @@ func remove_curio(curio: Resource) -> void:
 # Check if player has a specific curio
 func has_curio(curio_name: String) -> bool:
 	for curio in active_curios:
-		var check_name = curio.curio_name if curio.has("curio_name") else ""
+		var check_name = curio.curio_name if curio.curio_name else ""
 		if check_name == curio_name:
 			return true
 	return false
@@ -155,13 +155,13 @@ func trigger_curio_effects(event_type: String, context: Dictionary = {}) -> void
 	GLog.debug("Triggering curio effects for event: " + event_type)
 	
 	for curio in active_curios:
-		var effects = curio.effects if curio.has("effects") else []
+		var effects = curio.effects if curio.effects != null else []
 		for effect in effects:
-			var trigger = effect.trigger_event if effect.has("trigger_event") else ""
+			var trigger = effect.trigger_event if effect.trigger_event else ""
 			if effect and trigger == event_type:
 				if effect.can_trigger(self, context):
-					var effect_name = effect.effect_name if effect.has("effect_name") else "Unknown"
-					var curio_name = curio.curio_name if curio.has("curio_name") else "Unknown"
+					var effect_name = effect.effect_name if effect.effect_name else "Unknown"
+					var curio_name = curio.curio_name if curio.curio_name else "Unknown"
 					GLog.debug("Triggering effect '%s' from curio '%s'" % [effect_name, curio_name])
 					effect.apply_effect(self, curio, context)
 					effect.mark_triggered()
@@ -175,11 +175,11 @@ func get_stat_modifier(stat_name: String) -> float:
 	
 	for curio in active_curios:
 		# Get stack multiplier
-		var curio_name = curio.curio_name if curio.has("curio_name") else ""
+		var curio_name = curio.curio_name if curio.curio_name else ""
 		var stack_mult = curio_stacks.get(curio_name, 1)
 		
 		# Each curio effect can contribute to stat modifiers
-		var effects = curio.effects if curio.has("effects") else []
+		var effects = curio.effects if curio.effects != null else []
 		for effect in effects:
 			if effect and effect.has_method("get_stat_modifier"):
 				total_modifier += effect.get_stat_modifier(stat_name) * stack_mult
@@ -190,7 +190,7 @@ func get_stat_modifier(stat_name: String) -> float:
 func _on_combat_started(_enemy_data: Resource) -> void:
 	# Reset combat tracking for all effects
 	for curio in active_curios:
-		var effects = curio.effects if curio.has("effects") else []
+		var effects = curio.effects if curio.effects != null else []
 		for effect in effects:
 			if effect and effect.has_method("reset_combat_tracking"):
 				effect.reset_combat_tracking()
@@ -204,7 +204,7 @@ func _on_combat_ended(victory: bool) -> void:
 func _on_turn_started(turn_number: int) -> void:
 	# Reset turn tracking for all effects
 	for curio in active_curios:
-		var effects = curio.effects if curio.has("effects") else []
+		var effects = curio.effects if curio.effects != null else []
 		for effect in effects:
 			if effect and effect.has_method("reset_turn_tracking"):
 				effect.reset_turn_tracking()
@@ -218,7 +218,7 @@ func _on_turn_ended(turn_number: int) -> void:
 func _on_card_played(card: Node) -> void:
 	var context = {
 		"card": card,
-		"card_data": card.card_data if card.has("card_data") else null
+		"card_data": card.card_data if card.card_data else null
 	}
 	trigger_curio_effects("card_played", context)
 
@@ -252,7 +252,7 @@ func get_save_data() -> Dictionary:
 	
 	# Save curio resource paths
 	for curio in active_curios:
-		var resource_path = curio.resource_path if curio.has("resource_path") else ""
+		var resource_path = curio.resource_path if curio.resource_path else ""
 		if resource_path:
 			save_data["curios"].append(resource_path)
 	
@@ -303,10 +303,10 @@ func debug_add_curio(curio_name: String) -> void:
 func debug_list_curios() -> void:
 	print("\n=== Active Curios ===")
 	for curio in active_curios:
-		var curio_name = curio.curio_name if curio.has("curio_name") else "Unknown"
+		var curio_name = curio.curio_name if curio.curio_name else "Unknown"
 		var stacks = curio_stacks.get(curio_name, 1)
-		var rarity = curio.rarity if curio.has("rarity") else "Common"
-		var description = curio.description if curio.has("description") else ""
+		var rarity = curio.rarity if curio.rarity else "Common"
+		var description = curio.description if curio.description else ""
 		print("- %s (x%d) [%s]" % [curio_name, stacks, rarity])
 		print("  %s" % description)
 	print("Total: %d curios\n" % active_curios.size())

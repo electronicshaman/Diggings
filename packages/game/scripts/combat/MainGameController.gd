@@ -32,12 +32,17 @@ const DEBUG_ENABLED: bool = true
 @onready var discard_label := $UI/Control/PileIndicatorsRight/DiscardLabel
 @onready var turn_label := $UI/Control/TurnInfo/TurnLabel
 @onready var phase_label := $UI/Control/TurnInfo/PhaseLabel
+@onready var seed_label := $UI/Control/TurnInfo/SeedLabel
 
 # Debug UI
 @onready var add_card_button := $UI/Control/DebugPanel/DebugButtons/AddCardButton
 @onready var set_health_button := $UI/Control/DebugPanel/DebugButtons/SetHealthButton
 @onready var set_energy_button := $UI/Control/DebugPanel/DebugButtons/SetEnergyButton
 @onready var reset_duel_button := $UI/Control/DebugPanel/DebugButtons/ResetDuelButton
+
+# Curios UI
+@onready var curios_panel := $UI/Control/CuriosPanel
+@onready var curios_list := $UI/Control/CuriosPanel/CuriosList
 
 var is_initialized: bool = false
 
@@ -79,13 +84,16 @@ func get_ui_references() -> Dictionary:
 		"discard": discard_label,
 		"turn": turn_label,
 		"phase": phase_label,
+		"seed": seed_label,
 		"end_turn_button": end_turn_button,
 		"debug_panel": debug_panel,
 		"hand_area": hand_area,
 		"add_card_button": add_card_button,
 		"set_health_button": set_health_button,
 		"set_energy_button": set_energy_button,
-		"reset_duel_button": reset_duel_button
+		"reset_duel_button": reset_duel_button,
+		"curios_panel": curios_panel,
+		"curios_list": curios_list
 	}
 
 func setup_connections() -> void:
