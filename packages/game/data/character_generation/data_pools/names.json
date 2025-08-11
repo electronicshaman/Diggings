@@ -1,0 +1,60 @@
+{
+  "prospector": {
+    "first_names": {
+      "irish": ["Patrick", "Seamus", "Finnegan", "Declan", "Cormac", "Bridget", "Siobhan", "Molly", "Aoife", "Niamh"],
+      "chinese": ["Chen", "Wei", "Li", "Zhang", "Wang", "Mei", "Xiao", "Ling", "Hua", "Yan"],
+      "welsh": ["Ioan", "Rhys", "Dai", "Gareth", "Owen", "Gwen", "Cerys", "Anwen", "Bethan", "Eira"],
+      "cornish": ["Jago", "Piran", "Cador", "Tristan", "Jowan", "Morwenna", "Demelza", "Kerensa", "Senara", "Tegen"],
+      "english": ["Thomas", "William", "George", "Henry", "Edward", "Mary", "Elizabeth", "Sarah", "Emma", "Margaret"],
+      "scottish": ["Hamish", "Ewan", "Duncan", "Fergus", "Angus", "Isla", "Morag", "Fiona", "Ailsa", "Mairi"]
+    },
+    "surnames": [
+      "O'Sullivan", "McCarthy", "O'Brien", "Kelly", "Murphy",
+      "Wei", "Chen", "Zhang", "Li", "Wang",
+      "Evans", "Jones", "Williams", "Davies", "Morgan",
+      "Trevithick", "Penrose", "Carbis", "Pascoe", "Trelawney",
+      "Smith", "Brown", "Johnson", "Miller", "Wilson",
+      "MacLeod", "Campbell", "Stewart", "Fraser", "Murray"
+    ]
+  },
+  "bushranger": {
+    "first_names": {
+      "irish": ["Ned", "Dan", "Patrick", "Michael", "John", "Mary", "Kate", "Bridget", "Ellen", "Margaret"],
+      "english": ["Harry", "Frank", "George", "Ben", "Jack", "Elizabeth", "Charlotte", "Jane", "Alice", "Rose"],
+      "scottish": ["Andrew", "James", "Robert", "William", "David", "Isabella", "Jean", "Agnes", "Helen", "Janet"],
+      "australian_born": ["Billy", "Tom", "Joe", "Sam", "Fred", "Jessie", "Annie", "Maggie", "Lizzie", "Nellie"]
+    },
+    "surnames": [
+      "Kelly", "Morgan", "Power", "Brady", "Quinn",
+      "Hall", "Ward", "Gardiner", "Clarke", "Turner",
+      "McPherson", "Gilbert", "Thunderbolt", "Starlight", "Flash",
+      "The Wild", "The Bold", "The Terrible", "The Merciless", "The Just"
+    ]
+  },
+  "tracker": {
+    "first_names": {
+      "aboriginal": ["Jacky", "Billy", "Tommy", "Jimmy", "Charlie", "Mary", "Daisy", "Lucy", "Rosie", "Nellie"],
+      "mixed": ["William", "George", "Samuel", "Joseph", "David", "Sarah", "Emily", "Grace", "Ruby", "Pearl"],
+      "frontier": ["Tracker", "Scout", "Pathfinder", "Guide", "Ranger", "Shadow", "Moonlight", "Dawn", "River", "Sky"]
+    },
+    "surnames": [
+      "Nameless", "Walker", "Hunter", "Tracker", "Finder",
+      "of the Bush", "of the Plains", "of the Mountains", "of the Rivers", "of the Desert",
+      "Blacktracker", "Pathfinder", "Wayfinder", "Shadowstep", "Keeneye"
+    ]
+  },
+  "publican": {
+    "first_names": {
+      "irish": ["Molly", "Rose", "Patrick", "Sean", "Michael", "Kathleen", "Maureen", "Eileen", "Colleen", "Sheila"],
+      "english": ["James", "Robert", "Charles", "Albert", "Frederick", "Victoria", "Florence", "Edith", "Dorothy", "Ethel"],
+      "scottish": ["Hamish", "Archie", "Finlay", "Malcolm", "Kenneth", "Bonnie", "Flora", "Catriona", "Shona", "Kirsty"],
+      "working_class": ["Big Jim", "Whistling Jack", "Mother Francis", "Old Tom", "Young Billy", "Sweet Molly", "Laughing Kate", "Gentle Annie", "Wise Martha", "Honest John"]
+    },
+    "surnames": [
+      "O'Brien", "McGrath", "Finnegan", "Doyle", "Walsh",
+      "Barker", "Brewster", "Taverner", "Innkeeper", "Alehouse",
+      "MacTavish", "MacDougall", "MacBride", "MacPhail", "MacKenzie",
+      "The Landlord", "The Barkeep", "The Brewmaster", "The Hostess", "The Proprietor"
+    ]
+  }
+}
