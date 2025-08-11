@@ -65,9 +65,18 @@ func test_config_loading():
 func generate_test_map():
 	print("=== GENERATING TEST MAP ===")
 	
+	# Test the new dual seed system
+	test_hash_seeds()
+	test_probability_distribution()
+	test_deterministic_behavior()
+	
 	# Generate map with a specific seed for debugging
 	var test_seed = 42
-	print("Using seed: ", test_seed)
+	print("Using integer seed: ", test_seed)
+	
+	# Also demonstrate hash seed usage
+	var hash_seed = SeedManager.generate_hash_seed(str(test_seed))
+	print("Generated hash seed: ", hash_seed)
 	
 	var generated_graph = map_generator.generate_map(test_seed)
 	
@@ -78,6 +87,9 @@ func generate_test_map():
 	print("Map generated successfully!")
 	print("  Node count: ", generated_graph.nodes.size())
 	print("  Edge count: ", generated_graph.edges.size())
+	
+	# Test that the same results are produced with equivalent hash seed
+	test_seed_equivalence(test_seed, hash_seed)
 	
 	# Print all node positions
 	print("=== NODE POSITIONS ===")
@@ -106,6 +118,113 @@ func generate_test_map():
 	map_visualizer.visualize_graph(generated_graph)
 	
 	print("=== TEST COMPLETE ===")
+
+func test_hash_seeds():
+	print("=== TESTING DUAL SEED SYSTEM ===")
+	
+	# Test various seed inputs
+	var test_inputs = ["42", "test", "ABCDEF1234", "cthulhu", "gold", "fear", "eldritch"]
+	
+	for input in test_inputs:
+		var hash_seed = SeedManager.generate_hash_seed(input)
+		var validation = SeedManager.validate_hash_seed(hash_seed)
+		var is_thematic = SeedManager.is_thematic_seed(hash_seed)
+		var type_label = "STANDARD" if not is_thematic else "THEMATIC"
+		
+		print("Input: ", input, " -> ", hash_seed, " (", type_label, ", Valid: ", validation, ")")
+		
+		# Test round-trip conversion
+		if validation:
+			var converted_int = SeedManager.hash_to_seed(hash_seed)
+			print("  Converted to integer: ", converted_int)
+
+func test_probability_distribution():
+	print("=== TESTING PROBABILITY DISTRIBUTION ===")
+	
+	var standard_count = 0
+	var thematic_count = 0
+	var total_tests = 1000
+	var thematic_examples = []
+	
+	print("Testing ", total_tests, " seed generations...")
+	
+	for i in range(total_tests):
+		# Use varied inputs to get different hash results
+		var test_input = "test_" + str(i)
+		var seed = SeedManager.generate_hash_seed(test_input)
+		
+		if SeedManager.is_thematic_seed(seed):
+			thematic_count += 1
+			if thematic_examples.size() < 10:  # Collect first 10 examples
+				thematic_examples.append(seed)
+		else:
+			standard_count += 1
+	
+	var thematic_percentage = (float(thematic_count) / total_tests) * 100.0
+	
+	print("Results:")
+	print("  Standard seeds: ", standard_count, " (", 100.0 - thematic_percentage, "%)")
+	print("  Thematic seeds: ", thematic_count, " (", thematic_percentage, "%)")
+	print("  Expected thematic: ~1%")
+	
+	if thematic_examples.size() > 0:
+		print("  Thematic examples: ", thematic_examples)
+	else:
+		print("  No thematic seeds generated in this sample")
+
+func test_deterministic_behavior():
+	print("=== TESTING DETERMINISTIC BEHAVIOR ===")
+	
+	var test_inputs = ["same_input", "another_test", "deterministic"]
+	
+	for input in test_inputs:
+		var seeds = []
+		# Generate same seed multiple times
+		for i in range(5):
+			seeds.append(SeedManager.generate_hash_seed(input))
+		
+		# Check if all results are identical
+		var all_same = true
+		for i in range(1, seeds.size()):
+			if seeds[i] != seeds[0]:
+				all_same = false
+				break
+		
+		print("Input '", input, "': ", seeds[0], " (Deterministic: ", all_same, ")")
+		if not all_same:
+			print("  ERROR: Non-deterministic results: ", seeds)
+
+func test_seed_equivalence(int_seed: int, hash_seed: String):
+	print("=== TESTING SEED EQUIVALENCE ===")
+	
+	# Generate with integer seed
+	SeedManager.set_master_seed(int_seed)
+	var random_values_int = []
+	for i in range(10):
+		random_values_int.append(SeedManager.get_map_random_int(0, 1000))
+	
+	# Generate with equivalent hash seed
+	SeedManager.set_master_seed(hash_seed)
+	var random_values_hash = []
+	for i in range(10):
+		random_values_hash.append(SeedManager.get_map_random_int(0, 1000))
+	
+	print("Integer seed values: ", random_values_int)
+	print("Hash seed values: ", random_values_hash)
+	
+	# Check if they match (they should be different due to different conversion methods)
+	var match_count = 0
+	for i in range(min(random_values_int.size(), random_values_hash.size())):
+		if random_values_int[i] == random_values_hash[i]:
+			match_count += 1
+	
+	print("Matching values: ", match_count, "/", random_values_int.size())
+	
+	# This is expected behavior - hash seeds create different but deterministic results
+	if match_count < random_values_int.size():
+		print("EXPECTED: Hash and integer seeds produce different deterministic sequences")
+	else:
+		print("UNEXPECTED: All values matched - this might indicate an issue")
 
 func _input(event):
 	if event is InputEventKey and event.pressed:

@@ -27,6 +27,7 @@ signal game_mode_changed(new_mode: GameMode)
 var current_state: GameState = GameState.MENU
 var current_mode: GameMode = GameMode.STANDARD
 var current_run_seed: int = 0
+var current_run_hash_seed: String = ""
 var current_character_class: String = ""
 var selected_character: GeneratedCharacter = null
 var is_run_active: bool = false
@@ -84,27 +85,62 @@ func reset_run_statistics() -> void:
 		"events_encountered": 0
 	}
 
-func start_new_run(character_class: String, custom_seed: Variant = null, mode: GameMode = GameMode.STANDARD) -> void:
-	GLog.debug("Starting new run with class: " + character_class)
+func prepare_new_run() -> void:
+	"""Pre-establish seed for new run, affecting character generation and everything else."""
+	GLog.debug("Preparing new run - establishing seed")
 	
-	# Use custom seed if provided, otherwise use GameSettings custom seed, otherwise auto-generate
-	var seed_to_use = custom_seed
-	if seed_to_use == null:
-		seed_to_use = GameSettings.custom_seed if not GameSettings.custom_seed.is_empty() else null
+	# Get the effective seed from GameSettings (prioritizes hash seed over regular seed)
+	var seed_to_use = GameSettings.get_effective_seed()
+	if seed_to_use.is_empty():
+		seed_to_use = null  # Auto-generate
 	
 	# Initialize the seed system for this run
 	var final_seed = SeedManager.set_master_seed(seed_to_use)
 	SeedManager.start_run(seed_to_use)
 	
+	# Store both integer and hash seeds for the run
 	current_run_seed = final_seed
+	current_run_hash_seed = SeedManager.get_hash_seed_string()
+	
+	# Store the established seeds back to GameSettings for persistence
+	GameSettings.last_used_seed = final_seed
+	GameSettings.last_used_hash_seed = current_run_hash_seed
+	GameSettings.save_settings()
+	
+	GLog.info("New run prepared with seed: " + str(final_seed) + " (Hash: " + current_run_hash_seed + ")")
+
+func start_new_run(character_class: String, custom_seed: Variant = null, mode: GameMode = GameMode.STANDARD) -> void:
+	GLog.debug("Starting new run with class: " + character_class)
+	
+	# If no custom seed provided and no seed is pre-established, fall back to old behavior
+	if custom_seed != null:
+		# Override with custom seed (for direct API calls)
+		var final_seed = SeedManager.set_master_seed(custom_seed)
+		SeedManager.start_run(custom_seed)
+		current_run_seed = final_seed
+		current_run_hash_seed = SeedManager.get_hash_seed_string()
+		GameSettings.last_used_seed = final_seed
+		GameSettings.last_used_hash_seed = current_run_hash_seed
+		GameSettings.save_settings()
+	elif current_run_seed == 0:
+		# No seed pre-established, fall back to auto-generation
+		GLog.warn("No seed pre-established for run, auto-generating")
+		var seed_to_use = GameSettings.get_effective_seed()
+		if seed_to_use.is_empty():
+			seed_to_use = null
+		var final_seed = SeedManager.set_master_seed(seed_to_use)
+		SeedManager.start_run(seed_to_use)
+		current_run_seed = final_seed
+		current_run_hash_seed = SeedManager.get_hash_seed_string()
+		GameSettings.last_used_seed = final_seed
+		GameSettings.last_used_hash_seed = current_run_hash_seed
+		GameSettings.save_settings()
+	# Otherwise use the pre-established seed from prepare_new_run()
+	
 	current_character_class = character_class
 	current_mode = mode
 	is_run_active = true
 	run_start_time = Time.get_ticks_msec() / 1000.0
-	
-	# Store the seed used for this run
-	GameSettings.last_used_seed = final_seed
-	GameSettings.save_settings()
 	
 	initialize_game_data()
 	reset_run_statistics()
@@ -141,6 +177,7 @@ func save_run_statistics(victory: bool, duration: float) -> void:
 	run_statistics["duration"] = duration
 	run_statistics["character_class"] = current_character_class
 	run_statistics["seed"] = current_run_seed
+	run_statistics["hash_seed"] = current_run_hash_seed
 	run_statistics["mode"] = current_mode
 	run_statistics["floor_reached"] = game_data.get("current_floor", 0)
 	run_statistics["timestamp"] = Time.get_unix_time_from_system()
