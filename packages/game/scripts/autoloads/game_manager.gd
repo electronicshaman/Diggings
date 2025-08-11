@@ -28,6 +28,7 @@ var current_state: GameState = GameState.MENU
 var current_mode: GameMode = GameMode.STANDARD
 var current_run_seed: int = 0
 var current_character_class: String = ""
+var selected_character: GeneratedCharacter = null
 var is_run_active: bool = false
 
 var game_data: Dictionary = {}
@@ -108,6 +109,10 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	initialize_game_data()
 	reset_run_statistics()
 	
+	# Apply character data if available
+	if selected_character:
+		apply_character_data()
+	
 	# Generate all maps for this run
 	generate_all_maps()
 	
@@ -141,6 +146,57 @@ func save_run_statistics(victory: bool, duration: float) -> void:
 	run_statistics["timestamp"] = Time.get_unix_time_from_system()
 	
 	GLog.debug("Run statistics saved: " + str(run_statistics))
+
+func apply_character_data() -> void:
+	"""Apply selected character data to game state"""
+	if not selected_character:
+		return
+	
+	GLog.info("Applying character data for: " + selected_character.full_name + " '" + selected_character.nickname + "'")
+	
+	# Apply stat modifiers to base stats
+	var base_stats = get_base_character_stats(current_character_class)
+	for stat in selected_character.stat_modifiers:
+		if base_stats.has(stat):
+			base_stats[stat] += selected_character.stat_modifiers[stat]
+	
+	# Apply starting gold
+	if base_stats.has("starting_gold"):
+		game_data["gold"] = base_stats["starting_gold"]
+	
+	# Add starting curio (TODO: Re-enable when CurioManager is working)
+	if selected_character.starting_curio:
+		var curio_resource = selected_character.starting_curio
+		if curio_resource:
+			var curio_name = "Unknown Curio"
+			if curio_resource.curio_name:
+				curio_name = curio_resource.curio_name
+			
+			GLog.info("Character has starting curio: " + curio_name)
+			# var success = CurioManager.add_curio(curio_resource)
+			# if success:
+			#	GLog.info("Added starting curio: " + curio_name)
+			# else:
+			#	GLog.warn("Failed to add starting curio: " + curio_name)
+	
+	# Store character in game data for access by other systems
+	game_data["character"] = selected_character
+	
+	GLog.info("Character data applied successfully")
+
+func get_base_character_stats(character_class: String) -> Dictionary:
+	"""Get base stats for a character class"""
+	match character_class:
+		"Bushranger":
+			return {"max_health": 55, "max_sanity": 90, "max_energy": 3, "starting_gold": 10}
+		"Prospector":
+			return {"max_health": 45, "max_sanity": 95, "max_energy": 3, "starting_gold": 15}
+		"Tracker":
+			return {"max_health": 50, "max_sanity": 105, "max_energy": 3, "starting_gold": 8}
+		"Publican":
+			return {"max_health": 60, "max_sanity": 85, "max_energy": 3, "starting_gold": 20}
+		_:
+			return {"max_health": 50, "max_sanity": 100, "max_energy": 3, "starting_gold": 10}
 
 func change_state(new_state: GameState) -> void:
 	if current_state == new_state:
