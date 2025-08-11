@@ -265,19 +265,33 @@ func end_duel(winner: String):
 func _check_curio_reward():
 	# Simple curio reward system - 30% chance on victory
 	if randf() < 0.3:
-		var curio_names = ["Lucky Nugget", "Thick Leather", "Old Compass", "Sharpened Blade"]
-		var random_curio = curio_names[randi() % curio_names.size()]
-		GLog.info("🏆 Curio Reward: You found a %s!" % random_curio)
+		# For now, only Lucky Nugget is implemented
+		var curio_paths = [
+			"res://data/curios/common/lucky_nugget.tres"
+		]
 		
-		# For now, just show a message - we'll integrate with CurioManager later
-		# Try to add to CurioManager if it exists
-		if has_node("/root/CurioManager"):
-			var cm = get_node("/root/CurioManager")
-			# We'll implement this once we have actual curio resources
-			GLog.debug("CurioManager available for reward: %s" % random_curio)
+		var random_path = curio_paths[randi() % curio_paths.size()]
 		
-		# Emit a reward event for UI display
-		EventBus.ui_notification.emit("Found curio: %s" % random_curio, "reward")
+		# Try to load the curio resource
+		if ResourceLoader.exists(random_path):
+			var curio_resource = load(random_path)
+			
+			if curio_resource and has_node("/root/CurioManager"):
+				var cm = get_node("/root/CurioManager")
+				var success = cm.add_curio(curio_resource)
+				
+				if success:
+					GLog.info("🏆 Curio Reward: You found %s!" % curio_resource.curio_name)
+					GLog.info("   %s" % curio_resource.description)
+					
+					# Emit a reward event for UI display
+					EventBus.ui_notification.emit("Found curio: %s" % curio_resource.curio_name, "reward")
+				else:
+					GLog.debug("Could not add curio (may be at max stacks)")
+			else:
+				GLog.error("CurioManager not found or curio resource invalid")
+		else:
+			GLog.error("Curio resource not found at: %s" % random_path)
 
 func get_hand_cards() -> Array[CardData]:
 	return duel_state.hand.cards if duel_state.hand else []
