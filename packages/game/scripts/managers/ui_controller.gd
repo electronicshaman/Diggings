@@ -21,6 +21,7 @@ var deck_label: Label
 var discard_label: Label
 var turn_label: Label
 var phase_label: Label
+var seed_label: Label
 var end_turn_button: Button
 var debug_panel: Control
 
@@ -51,6 +52,7 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	discard_label = ui_references.get("discard")
 	turn_label = ui_references.get("turn")
 	phase_label = ui_references.get("phase")
+	seed_label = ui_references.get("seed")
 	end_turn_button = ui_references.get("end_turn_button")
 	debug_panel = ui_references.get("debug_panel")
 	hand_area = ui_references.get("hand_area")
@@ -86,6 +88,7 @@ func update_all_ui() -> void:
 	update_enemy_ui()
 	update_pile_ui()
 	update_turn_ui()
+	update_seed_ui()
 	refresh_hand_display()
 	ui_refresh_requested.emit()
 
@@ -179,6 +182,24 @@ func update_turn_ui() -> void:
 		end_turn_button.disabled = not duel_state.is_player_turn
 	else:
 		GLog.debug("end_turn_button is null - UI element missing")
+
+func update_seed_ui() -> void:
+	"""Update the seed display based on GameSettings."""
+	if not seed_label:
+		return
+	
+	# Only show seed if the setting is enabled
+	if GameSettings.show_seed_in_ui and SeedManager.is_run_active():
+		seed_label.visible = true
+		var hash_seed = SeedManager.get_hash_seed_string()
+		var is_thematic = SeedManager.is_thematic_seed(hash_seed)
+		
+		if is_thematic:
+			seed_label.text = "Seed: %s ✨" % hash_seed  # Special indicator for thematic seeds
+		else:
+			seed_label.text = "Seed: %s" % hash_seed
+	else:
+		seed_label.visible = false
 
 func refresh_hand_display() -> void:
 	clear_hand_display()

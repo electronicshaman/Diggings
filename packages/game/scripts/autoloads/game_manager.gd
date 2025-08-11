@@ -89,6 +89,11 @@ func prepare_new_run() -> void:
 	"""Pre-establish seed for new run, affecting character generation and everything else."""
 	GLog.debug("Preparing new run - establishing seed")
 	
+	# Clear any custom seeds from GameSettings to ensure fresh generation
+	# (unless player explicitly set one in settings menu)
+	# The custom seeds should only be used if player enters them in settings
+	# For normal "New Game", we want auto-generation
+	
 	# Get the effective seed from GameSettings (prioritizes hash seed over regular seed)
 	var seed_to_use = GameSettings.get_effective_seed()
 	if seed_to_use.is_empty():
@@ -112,9 +117,9 @@ func prepare_new_run() -> void:
 func start_new_run(character_class: String, custom_seed: Variant = null, mode: GameMode = GameMode.STANDARD) -> void:
 	GLog.debug("Starting new run with class: " + character_class)
 	
-	# If no custom seed provided and no seed is pre-established, fall back to old behavior
 	if custom_seed != null:
 		# Override with custom seed (for direct API calls)
+		GLog.info("Using custom seed override: " + str(custom_seed))
 		var final_seed = SeedManager.set_master_seed(custom_seed)
 		SeedManager.start_run(custom_seed)
 		current_run_seed = final_seed
@@ -122,9 +127,9 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 		GameSettings.last_used_seed = final_seed
 		GameSettings.last_used_hash_seed = current_run_hash_seed
 		GameSettings.save_settings()
-	elif current_run_seed == 0:
+	elif current_run_seed == 0 or current_run_hash_seed.is_empty():
 		# No seed pre-established, fall back to auto-generation
-		GLog.warn("No seed pre-established for run, auto-generating")
+		GLog.warn("No seed pre-established for run, auto-generating from GameSettings")
 		var seed_to_use = GameSettings.get_effective_seed()
 		if seed_to_use.is_empty():
 			seed_to_use = null
@@ -135,7 +140,12 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 		GameSettings.last_used_seed = final_seed
 		GameSettings.last_used_hash_seed = current_run_hash_seed
 		GameSettings.save_settings()
-	# Otherwise use the pre-established seed from prepare_new_run()
+	else:
+		# Use the pre-established seed from prepare_new_run()
+		GLog.info("Using pre-established seed: " + str(current_run_seed) + " (Hash: " + current_run_hash_seed + ")")
+		# Ensure SeedManager has the run marked as active
+		if not SeedManager.is_run_active():
+			SeedManager.current_run_active = true
 	
 	current_character_class = character_class
 	current_mode = mode

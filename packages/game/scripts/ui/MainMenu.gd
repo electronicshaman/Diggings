@@ -23,6 +23,14 @@ func check_save_file_exists():
 
 func _on_new_game_pressed():
 	GLog.info("New Game button pressed")
+	
+	# Clear any custom seeds to ensure fresh auto-generation for new game
+	# (These should only persist if player explicitly sets them in Settings menu)
+	GameSettings.clear_custom_seeds()
+	
+	# Pre-establish seed for the new run (affects character generation)
+	GameManager.prepare_new_run()
+	
 	# Transition to class selection
 	SceneManager.load_scene_by_name("class_selection")
 

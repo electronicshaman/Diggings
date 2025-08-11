@@ -137,6 +137,12 @@ func get_effective_seed() -> String:
 		return custom_hash_seed
 	return custom_seed
 
+func clear_custom_seeds() -> void:
+	"""Clear custom seeds to allow auto-generation for new runs."""
+	custom_seed = ""
+	custom_hash_seed = ""
+	GLog.debug("Custom seeds cleared for auto-generation")
+
 func reset_to_defaults() -> void:
 	master_volume = 1.0
 	sfx_volume = 1.0

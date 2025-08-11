@@ -67,44 +67,74 @@ func set_master_seed(seed_input: Variant = null) -> int:
 		The final master seed used
 	"""
 	var seed_source: String = ""
+	var input_type: String = "null"
 	
 	if seed_input == null:
-		# Auto-generate seed
-		master_seed = Time.get_ticks_msec() % 2147483647  # Keep within int range
+		# Auto-generate seed using multiple sources for better randomness
+		randomize()  # Initialize Godot's random number generator with system time
+		var time_component = Time.get_ticks_msec()
+		var random_component = randi() % 1000000
+		var unix_component = int(Time.get_unix_time_from_system()) % 1000000
+		master_seed = abs((time_component + random_component * 31 + unix_component * 17)) % 2147483647
 		seed_source = str(master_seed)
+		input_type = "auto-generated"
+		GLog.debug("Auto-generating seed: " + str(master_seed) + " (time: " + str(time_component) + ", random: " + str(random_component) + ", unix: " + str(unix_component) + ")")
 	elif seed_input is String:
+		input_type = "string"
 		# Check if it's a hash seed first
 		if validate_hash_seed(seed_input.strip_edges().to_upper()):
 			master_hash_seed = seed_input.strip_edges().to_upper()
 			master_seed = hash_to_seed(master_hash_seed)
 			seed_source = master_hash_seed
+			input_type = "hash_seed"
+			GLog.debug("Using provided hash seed: " + master_hash_seed + " -> integer: " + str(master_seed))
 		elif seed_input.strip_edges().is_empty():
-			# Empty string - auto-generate
-			master_seed = Time.get_ticks_msec() % 2147483647
+			# Empty string - auto-generate with better randomness
+			randomize()
+			var time_component = Time.get_ticks_msec()
+			var random_component = randi() % 1000000
+			var unix_component = int(Time.get_unix_time_from_system()) % 1000000
+			master_seed = abs((time_component + random_component * 31 + unix_component * 17)) % 2147483647
 			seed_source = str(master_seed)
+			input_type = "empty_string_auto_gen"
+			GLog.debug("Empty string provided, auto-generating: " + str(master_seed))
 		else:
 			# Regular string - hash it
 			master_seed = abs(seed_input.hash()) % 2147483647
 			seed_source = seed_input
+			input_type = "hashed_string"
+			GLog.debug("Hashing string '" + seed_input + "' -> " + str(master_seed))
 	elif seed_input is int:
 		# Use provided integer seed
 		master_seed = abs(seed_input) % 2147483647
 		seed_source = str(master_seed)
+		input_type = "integer"
+		GLog.debug("Using provided integer seed: " + str(master_seed))
 	else:
 		# Fallback - convert to string then hash
 		master_seed = abs(str(seed_input).hash()) % 2147483647
 		seed_source = str(seed_input)
+		input_type = "fallback_conversion"
+		GLog.debug("Converting " + str(type_string(typeof(seed_input))) + " to seed: " + str(master_seed))
 	
-	# Generate hash seed if not already set
-	if master_hash_seed.is_empty():
+	# Always generate a fresh hash seed (unless we're using a provided hash seed)
+	if not (seed_input is String and validate_hash_seed(seed_input.strip_edges().to_upper())):
+		var old_hash_seed = master_hash_seed
 		master_hash_seed = generate_hash_seed(seed_source)
+		GLog.debug("Generated new hash seed: " + master_hash_seed + " (was: " + old_hash_seed + ")")
+	
+	# Validation: Ensure both seeds are set
+	if master_seed == 0:
+		GLog.error("Master seed is 0 after setting! Input: " + str(seed_input) + " Type: " + input_type)
+	if master_hash_seed.is_empty():
+		GLog.error("Master hash seed is empty after setting! Input: " + str(seed_input) + " Type: " + input_type)
 	
 	# Initialize all sub-systems with deterministic seeds
 	setup_subsystem_seeds()
 	
 	seed_changed.emit(master_seed)
 	hash_seed_changed.emit(master_hash_seed)
-	GLog.info("Master seed set: " + str(master_seed) + " (Hash: " + master_hash_seed + ")")
+	GLog.info("Master seed set: " + str(master_seed) + " (Hash: " + master_hash_seed + ") [Input type: " + input_type + "]")
 	
 	return master_seed
 
@@ -450,9 +480,17 @@ func validate_seed_input(input: String) -> bool:
 
 func start_run(seed_input: Variant = null) -> void:
 	"""Initialize seeding for a new run."""
-	set_master_seed(seed_input)
+	if seed_input != null:
+		set_master_seed(seed_input)
+	elif master_seed == 0 or master_hash_seed.is_empty():
+		GLog.warn("start_run called with no seed and no existing seed - auto-generating")
+		set_master_seed(null)
+	
 	current_run_active = true
-	GLog.info("New run started with seed: " + str(master_seed))
+	GLog.info("New run started with seed: " + str(master_seed) + " (Hash: " + master_hash_seed + ")")
+	
+	# Validate the run state
+	validate_run_state()
 
 func end_run() -> void:
 	"""Clean up after a run ends."""
@@ -462,3 +500,39 @@ func end_run() -> void:
 func is_run_active() -> bool:
 	"""Check if a seeded run is currently active."""
 	return current_run_active
+
+func validate_run_state() -> bool:
+	"""Validate that the seed system is in a consistent state."""
+	var errors: Array[String] = []
+	
+	if not is_initialized:
+		errors.append("SeedManager not initialized")
+	
+	if master_seed == 0:
+		errors.append("Master seed is 0")
+	
+	if master_hash_seed.is_empty():
+		errors.append("Master hash seed is empty")
+	
+	if not current_run_active:
+		errors.append("Run not marked as active")
+	
+	# Validate RNG instances exist and have valid seeds
+	if not map_rng:
+		errors.append("Map RNG not initialized")
+	elif map_rng.seed == 0:
+		errors.append("Map RNG has zero seed")
+	
+	if not combat_rng:
+		errors.append("Combat RNG not initialized")
+	elif combat_rng.seed == 0:
+		errors.append("Combat RNG has zero seed")
+	
+	if errors.size() > 0:
+		GLog.error("Seed system validation failed:")
+		for error in errors:
+			GLog.error("  - " + error)
+		return false
+	
+	GLog.debug("Seed system validation passed")
+	return true
