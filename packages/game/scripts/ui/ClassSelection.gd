@@ -4,18 +4,30 @@ class_name ClassSelectionController
 @onready var class_container = $MainContainer/ClassContainer
 @onready var back_button = $MainContainer/BackButton
 @onready var title_label = $MainContainer/TitleLabel
+@onready var seed_label = $VBoxContainer/SeedLabel
 
 var generated_characters: Array[GeneratedCharacter] = []
 var character_cards: Array[Control] = []
 
 func _ready():
-	setup_character_generation()
 	setup_button_connections()
+	setup_seed_display()
+	# Defer character generation until after scene is fully loaded and seed is established
+	call_deferred("setup_character_generation")
 
 func setup_character_generation():
-	# Generate characters for all 4 classes
+	# Ensure seed is established before generating characters
+	if not SeedManager.is_run_active() or SeedManager.get_seed_string() == "0":
+		GLog.warn("ClassSelection: No active seed detected, character generation may not be deterministic")
+	
+	# Generate characters for all 4 classes using the established seed
 	var classes: Array[String] = ["Bushranger", "Prospector", "Tracker", "Publican"]
 	generated_characters = CharacterGenerator.generate_character_set(classes)
+	
+	GLog.debug("Generated characters with seed: " + SeedManager.get_seed_string())
+	
+	# Update seed display with current seed
+	update_seed_display()
 	
 	# Clear existing cards and create new ones
 	clear_character_cards()
@@ -163,6 +175,29 @@ func get_starting_curio_display(character: GeneratedCharacter) -> String:
 
 func setup_button_connections():
 	back_button.pressed.connect(_on_back_pressed)
+
+func setup_seed_display():
+	# Connect to seed change signals to update display dynamically
+	if SeedManager.hash_seed_changed.is_connected(_on_hash_seed_changed):
+		SeedManager.hash_seed_changed.disconnect(_on_hash_seed_changed)
+	SeedManager.hash_seed_changed.connect(_on_hash_seed_changed)
+	
+	# Initial seed display update
+	update_seed_display()
+
+func update_seed_display():
+	var hash_seed = SeedManager.get_hash_seed_string()
+	var is_thematic = SeedManager.is_thematic_seed(hash_seed)
+	
+	if hash_seed.is_empty():
+		seed_label.text = "Seed: Not Set"
+	elif is_thematic:
+		seed_label.text = "Seed: " + hash_seed + " ✨"  # Special indicator for thematic seeds
+	else:
+		seed_label.text = "Seed: " + hash_seed
+
+func _on_hash_seed_changed(new_hash_seed: String):
+	update_seed_display()
 
 func _on_character_selected(character_index: int):
 	var character = generated_characters[character_index]

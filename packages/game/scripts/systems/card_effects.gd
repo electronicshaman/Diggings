@@ -46,6 +46,10 @@ func get_card_value_estimate(card_data: CardData) -> int:
 	for effect in card_data.effects:
 		if effect is Damage:
 			value += effect.damage_amount * 2
+		elif effect is RandomDamage:
+			# Use average damage for value estimation
+			var avg_damage = (effect.min_damage + effect.max_damage) / 2.0
+			value += int(avg_damage * 2)
 		elif effect is Defense:
 			value += effect.defense_amount * 2
 		elif effect is Heal:
