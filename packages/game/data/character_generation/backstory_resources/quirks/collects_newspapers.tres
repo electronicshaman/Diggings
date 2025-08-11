@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "collects_newspapers"
+element_type = "quirk"
+display_name = "Collects Newspapers"
+description = "You obsessively collect every newspaper you find, convinced they hold important secrets."
+flavor_text = "The truth is in the details - between the lines, in the obituaries, in what they don't print."
+weight = 15.0
+class_compatibility = {
+  "Bushranger": 0.9,
+  "Prospector": 1.0,
+  "Tracker": 1.1,
+  "Publican": 1.8
+}
+stat_modifiers = {
+  "max_resolve": 3
+}
+percentage_modifiers = {
+  "information_gathering": 0.25,
+  "rumor_accuracy": 0.2
+}
+special_modifiers = {
+  "news_obsession": true,
+  "information_network": true,
+  "conspiracy_theorist": 1.2
+}
+gameplay_rules = ["information_hoarder"]
+conditional_modifiers = []
+compatible_next_elements = ["paranoid", "knowledgeable", "obsessive"]
+incompatible_elements = ["illiterate", "disinterested"]
+required_elements = []
+adds_objective = false
+objective_type = ""
+objective_value = 0
+objective_reward = ""
+icon = null
+color_theme = Color(0.3, 0.3, 0.3, 1.0)
+nickname_pool = ["The Reader", "News-Hound", "Paper-Collector", "Truth-Seeker", "The Informed"]

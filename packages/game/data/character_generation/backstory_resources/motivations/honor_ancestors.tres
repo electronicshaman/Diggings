@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "honor_ancestors"
+element_type = "motivation"
+display_name = "Honor Ancestors"
+description = "You must perform sacred duties to honor those who came before."
+flavor_text = "Their spirits call to you from the dreaming. The old ways must not be forgotten."
+weight = 18.0
+class_compatibility = {
+  "Bushranger": 0.7,
+  "Prospector": 0.8,
+  "Tracker": 2.0,
+  "Publican": 0.6
+}
+stat_modifiers = {
+  "max_sanity": 10
+}
+percentage_modifiers = {
+  "spirit_communication_chance": 0.25
+}
+special_modifiers = {
+  "ancestral_guidance": true,
+  "sacred_site_bonuses": true,
+  "ritual_knowledge": true
+}
+gameplay_rules = ["ancestral_obligations"]
+conditional_modifiers = []
+compatible_next_elements = ["spiritual", "wise", "traditional"]
+incompatible_elements = ["sacrilegious", "materialistic"]
+required_elements = []
+adds_objective = true
+objective_type = "complete_rituals"
+objective_value = 5
+objective_reward = "ancestral_blessing"
+icon = null
+color_theme = Color(0.4, 0.2, 0.6, 1.0)
+nickname_pool = ["Spirit-Touched", "Ancestor-Blessed", "Dreaming-Walker", "Sacred-Keeper"]

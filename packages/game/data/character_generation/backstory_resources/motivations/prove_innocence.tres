@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "prove_innocence"
+element_type = "motivation"
+display_name = "Prove Innocence"
+description = "You seek evidence to clear your name and expose the real culprit."
+flavor_text = "The truth is out there, buried in these hills. You just need to find it before they find you."
+weight = 20.0
+class_compatibility = {
+  "Bushranger": 2.0,
+  "Prospector": 1.0,
+  "Tracker": 1.5,
+  "Publican": 0.8
+}
+stat_modifiers = {
+  "max_resolve": 5
+}
+percentage_modifiers = {
+  "clue_discovery_chance": 0.2
+}
+special_modifiers = {
+  "investigation_bonus": true,
+  "lawman_dialogue_options": true
+}
+gameplay_rules = ["seeking_evidence"]
+conditional_modifiers = []
+compatible_next_elements = ["methodical", "determined", "desperate"]
+incompatible_elements = ["guilty", "criminal"]
+required_elements = []
+adds_objective = true
+objective_type = "find_evidence"
+objective_value = 3
+objective_reward = "name_cleared"
+icon = null
+color_theme = Color(0.3, 0.5, 0.8, 1.0)
+nickname_pool = ["The Innocent", "Truth-Seeker", "Vindicated", "Justice-Bound"]

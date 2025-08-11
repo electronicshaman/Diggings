@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "wrongly_accused"
+element_type = "origin"
+display_name = "Wrongly Accused"
+description = "Framed for a crime they didn't commit, forced into the outlaw life."
+flavor_text = "The law called them guilty, but the truth knows better. Now they live outside the law that failed them."
+weight = 20.0
+class_compatibility = {
+  "Bushranger": 1.8,
+  "Prospector": 0.9,
+  "Tracker": 1.1,
+  "Publican": 0.8
+}
+stat_modifiers = {
+  "max_health": 5
+}
+percentage_modifiers = {}
+special_modifiers = {
+  "settlement_reputation": -20,
+  "boss_kills_clear_name": 3
+}
+gameplay_rules = ["can_clear_name"]
+conditional_modifiers = []
+compatible_next_elements = ["framed_for_murder", "false_witness", "mistaken_identity"]
+incompatible_elements = []
+required_elements = []
+adds_objective = true
+objective_type = "clear_name"
+objective_value = 3
+objective_reward = "settlements_become_neutral"
+icon = null
+color_theme = Color(0.6, 0.2, 0.2, 1.0)
+nickname_pool = ["The Innocent", "Framed", "Justice", "Wronged", "Fugitive", "The Accused"]

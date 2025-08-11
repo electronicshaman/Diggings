@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "tribe_massacred"
+element_type = "tragedy"
+display_name = "Tribe Massacred"
+description = "Your people were slaughtered while you were away guiding strangers."
+flavor_text = "The smoke rising from your homeland told the story before you arrived. Now only the spirits remain."
+weight = 15.0
+class_compatibility = {
+  "Bushranger": 0.8,
+  "Prospector": 0.7,
+  "Tracker": 2.0,
+  "Publican": 0.6
+}
+stat_modifiers = {
+  "max_sanity": -10
+}
+percentage_modifiers = {
+  "corruption_resistance": 0.3
+}
+special_modifiers = {
+  "spirit_guidance": true,
+  "vengeance_damage": 2
+}
+gameplay_rules = ["guided_by_spirits", "seeking_vengeance"]
+conditional_modifiers = []
+compatible_next_elements = ["find_truth", "honor_ancestors", "revenge"]
+incompatible_elements = []
+required_elements = ["aboriginal_guide"]
+adds_objective = false
+objective_type = ""
+objective_value = 0
+objective_reward = ""
+icon = null
+color_theme = Color(0.2, 0.2, 0.4, 1.0)
+nickname_pool = ["Last", "Survivor", "Vengeful", "Spirit-Walker", "Mourning"]

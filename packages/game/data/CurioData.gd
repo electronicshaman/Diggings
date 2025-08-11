@@ -37,8 +37,8 @@ class_name CurioData
 @export var trigger_particle: PackedScene  # Optional particle effect on trigger
 
 # Helper methods
-func get_synergy_for_class(class_name: String) -> float:
-	match class_name.to_lower():
+func get_synergy_for_class(character_class: String) -> float:
+	match character_class.to_lower():
 		"bushranger":
 			return bushranger_synergy
 		"prospector":

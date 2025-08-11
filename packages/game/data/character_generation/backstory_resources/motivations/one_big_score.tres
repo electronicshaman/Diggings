@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "one_big_score"
+element_type = "motivation"
+display_name = "One Big Score"
+description = "You're here for one massive find that will set you up for life."
+flavor_text = "Just one strike, one vein, one nugget the size of your fist. Then you can finally go home."
+weight = 25.0
+class_compatibility = {
+  "Bushranger": 1.2,
+  "Prospector": 2.0,
+  "Tracker": 0.8,
+  "Publican": 0.6
+}
+stat_modifiers = {}
+percentage_modifiers = {
+  "rare_resource_find_chance": 0.15
+}
+special_modifiers = {
+  "gold_fever": true,
+  "big_score_bonus": 1.5
+}
+gameplay_rules = ["obsessed_with_wealth"]
+conditional_modifiers = []
+compatible_next_elements = ["greedy", "ambitious", "desperate"]
+incompatible_elements = ["content", "modest"]
+required_elements = []
+adds_objective = true
+objective_type = "single_gold_find"
+objective_value = 200
+objective_reward = "early_retirement"
+icon = null
+color_theme = Color(0.8, 0.6, 0.0, 1.0)
+nickname_pool = ["Gold-Hungry", "The Ambitious", "Big Dreams", "Fortune-Seeker"]
