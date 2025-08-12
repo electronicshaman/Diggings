@@ -18,7 +18,8 @@ func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dicti
 	var processed_effects = 0
 	var failed_effects = 0
 	
-	GLog.debug("Processing %d effects for card: %s" % [card_data.effects.size(), card_data.card_name]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Processing %d effects for card: %s" % [card_data.effects.size(), card_data.card_name])
 	
 	for i in range(card_data.effects.size()):
 		var effect = card_data.effects[i]
@@ -28,7 +29,8 @@ func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dicti
 			processed_effects += 1
 		else:
 			failed_effects += 1
-			GLog.warn("Effect %d failed: %s" % [i, effect_result.error_message]) if DEBUG_ENABLED else null
+			if DEBUG_ENABLED:
+				GLog.warn("Effect %d failed: %s" % [i, effect_result.error_message])
 	
 	# Apply gambling modifiers if applicable
 	_apply_gambling_modifiers(duel_manager, results)
@@ -37,7 +39,8 @@ func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dicti
 	if failed_effects > 0:
 		push_warning("CardEffects: %d/%d effects failed for card: %s" % [failed_effects, card_data.effects.size(), card_data.card_name])
 	
-	GLog.debug("Card effects complete: %d processed, %d failed" % [processed_effects, failed_effects]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Card effects complete: %d processed, %d failed" % [processed_effects, failed_effects])
 	
 	return results
 
@@ -83,8 +86,8 @@ func _validate_card_effect_inputs(duel_manager: DuelManager, card_data: CardData
 	# Check for required properties on card data
 	var required_card_properties = ["card_name", "effects"]
 	for prop in required_card_properties:
-		if not prop in card_data:
-			result.error = ERR_PROPERTY_CANT_RESOLVE
+		if not card_data.has_property(prop):
+			result.error = ERR_INVALID_DATA
 			result.message = "CardData missing property: " + prop
 			return result
 	
@@ -137,7 +140,8 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_data
 	elif "effect_name" in effect:
 		effect_name = effect.effect_name
 	
-	GLog.debug("Applied effect: %s" % effect_name) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Applied effect: %s" % effect_name)
 	
 	return result
 
@@ -155,18 +159,21 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 	var player_data = duel_manager.duel_state.player_data
 	
 	if not player_data.has_method("check_and_apply_gambling"):
-		GLog.debug("Player data does not support gambling mechanics") if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Player data does not support gambling mechanics")
 		return
 	
 	var gambling_result = player_data.check_and_apply_gambling()
 	
 	if not gambling_result is Dictionary or not gambling_result.has("active"):
-		GLog.warn("Invalid gambling result format") if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.warn("Invalid gambling result format")
 		return
 	
 	if gambling_result.active:
 		var multiplier = gambling_result.get("multiplier", 1.0)
-		GLog.debug("Gambling active! Multiplier: %.1fx" % multiplier) if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Gambling active! Multiplier: %.1fx" % multiplier)
 		
 		# 50% chance for gambling success
 		if randf() < 0.5:
@@ -176,13 +183,15 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 				if results.has(field) and results[field] is int:
 					results[field] = int(results[field] * multiplier)
 			
-			GLog.debug("Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier) if DEBUG_ENABLED else null
+			if DEBUG_ENABLED:
+				GLog.debug("Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier)
 		else:
 			# Negate effects on gambling failure
 			results.damage = 0
 			results.defense = 0
 			results.heal = 0
-			GLog.debug("Gambling FAILED! All effects negated") if DEBUG_ENABLED else null
+			if DEBUG_ENABLED:
+				GLog.debug("Gambling FAILED! All effects negated")
 
 func get_card_value_estimate(card_data: CardData) -> int:
 	# Input validation
