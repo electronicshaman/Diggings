@@ -21,9 +21,16 @@ var current_player_node: String = ""
 func _ready():
 	if DEBUG_ENABLED:
 		GLog.info("=== SIMPLE MAP SYSTEM INITIALIZED ===")
-	
-	# Generate a simple test map
-	generate_simple_map()
+
+	# If we have a saved map in GameManager, restore it; otherwise generate and save
+	if GameManager and GameManager.game_data.has("simple_map") and not GameManager.game_data.simple_map.is_empty():
+		if DEBUG_ENABLED:
+			GLog.info("Restoring map from GameManager.simple_map")
+		_restore_map_from_saved(GameManager.game_data.simple_map)
+	else:
+		# Generate a simple test map and persist
+		generate_simple_map()
+		_persist_current_map_state()
 
 func generate_simple_map():
 	"""Generate a simple map using Delaunay triangulation"""
@@ -820,6 +827,9 @@ func set_current_player_node(node_id: String):
 	if DEBUG_ENABLED:
 		GLog.info("Player moved to: " + node_id + " (type: " + str(current_node.map_node.get_type_name()) + ")")
 
+	# Persist current map state after movement so revisits don't regenerate
+	_persist_current_map_state()
+
 func _on_node_clicked(node_id: String, _event: InputEvent):
 	"""Handle node click - move player if connected"""
 	GLog.info("✅ MAP RECEIVED CLICK: " + node_id)
@@ -973,3 +983,118 @@ func get_available_moves() -> Array[String]:
 		return []
 	
 	return nodes[current_player_node].connections
+
+# =========================
+# Persistence helpers
+# =========================
+
+func _persist_current_map_state():
+	if not GameManager:
+		return
+
+	var saved_nodes: Array = []
+	for node_id in nodes:
+		var entry = nodes[node_id]
+		var pos: Vector2 = entry.position
+		var map_node: MapNode = entry.map_node
+		var state_val: int = map_node.get_state()
+		saved_nodes.append({
+			"id": node_id,
+			"type": entry.type,  # our string type used during creation
+			"position": [pos.x, pos.y],
+			"state": state_val
+		})
+
+	var saved_edges: Array = []
+	for e in edges:
+		saved_edges.append({"from": e.from, "to": e.to})
+
+	var payload: Dictionary = {
+		"nodes": saved_nodes,
+		"edges": saved_edges,
+		"current_player_node": current_player_node
+	}
+
+	GameManager.game_data.simple_map = payload
+	if DEBUG_ENABLED:
+		GLog.debug("Persisted simple_map with " + str(saved_nodes.size()) + " nodes and " + str(saved_edges.size()) + " edges")
+
+func _restore_map_from_saved(data: Dictionary):
+	clear_map()
+
+	if not data.has("nodes"):
+		if DEBUG_ENABLED:
+			GLog.warn("Saved map missing 'nodes'; regenerating")
+		generate_simple_map()
+		_persist_current_map_state()
+		return
+
+	# Prepare type configs
+	var cfgs = load_node_configurations()
+
+	# Recreate nodes
+	for nd in data.nodes:
+		var node_id: String = nd.get("id", "")
+		if node_id == "":
+			continue
+		var pos_arr = nd.get("position", [0, 0])
+		var node_pos = Vector2(float(pos_arr[0]), float(pos_arr[1]))
+		var t: String = nd.get("type", "junction")
+		var node_cfg: MapNodeConfig = cfgs.get(t, cfgs.junction)
+
+		# Create scene + node
+		var node_scene = MAP_NODE_SCENE.instantiate()
+		map_container.add_child(node_scene)
+		node_scene.position = node_pos - Vector2(16, 16)
+		node_scene.z_index = map_config.node_z_index
+
+		var map_node = MapNode.new(node_id, node_pos, node_cfg)
+		# Apply saved state if present, else default to KNOWN
+		var saved_state: int = int(nd.get("state", MapNode.NodeState.KNOWN))
+		map_node.set_state(saved_state)
+		node_scene.setup_node(node_id, map_node)
+		node_scene.refresh()
+
+		# Optional debug badge preview for content nodes
+		if map_config.show_outcome_debug_badges and (map_node.type == MapNode.NodeType.MINE or map_node.type == MapNode.NodeType.POI):
+			var preview = _preview_outcome_for_debug(map_node)
+			var label_text = "D" if preview == "duel" else "E"
+			var label_color = Color(1.0, 0.35, 0.35) if preview == "duel" else Color(0.35, 0.9, 0.6)
+			if node_scene.has_method("update_debug_badge"):
+				node_scene.update_debug_badge(label_text, label_color)
+
+		# Connect click signal
+		node_scene.node_clicked.connect(_on_node_clicked)
+
+		# Insert into our structures
+		nodes[node_id] = {
+			"position": node_pos,
+			"scene": node_scene,
+			"connections": [],
+			"map_node": map_node,
+			"type": t
+		}
+
+	# Recreate edges
+	if data.has("edges"):
+		for e in data.edges:
+			var from_id: String = e.get("from", "")
+			var to_id: String = e.get("to", "")
+			if from_id != "" and to_id != "":
+				create_connection(from_id, to_id)
+
+	# Restore player node and availability
+	var saved_current: String = data.get("current_player_node", "")
+	if saved_current != "" and nodes.has(saved_current):
+		set_current_player_node(saved_current)
+	else:
+		# Fallback: try to find city or first node
+		var city_id = find_city_node()
+		if city_id != "":
+			set_current_player_node(city_id)
+		else:
+			if not nodes.is_empty():
+				set_current_player_node(nodes.keys()[0])
+
+	if DEBUG_ENABLED:
+		GLog.info("Restored map from save: nodes=" + str(nodes.size()) + ", edges=" + str(edges.size()))
