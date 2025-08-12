@@ -46,8 +46,7 @@ func _initialize_ui_manager() -> Error:
 	if not is_instance_valid(lose_duel_button):
 		push_warning("MainGameController: Lose duel button not found")
 	
-	if DEBUG_ENABLED:
-		GLog.debug("MainGameController: UI manager initialized successfully")
+	GLog.debug("MainGameController: UI manager initialized successfully")
 	return OK
 
 func initialize_controllers() -> void:
@@ -218,7 +217,6 @@ func get_ui_manager() -> UIReferenceManager:
 func refresh_ui_references() -> void:
 	if ui_manager:
 		ui_manager.clear_cache()
-		if DEBUG_ENABLED:
-			GLog.debug("MainGameController: UI references refreshed")
+		GLog.debug("MainGameController: UI references refreshed")
 	else:
 		push_warning("MainGameController: Cannot refresh UI - UI manager not initialized")

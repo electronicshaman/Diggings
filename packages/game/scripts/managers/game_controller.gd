@@ -75,14 +75,12 @@ func initialize(duel_manager_ref: Node) -> Error:
 	else:
 		push_warning("GameController: DuelManager missing duel_state property")
 	
-	if DEBUG_ENABLED:
-		GLog.debug("GameController initialized successfully")
+	GLog.debug("GameController initialized successfully")
 	return OK
 
 ## Safe test content loading with error boundaries
 func _safe_load_test_content() -> void:
-	if DEBUG_ENABLED:
-		GLog.debug("Loading test content...")
+	GLog.debug("Loading test content...")
 	
 	var loading_tasks = [
 		{"name": "character", "method": "_load_bushranger_character"},
@@ -100,8 +98,7 @@ func _safe_load_test_content() -> void:
 	
 	if successful_loads > 0:
 		test_content_loaded.emit()
-		if DEBUG_ENABLED:
-			GLog.debug("Test content loading complete: %d/2 tasks successful" % successful_loads)
+		GLog.debug("Test content loading complete: %d/2 tasks successful" % successful_loads)
 	else:
 		push_error("GameController: All content loading tasks failed")
 
@@ -109,8 +106,7 @@ func _safe_load_test_content() -> void:
 func _load_bushranger_character() -> Dictionary:
 	var result = {"success": false, "error_message": ""}
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Loading Bushranger character class...")
+	GLog.debug("Loading Bushranger character class...")
 	var character_path = "res://data/characters/bushranger.tres"
 	
 	# Use ResourceManager for safer loading
@@ -134,8 +130,7 @@ func _load_bushranger_character() -> Dictionary:
 		result.error_message = "Character data validation failed for: " + character_path
 		return result
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Loaded character: " + player_character.character_class_name)
+	GLog.debug("Loaded character: " + player_character.character_class_name)
 	
 	# Load starting deck safely
 	if player_character.has_method("load_starting_deck"):
@@ -143,8 +138,7 @@ func _load_bushranger_character() -> Dictionary:
 		if test_cards.is_empty():
 			push_warning("GameController: Character has empty starting deck")
 		else:
-			if DEBUG_ENABLED:
-				GLog.debug("Loaded %d cards for starting deck" % test_cards.size())
+			GLog.debug("Loaded %d cards for starting deck" % test_cards.size())
 	else:
 		push_warning("GameController: Character missing load_starting_deck method")
 		test_cards = []
@@ -180,24 +174,19 @@ func _load_test_enemies() -> Dictionary:
 				test_enemies.append(enemy_data)
 				loaded_count += 1
 				if _has_prop(enemy_data, "enemy_name"):
-					if DEBUG_ENABLED:
-						GLog.debug("Loaded test enemy: " + enemy_data.enemy_name)
+					GLog.debug("Loaded test enemy: " + enemy_data.enemy_name)
 				else:
-					if DEBUG_ENABLED:
-						GLog.debug("Loaded unnamed enemy from: " + path)
+					GLog.debug("Loaded unnamed enemy from: " + path)
 			else:
 				_failed_count += 1
-				if DEBUG_ENABLED:
-					GLog.warn("Enemy data validation failed: " + path)
+				GLog.warn("Enemy data validation failed: " + path)
 		else:
 			_failed_count += 1
-			if DEBUG_ENABLED:
-				GLog.warn("Enemy resource not found or invalid: " + path)
+			GLog.warn("Enemy resource not found or invalid: " + path)
 	
 	if loaded_count > 0:
 		result.success = true
-		if DEBUG_ENABLED:
-			GLog.debug("Loaded %d/%d enemy resources" % [loaded_count, enemy_paths.size()])
+		GLog.debug("Loaded %d/%d enemy resources" % [loaded_count, enemy_paths.size()])
 	else:
 		result.error_message = "Failed to load any enemy resources (%d attempted)" % enemy_paths.size()
 	
@@ -325,8 +314,7 @@ func _safe_start_duel() -> Dictionary:
 		result.error_message = "Player deck validation failed"
 		return result
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Starting duel as %s with enemy: %s" % [player_character.character_class_name, enemy.enemy_name])
+	GLog.debug("Starting duel as %s with enemy: %s" % [player_character.character_class_name, enemy.enemy_name])
 	
 	# Start the duel
 	duel_manager.start_new_duel(player_deck, enemy)
@@ -382,8 +370,7 @@ func _safe_apply_character_to_player_data() -> Dictionary:
 	else:
 		push_warning("GameController: Player data missing stats")
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Applied %s stats: %d health, %d sanity, %d energy, %d gold" % [
+	GLog.debug("Applied %s stats: %d health, %d sanity, %d energy, %d gold" % [
 			player_character.character_class_name,
 			player_character.base_health,
 			player_character.base_sanity,
@@ -397,19 +384,16 @@ func _safe_apply_character_to_player_data() -> Dictionary:
 ## Safely add test curios
 func _safe_add_test_curios() -> void:
 	if not is_instance_valid(CurioManager):
-		if DEBUG_ENABLED:
-			GLog.debug("CurioManager not available")
+		GLog.debug("CurioManager not available")
 		return
 	
 	if not CurioManager.has_method("get_active_curios") or not CurioManager.has_method("debug_add_curio"):
-		if DEBUG_ENABLED:
-			GLog.debug("CurioManager missing required methods")
+		GLog.debug("CurioManager missing required methods")
 		return
 	
 	var active_curios = CurioManager.get_active_curios()
 	if active_curios.is_empty():
-		if DEBUG_ENABLED:
-			GLog.debug("Adding test curios for debugging")
+		GLog.debug("Adding test curios for debugging")
 		var test_curios = ["Lucky Nugget", "Iron Horseshoe", "Bush Tea"]
 		
 		for curio_name in test_curios:
@@ -430,12 +414,10 @@ func _validate_deck_contents(deck: Array[CardData]) -> bool:
 				valid_cards += 1
 			else:
 				invalid_cards += 1
-				if DEBUG_ENABLED:
-					GLog.warn("Invalid card structure in deck")
+				GLog.warn("Invalid card structure in deck")
 		else:
 			invalid_cards += 1
-			if DEBUG_ENABLED:
-				GLog.warn("Null card found in deck")
+			GLog.warn("Null card found in deck")
 	
 	if invalid_cards > 0:
 		push_warning("GameController: Deck has %d invalid cards out of %d total" % [invalid_cards, deck.size()])
@@ -587,8 +569,7 @@ func modify_player_energy(amount: int) -> Error:
 	return OK
 
 func _on_duel_started() -> void:
-	if DEBUG_ENABLED:
-		GLog.debug("Duel started in GameController")
+	GLog.debug("Duel started in GameController")
 	game_state_updated.emit()
 	
 	# Emit event safely
@@ -600,8 +581,7 @@ func _on_duel_started() -> void:
 		EventBus.duel_started.emit(enemy_data)
 
 func _on_duel_ended(winner: String) -> void:
-	if DEBUG_ENABLED:
-		GLog.debug("Duel ended - Winner: " + winner)
+	GLog.debug("Duel ended - Winner: " + winner)
 	
 	if winner.is_empty():
 		push_warning("GameController: Duel ended with empty winner string")
@@ -619,8 +599,7 @@ func _on_duel_ended(winner: String) -> void:
 		GameManager.increment_statistic(stat_name)
 
 func _on_turn_started(is_player_turn: bool) -> void:
-	if DEBUG_ENABLED:
-		GLog.debug("Turn started: " + ("Player" if is_player_turn else "Enemy"))
+	GLog.debug("Turn started: " + ("Player" if is_player_turn else "Enemy"))
 	
 	# Emit event safely
 	if is_instance_valid(EventBus) and EventBus.has_signal("turn_started"):
@@ -637,8 +616,7 @@ func _on_card_played(card_data: CardData) -> void:
 	if is_instance_valid(card_data) and card_data.has_property("card_name"):
 		card_name = card_data.card_name
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Card played: " + card_name)
+	GLog.debug("Card played: " + card_name)
 	
 	# Update statistics safely
 	if is_instance_valid(GameManager) and GameManager.has_method("increment_statistic"):
@@ -661,5 +639,4 @@ func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 				if amount > 0:
 					GameManager.increment_statistic("damage_dealt", amount)
 		_:
-			if DEBUG_ENABLED:
-				GLog.debug("Duel state changed: %s" % change_type)
+			GLog.debug("Duel state changed: %s" % change_type)
