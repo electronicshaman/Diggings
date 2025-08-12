@@ -52,6 +52,14 @@ left_mouse={
 ]
 }
 
+[debug]
+
+shapes/collision/draw_2d=true
+
+[network]
+
+limits/debugger/max_queued_messages=4096
+
 [rendering]
 
 renderer/rendering_method="mobile"

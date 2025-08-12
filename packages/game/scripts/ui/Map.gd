@@ -820,10 +820,9 @@ func set_current_player_node(node_id: String):
 	if DEBUG_ENABLED:
 		GLog.info("Player moved to: " + node_id + " (type: " + str(current_node.map_node.get_type_name()) + ")")
 
-func _on_node_clicked(node_id: String):
+func _on_node_clicked(node_id: String, event: InputEvent):
 	"""Handle node click - move player if connected"""
-	if DEBUG_ENABLED:
-		GLog.info("=== NODE CLICKED: " + node_id + " ===")
+	GLog.info("✅ MAP RECEIVED CLICK: " + node_id)
 	
 	if current_player_node == "":
 		GLog.error("No current player node set")

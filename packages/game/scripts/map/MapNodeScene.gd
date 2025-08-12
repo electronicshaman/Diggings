@@ -1,15 +1,15 @@
-extends Control
+extends Node2D
 class_name MapNodeScene
 
-const DEBUG_ENABLED: bool = false
+const DEBUG_ENABLED: bool = true
 
 # Node references
-@onready var node_button: Button = $NodeButton
-@onready var background_icon: ColorRect = $BackgroundIcon
-@onready var node_icon: ColorRect = $NodeIcon
+@onready var click_area: Area2D = $ClickArea
+@onready var background_icon: MeshInstance2D = $BackgroundIcon
+@onready var node_icon: MeshInstance2D = $NodeIcon
 # @onready var node_label: Label = $NodeLabel  # Removed - using tooltips instead
-@onready var state_indicator: Control = $StateIndicator
-@onready var outline: ColorRect = $StateIndicator/Outline
+@onready var state_indicator: Node2D = $StateIndicator
+@onready var outline: MeshInstance2D = $StateIndicator/Outline
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 # Node data and state
@@ -35,49 +35,66 @@ func _ready():
 	setup_visual_hierarchy()
 	connect_signals()
 
+# Global mouse detection to see if ANY events reach this node
+func _unhandled_input(event: InputEvent):
+	if event is InputEventMouseButton and event.pressed:
+		var global_pos = event.global_position
+		var local_pos = to_local(global_pos)
+		var rect = Rect2(Vector2.ZERO, node_size)
+		if rect.has_point(local_pos):
+			GLog.info("🎯 GLOBAL MOUSE over " + node_id + " at " + str(local_pos))
+
 func setup_visual_hierarchy():
 	"""Set up the visual layout and styling"""
-	# Configure main control
-	custom_minimum_size = node_size
-	size = node_size
+	# Node2D doesn't have size properties like Control nodes
+	# All sizing is handled by child nodes
 	
-	# Only configure nodes if they exist
-	if node_button:
-		node_button.flat = true
-		node_button.custom_minimum_size = node_size
-		node_button.size = node_size
-		node_button.position = Vector2.ZERO
+	# Configure click area if it exists
+	if click_area:
+		# Area2D doesn't need size configuration, handled by CollisionShape2D
+		pass
 	
 	if background_icon:
-		background_icon.size = node_size
-		background_icon.position = Vector2.ZERO
+		# MeshInstance2D positioning - centered on the node
+		background_icon.position = node_size * 0.5
+		if background_icon.mesh is QuadMesh:
+			(background_icon.mesh as QuadMesh).size = node_size
 	
 	if node_icon:
-		node_icon.size = node_size * 0.7  # Slightly smaller than background
-		node_icon.position = node_size * 0.15  # Center it
+		# Slightly smaller than background, centered
+		node_icon.position = node_size * 0.5
+		if node_icon.mesh is QuadMesh:
+			(node_icon.mesh as QuadMesh).size = node_size * 0.7
 	
 	# Label configuration removed - using tooltips instead
 	
 	if state_indicator:
-		state_indicator.size = node_size + Vector2(8, 8)  # Slightly larger
-		state_indicator.position = Vector2(-4, -4)  # Centered offset
+		# Offset for outline effect
+		state_indicator.position = Vector2(-4, -4)
 	
 	if outline:
-		outline.size = state_indicator.size if state_indicator else node_size + Vector2(8, 8)
-		outline.position = Vector2.ZERO
-		outline.color = Color.TRANSPARENT
+		# Centered on the state indicator with larger size for outline
+		outline.position = node_size * 0.5 + Vector2(4, 4)  # Offset to center
+		outline.modulate = Color.TRANSPARENT
+		if outline.mesh is QuadMesh:
+			(outline.mesh as QuadMesh).size = node_size + Vector2(8, 8)
 
 func connect_signals():
 	"""Connect internal signals"""
-	if node_button:
-		node_button.pressed.connect(_on_button_pressed)
-		node_button.mouse_entered.connect(_on_mouse_entered)
-		node_button.mouse_exited.connect(_on_mouse_exited)
+	if click_area:
+		click_area.input_event.connect(_on_area_input_event)
+		click_area.mouse_entered.connect(_on_mouse_entered)
+		click_area.mouse_exited.connect(_on_mouse_exited)
+		pass  # Signals connected
+	else:
+		GLog.error("CRITICAL: click_area is NULL - signals not connected!")
 
 func setup_node(id: String, data: MapNode):
 	"""Initialize this scene with node data"""
 	node_id = id
 	node_data = data
+	
+	# Setup node data
 	
 	if not node_data:
 		GLog.error("MapNodeScene setup failed: no node data provided")
@@ -101,9 +118,8 @@ func apply_type_customizations():
 	# All visual properties come from the NodeConfig resource
 	node_size = node_data.get_visual_size()
 	
-	# Apply the size to the control
-	custom_minimum_size = node_size
-	size = node_size
+	# Node2D doesn't have size properties like Control nodes
+	# Size is managed by child nodes
 	
 	# Update child node sizes to match
 	setup_visual_hierarchy()
@@ -124,12 +140,12 @@ func update_visuals():
 	# Update background using explicit resource color
 	if background_icon:
 		# Use state-specific color for background
-		background_icon.color = state_color
+		background_icon.modulate = state_color
 	
 	# Update main icon using explicit resource color
 	if node_icon:
 		# Use base visual color for the main icon
-		node_icon.color = base_visual_color
+		node_icon.modulate = base_visual_color
 	
 	# Update state indicator
 	update_state_indicator()
@@ -148,21 +164,21 @@ func update_state_indicator():
 	# Handle special states
 	if is_highlighted:
 		# Use resource-defined glow color instead of hardcoded cyan
-		outline.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.8)
+		outline.modulate = Color(glow_color.r, glow_color.g, glow_color.b, 0.8)
 	elif state == MapNode.NodeState.CURRENT:
-		outline.color = glow_color
+		outline.modulate = glow_color
 	elif state == MapNode.NodeState.AVAILABLE and is_interactive:
 		# Use resource glow color but make it more subtle for available state
-		outline.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.6)
+		outline.modulate = Color(glow_color.r, glow_color.g, glow_color.b, 0.6)
 	elif state == MapNode.NodeState.LOCKED:
-		outline.color = Color.TRANSPARENT
+		outline.modulate = Color.TRANSPARENT
 	else:
-		outline.color = Color.TRANSPARENT
+		outline.modulate = Color.TRANSPARENT
 
 
 func update_interactivity():
 	"""Update whether this node can be interacted with"""
-	if not node_button or not node_data:
+	if not click_area or not node_data:
 		return
 	
 	var new_interactive = node_data.is_interactive()
@@ -170,21 +186,20 @@ func update_interactivity():
 	if new_interactive != is_interactive:
 		is_interactive = new_interactive
 		
-		# Update button state
-		node_button.disabled = not is_interactive
+		# Update Area2D pickable state
+		click_area.input_pickable = is_interactive
 		
-		# Visual feedback for interactivity
-		if is_interactive:
-			node_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		else:
-			node_button.mouse_default_cursor_shape = Control.CURSOR_ARROW
+		# Interactivity updated
+		
+		# Note: Node2D doesn't have mouse_default_cursor_shape
+		# Cursor changes would need to be handled differently if needed
 		
 		# Update visual appearance
 		update_state_indicator()
 
 func update_tooltip():
 	"""Update the tooltip based on current node state and available actions"""
-	if not node_button or not node_data:
+	if not node_data:
 		return
 	
 	var tooltip_content = node_data.get_description()
@@ -216,7 +231,8 @@ func update_tooltip():
 	if is_interactive and node_data.actions.size() > 0:
 		tooltip_content += "\n\nAvailable actions: " + str(node_data.actions.size())
 	
-	node_button.tooltip_text = tooltip_content
+	# Note: Node2D doesn't have tooltip_text property
+	# Tooltips would need to be handled differently if needed
 
 func set_highlight(highlighted: bool):
 	"""Set whether this node should be highlighted"""
@@ -260,40 +276,47 @@ func play_discover_animation():
 		animation_player.play("discover")
 
 # Event handlers
-func _on_button_pressed():
-	"""Handle button press - emit click signal"""
-	GLog.info("=== MapNodeScene button pressed: " + node_id + " ===")
-	GLog.debug("Node interactive: " + str(is_interactive) + ", button disabled: " + str(node_button.disabled if node_button else "no button"))
+func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
+	"""Handle Area2D input events"""
+	GLog.info("🎯 AREA2D EVENT on " + node_id + ": " + str(event.get_class()))
 	
-	if node_data:
-		GLog.debug("Node state: " + str(node_data.get_state()) + ", can interact: " + str(node_data.is_interactive()))
-	
-	# Play selection animation
-	play_select_animation()
-	
-	# Emit the click signal
-	var dummy_event = InputEventMouseButton.new()
-	dummy_event.button_index = MOUSE_BUTTON_LEFT
-	dummy_event.pressed = true
-	GLog.debug("Emitting node_clicked signal for: " + node_id)
-	node_clicked.emit(node_id, dummy_event)
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			GLog.info("🖱️ LEFT CLICK on " + node_id)
+			
+			if not is_interactive:
+				GLog.info("❌ Node " + node_id + " not interactive")
+				return
+			
+			# Play selection animation
+			play_select_animation()
+			
+			# Emit the click signal
+			GLog.info("✅ EMITTING click signal: " + node_id)
+			node_clicked.emit(node_id, event)
 
 func _on_mouse_entered():
 	"""Handle mouse hover enter"""
+	GLog.debug("🖱️ HOVER: " + node_id)
+	
 	node_hovered.emit(node_id)
 	
 	# Visual feedback
 	if is_interactive:
 		var tween = create_tween()
 		tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.1)
+		# Hover animation started
 
 func _on_mouse_exited():
 	"""Handle mouse hover exit"""
+	GLog.debug("🖱️ UNHOVER: " + node_id)
+	
 	node_unhovered.emit()
 	
 	# Reset visual feedback
 	var tween = create_tween()
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.1)
+	# Unhover animation started
 
 # Public interface for external control
 func refresh():

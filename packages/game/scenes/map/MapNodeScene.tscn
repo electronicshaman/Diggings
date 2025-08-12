@@ -1,45 +1,39 @@
-[gd_scene load_steps=2 format=3 uid="uid://dxwewo6tk2xo6"]
+[gd_scene load_steps=5 format=3 uid="uid://dxwewo6tk2xo6"]
 
 [ext_resource type="Script" uid="uid://cobhsqjxjdpst" path="res://scripts/map/MapNodeScene.gd" id="1_ebne8"]
 
-[node name="MapNodeScene" type="Control"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 3
-anchors_preset = 0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(64, 64)
+
+[sub_resource type="QuadMesh" id="QuadMesh_1"]
+size = Vector2(64, 64)
+
+[sub_resource type="QuadMesh" id="QuadMesh_2"]
+size = Vector2(45, 45)
+
+[node name="MapNodeScene" type="Node2D"]
 script = ExtResource("1_ebne8")
 
-[node name="BackgroundIcon" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 64.0
-offset_bottom = 64.0
-color = Color(1, 1, 1, 1)
+[node name="BackgroundIcon" type="MeshInstance2D" parent="."]
+position = Vector2(32, 32)
+mesh = SubResource("QuadMesh_1")
 
-[node name="NodeIcon" type="ColorRect" parent="."]
-layout_mode = 0
-offset_left = 9.5
-offset_top = 9.5
-offset_right = 54.5
-offset_bottom = 54.5
-color = Color(1, 1, 1, 1)
+[node name="NodeIcon" type="MeshInstance2D" parent="."]
+position = Vector2(32, 32)
+mesh = SubResource("QuadMesh_2")
 
-[node name="StateIndicator" type="Control" parent="."]
-anchors_preset = 0
-offset_left = -4.0
-offset_top = -4.0
-offset_right = -4.0
-offset_bottom = -4.0
+[node name="StateIndicator" type="Node2D" parent="."]
+position = Vector2(-4, -4)
 
-[node name="Outline" type="ColorRect" parent="StateIndicator"]
-layout_mode = 0
-offset_right = 72.0
-offset_bottom = 72.0
-color = Color(0, 0, 0, 0)
+[node name="Outline" type="MeshInstance2D" parent="StateIndicator"]
+position = Vector2(36, 36)
+modulate = Color(1, 1, 1, 0)
+mesh = SubResource("QuadMesh_1")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
-[node name="NodeButton" type="Button" parent="."]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 0
-offset_right = 64.0
-offset_bottom = 64.0
-flat = true
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_1")
