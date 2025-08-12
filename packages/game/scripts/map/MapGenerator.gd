@@ -117,29 +117,9 @@ func generate_map(seed: int = -1) -> Dictionary:
 		return generate_traditional_map()
 
 func generate_traditional_map() -> Dictionary:
-	# Reset rule counters
-	for rule in rules:
-		rule.reset()
-	
-	# Create starting node
-	create_start_node()
-	
-	# Generate the rest of the map using traditional rule-based approach
-	var generation_steps = 0
-	var max_steps = 50  # Prevent infinite loops
-	
-	while should_continue_generation() and generation_steps < max_steps:
-		apply_random_rule()
-		generation_steps += 1
-	
-	# Post-process the graph
-	GLog.debug("Starting traditional post-processing...")
-	post_process_graph()
-	GLog.debug("Post-processing complete")
-	
-	GLog.debug("Traditional map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
-	map_generated.emit(graph)
-	return graph
+	# Fallback to planar generation if traditional path is called
+	GLog.warn("Traditional map generation called - redirecting to planar generation")
+	return generate_planar_map()
 
 func generate_planar_map() -> Dictionary:
 	GLog.debug("Using planar graph generation with Delaunay triangulation")
@@ -304,10 +284,7 @@ func post_process_graph():
 	# Enforce connection limits
 	enforce_connection_limits()
 	
-	# Apply Poisson Disk Sampling layout for even distribution
-	GLog.debug("Starting Poisson Disk Sampling layout...")
-	apply_poisson_disk_layout()
-	
+	# Node positions already optimized during generation
 
 
 func ensure_graph_connectivity():
@@ -858,17 +835,7 @@ func apply_minimum_connections():
 	else:
 		GLog.warn("No minimum connection rule found")
 
-func apply_poisson_disk_layout():
-	"""Apply Poisson Disk Sampling for even node distribution"""
-	GLog.debug("Applying Poisson Disk Sampling layout...")
-	
-	var layout_optimizer = PoissonDiskLayout.new()
-	layout_optimizer.setup(layout_config)
-	
-	# Apply the layout optimization
-	graph = layout_optimizer.apply_layout(graph)
-	
-	GLog.debug("Poisson Disk layout complete")
+# Removed apply_poisson_disk_layout() - redundant with initial Poisson sampling in generate_nodes_with_poisson_sampling()
 
 # New planar graph generation methods
 

@@ -79,10 +79,13 @@ mcp__godot-mcp__clear_output_logs()
 
 ### Map Generation
 
-Recent implementation uses **Poisson Disk Sampling** for reliable layouts:
+Current implementation uses **Delaunay Triangulation** (Bowyer-Watson algorithm) for planar graph generation:
 
 - **MapGenerator** (`scripts/map/MapGenerator.gd`) - Main generation logic
-- **PoissonDiskLayout** (`scripts/map/PoissonDiskLayout.gd`) - Node placement algorithm
+- **DelaunayTriangulator** (`scripts/map/DelaunayTriangulator.gd`) - Creates planar connectivity
+- **PoissonDiskLayout** (`scripts/map/PoissonDiskLayout.gd`) - Initial node positioning
+- **EdgePruner** (`scripts/map/EdgePruner.gd`) - Intelligent edge reduction
+- **PlanarGraphValidator** (`scripts/map/PlanarGraphValidator.gd`) - Validates planarity
 - **MapLayoutConfig** (`data/map_layout_config.tres`) - Generation parameters
 - **MapNodeRegistry** autoload - Registers all node types dynamically
 
@@ -123,7 +126,9 @@ scenes/
 
 ### Map System (Active Branch: 2025-08-10-poisson-disk-sampling)
 
-- Replaced force-directed physics with Poisson Disk Sampling for reliable layouts
+- Using Delaunay triangulation (Bowyer-Watson algorithm) for planar graph generation
+- Poisson Disk Sampling for initial node positioning ensures even distribution
+- Edge pruning reduces triangulation to game-appropriate connectivity
 - Debug mode available via `scenes/debug/map_test.tscn`
 - Procedural generation with configurable parameters in `MapLayoutConfig`
 
