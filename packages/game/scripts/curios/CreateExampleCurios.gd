@@ -1,8 +1,10 @@
 @tool
 extends EditorScript
 
+const DEBUG_ENABLED: bool = true
+
 func _run():
-	print("Creating example curios...")
+	GLog.info("Creating example curios...")
 	
 	# Create Lucky Nugget
 	create_lucky_nugget()
@@ -16,7 +18,7 @@ func _run():
 	# Create Sharpened Blade
 	create_sharpened_blade()
 	
-	print("Example curios created!")
+	GLog.info("Example curios created!")
 
 func create_lucky_nugget():
 	var curio = CurioData.new()
@@ -45,7 +47,7 @@ func create_lucky_nugget():
 	
 	# Save the resource
 	ResourceSaver.save(curio, "res://data/curios/common/lucky_nugget.tres")
-	print("Created Lucky Nugget")
+	GLog.debug("Created Lucky Nugget")
 
 func create_thick_leather():
 	var curio = CurioData.new()
@@ -74,7 +76,7 @@ func create_thick_leather():
 	
 	# Save the resource
 	ResourceSaver.save(curio, "res://data/curios/common/thick_leather.tres")
-	print("Created Thick Leather")
+	GLog.debug("Created Thick Leather")
 
 func create_old_compass():
 	var curio = CurioData.new()
@@ -103,7 +105,7 @@ func create_old_compass():
 	
 	# Save the resource
 	ResourceSaver.save(curio, "res://data/curios/common/old_compass.tres")
-	print("Created Old Compass")
+	GLog.debug("Created Old Compass")
 
 func create_sharpened_blade():
 	var curio = CurioData.new()
@@ -133,4 +135,4 @@ func create_sharpened_blade():
 	
 	# Save the resource
 	ResourceSaver.save(curio, "res://data/curios/common/sharpened_blade.tres")
-	print("Created Sharpened Blade")
+	GLog.debug("Created Sharpened Blade")

@@ -33,7 +33,7 @@ func apply_effect(game_state: Node, curio_data: Resource, context: Dictionary) -
 		"return_to_hand":
 			_return_to_hand(game_state, card)
 		_:
-			print("WARNING: Unknown modification type '%s'" % modification_type)
+			GLog.warn("Unknown modification type '%s'" % modification_type)
 
 func _matches_target(card_data: CardData) -> bool:
 	# Check specific card name first

@@ -30,6 +30,7 @@ GDAIMCPRuntime="*res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd"
 MapNodeRegistry="*res://scripts/autoloads/map_node_registry.gd"
 CurioManager="*res://scripts/autoloads/curio_manager.gd"
 CharacterGenerator="*res://scripts/autoloads/character_generator.gd"
+RunHistoryManager="*res://scripts/autoloads/run_history_manager.gd"
 
 [display]
 

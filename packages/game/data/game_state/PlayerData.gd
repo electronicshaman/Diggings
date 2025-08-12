@@ -1,6 +1,8 @@
 extends Resource
 class_name PlayerData
 
+const DEBUG_ENABLED: bool = true
+
 # PlayerData Resource - Complete player state using Stats resource
 # Replaces the old PlayerState Node with a more efficient resource-based approach
 
@@ -489,6 +491,6 @@ func print_status():
 	"""Print current player status for debugging"""
 	if stats:
 		stats.print_status()
-	print("Class: %s" % get_display_name())
-	print("Cards played this turn: %d" % cards_played_this_turn)
-	print("HOLD cards: %d" % hold_cards.size())
+	GLog.debug("Class: %s" % get_display_name())
+	GLog.debug("Cards played this turn: %d" % cards_played_this_turn)
+	GLog.debug("HOLD cards: %d" % hold_cards.size())

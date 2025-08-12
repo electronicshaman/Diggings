@@ -39,7 +39,7 @@ func apply_effect(game_state: Node, curio_data: Resource, context: Dictionary) -
 			if game_state.has_method("add_gold"):
 				game_state.add_gold(int(actual_value))
 		_:
-			print("WARNING: Unknown stat '%s' in StatModifier" % stat_name)
+			GLog.warn("Unknown stat '%s' in StatModifier" % stat_name)
 
 func get_stat_modifier(requested_stat: String) -> float:
 	"""Return the modifier value if this effect modifies the requested stat"""

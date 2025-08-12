@@ -192,7 +192,16 @@ func save_run_statistics(victory: bool, duration: float) -> void:
 	run_statistics["floor_reached"] = game_data.get("current_floor", 0)
 	run_statistics["timestamp"] = Time.get_unix_time_from_system()
 	
+	# Add character name if available
+	if selected_character:
+		run_statistics["character_name"] = selected_character.full_name + " '" + selected_character.nickname + "'"
+	else:
+		run_statistics["character_name"] = current_character_class
+	
 	GLog.debug("Run statistics saved: " + str(run_statistics))
+	
+	# Save to run history for persistent tracking
+	RunHistoryManager.add_run(run_statistics)
 
 func apply_character_data() -> void:
 	"""Apply selected character data to game state"""

@@ -35,7 +35,7 @@ func apply_effect(game_state: Node, curio_data: Resource, context: Dictionary) -
 		"block", "defense":
 			_add_defense(game_state, actual_amount)
 		_:
-			print("WARNING: Unknown resource type '%s' in ResourceGain" % resource_type)
+			GLog.warn("Unknown resource type '%s' in ResourceGain" % resource_type)
 
 func _check_condition(game_state: Node, context: Dictionary) -> bool:
 	if condition.is_empty():

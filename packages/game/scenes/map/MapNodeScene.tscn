@@ -8,19 +8,19 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_ebne8")
 
-[node name="BackgroundIcon" type="TextureRect" parent="."]
+[node name="BackgroundIcon" type="ColorRect" parent="."]
 layout_mode = 0
 offset_right = 64.0
 offset_bottom = 64.0
-stretch_mode = 4
+color = Color(1, 1, 1, 1)
 
-[node name="NodeIcon" type="TextureRect" parent="."]
+[node name="NodeIcon" type="ColorRect" parent="."]
 layout_mode = 0
 offset_left = 9.5
 offset_top = 9.5
 offset_right = 54.5
 offset_bottom = 54.5
-stretch_mode = 4
+color = Color(1, 1, 1, 1)
 
 [node name="StateIndicator" type="Control" parent="."]
 anchors_preset = 0

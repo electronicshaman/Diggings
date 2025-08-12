@@ -5,8 +5,8 @@ const DEBUG_ENABLED: bool = false
 
 # Node references
 @onready var node_button: Button = $NodeButton
-@onready var background_icon: TextureRect = $BackgroundIcon
-@onready var node_icon: TextureRect = $NodeIcon
+@onready var background_icon: ColorRect = $BackgroundIcon
+@onready var node_icon: ColorRect = $NodeIcon
 # @onready var node_label: Label = $NodeLabel  # Removed - using tooltips instead
 @onready var state_indicator: Control = $StateIndicator
 @onready var outline: ColorRect = $StateIndicator/Outline
@@ -49,12 +49,10 @@ func setup_visual_hierarchy():
 		node_button.position = Vector2.ZERO
 	
 	if background_icon:
-		background_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		background_icon.size = node_size
 		background_icon.position = Vector2.ZERO
 	
 	if node_icon:
-		node_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		node_icon.size = node_size * 0.7  # Slightly smaller than background
 		node_icon.position = node_size * 0.15  # Center it
 	
@@ -112,24 +110,26 @@ func apply_type_customizations():
 
 func update_visuals():
 	"""Update all visual elements based on current node data and state"""
-	if not node_data:
+	if not node_data or not node_data.config:
+		GLog.error("MapNodeScene.update_visuals() called without node data or config")
 		return
 	
-	# Label removed - using tooltips instead
+	# Get the explicit color from resource based on current state
+	var state_color = node_data.config.get_state_color(node_data.get_state())
+	var base_visual_color = node_data.config.visual_color
 	
-	# Update background based on type
+	if DEBUG_ENABLED:
+		GLog.debug("Updating visuals for " + node_id + " - State: " + str(node_data.get_state()) + ", State Color: " + str(state_color) + ", Visual Color: " + str(base_visual_color))
+	
+	# Update background using explicit resource color
 	if background_icon:
-		background_icon.modulate = get_background_color()
-		# Set background texture if available
-		if node_data.config and node_data.config.background_texture:
-			background_icon.texture = node_data.config.background_texture
+		# Use state-specific color for background
+		background_icon.color = state_color
 	
-	# Update main icon
+	# Update main icon using explicit resource color
 	if node_icon:
-		node_icon.modulate = get_icon_color()
-		# Set icon texture if available
-		if node_data.config and node_data.config.icon_texture:
-			node_icon.texture = node_data.config.icon_texture
+		# Use base visual color for the main icon
+		node_icon.color = base_visual_color
 	
 	# Update state indicator
 	update_state_indicator()
@@ -159,29 +159,6 @@ func update_state_indicator():
 	else:
 		outline.color = Color.TRANSPARENT
 
-func get_background_color() -> Color:
-	"""Get the background color using resource-defined state colors exactly"""
-	if not node_data or not node_data.config:
-		return Color.WHITE
-	
-	# Use the state color exactly as defined in the MapNodeConfig resource
-	return node_data.get_state_color()
-
-func get_icon_color() -> Color:
-	"""Get the icon color based on node state"""
-	var alpha = node_data.get_state_alpha()
-	return Color(1.0, 1.0, 1.0, alpha)
-
-# func get_label_color() -> Color:
-	# Removed - no longer using labels
-
-func get_current_resource_modulate() -> Color:
-	"""Get the current modulate color using resource-defined state colors exactly"""
-	if not node_data or not node_data.config:
-		return Color.WHITE
-	
-	# Use the state color exactly as defined in the MapNodeConfig resource
-	return node_data.get_state_color()
 
 func update_interactivity():
 	"""Update whether this node can be interacted with"""
@@ -259,10 +236,10 @@ func play_select_animation():
 	if animation_player and animation_player.has_animation("select"):
 		animation_player.play("select")
 	else:
-		# Get the proper resource-based color to restore to
-		var base_color = get_current_resource_modulate()
+		# Get the current resource-based color for animation
+		var base_color = node_data.config.get_state_color(node_data.get_state()) if node_data and node_data.config else Color.WHITE
 		
-		# Fallback animation using tween
+		# Fallback animation using tween with modulate effects
 		var tween = create_tween()
 		tween.parallel().tween_property(self, "scale", Vector2(1.2, 1.2), 0.1)
 		tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
@@ -285,7 +262,11 @@ func play_discover_animation():
 # Event handlers
 func _on_button_pressed():
 	"""Handle button press - emit click signal"""
-	GLog.debug("MapNodeScene button pressed: " + node_id)
+	GLog.info("=== MapNodeScene button pressed: " + node_id + " ===")
+	GLog.debug("Node interactive: " + str(is_interactive) + ", button disabled: " + str(node_button.disabled if node_button else "no button"))
+	
+	if node_data:
+		GLog.debug("Node state: " + str(node_data.get_state()) + ", can interact: " + str(node_data.is_interactive()))
 	
 	# Play selection animation
 	play_select_animation()
@@ -294,6 +275,7 @@ func _on_button_pressed():
 	var dummy_event = InputEventMouseButton.new()
 	dummy_event.button_index = MOUSE_BUTTON_LEFT
 	dummy_event.pressed = true
+	GLog.debug("Emitting node_clicked signal for: " + node_id)
 	node_clicked.emit(node_id, dummy_event)
 
 func _on_mouse_entered():

@@ -21,7 +21,7 @@ var current_player_node: String = ""
 
 func _ready():
 	if DEBUG_ENABLED:
-		print("=== SIMPLE MAP SYSTEM INITIALIZED ===")
+		GLog.info("=== SIMPLE MAP SYSTEM INITIALIZED ===")
 	
 	# Generate a simple test map
 	generate_simple_map()
@@ -29,7 +29,7 @@ func _ready():
 func generate_simple_map():
 	"""Generate a simple map using Delaunay triangulation"""
 	if DEBUG_ENABLED:
-		print("Generating simple map with Delaunay triangulation...")
+		GLog.info("Generating simple map with Delaunay triangulation...")
 	
 	# Clear existing content
 	clear_map()
@@ -42,7 +42,7 @@ func generate_simple_map():
 	var edges_data = DelaunayTriangulator.triangulation_to_edges(triangulation)
 	
 	if DEBUG_ENABLED:
-		print("Generated", node_positions.size(), "nodes with", edges_data.size(), "connections")
+		GLog.debug("Generated " + str(node_positions.size()) + " nodes with " + str(edges_data.size()) + " connections")
 	
 	# First pass: create initial node assignments
 	var initial_assignments = assign_node_types_to_positions(node_positions)
@@ -71,7 +71,7 @@ func generate_simple_map():
 		set_current_player_node(nodes.keys()[0])
 	
 	if DEBUG_ENABLED:
-		print("Simple map generation complete!")
+		GLog.info("Simple map generation complete!")
 
 func generate_random_positions(count: int) -> Array[Vector2]:
 	"""Generate random positions within the map area"""
@@ -186,7 +186,7 @@ func create_nodes_with_assignments(positions: Array[Vector2], assignments: Array
 		}
 		
 		if DEBUG_ENABLED:
-			print("Created", node_type_info.type_name, "node:", node_id, "at", position)
+			GLog.debug("Created " + node_type_info.type_name + " node: " + node_id + " at " + str(position))
 
 func create_connections_from_filtered(filtered_edges: Array):
 	"""Create connections from pre-filtered edges"""
@@ -262,8 +262,8 @@ func assign_node_types_to_positions(positions: Array[Vector2]) -> Array:
 		assignments.append(assignment)
 	
 	if DEBUG_ENABLED:
-		print("Assigned city to index:", city_index)
-		print("Assigned boss to index:", boss_index, "(furthest from city)")
+		GLog.debug("Assigned city to index: " + str(city_index))
+		GLog.debug("Assigned boss to index: " + str(boss_index) + " (furthest from city)")
 		print("Assigned settlements to indices:", edge_indices)
 		print("Interior node distribution:", _count_node_types(interior_assignments))
 	
@@ -341,7 +341,7 @@ func distribute_interior_node_types(interior_count: int) -> Array[String]:
 	
 	if total_mins > interior_count:
 		if DEBUG_ENABLED:
-			print("WARNING: Total minimum requirements (", total_mins, ") exceed interior slots (", interior_count, ")")
+			GLog.warn("Total minimum requirements (" + str(total_mins) + ") exceed interior slots (" + str(interior_count) + ")")
 		# Scale down minimums proportionally
 		for type in types:
 			type_limits[type].min = int(type_limits[type].min * float(interior_count) / float(total_mins))
@@ -432,7 +432,7 @@ func distribute_interior_node_types_excluding_boss(interior_count: int) -> Array
 	
 	if total_mins > interior_count:
 		if DEBUG_ENABLED:
-			print("WARNING: Total minimum requirements (", total_mins, ") exceed interior slots (", interior_count, ")")
+			GLog.warn("Total minimum requirements (" + str(total_mins) + ") exceed interior slots (" + str(interior_count) + ")")
 		# Scale down minimums proportionally
 		for type in types:
 			type_limits[type].min = int(type_limits[type].min * float(interior_count) / float(total_mins))
@@ -592,7 +592,7 @@ func validate_graph_connectivity(edge_list: Array) -> bool:
 	var all_connected = visited.size() == nodes.size()
 	
 	if DEBUG_ENABLED and not all_connected:
-		print("Connectivity check failed: visited", visited.size(), "of", nodes.size(), "nodes")
+		GLog.warn("Connectivity check failed: visited " + str(visited.size()) + " of " + str(nodes.size()) + " nodes")
 	
 	return all_connected
 
@@ -714,7 +714,7 @@ func create_connections_from_edges(edges_data: Array):
 				print("Filtered out connection:", nodes[from_node_id].type, "->", nodes[to_node_id].type)
 	
 	if DEBUG_ENABLED:
-		print("Original edges:", edges_data.size(), "Filtered edges:", filtered_edges.size())
+		GLog.debug("Original edges: " + str(edges_data.size()) + " Filtered edges: " + str(filtered_edges.size()))
 	
 	# Don't add extra edges - we'll handle dead-ends by making them mines
 	# filtered_edges already contains what we want
@@ -725,7 +725,7 @@ func create_connections_from_edges(edges_data: Array):
 		for edge_data in filtered_edges:
 			create_connection(edge_data.from, edge_data.to)
 	else:
-		print("WARNING: Filtered edges would break connectivity, falling back to original edges")
+		GLog.warn("Filtered edges would break connectivity, falling back to original edges")
 		# Fallback to original edges to maintain connectivity
 		for edge in edges_data:
 			var from_key = str(edge.p1)
@@ -773,42 +773,94 @@ func create_connection(from_node_id: String, to_node_id: String):
 		print("Connected", from_node_id, "to", to_node_id)
 
 func set_current_player_node(node_id: String):
-	"""Set the current player position"""
+	"""Set the current player position and update node states"""
 	if not nodes.has(node_id):
+		GLog.error("Attempted to set current player node to non-existent node: " + node_id)
 		return
 	
-	# Reset previous current node
+	if DEBUG_ENABLED:
+		GLog.debug("Setting current player node to: " + node_id)
+	
+	# Reset previous current node state
 	if current_player_node != "" and nodes.has(current_player_node):
 		var old_node = nodes[current_player_node]
-		old_node.scene.modulate = Color(1.0, 1.0, 1.0, 1.0)  # Full white, full opacity
+		# Set old node to completed state (can revisit)
+		old_node.map_node.set_state(MapNode.NodeState.COMPLETED)
+		old_node.scene.refresh()
+		if DEBUG_ENABLED:
+			GLog.debug("Set previous node " + current_player_node + " to COMPLETED state")
+	
+	# Set all nodes to default AVAILABLE state (except current)
+	for other_node_id in nodes.keys():
+		if other_node_id != node_id:
+			var other_node = nodes[other_node_id]
+			if other_node.map_node.get_state() != MapNode.NodeState.COMPLETED:
+				other_node.map_node.set_state(MapNode.NodeState.AVAILABLE)
+				other_node.scene.refresh()
 	
 	# Set new current node
 	current_player_node = node_id
 	var current_node = nodes[current_player_node]
-	current_node.scene.modulate = Color(1.0, 0.843, 0.0, 1.0)  # Gold with full opacity
+	
+	# Update current node state to CURRENT (resource colors will be applied automatically)
+	current_node.map_node.set_state(MapNode.NodeState.CURRENT)
+	current_node.scene.refresh()
+	
+	# Ensure connected nodes are AVAILABLE for interaction
+	for connected_node_id in current_node.connections:
+		if nodes.has(connected_node_id):
+			var connected_node = nodes[connected_node_id]
+			# Don't change completed nodes back to available
+			if connected_node.map_node.get_state() != MapNode.NodeState.COMPLETED:
+				connected_node.map_node.set_state(MapNode.NodeState.AVAILABLE)
+				connected_node.scene.refresh()
+			if DEBUG_ENABLED:
+				GLog.debug("Connected node " + connected_node_id + " is available")
 	
 	if DEBUG_ENABLED:
-		print("Player moved to:", node_id)
+		GLog.info("Player moved to: " + node_id + " (type: " + str(current_node.map_node.get_type_name()) + ")")
 
 func _on_node_clicked(node_id: String):
 	"""Handle node click - move player if connected"""
 	if DEBUG_ENABLED:
-		print("Node clicked:", node_id)
+		GLog.info("=== NODE CLICKED: " + node_id + " ===")
 	
 	if current_player_node == "":
+		GLog.error("No current player node set")
 		return
+	
+	if not nodes.has(node_id):
+		GLog.error("Clicked node " + node_id + " does not exist")
+		return
+	
+	if not nodes.has(current_player_node):
+		GLog.error("Current player node " + current_player_node + " does not exist")
+		return
+	
+	# Get node info for debugging
+	var clicked_node = nodes[node_id]
+	var clicked_state = clicked_node.map_node.get_state()
+	var clicked_interactive = clicked_node.map_node.is_interactive()
+	
+	if DEBUG_ENABLED:
+		GLog.debug("Clicked node state: " + str(clicked_state) + ", interactive: " + str(clicked_interactive))
+		GLog.debug("Current player at: " + current_player_node)
 	
 	# Check if clicked node is connected to current position
 	var current_connections = nodes[current_player_node].connections
 	
+	if DEBUG_ENABLED:
+		GLog.debug("Current connections: " + str(current_connections))
+	
 	if node_id == current_player_node:
-		print("Already at this node!")
+		GLog.info("Already at this node!")
 		return
 	
 	if node_id in current_connections:
+		GLog.info("Moving from " + current_player_node + " to " + node_id)
 		set_current_player_node(node_id)
 	else:
-		print("Cannot reach", node_id, "from current position")
+		GLog.warn("Cannot reach " + node_id + " from current position " + current_player_node)
 
 func clear_map():
 	"""Clear all existing map content"""

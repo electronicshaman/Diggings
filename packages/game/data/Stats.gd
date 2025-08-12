@@ -1,6 +1,8 @@
 extends Resource
 class_name Stats
 
+const DEBUG_ENABLED: bool = true
+
 # Stats Resource - Handles health, energy, sanity, and defense with change tracking
 # Part of the resource-based architecture migration for better performance and reusability
 
@@ -293,7 +295,7 @@ func load_from_data(data: Dictionary) -> void:
 
 # Print current stats for debugging
 func print_status() -> void:
-	print("Stats: %d/%d HP, %d/%d Energy, %d/%d Sanity, %d Defense" % [
+	GLog.debug("Stats: %d/%d HP, %d/%d Energy, %d/%d Sanity, %d Defense" % [
 		current_health, max_health,
 		current_energy, max_energy, 
 		current_sanity, max_sanity,

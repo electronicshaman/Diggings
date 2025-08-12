@@ -1,6 +1,8 @@
 extends Resource
 class_name CurioEffect
 
+const DEBUG_ENABLED: bool = true
+
 # Base class for all curio effects
 # Each effect is a modular resource that can be applied to curios
 
@@ -24,8 +26,8 @@ var triggered_this_turn: bool = false
 # curio_data: The curio that owns this effect
 # context: Dictionary with contextual information (e.g., card_played, damage_amount, etc.)
 func apply_effect(_game_state: Node, _curio_data: Resource, _context: Dictionary) -> void:
-	print("WARNING: CurioEffect.apply_effect() called but not overridden!")
-	print("Effect: %s" % effect_name)
+	GLog.warn("CurioEffect.apply_effect() called but not overridden!")
+	GLog.warn("Effect: %s" % effect_name)
 
 # Check if this effect can trigger given the current context
 func can_trigger(_game_state: Node, context: Dictionary) -> bool:
@@ -77,6 +79,6 @@ func get_required_context_keys() -> Array[String]:
 func validate_context(context: Dictionary) -> bool:
 	for key in get_required_context_keys():
 		if not context.has(key):
-			print("WARNING: CurioEffect '%s' missing required context key: %s" % [effect_name, key])
+			GLog.warn("CurioEffect '%s' missing required context key: %s" % [effect_name, key])
 			return false
 	return true

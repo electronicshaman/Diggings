@@ -11,7 +11,7 @@ var map_generator: MapGenerator
 var map_visualizer: MapVisualizer
 
 func _ready():
-	print("=== MAP TEST SCENE STARTED ===")
+	GLog.info("=== MAP TEST SCENE STARTED ===")
 	
 	# Set up the scene size to full viewport
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -22,7 +22,7 @@ func _ready():
 	generate_test_map()
 
 func setup_map_system():
-	print("Setting up map system...")
+	GLog.info("Setting up map system...")
 	
 	# Create map generator
 	map_generator = MapGenerator.new()
@@ -33,37 +33,37 @@ func setup_map_system():
 	map_visualizer.setup(map_generator)
 	add_child(map_visualizer)
 	
-	print("Map system setup complete")
+	GLog.info("Map system setup complete")
 
 func test_config_loading():
-	print("=== TESTING CONFIG LOADING ===")
+	GLog.info("=== TESTING CONFIG LOADING ===")
 	
 	# Test loading the config manually
 	var config_path = "res://data/map_layout_config.tres"
 	if ResourceLoader.exists(config_path):
 		var config = load(config_path) as MapLayoutConfig
-		print("Config loaded successfully:")
-		print("  viewport_size: ", config.viewport_size)
-		print("  spacing_min: ", config.spacing_min)
-		print("  spacing_max: ", config.spacing_max)
-		print("  connection_max_distance: ", config.connection_max_distance)
-		print("  physics_enabled: ", config.physics_enabled)
-		print("  bounds_enforce_viewport: ", config.bounds_enforce_viewport)
-		print("  bounds_margin: ", config.bounds_margin)
+		GLog.debug("Config loaded successfully:")
+		GLog.debug("  viewport_size: " + str(config.viewport_size))
+		GLog.debug("  spacing_min: " + str(config.spacing_min))
+		GLog.debug("  spacing_max: " + str(config.spacing_max))
+		GLog.debug("  connection_max_distance: " + str(config.connection_max_distance))
+		GLog.debug("  physics_enabled: " + str(config.physics_enabled))
+		GLog.debug("  bounds_enforce_viewport: " + str(config.bounds_enforce_viewport))
+		GLog.debug("  bounds_margin: " + str(config.bounds_margin))
 	else:
-		print("ERROR: Config file not found!")
+		GLog.error("Config file not found!")
 	
 	# Test the generator's loaded config
 	if map_generator.layout_config:
-		print("Generator config:")
-		print("  viewport_size: ", map_generator.layout_config.viewport_size)
-		print("  spacing_min: ", map_generator.layout_config.spacing_min)
-		print("  spacing_max: ", map_generator.layout_config.spacing_max)
+		GLog.debug("Generator config:")
+		GLog.debug("  viewport_size: " + str(map_generator.layout_config.viewport_size))
+		GLog.debug("  spacing_min: " + str(map_generator.layout_config.spacing_min))
+		GLog.debug("  spacing_max: " + str(map_generator.layout_config.spacing_max))
 	else:
-		print("ERROR: Generator has no config!")
+		GLog.error("Generator has no config!")
 
 func generate_test_map():
-	print("=== GENERATING TEST MAP ===")
+	GLog.info("=== GENERATING TEST MAP ===")
 	
 	# Test the new dual seed system
 	test_hash_seeds()
@@ -74,27 +74,27 @@ func generate_test_map():
 	test_traditional_generation()
 	test_planar_generation()
 	
-	print("=== TEST COMPLETE ===")
+	GLog.info("=== TEST COMPLETE ===")
 
 func test_traditional_generation():
-	print("=== TESTING TRADITIONAL GENERATION ===")
+	GLog.info("=== TESTING TRADITIONAL GENERATION ===")
 	
 	# Ensure traditional generation is used
 	if map_generator.layout_config:
 		map_generator.layout_config.use_planar_graph_generation = false
 	
 	var test_seed = 42
-	print("Using integer seed: ", test_seed)
+	GLog.debug("Using integer seed: " + str(test_seed))
 	
 	var generated_graph = map_generator.generate_map(test_seed)
 	
 	if not generated_graph or generated_graph.get("nodes", {}).is_empty():
-		print("ERROR: Traditional map generation failed!")
+		GLog.error("Traditional map generation failed!")
 		return
 	
-	print("Traditional map generated successfully!")
-	print("  Node count: ", generated_graph.nodes.size())
-	print("  Edge count: ", generated_graph.edges.size())
+	GLog.info("Traditional map generated successfully!")
+	GLog.debug("  Node count: " + str(generated_graph.nodes.size()))
+	GLog.debug("  Edge count: " + str(generated_graph.edges.size()))
 	
 	# Test for edge crossings in traditional generation
 	test_planarity(generated_graph, "Traditional")
@@ -106,7 +106,7 @@ func test_traditional_generation():
 	map_visualizer.visualize_graph(generated_graph)
 
 func test_planar_generation():
-	print("=== TESTING PLANAR GENERATION ===")
+	GLog.info("=== TESTING PLANAR GENERATION ===")
 	
 	# Enable planar graph generation
 	if map_generator.layout_config:
@@ -116,17 +116,17 @@ func test_planar_generation():
 		map_generator.layout_config.validate_planarity = true
 	
 	var test_seed = 43  # Different seed for variety
-	print("Using integer seed for planar generation: ", test_seed)
+	GLog.debug("Using integer seed for planar generation: " + str(test_seed))
 	
 	var generated_graph = map_generator.generate_map(test_seed)
 	
 	if not generated_graph or generated_graph.get("nodes", {}).is_empty():
-		print("ERROR: Planar map generation failed!")
+		GLog.error("Planar map generation failed!")
 		return
 	
-	print("Planar map generated successfully!")
-	print("  Node count: ", generated_graph.nodes.size())
-	print("  Edge count: ", generated_graph.edges.size())
+	GLog.info("Planar map generated successfully!")
+	GLog.debug("  Node count: " + str(generated_graph.nodes.size()))
+	GLog.debug("  Edge count: " + str(generated_graph.edges.size()))
 	
 	# Test planarity
 	test_planarity(generated_graph, "Planar")
@@ -142,7 +142,7 @@ func test_planar_generation():
 	map_visualizer.visualize_graph(generated_graph)
 
 func test_planarity(graph: Dictionary, generation_type: String):
-	print("=== PLANARITY TEST FOR " + generation_type.to_upper() + " ===")
+	GLog.info("=== PLANARITY TEST FOR " + generation_type.to_upper() + " ===")
 	
 	# Import the validator
 	const PlanarGraphValidator = preload("res://scripts/map/PlanarGraphValidator.gd")
@@ -151,9 +151,9 @@ func test_planarity(graph: Dictionary, generation_type: String):
 	var crossings = PlanarGraphValidator.find_edge_crossings(graph)
 	
 	if is_planar:
-		print("  ✓ Graph is PLANAR (no edge crossings)")
+		GLog.info("  ✓ Graph is PLANAR (no edge crossings)")
 	else:
-		print("  ✗ Graph has CROSSINGS: ", crossings.size(), " intersections found")
+		GLog.warn("  ✗ Graph has CROSSINGS: " + str(crossings.size()) + " intersections found")
 		
 		# Print details of first few crossings
 		var max_details = min(5, crossings.size())
@@ -164,7 +164,7 @@ func test_planarity(graph: Dictionary, generation_type: String):
 				  " at ", crossing.intersection_point)
 
 func test_detailed_planarity_analysis(graph: Dictionary):
-	print("=== DETAILED PLANARITY ANALYSIS ===")
+	GLog.info("=== DETAILED PLANARITY ANALYSIS ===")
 	
 	const PlanarGraphValidator = preload("res://scripts/map/PlanarGraphValidator.gd")
 	
@@ -215,7 +215,7 @@ func print_graph_details(graph: Dictionary, generation_type: String):
 	print("  Utilization: ", actual_size.x, "x", actual_size.y, " of expected 1920x900")
 
 func test_hash_seeds():
-	print("=== TESTING DUAL SEED SYSTEM ===")
+	GLog.info("=== TESTING DUAL SEED SYSTEM ===")
 	
 	# Test various seed inputs
 	var test_inputs = ["42", "test", "ABCDEF1234", "cthulhu", "gold", "fear", "eldritch"]
