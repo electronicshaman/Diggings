@@ -46,7 +46,8 @@ func _initialize_ui_manager() -> Error:
 	if not is_instance_valid(lose_duel_button):
 		push_warning("MainGameController: Lose duel button not found")
 	
-	GLog.debug("MainGameController: UI manager initialized successfully") if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("MainGameController: UI manager initialized successfully")
 	return OK
 
 func initialize_controllers() -> void:
@@ -130,8 +131,9 @@ func start_initial_duel() -> void:
 		push_error("MainGameController: GameController missing start_test_duel method")
 		return
 	
-	# Check if test cards are available
-	if game_controller.has_property("test_cards") and game_controller.test_cards.size() > 0:
+	# Check if test cards are available (avoid has_property; use safe get)
+	var tc = game_controller.get("test_cards")
+	if tc is Array and tc.size() > 0:
 		game_controller.start_test_duel()
 	else:
 		GLog.warn("Cannot start duel - waiting for test content to load")
@@ -216,6 +218,7 @@ func get_ui_manager() -> UIReferenceManager:
 func refresh_ui_references() -> void:
 	if ui_manager:
 		ui_manager.clear_cache()
-		GLog.debug("MainGameController: UI references refreshed") if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("MainGameController: UI references refreshed")
 	else:
 		push_warning("MainGameController: Cannot refresh UI - UI manager not initialized")
