@@ -2,116 +2,148 @@ extends Node2D
 
 const DEBUG_ENABLED: bool = true
 
-@onready var duel_manager := $DuelManager
-@onready var game_controller := $GameController
-@onready var ui_controller := $UIController
-@onready var input_controller := $InputController
+# Core controllers - safely referenced
+@onready var duel_manager: Node = $DuelManager
+@onready var game_controller: Node = $GameController
+@onready var ui_controller: Node = $UIController
+@onready var input_controller: Node = $InputController
 
-# UI Elements - Direct references using @onready
-@onready var hand_area := $UI/Control/HandArea
-@onready var debug_panel := $UI/Control/DebugPanel
-@onready var end_turn_button := $UI/Control/TurnInfo/EndTurnButton
-@onready var win_duel_button := $UI/Control/TurnInfo/WinDuel
-@onready var lose_duel_button := $UI/Control/TurnInfo/LoseDuel
-
-# Player Stats UI
-@onready var player_health_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/HealthLabel
-@onready var player_energy_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/EnergyLabel
-@onready var player_defense_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/DefenseLabel
-@onready var player_sanity_label := $UI/Control/PlayerArea/PlayerStats/RightColumn/SanityLabel
-@onready var character_name_label := $UI/Control/PlayerArea/PlayerStats/LeftColumn/CharacterNameLabel
-@onready var player_gold_label := $UI/Control/PlayerArea/PlayerStats/RightColumn/GoldLabel
-
-# Enemy Stats UI
-@onready var enemy_name_label := $UI/Control/EnemyArea/EnemyStats/EnemyName
-@onready var enemy_health_label := $UI/Control/EnemyArea/EnemyStats/EnemyHealth
-@onready var enemy_defense_label := $UI/Control/EnemyArea/EnemyStats/EnemyDefense
-
-# Game Info UI
-@onready var deck_label := $UI/Control/PileIndicatorsLeft/DeckLabel
-@onready var discard_label := $UI/Control/PileIndicatorsRight/DiscardLabel
-@onready var turn_label := $UI/Control/TurnInfo/TurnLabel
-@onready var phase_label := $UI/Control/TurnInfo/PhaseLabel
-@onready var seed_label := $UI/Control/TurnInfo/SeedLabel
-
-# Debug UI
-@onready var add_card_button := $UI/Control/DebugPanel/DebugButtons/AddCardButton
-@onready var set_health_button := $UI/Control/DebugPanel/DebugButtons/SetHealthButton
-@onready var set_energy_button := $UI/Control/DebugPanel/DebugButtons/SetEnergyButton
-@onready var reset_duel_button := $UI/Control/DebugPanel/DebugButtons/ResetDuelButton
-
-# Curios UI
-@onready var curios_panel := $UI/Control/CuriosPanel
-@onready var curios_list := $UI/Control/CuriosPanel/CuriosList
-
+# UI Reference Manager for safe UI access
+var ui_manager: UIReferenceManager
 var is_initialized: bool = false
+
+# Quick access nodes that need direct references for critical functionality
+var win_duel_button: Button
+var lose_duel_button: Button
 
 func _ready() -> void:
 	GLog.debug("MainGameController awakened - The orchestrator of chaos")
 	await get_tree().process_frame
+	
+	if _initialize_ui_manager() != OK:
+		push_error("MainGameController: Failed to initialize UI manager")
+		return
+	
 	initialize_controllers()
 	
 	await get_tree().create_timer(0.5).timeout
 	start_initial_duel()
 
+func _initialize_ui_manager() -> Error:
+	ui_manager = UIReferenceManager.new()
+	var result = ui_manager.initialize(self)
+	
+	if result != OK:
+		push_error("MainGameController: UI manager initialization failed")
+		return result
+	
+	# Cache critical buttons for direct access
+	win_duel_button = get_node_or_null("UI/Control/TurnInfo/WinDuel")
+	lose_duel_button = get_node_or_null("UI/Control/TurnInfo/LoseDuel")
+	
+	if not is_instance_valid(win_duel_button):
+		push_warning("MainGameController: Win duel button not found")
+	if not is_instance_valid(lose_duel_button):
+		push_warning("MainGameController: Lose duel button not found")
+	
+	GLog.debug("MainGameController: UI manager initialized successfully") if DEBUG_ENABLED else null
+	return OK
+
 func initialize_controllers() -> void:
 	if is_initialized:
+		return
+	
+	if not is_instance_valid(game_controller):
+		push_error("MainGameController: GameController is invalid")
+		return
+	
+	if not is_instance_valid(duel_manager):
+		push_error("MainGameController: DuelManager is invalid")
 		return
 	
 	game_controller.initialize(duel_manager)
 	
 	var ui_references := get_ui_references()
-	ui_controller.initialize(ui_references, game_controller)
+	if ui_references.is_empty():
+		push_warning("MainGameController: No UI references available")
 	
-	input_controller.initialize(game_controller, ui_controller, end_turn_button)
+	if is_instance_valid(ui_controller):
+		ui_controller.initialize(ui_references, game_controller)
+	else:
+		push_error("MainGameController: UIController is invalid")
+		return
+	
+	var end_turn_btn = ui_manager.get_ui_node("end_turn_button")
+	if is_instance_valid(input_controller):
+		input_controller.initialize(game_controller, ui_controller, end_turn_btn)
+	else:
+		push_error("MainGameController: InputController is invalid")
+		return
 	
 	setup_connections()
 	is_initialized = true
 	GLog.debug("All controllers initialized and connected")
 
 func get_ui_references() -> Dictionary:
-	return {
-		"player_health": player_health_label,
-		"player_energy": player_energy_label,
-		"player_defense": player_defense_label,
-		"player_sanity": player_sanity_label,
-		"player_gold": player_gold_label,
-		"character_name": character_name_label,
-		"enemy_name": enemy_name_label,
-		"enemy_health": enemy_health_label,
-		"enemy_defense": enemy_defense_label,
-		"deck": deck_label,
-		"discard": discard_label,
-		"turn": turn_label,
-		"phase": phase_label,
-		"seed": seed_label,
-		"end_turn_button": end_turn_button,
-		"debug_panel": debug_panel,
-		"hand_area": hand_area,
-		"add_card_button": add_card_button,
-		"set_health_button": set_health_button,
-		"set_energy_button": set_energy_button,
-		"reset_duel_button": reset_duel_button,
-		"curios_panel": curios_panel,
-		"curios_list": curios_list
-	}
+	if not ui_manager:
+		push_error("MainGameController: UI manager not initialized")
+		return {}
+	
+	return ui_manager.get_ui_reference_dictionary()
 
 func setup_connections() -> void:
-	game_controller.test_content_loaded.connect(_on_test_content_loaded)
-	ui_controller.ui_refresh_requested.connect(_on_ui_refresh_requested)
-	input_controller.input_action_triggered.connect(_on_input_action_triggered)
+	if is_instance_valid(game_controller):
+		if game_controller.has_signal("test_content_loaded"):
+			game_controller.test_content_loaded.connect(_on_test_content_loaded)
+		else:
+			push_warning("MainGameController: test_content_loaded signal not found on GameController")
 	
-	# Connect testing buttons
-	win_duel_button.pressed.connect(_on_win_duel_pressed)
-	lose_duel_button.pressed.connect(_on_lose_duel_pressed)
+	if is_instance_valid(ui_controller):
+		if ui_controller.has_signal("ui_refresh_requested"):
+			ui_controller.ui_refresh_requested.connect(_on_ui_refresh_requested)
+		else:
+			push_warning("MainGameController: ui_refresh_requested signal not found on UIController")
+	
+	if is_instance_valid(input_controller):
+		if input_controller.has_signal("input_action_triggered"):
+			input_controller.input_action_triggered.connect(_on_input_action_triggered)
+		else:
+			push_warning("MainGameController: input_action_triggered signal not found on InputController")
+	
+	# Connect testing buttons safely
+	if is_instance_valid(win_duel_button):
+		win_duel_button.pressed.connect(_on_win_duel_pressed)
+	else:
+		push_warning("MainGameController: Cannot connect win_duel_button - button is invalid")
+		
+	if is_instance_valid(lose_duel_button):
+		lose_duel_button.pressed.connect(_on_lose_duel_pressed)
+	else:
+		push_warning("MainGameController: Cannot connect lose_duel_button - button is invalid")
 
 func start_initial_duel() -> void:
-	if game_controller and game_controller.test_cards.size() > 0:
+	if not is_instance_valid(game_controller):
+		push_error("MainGameController: Cannot start duel - GameController is invalid")
+		return
+	
+	if not game_controller.has_method("start_test_duel"):
+		push_error("MainGameController: GameController missing start_test_duel method")
+		return
+	
+	# Check if test cards are available
+	if game_controller.has_property("test_cards") and game_controller.test_cards.size() > 0:
 		game_controller.start_test_duel()
 	else:
 		GLog.warn("Cannot start duel - waiting for test content to load")
-		await game_controller.test_content_loaded
-		game_controller.start_test_duel()
+		
+		# Wait for test content to load if signal exists
+		if game_controller.has_signal("test_content_loaded"):
+			await game_controller.test_content_loaded
+			if is_instance_valid(game_controller):
+				game_controller.start_test_duel()
+		else:
+			push_warning("MainGameController: test_content_loaded signal not available - starting duel anyway")
+			game_controller.start_test_duel()
 
 func _on_test_content_loaded() -> void:
 	GLog.debug("Test content loaded, ready for dueling")
@@ -126,30 +158,64 @@ func _on_input_action_triggered(action: String) -> void:
 
 func _on_win_duel_pressed() -> void:
 	GLog.debug("Test win button pressed - ending duel as player victory")
-	if duel_manager:
+	if is_instance_valid(duel_manager) and duel_manager.has_method("end_duel"):
 		duel_manager.end_duel("player")
+	else:
+		push_warning("MainGameController: Cannot end duel - DuelManager is invalid or missing method")
 	
 	# Return to map after a brief delay
 	await get_tree().create_timer(1.0).timeout
-	SceneManager.load_scene("res://scenes/game/map.tscn")
+	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene"):
+		SceneManager.load_scene("res://scenes/game/map.tscn")
+	else:
+		push_error("MainGameController: Cannot load map scene - SceneManager unavailable")
 
 func _on_lose_duel_pressed() -> void:
 	GLog.debug("Test lose button pressed - ending duel as player defeat")
-	if duel_manager:
+	if is_instance_valid(duel_manager) and duel_manager.has_method("end_duel"):
 		duel_manager.end_duel("enemy")
+	else:
+		push_warning("MainGameController: Cannot end duel - DuelManager is invalid or missing method")
 	
 	# Go to game over after a brief delay
 	await get_tree().create_timer(1.0).timeout
-	SceneManager.load_scene("res://scenes/ui/game_over.tscn")
+	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene"):
+		SceneManager.load_scene("res://scenes/ui/game_over.tscn")
+	else:
+		push_error("MainGameController: Cannot load game over scene - SceneManager unavailable")
 
 func get_game_controller() -> Node:
-	return game_controller
+	if is_instance_valid(game_controller):
+		return game_controller
+	push_warning("MainGameController: GameController is invalid")
+	return null
 
 func get_ui_controller() -> Node:
-	return ui_controller
+	if is_instance_valid(ui_controller):
+		return ui_controller
+	push_warning("MainGameController: UIController is invalid")
+	return null
 
 func get_input_controller() -> Node:
-	return input_controller
+	if is_instance_valid(input_controller):
+		return input_controller
+	push_warning("MainGameController: InputController is invalid")
+	return null
 
 func get_duel_manager() -> Node:
-	return duel_manager
+	if is_instance_valid(duel_manager):
+		return duel_manager
+	push_warning("MainGameController: DuelManager is invalid")
+	return null
+
+## Get UI manager for external access to UI references
+func get_ui_manager() -> UIReferenceManager:
+	return ui_manager
+
+## Refresh UI cache - useful when UI structure changes during runtime
+func refresh_ui_references() -> void:
+	if ui_manager:
+		ui_manager.clear_cache()
+		GLog.debug("MainGameController: UI references refreshed") if DEBUG_ENABLED else null
+	else:
+		push_warning("MainGameController: Cannot refresh UI - UI manager not initialized")
