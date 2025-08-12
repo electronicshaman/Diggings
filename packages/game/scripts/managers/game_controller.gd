@@ -16,6 +16,20 @@ var _error_count: int = 0
 var _last_error_time: float = 0.0
 var _critical_errors: Array[String] = []
 
+# Safe property existence helper for Objects/Resources without has_property()
+func _has_prop(obj, prop_name: String) -> bool:
+	if obj == null:
+		return false
+	if obj is Dictionary:
+		return (obj as Dictionary).has(prop_name)
+	if obj is Object:
+		var o: Object = obj
+		var plist: Array = o.get_property_list()
+		for p in plist:
+			if typeof(p) == TYPE_DICTIONARY and (p as Dictionary).get("name", "") == prop_name:
+				return true
+	return false
+
 func _ready() -> void:
 	GLog.debug("GameController initialized - Managing the cosmic game state")
 	_safe_load_test_content()
@@ -52,7 +66,7 @@ func initialize(duel_manager_ref: Node) -> Error:
 			push_warning("GameController: DuelManager missing signal: " + connection.signal)
 	
 	# Initialize duel state safely
-	if duel_manager.has_property("duel_state"):
+	if _has_prop(duel_manager, "duel_state"):
 		current_duel_state = duel_manager.duel_state
 		if is_instance_valid(current_duel_state) and current_duel_state.has_method("add_change_listener"):
 			current_duel_state.add_change_listener(_on_duel_state_changed)
@@ -165,7 +179,7 @@ func _load_test_enemies() -> Dictionary:
 			if _validate_enemy_data(enemy_data):
 				test_enemies.append(enemy_data)
 				loaded_count += 1
-				if enemy_data.has_property("enemy_name"):
+				if _has_prop(enemy_data, "enemy_name"):
 					if DEBUG_ENABLED:
 						GLog.debug("Loaded test enemy: " + enemy_data.enemy_name)
 				else:
@@ -221,7 +235,7 @@ func _validate_character_data(character: CharacterClass) -> bool:
 	
 	var required_properties = ["character_class_name", "base_health", "base_energy", "base_sanity"]
 	for prop in required_properties:
-		if not character.has_property(prop):
+		if not _has_prop(character, prop):
 			push_warning("GameController: Character missing property: " + prop)
 			return false
 	
@@ -234,7 +248,7 @@ func _validate_enemy_data(enemy: Resource) -> bool:
 	
 	var required_properties = ["enemy_name", "health"]
 	for prop in required_properties:
-		if not enemy.has_property(prop) and not prop in enemy:
+		if not _has_prop(enemy, prop):
 			push_warning("GameController: Enemy missing property: " + prop)
 			return false
 	
@@ -329,7 +343,7 @@ func _safe_apply_character_to_player_data() -> Dictionary:
 		result.error_message = "Current duel state is invalid"
 		return result
 	
-	if not current_duel_state.has_property("player_data") or not is_instance_valid(current_duel_state.player_data):
+	if not _has_prop(current_duel_state, "player_data") or not is_instance_valid(current_duel_state.player_data):
 		result.error_message = "Player data is invalid"
 		return result
 	
@@ -346,7 +360,7 @@ func _safe_apply_character_to_player_data() -> Dictionary:
 		push_warning("GameController: Player data missing set_character_class method")
 	
 	# Apply base stats from character
-	if player_data.has_property("stats") and is_instance_valid(player_data.stats):
+	if _has_prop(player_data, "stats") and is_instance_valid(player_data.stats):
 		var stats = player_data.stats
 		
 		# Apply stats safely
@@ -363,7 +377,7 @@ func _safe_apply_character_to_player_data() -> Dictionary:
 		for stat_name in stat_mappings:
 			var char_property = stat_mappings[stat_name]
 			
-			if stats.has_property(stat_name) and player_character.has_property(char_property):
+			if _has_prop(stats, stat_name) and _has_prop(player_character, char_property):
 				stats.set(stat_name, player_character.get(char_property))
 	else:
 		push_warning("GameController: Player data missing stats")
@@ -412,7 +426,7 @@ func _validate_deck_contents(deck: Array[CardData]) -> bool:
 	
 	for card in deck:
 		if is_instance_valid(card):
-			if card.has_property("card_name") and card.has_property("effects"):
+			if _has_prop(card, "card_name") and _has_prop(card, "effects"):
 				valid_cards += 1
 			else:
 				invalid_cards += 1
