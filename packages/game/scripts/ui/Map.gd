@@ -4,9 +4,8 @@ class_name MapController
 const DEBUG_ENABLED: bool = true
 
 # Core map components we need
-const MapNodeScene = preload("res://scenes/map/MapNodeScene.tscn")
-const DelaunayTriangulator = preload("res://scripts/map/DelaunayTriangulator.gd")
-const MapConfig = preload("res://scripts/map/MapConfig.gd")
+const MAP_NODE_SCENE = preload("res://scenes/map/MapNodeScene.tscn")
+const DELAUNAY_TRIANGULATOR = preload("res://scripts/map/DelaunayTriangulator.gd")
 
 # Map configuration
 var map_config: MapConfig = load("res://data/map_config.tres") as MapConfig
@@ -38,8 +37,8 @@ func generate_simple_map():
 	var node_positions = generate_random_positions(map_config.total_nodes)
 	
 	# Apply Delaunay triangulation to get connections
-	var triangulation = DelaunayTriangulator.triangulate(node_positions)
-	var edges_data = DelaunayTriangulator.triangulation_to_edges(triangulation)
+	var triangulation = DELAUNAY_TRIANGULATOR.triangulate(node_positions)
+	var edges_data = DELAUNAY_TRIANGULATOR.triangulation_to_edges(triangulation)
 	
 	if DEBUG_ENABLED:
 		GLog.debug("Generated " + str(node_positions.size()) + " nodes with " + str(edges_data.size()) + " connections")
@@ -80,13 +79,13 @@ func generate_random_positions(count: int) -> Array[Vector2]:
 	var margin = 100.0
 	
 	# Use a simple grid with random offset to ensure good distribution
-	var grid_cols = int(sqrt(count)) + 1
-	var grid_rows = int(count / grid_cols) + 1
+	var grid_cols = int(ceil(sqrt(count)))
+	var grid_rows = int(ceil(count / float(grid_cols)))
 	var cell_width = (map_size.x - margin * 2) / grid_cols
 	var cell_height = (map_size.y - margin * 2) / grid_rows
 	
 	for i in range(count):
-		var row = i / grid_cols
+		var row = int(i / float(grid_cols))
 		var col = i % grid_cols
 		
 		var base_x = margin + col * cell_width + cell_width * 0.5
@@ -143,8 +142,7 @@ func reassign_dead_ends_as_mines(positions: Array[Vector2], filtered_edges: Arra
 		if connection_count[i] == 1:  # Dead end
 			# Don't reassign the city!
 			if final_assignments[i].type != "city":
-				if DEBUG_ENABLED:
-					print("Reassigning dead-end node", i, "from", final_assignments[i].type, "to mine")
+				GLog.debug("Reassigning dead-end node " + str(i) + " from " + str(final_assignments[i].type) + " to mine")
 				
 				final_assignments[i] = {
 					"type": "mine",
@@ -158,27 +156,35 @@ func create_nodes_with_assignments(positions: Array[Vector2], assignments: Array
 	"""Create MapNodeScene instances with given assignments"""
 	for i in range(positions.size()):
 		var node_id = "node_" + str(i + 1)
-		var position = positions[i]
+		var node_pos = positions[i]
 		var node_type_info = assignments[i]
 		
 		# Create the MapNodeScene instance
-		var node_scene = MapNodeScene.instantiate()
+		var node_scene = MAP_NODE_SCENE.instantiate()
 		map_container.add_child(node_scene)
 		
 		# Position it
-		node_scene.position = position - Vector2(16, 16)  # Center the node
+		node_scene.position = node_pos - Vector2(16, 16)  # Center the node
 		node_scene.z_index = map_config.node_z_index  # Nodes above edges
 		
 		# Create real MapNode with proper config
-		var map_node = create_node_with_config(node_id, node_type_info.config, position)
+		var map_node = create_node_with_config(node_id, node_type_info.config, node_pos)
 		node_scene.setup_node(node_id, map_node)
+
+		# Optional debug: preview outcome for MINE/POI without persisting, show small badge
+		if map_config.show_outcome_debug_badges and (map_node.type == MapNode.NodeType.MINE or map_node.type == MapNode.NodeType.POI):
+			var preview = _preview_outcome_for_debug(map_node)
+			var label_text = "D" if preview == "duel" else "E"
+			var label_color = Color(1.0, 0.35, 0.35) if preview == "duel" else Color(0.35, 0.9, 0.6)
+			if node_scene.has_method("update_debug_badge"):
+				node_scene.update_debug_badge(label_text, label_color)
 		
 		# Connect click signal
 		node_scene.node_clicked.connect(_on_node_clicked)
 		
 		# Store in our nodes dictionary
 		nodes[node_id] = {
-			"position": position,
+			"position": node_pos,
 			"scene": node_scene,
 			"connections": [],
 			"map_node": map_node,
@@ -186,7 +192,9 @@ func create_nodes_with_assignments(positions: Array[Vector2], assignments: Array
 		}
 		
 		if DEBUG_ENABLED:
-			GLog.debug("Created " + node_type_info.type_name + " node: " + node_id + " at " + str(position))
+			GLog.debug("Created " + node_type_info.type_name + " node: " + node_id + " at " + str(node_pos))
+			if map_config.show_outcome_debug_badges and (map_node.type == MapNode.NodeType.MINE or map_node.type == MapNode.NodeType.POI):
+				GLog.debug("\tOutcome preview => " + _preview_outcome_for_debug(map_node))
 
 func create_connections_from_filtered(filtered_edges: Array):
 	"""Create connections from pre-filtered edges"""
@@ -198,10 +206,11 @@ func create_connections_from_filtered(filtered_edges: Array):
 # Old create_nodes_from_positions is replaced by new flow:
 # get_filtered_edges -> reassign_dead_ends_as_mines -> create_nodes_with_assignments
 
-func create_node_with_config(node_id: String, node_config: MapNodeConfig, position: Vector2) -> MapNode:
+func create_node_with_config(node_id: String, node_config: MapNodeConfig, node_pos: Vector2) -> MapNode:
 	"""Create a real MapNode with proper configuration"""
-	var map_node = MapNode.new(node_id, position, node_config)
-	map_node.set_state(MapNode.NodeState.AVAILABLE)
+	var map_node = MapNode.new(node_id, node_pos, node_config)
+	# Default to KNOWN (visible, not clickable); we'll unlock adjacency later
+	map_node.set_state(MapNode.NodeState.KNOWN)
 	return map_node
 
 func assign_node_types_to_positions(positions: Array[Vector2]) -> Array:
@@ -264,8 +273,8 @@ func assign_node_types_to_positions(positions: Array[Vector2]) -> Array:
 	if DEBUG_ENABLED:
 		GLog.debug("Assigned city to index: " + str(city_index))
 		GLog.debug("Assigned boss to index: " + str(boss_index) + " (furthest from city)")
-		print("Assigned settlements to indices:", edge_indices)
-		print("Interior node distribution:", _count_node_types(interior_assignments))
+		GLog.debug("Assigned settlements to indices: " + str(edge_indices))
+		GLog.debug("Interior node distribution: " + str(_count_node_types(interior_assignments)))
 	
 	return assignments
 
@@ -379,8 +388,7 @@ func distribute_interior_node_types(interior_count: int) -> Array[String]:
 		assignments[i] = assignments[j]
 		assignments[j] = temp
 	
-	if DEBUG_ENABLED:
-		print("Interior distribution for", interior_count, "slots:", type_counts)
+	GLog.debug("Interior distribution for " + str(interior_count) + " slots: " + str(type_counts))
 	
 	return assignments
 
@@ -407,8 +415,7 @@ func find_furthest_position_from_city(positions: Array[Vector2], city_index: int
 			max_distance = distance
 			furthest_index = i
 	
-	if DEBUG_ENABLED:
-		print("Boss placed at index", furthest_index, "with distance", max_distance, "from city")
+	GLog.debug("Boss placed at index " + str(furthest_index) + " with distance " + str(max_distance) + " from city")
 	
 	return furthest_index
 
@@ -470,8 +477,7 @@ func distribute_interior_node_types_excluding_boss(interior_count: int) -> Array
 		assignments[i] = assignments[j]
 		assignments[j] = temp
 	
-	if DEBUG_ENABLED:
-		print("Interior distribution for", interior_count, "slots (excluding boss):", type_counts)
+	GLog.debug("Interior distribution for " + str(interior_count) + " slots (excluding boss): " + str(type_counts))
 	
 	return assignments
 
@@ -524,8 +530,7 @@ func ensure_minimum_connections(filtered_edges: Array, all_valid_edges: Array) -
 		if connection_count[node_id] < map_config.min_edges_per_node:
 			var needed = map_config.min_edges_per_node - connection_count[node_id]
 			
-			if DEBUG_ENABLED:
-				print("Node", node_id, "has", connection_count[node_id], "connections, needs", needed, "more")
+			GLog.debug("Node " + str(node_id) + " has " + str(connection_count[node_id]) + " connections, needs " + str(needed) + " more")
 			
 			# Find candidate edges for this node from all_valid_edges
 			var candidates = []
@@ -550,8 +555,7 @@ func ensure_minimum_connections(filtered_edges: Array, all_valid_edges: Array) -
 				connection_count[candidates[i].from] += 1
 				connection_count[candidates[i].to] += 1
 				
-				if DEBUG_ENABLED:
-					print("Added edge for minimum connections:", candidates[i].from, "->", candidates[i].to)
+				GLog.debug("Added edge for minimum connections: " + str(candidates[i].from) + " -> " + str(candidates[i].to))
 	
 	return result_edges
 
@@ -596,7 +600,7 @@ func validate_graph_connectivity(edge_list: Array) -> bool:
 	
 	return all_connected
 
-func ensure_graph_connectivity(filtered_edges: Array, all_edges_data: Array, positions: Array[Vector2]) -> Array:
+func ensure_graph_connectivity(filtered_edges: Array, _all_edges_data: Array, positions: Array[Vector2]) -> Array:
 	"""Ensure all nodes are connected by adding minimum necessary edges"""
 	# Convert positions to indices for easier lookup
 	var position_to_index = {}
@@ -640,7 +644,7 @@ func ensure_graph_connectivity(filtered_edges: Array, all_edges_data: Array, pos
 		var comp_sizes = []
 		for comp in components:
 			comp_sizes.append(comp.size())
-		print("Found", components.size(), "connected components with sizes:", comp_sizes)
+		GLog.debug("Found " + str(components.size()) + " connected components with sizes: " + str(comp_sizes))
 	
 	# If we have more than one component, we need to connect them
 	if components.size() > 1:
@@ -670,8 +674,7 @@ func ensure_graph_connectivity(filtered_edges: Array, all_edges_data: Array, pos
 			
 			if shortest_edge:
 				result_edges.append(shortest_edge)
-				if DEBUG_ENABLED:
-					print("Connected component of size", comp.size(), "to main component with edge length", shortest_distance)
+				GLog.debug("Connected component of size " + str(comp.size()) + " to main component with edge length " + str(shortest_distance))
 		
 		return result_edges
 	
@@ -700,8 +703,7 @@ func create_connections_from_edges(edges_data: Array):
 			# Check edge length
 			var distance = edge.p1.distance_to(edge.p2)
 			if distance > map_config.max_edge_length:
-				if DEBUG_ENABLED:
-					print("Filtered out long edge:", from_node_id, "->", to_node_id, "distance:", distance)
+				GLog.debug("Filtered out long edge: " + str(from_node_id) + " -> " + str(to_node_id) + " distance: " + str(distance))
 				continue
 			
 			# Store all edges that pass length check
@@ -710,8 +712,8 @@ func create_connections_from_edges(edges_data: Array):
 			# Check type rules
 			if should_connect_node_types(from_node_id, to_node_id):
 				filtered_edges.append({"from": from_node_id, "to": to_node_id})
-			elif DEBUG_ENABLED:
-				print("Filtered out connection:", nodes[from_node_id].type, "->", nodes[to_node_id].type)
+			else:
+				GLog.debug("Filtered out connection: " + str(nodes[from_node_id].type) + " -> " + str(nodes[to_node_id].type))
 	
 	if DEBUG_ENABLED:
 		GLog.debug("Original edges: " + str(edges_data.size()) + " Filtered edges: " + str(filtered_edges.size()))
@@ -755,8 +757,7 @@ func create_connection(from_node_id: String, to_node_id: String):
 	
 	map_container.add_child(line)
 	
-	if DEBUG_ENABLED:
-		print("Drew line from", from_pos, "to", to_pos, "with color", line.default_color, "z_index", line.z_index)
+	GLog.debug("Drew line from " + str(from_pos) + " to " + str(to_pos) + " with color " + str(line.default_color) + " z_index " + str(line.z_index))
 	
 	# Store the connection
 	edges.append({
@@ -769,8 +770,7 @@ func create_connection(from_node_id: String, to_node_id: String):
 	nodes[from_node_id].connections.append(to_node_id)
 	nodes[to_node_id].connections.append(from_node_id)
 	
-	if DEBUG_ENABLED:
-		print("Connected", from_node_id, "to", to_node_id)
+	GLog.info("Connected " + str(from_node_id) + " to " + str(to_node_id))
 
 func set_current_player_node(node_id: String):
 	"""Set the current player position and update node states"""
@@ -790,12 +790,12 @@ func set_current_player_node(node_id: String):
 		if DEBUG_ENABLED:
 			GLog.debug("Set previous node " + current_player_node + " to COMPLETED state")
 	
-	# Set all nodes to default AVAILABLE state (except current)
+	# By default, set all nodes to KNOWN (visible, not clickable) except completed ones
 	for other_node_id in nodes.keys():
 		if other_node_id != node_id:
 			var other_node = nodes[other_node_id]
 			if other_node.map_node.get_state() != MapNode.NodeState.COMPLETED:
-				other_node.map_node.set_state(MapNode.NodeState.AVAILABLE)
+				other_node.map_node.set_state(MapNode.NodeState.KNOWN)
 				other_node.scene.refresh()
 	
 	# Set new current node
@@ -820,7 +820,7 @@ func set_current_player_node(node_id: String):
 	if DEBUG_ENABLED:
 		GLog.info("Player moved to: " + node_id + " (type: " + str(current_node.map_node.get_type_name()) + ")")
 
-func _on_node_clicked(node_id: String, event: InputEvent):
+func _on_node_clicked(node_id: String, _event: InputEvent):
 	"""Handle node click - move player if connected"""
 	GLog.info("✅ MAP RECEIVED CLICK: " + node_id)
 	
@@ -858,8 +858,102 @@ func _on_node_clicked(node_id: String, event: InputEvent):
 	if node_id in current_connections:
 		GLog.info("Moving from " + current_player_node + " to " + node_id)
 		set_current_player_node(node_id)
+
+		# Determine destination scene for this node and transition
+		var destination_scene = _choose_destination_scene(nodes[node_id].map_node)
+		if destination_scene != "":
+			if DEBUG_ENABLED:
+				GLog.info("Loading scene for node '" + node_id + "': " + destination_scene)
+			SceneManager.load_scene_by_name(destination_scene)
+		else:
+			GLog.warn("No destination scene mapped for node: " + node_id)
 	else:
 		GLog.warn("Cannot reach " + node_id + " from current position " + current_player_node)
+
+func _choose_destination_scene(map_node: MapNode) -> String:
+	"""Map node type to scene with deterministic Event/Duel roll where applicable."""
+	var t = map_node.type
+	match t:
+		MapNode.NodeType.CITY:
+			return "city_hub"
+		MapNode.NodeType.CAMP:
+			return "camp"
+		MapNode.NodeType.SETTLEMENT:
+			return "shop"
+		MapNode.NodeType.JUNCTION:
+			return "junction"
+		MapNode.NodeType.BOSS:
+			return "duel"  # Boss is always a duel
+		MapNode.NodeType.MINE, MapNode.NodeType.POI:
+			var outcome = _get_or_generate_outcome(map_node)
+			return outcome
+		_:
+			return ""
+
+func _get_or_generate_outcome(map_node: MapNode) -> String:
+	"""Deterministically choose 'duel' or 'event' for a node and persist choice for this run/map."""
+	# Identify current map/region if available
+	var current_map_id: String = "default_map"
+	if GameManager and GameManager.game_data.has("current_map") and not str(GameManager.game_data.current_map).is_empty():
+		current_map_id = str(GameManager.game_data.current_map)
+
+	# Prepare storage in GameManager for outcomes
+	if not GameManager.game_data.has("map_node_outcomes"):
+		GameManager.game_data.map_node_outcomes = {}
+	var all_outcomes: Dictionary = GameManager.game_data.map_node_outcomes
+	if not all_outcomes.has(current_map_id):
+		all_outcomes[current_map_id] = {}
+	var map_outcomes: Dictionary = all_outcomes[current_map_id]
+
+	# Return persisted outcome if present
+	if map_outcomes.has(map_node.id):
+		return map_outcomes[map_node.id]
+
+	# Determine base chances, allowing override via config.custom_properties
+	var duel_chance := 0.5
+	if map_node.config and map_node.config.custom_properties.has("duel_chance"):
+		duel_chance = float(map_node.config.custom_properties["duel_chance"])
+	else:
+		match map_node.type:
+			MapNode.NodeType.MINE:
+				duel_chance = 0.6
+			MapNode.NodeType.POI:
+				duel_chance = 0.4
+			_:
+				duel_chance = 0.5
+
+	# Seed-independent deterministic roll based on master seed + map + node id
+	var hash_input = str(SeedManager.get_seed_string()) + "|" + current_map_id + "|" + map_node.id
+	var roll = float(abs(hash_input.hash()) % 100) / 100.0
+	var outcome = "duel" if roll < duel_chance else "event"
+
+	# Persist and return
+	map_outcomes[map_node.id] = outcome
+	all_outcomes[current_map_id] = map_outcomes
+	GameManager.game_data.map_node_outcomes = all_outcomes
+	return outcome
+
+# Debug helper: compute outcome like _get_or_generate_outcome but do not persist
+func _preview_outcome_for_debug(map_node: MapNode) -> String:
+	var current_map_id: String = "default_map"
+	if GameManager and GameManager.game_data.has("current_map") and not str(GameManager.game_data.current_map).is_empty():
+		current_map_id = str(GameManager.game_data.current_map)
+
+	var duel_chance := 0.5
+	if map_node.config and map_node.config.custom_properties.has("duel_chance"):
+		duel_chance = float(map_node.config.custom_properties["duel_chance"])
+	else:
+		match map_node.type:
+			MapNode.NodeType.MINE:
+				duel_chance = 0.6
+			MapNode.NodeType.POI:
+				duel_chance = 0.4
+			_:
+				duel_chance = 0.5
+
+	var hash_input = str(SeedManager.get_seed_string()) + "|" + current_map_id + "|" + map_node.id
+	var roll = float(abs(hash_input.hash()) % 100) / 100.0
+	return "duel" if roll < duel_chance else "event"
 
 func clear_map():
 	"""Clear all existing map content"""
@@ -871,8 +965,7 @@ func clear_map():
 	edges.clear()
 	current_player_node = ""
 	
-	if DEBUG_ENABLED:
-		print("Map cleared")
+	GLog.info("Map cleared")
 
 func get_available_moves() -> Array[String]:
 	"""Get nodes the player can move to from current position"""

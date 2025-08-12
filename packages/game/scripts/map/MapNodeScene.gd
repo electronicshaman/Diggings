@@ -24,11 +24,14 @@ var is_highlighted: bool = false
 
 # Data-driven visual system - all colors come from NodeConfig resources
 
+# Debug overlay label (created on demand)
+var debug_label: Label = null
+
 # Signals
 signal node_clicked(node_id: String, event: InputEvent)
 signal node_hovered(node_id: String)
 signal node_unhovered()
-signal action_requested(node_id: String, action_name: String)
+## Removed unused signal to avoid lint warnings
 
 func _ready():
 	# Set up the base scene structure
@@ -231,8 +234,10 @@ func update_tooltip():
 	if is_interactive and node_data.actions.size() > 0:
 		tooltip_content += "\n\nAvailable actions: " + str(node_data.actions.size())
 	
-	# Note: Node2D doesn't have tooltip_text property
-	# Tooltips would need to be handled differently if needed
+	# Note: Node2D doesn't have tooltip_text property.
+	# In DEBUG, we can log the computed tooltip for verification.
+	if DEBUG_ENABLED:
+		GLog.debug("Tooltip for " + node_id + ":\n" + tooltip_content)
 
 func set_highlight(highlighted: bool):
 	"""Set whether this node should be highlighted"""
@@ -274,6 +279,28 @@ func play_discover_animation():
 	"""Play discovery animation when node becomes visible"""
 	if animation_player and animation_player.has_animation("discover"):
 		animation_player.play("discover")
+
+# Debug helpers
+func update_debug_badge(text: String, color: Color = Color.WHITE):
+	"""Show or update a tiny debug label above the node without intercepting input"""
+	if not debug_label:
+		debug_label = Label.new()
+		debug_label.name = "DebugLabel"
+		# Ensure this Control doesn't steal mouse input from Area2D
+		debug_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# Smaller text and positioned slightly above the node center
+		debug_label.scale = Vector2(0.75, 0.75)
+		add_child(debug_label)
+	# Position relative to current node size (above the top a bit)
+	debug_label.position = Vector2(node_size.x * 0.5 - 6.0, -12.0)
+	debug_label.text = text
+	debug_label.modulate = color
+	debug_label.visible = true
+
+func clear_debug_badge():
+	"""Hide the debug label if present"""
+	if debug_label:
+		debug_label.visible = false
 
 # Event handlers
 func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):

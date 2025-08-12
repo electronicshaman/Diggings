@@ -31,3 +31,7 @@ class_name MapConfig
 @export_group("Edge Filtering")
 @export_range(100.0, 500.0, 10.0) var max_edge_length: float = 300.0
 @export_range(1, 6, 1) var min_edges_per_node: int = 2
+
+# Debug options
+@export_group("Debug")
+@export var show_outcome_debug_badges: bool = false
