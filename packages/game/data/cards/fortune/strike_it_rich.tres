@@ -6,7 +6,6 @@
 [sub_resource type="Resource" id="Gambling_1"]
 script = ExtResource("2")
 effect_name = "Gambling"
-description = "Next card: 50% chance to double all effects OR do nothing"
 success_chance = 0.5
 effect_multiplier = 2.0
 
@@ -14,7 +13,6 @@ effect_multiplier = 2.0
 script = ExtResource("1")
 card_name = "Strike It Rich"
 energy_cost = 1
-description = ""
 card_type = "Gamble"
 effects = [SubResource("Gambling_1")]
 sanity_cost = 0

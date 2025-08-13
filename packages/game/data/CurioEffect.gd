@@ -30,7 +30,7 @@ func apply_effect(_game_state: Node, _curio_data: Resource, _context: Dictionary
 	GLog.warn("Effect: %s" % effect_name)
 
 # Check if this effect can trigger given the current context
-func can_trigger(_game_state: Node, context: Dictionary) -> bool:
+func can_trigger(_game_state: Node, _context: Dictionary) -> bool:
 	# Check once-per-combat restriction
 	if only_first_per_combat and triggered_this_combat:
 		return false
@@ -70,6 +70,10 @@ func get_formatted_description() -> String:
 	if chance_to_trigger < 1.0:
 		desc = "(%d%% chance) %s" % [int(chance_to_trigger * 100), desc]
 	return desc
+
+# Helper to retrieve a display name for the effect; override if needed.
+func get_effect_name() -> String:
+	return effect_name
 
 # Get required context keys for this effect
 func get_required_context_keys() -> Array[String]:

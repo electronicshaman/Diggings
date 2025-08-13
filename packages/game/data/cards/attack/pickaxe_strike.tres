@@ -9,13 +9,11 @@ script = ExtResource("2")
 damage_amount = 3
 ignores_defense = false
 effect_name = "Damage"
-description = "Deal %s damage"
 
 [resource]
 script = ExtResource("1")
 card_name = "Pickaxe Strike"
 energy_cost = 1
-description = ""
 card_type = "Gold"
 flavor_text = ""
 effects = Array[ExtResource("1_oibm5")]([SubResource("Damage_1")])

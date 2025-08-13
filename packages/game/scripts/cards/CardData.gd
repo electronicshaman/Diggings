@@ -31,41 +31,31 @@ class_name CardData
 
 # Helper methods for mechanical behavior
 func discards_after_use() -> bool:
-	if not ThemeManager:
-		return true
-	var handling_def: Dictionary = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
 	if handling_def.has("discards_after_use"):
 		return handling_def["discards_after_use"]
 	return true
 
 func discards_end_of_turn() -> bool:
-	if not ThemeManager:
-		return true
-	var handling_def: Dictionary = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
 	if handling_def.has("discards_end_of_turn"):
 		return handling_def["discards_end_of_turn"]
 	return true
 
 func starts_in_hand() -> bool:
-	if not ThemeManager:
-		return false
-	var handling_def: Dictionary = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
 	if handling_def.has("starts_in_hand"):
 		return handling_def["starts_in_hand"]
 	return false
 
 func removed_after_use() -> bool:
-	if not ThemeManager:
-		return false
-	var handling_def: Dictionary = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
 	if handling_def.has("removed_after_use"):
 		return handling_def["removed_after_use"]
 	return false
 
 func triggers_on_draw() -> bool:
-	if not ThemeManager:
-		return false
-	var handling_def: Dictionary = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
 	if handling_def.has("triggers_on_draw"):
 		return handling_def["triggers_on_draw"]
 	return false
@@ -102,3 +92,44 @@ func is_class_card() -> bool:
 func is_neutral_card() -> bool:
 	"""Check if this card is available to all classes"""
 	return accessibility_tier == "Neutral"
+
+# --- Description generation helpers ---
+# Prefer effect-provided descriptions as the source of truth. These helpers let
+# UIs/tooltips render dynamic, parameterized text without relying on duplicated
+# strings saved into .tres resources.
+
+func get_effect_descriptions(separator: String = " ") -> String:
+	"""Join effect descriptions using get_formatted_description() where available.
+	Fallback to effect.description if needed. Skips empty strings."""
+	if not (effects is Array) or effects.is_empty():
+		return ""
+
+	var parts: Array[String] = []
+	for effect in effects:
+		if not is_instance_valid(effect):
+			continue
+		var text := ""
+		if effect.has_method("get_formatted_description"):
+			text = str(effect.get_formatted_description())
+		elif effect is CardEffect and effect.has("description"):
+			text = str(effect.description)
+		text = text.strip_edges()
+		if text != "":
+			parts.append(text)
+
+	return separator.join(parts)
+
+func get_display_description(prefer_generated: bool = true, separator: String = " ") -> String:
+	"""Return the description to display. If prefer_generated is true, try to
+	build from effects first; otherwise, use the card's description and fall back
+	to generated when empty."""
+	if prefer_generated:
+		var gen := get_effect_descriptions(separator)
+		if gen != "":
+			return gen
+		# Fallback to explicit card description
+		return description
+	# Not preferring generated: honor explicit description first
+	if description and description.strip_edges() != "":
+		return description
+	return get_effect_descriptions(separator)

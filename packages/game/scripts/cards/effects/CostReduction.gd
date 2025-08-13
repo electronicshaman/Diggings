@@ -1,6 +1,8 @@
 extends CardEffect
 class_name CostReduction
 
+const EFFECT_NAME := "Cost Reduction"
+
 # Cost Reduction Effect - Reduce energy cost of cards this turn
 # "When the stars align, even the impossible becomes affordable"
 
@@ -11,8 +13,7 @@ class_name CostReduction
 
 
 func _init() -> void:
-	effect_name = "Cost Reduction"
-	description = get_formatted_description()
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add cost reduction to results
@@ -26,7 +27,7 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 		"card_type_filter": card_type_filter
 	})
 	
-	print("Applied %s effect from %s (-%d energy cost)" % [effect_name, card_data.card_name, cost_reduction])
+	print("Applied %s effect from %s (-%d energy cost)" % [get_effect_name(), card_data.card_name, cost_reduction])
 
 func get_formatted_description() -> String:
 	var desc: String = "All cards cost -%d energy this turn" % cost_reduction
@@ -38,3 +39,6 @@ func get_formatted_description() -> String:
 		desc += " (requires %d+ cards in hand)" % minimum_hand_size
 	
 	return desc
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

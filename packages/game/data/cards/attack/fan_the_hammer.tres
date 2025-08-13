@@ -10,13 +10,11 @@ damage_per_hit = 3
 hit_count = 3
 ignores_defense = false
 effect_name = "Multi-Hit Damage"
-description = "Deal 3 damage 3 times"
 
 [resource]
 script = ExtResource("1")
 card_name = "Fan the Hammer"
 energy_cost = 2
-description = "Deal 3 damage 3 times."
 card_type = "Gold"
 flavor_text = "When precision fails, volume prevails."
 effects = Array[ExtResource("2")]([SubResource("MultiHitDamage_1")])

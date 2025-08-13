@@ -1,9 +1,10 @@
 extends CardEffect
 class_name FatalDamagePrevention
 
+const EFFECT_NAME := "Fatal Damage Prevention"
+
 func _init() -> void:
-	effect_name = "Fatal Damage Prevention"
-	description = "Prevent fatal damage this turn (survive with 1 Health)"
+	pass
 
 func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	var player_data = duel_manager.duel_state.player_data
@@ -21,3 +22,6 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 
 func get_formatted_description() -> String:
 	return "Prevent fatal damage this turn (survive with 1 Health)"
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

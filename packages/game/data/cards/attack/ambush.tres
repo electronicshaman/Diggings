@@ -10,13 +10,11 @@ first_card_damage = 15
 normal_damage = 6
 ignores_defense = false
 effect_name = "Ambush Damage"
-description = "Deal 15 damage if first card played, otherwise 6 damage"
 
 [resource]
 script = ExtResource("1")
 card_name = "Ambush"
 energy_cost = 2
-description = "Deal 15 damage if first card played this turn, otherwise deal 6 damage."
 card_type = "Gold"
 card_icon = null
 flavor_text = "Strike first, strike hard, no mercy."

@@ -1,6 +1,8 @@
 extends CardEffect
 class_name DeckManipulation
 
+const EFFECT_NAME := "Deck Manipulation"
+
 # Deck Manipulation - Look at top cards and select which to draw
 # "Knowledge of what's coming is power itself"
 
@@ -10,8 +12,7 @@ class_name DeckManipulation
 
 
 func _init() -> void:
-	effect_name = "Deck Manipulation"
-	description = get_formatted_description()
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add deck manipulation to results
@@ -24,8 +25,11 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 		"put_rest_on_bottom": put_rest_on_bottom
 	})
 	
-	print("Applied %s effect from %s (look at %d, select %d)" % [effect_name, card_data.card_name, cards_to_look_at, cards_to_select])
+	print("Applied %s effect from %s (look at %d, select %d)" % [get_effect_name(), card_data.card_name, cards_to_look_at, cards_to_select])
 
 func get_formatted_description() -> String:
 	var rest_location: String = "bottom of deck" if put_rest_on_bottom else "top of deck"
 	return "Look at top %d cards, put %d in hand, rest on %s" % [cards_to_look_at, cards_to_select, rest_location]
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

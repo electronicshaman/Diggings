@@ -1,12 +1,13 @@
 extends CardEffect
 class_name ForcedDiscard
 
+const EFFECT_NAME := "Forced Discard"
+
 @export var cards_to_discard: int = 1
 
 
 func _init() -> void:
-	effect_name = "Forced Discard"
-	description = "Must discard %d card(s)" % cards_to_discard
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add forced discard to results
@@ -15,7 +16,10 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 	
 	results.forced_discard += cards_to_discard
 	
-	print("Applied %s effect from %s (discard %d cards)" % [effect_name, card_data.card_name, cards_to_discard])
+	print("Applied %s effect from %s (discard %d cards)" % [get_effect_name(), card_data.card_name, cards_to_discard])
 
 func get_formatted_description() -> String:
 	return "Must discard %d card(s)" % cards_to_discard
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

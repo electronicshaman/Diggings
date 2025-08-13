@@ -1,16 +1,17 @@
 extends CurioEffect
 class_name ResourceGain
 
+const EFFECT_NAME := "Resource Gain"
+
 @export var resource_type: String = "gold"  # gold, energy, sanity, health, cards
 @export var amount: int = 1
 @export var random_range: bool = false  # If true, amount is max and we roll 1-amount
 @export var condition: String = ""  # Optional condition like "if_perfect_turn"
 
 func _init() -> void:
-	effect_name = "Resource Gain"
-	description = "Gain %d %s" % [amount, resource_type]
+	pass
 
-func apply_effect(game_state: Node, curio_data: Resource, context: Dictionary) -> void:
+func apply_effect(game_state: Node, _curio_data: Resource, context: Dictionary) -> void:
 	# Check condition if specified
 	if not _check_condition(game_state, context):
 		return
@@ -110,3 +111,6 @@ func get_formatted_description() -> String:
 		desc = "(%d%% chance) %s" % [int(chance_to_trigger * 100), desc]
 	
 	return desc
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

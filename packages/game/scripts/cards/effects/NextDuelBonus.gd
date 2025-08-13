@@ -1,6 +1,8 @@
 extends CardEffect
 class_name NextDuelBonus
 
+const EFFECT_NAME := "Next Duel Bonus"
+
 # Next Duel Bonus - Persistent rewards that carry to the next encounter
 # "Victory's spoils echo into the next battle"
 
@@ -18,8 +20,7 @@ enum BonusType {
 
 
 func _init() -> void:
-	effect_name = "Next Duel Bonus"
-	description = get_formatted_description()
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add next duel bonus to results
@@ -28,7 +29,7 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 	
 	results.next_duel_bonus.append(get_bonus_data())
 	
-	print("Applied %s effect from %s (%s: %d)" % [effect_name, card_data.card_name, BonusType.keys()[bonus_type], bonus_amount])
+	print("Applied %s effect from %s (%s: %d)" % [get_effect_name(), card_data.card_name, BonusType.keys()[bonus_type], bonus_amount])
 
 func get_formatted_description() -> String:
 	match bonus_type:
@@ -46,6 +47,9 @@ func get_formatted_description() -> String:
 			return "Next duel: First %d cards cost -1 energy" % bonus_amount
 		_:
 			return "Next duel bonus"
+
+func get_effect_name() -> String:
+	return EFFECT_NAME
 
 func get_bonus_data() -> Dictionary:
 	"""Get the bonus data for storage in GameState"""

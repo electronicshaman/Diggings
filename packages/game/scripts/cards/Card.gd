@@ -11,7 +11,7 @@ var original_z_index: int = 0  # Store original z-index for hand positioning
 
 # Signals
 signal card_played(card)
-signal card_effects_applied(card, effects)
+## Removed unused signal to satisfy linter
 
 func _ready():
 	original_scale = scale
@@ -51,11 +51,11 @@ func setup_card_visuals():
 	
 	# Set type symbol
 	if has_node("TypeSymbol"):
-		var type_symbol = ThemeManager.get_card_symbol(card_data.card_type) if ThemeManager else "?"
+		var type_symbol = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_symbol(card_data.card_type)
 		$TypeSymbol.text = type_symbol
 	
 	# Set card colors
-	var type_color = ThemeManager.get_card_color(card_data.card_type) if ThemeManager else Color.WHITE
+	var type_color = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_color(card_data.card_type)
 	if has_node("CardBorder"):
 		$CardBorder.color = type_color
 	if has_node("CardBackground"):
@@ -114,7 +114,7 @@ func _on_mouse_exited():
 	# Return to original z-index (preserves hand positioning)
 	z_index = original_z_index
 
-func _on_area_input_event(viewport: Node, event: InputEvent, shape_idx: int):
+func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	"""Handle Area2D input events directly (fallback - usually button handles this)"""
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if card_data:
@@ -146,27 +146,13 @@ func _on_button_clicked():
 
 
 func format_description() -> String:
-	# Prefer manual description over auto-generated effects
-	if card_data.description.length() > 0:
-		return card_data.description
-	
-	# Fall back to auto-generated effect descriptions if no manual description
-	var desc_parts = []
-	for effect in card_data.effects:
-		if effect:
-			desc_parts.append(effect.get_formatted_description())
-	
-	# Join with periods
-	var base_desc = ". ".join(desc_parts)
-	if base_desc.length() > 0:
-		base_desc += "."
-	
-	return base_desc
+	# Always generate from effects in the order they appear on the card resource
+	# Use CardData helper to format from effect scripts as the source of truth
+	# Separate lines for readability on the RichTextLabel
+	return card_data.get_effect_descriptions("\n")
 
 func format_card_handling() -> String:
-	if not ThemeManager:
-		return ""
-	var handling_display = ThemeManager.get_card_handling_display_name(card_data.card_handling)
+	var handling_display = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_display_name(card_data.card_handling)
 	return handling_display if handling_display != "Standard" else ""
 
 func _input(event: InputEvent):
@@ -187,7 +173,7 @@ func set_selected(selected: bool):
 	update_visual_state()
 
 func update_visual_state():
-	var base_color = (load("res://scripts/theme/ThemeManager.gd") as GDScript).get_card_color(card_data.card_type) if ThemeManager else Color.WHITE
+	var base_color = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_color(card_data.card_type)
 	if is_selected:
 		# Highlight selected cards
 		$CardBackground.color = base_color.lightened(0.3)

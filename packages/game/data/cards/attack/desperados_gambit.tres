@@ -9,13 +9,11 @@ script = ExtResource("3")
 damage_amount = 14
 ignores_defense = true
 effect_name = "Unblockable Damage"
-description = "Deal 14 unblockable damage"
 
 [resource]
 script = ExtResource("1")
 card_name = "Desperado's Gambit"
 energy_cost = 3
-description = "Deal 14 unblockable damage."
 card_type = "Gold"
 card_icon = null
 flavor_text = "When your back's against the wall, there's only one way out."

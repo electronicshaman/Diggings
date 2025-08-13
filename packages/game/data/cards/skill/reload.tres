@@ -8,13 +8,11 @@
 script = ExtResource("3")
 cards_to_draw = 2
 effect_name = "Draw"
-description = "Draw 2 card(s)"
 
 [resource]
 script = ExtResource("1")
 card_name = "Reload"
 energy_cost = 0
-description = "Draw 2 cards."
 card_type = "Grit"
 card_icon = null
 flavor_text = "A quick reload can turn the tide of battle."

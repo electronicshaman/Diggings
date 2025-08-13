@@ -6,14 +6,12 @@
 [sub_resource type="Resource" id="Defense_1"]
 script = ExtResource("2")
 effect_name = "Defense"
-description = "Gain 5 defense"
 defense_amount = 5
 
 [resource]
 script = ExtResource("1")
 card_name = "Bush Defense"
 energy_cost = 1
-description = ""
 card_type = "Grit"
 effects = [SubResource("Defense_1")]
 sanity_cost = 0

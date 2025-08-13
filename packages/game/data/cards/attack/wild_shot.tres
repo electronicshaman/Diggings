@@ -10,13 +10,11 @@ min_damage = 5
 max_damage = 9
 ignores_defense = false
 effect_name = "Random Damage"
-description = "Deal 5-9 damage randomly"
 
 [resource]
 script = ExtResource("1")
 card_name = "Wild Shot"
 energy_cost = 1
-description = "Deal 5-9 damage randomly."
 card_type = "Gold"
 card_icon = null
 flavor_text = "Sometimes you've got to trust in lady luck."

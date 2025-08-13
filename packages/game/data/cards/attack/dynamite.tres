@@ -9,13 +9,11 @@ script = ExtResource("2")
 damage_amount = 1
 number_of_hits = 3
 effect_name = "Multiple Damage"
-description = "Deal %s damage %s times"
 
 [resource]
 script = ExtResource("1")
 card_name = "Dynamite Blast"
 energy_cost = 2
-description = ""
 card_type = "Gold"
 flavor_text = ""
 effects = Array[ExtResource("1_bhtlf")]([SubResource("MultipleDamage_1")])

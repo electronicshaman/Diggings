@@ -1,6 +1,8 @@
 extends CardEffect
 class_name MissingHealthDamage
 
+const EFFECT_NAME := "Missing Health Damage"
+
 # Missing Health Damage - Power that feeds on suffering
 # Two modes: accumulated wounds vs fresh blood
 
@@ -16,8 +18,7 @@ enum DamageMode {
 @export var maximum_damage: int = 999         # Cap to prevent absurd values
 
 func _init() -> void:
-	effect_name = "Missing Health Damage"
-	description = get_formatted_description()
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add missing health damage to results
@@ -33,7 +34,7 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 	})
 	
 	var card_resource: CardData = card_data as CardData
-	print("Applied %s effect from %s (mode: %s)" % [effect_name, card_resource.card_name, DamageMode.keys()[damage_mode]])
+	print("Applied %s effect from %s (mode: %s)" % [get_effect_name(), card_resource.card_name, DamageMode.keys()[damage_mode]])
 
 func get_formatted_description() -> String:
 	match damage_mode:
@@ -49,6 +50,9 @@ func get_formatted_description() -> String:
 			return desc
 		_:
 			return "Deal damage based on wounds"
+
+func get_effect_name() -> String:
+	return EFFECT_NAME
 
 # Static helper function for calculating damage
 static func calculate_missing_health_damage(player_data: PlayerData, params: Dictionary) -> int:

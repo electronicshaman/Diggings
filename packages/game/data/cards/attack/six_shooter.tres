@@ -10,13 +10,11 @@ base_damage = 8
 quick_draw_bonus = 2
 ignores_defense = false
 effect_name = "Quick Draw Damage"
-description = "Deal 8 damage. Quick Draw: +2 damage"
 
 [resource]
 script = ExtResource("1")
 card_name = "Six-Shooter"
 energy_cost = 1
-description = "Deal 8 damage. Quick Draw: Deal +2 damage."
 card_type = "Gold"
 flavor_text = "Six shots, six chances to make your point."
 effects = Array[ExtResource("2")]([SubResource("QuickDrawDamage_1")])

@@ -31,11 +31,9 @@ func create_lucky_nugget():
 	
 	# Create the effect
 	var effect = preload("res://scripts/curios/effects/ResourceGain.gd").new()
-	effect.effect_name = "Gold Bonus"
 	effect.trigger_event = "combat_start"
 	effect.resource_type = "gold"
 	effect.amount = 3
-	effect.description = "Gain 3 gold"
 	
 	curio.effects = [effect]
 	
@@ -60,11 +58,9 @@ func create_thick_leather():
 	
 	# Create the effect
 	var effect = preload("res://scripts/curios/effects/ResourceGain.gd").new()
-	effect.effect_name = "Defense Bonus"
 	effect.trigger_event = "turn_start"
 	effect.resource_type = "defense"
 	effect.amount = 1
-	effect.description = "Gain 1 block"
 	
 	curio.effects = [effect]
 	
@@ -89,11 +85,9 @@ func create_old_compass():
 	
 	# Create the effect
 	var effect = preload("res://scripts/curios/effects/ResourceGain.gd").new()
-	effect.effect_name = "Extra Draw"
 	effect.trigger_event = "combat_start"
 	effect.resource_type = "cards"
 	effect.amount = 1
-	effect.description = "Draw 1 card"
 	
 	curio.effects = [effect]
 	
@@ -118,12 +112,10 @@ func create_sharpened_blade():
 	
 	# Create the effect
 	var effect = preload("res://scripts/curios/effects/CardModifier.gd").new()
-	effect.effect_name = "Damage Boost"
 	effect.trigger_event = "card_played"
 	effect.target_card_type = "attack"
 	effect.modification_type = "damage"
 	effect.modification_value = 1
-	effect.description = "Attack cards deal +1 damage"
 	
 	curio.effects = [effect]
 	

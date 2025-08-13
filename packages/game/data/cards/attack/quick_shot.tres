@@ -10,19 +10,16 @@ script = ExtResource("3")
 damage_amount = 4
 ignores_defense = false
 effect_name = "Damage"
-description = "Deal 4 damage"
 
 [sub_resource type="Resource" id="FirstCardDraw_1"]
 script = ExtResource("4")
 cards_to_draw = 1
 effect_name = "First Card Draw"
-description = "If first card played this turn, draw 1 card(s)"
 
 [resource]
 script = ExtResource("1")
 card_name = "Quick Shot"
 energy_cost = 1
-description = "Deal 4 damage. If this is the first card played this turn, draw 1 card."
 card_type = "Gold"
 flavor_text = "Speed is life in the outback."
 effects = Array[ExtResource("2")]([SubResource("Damage_1"), SubResource("FirstCardDraw_1")])

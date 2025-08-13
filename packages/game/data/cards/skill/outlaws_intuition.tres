@@ -8,19 +8,16 @@
 [sub_resource type="Resource" id="EnemyIntentReveal_1"]
 script = ExtResource("3")
 effect_name = "Enemy Intent Reveal"
-description = "Reveal the enemy's next intent"
 
 [sub_resource type="Resource" id="Defense_1"]
 script = ExtResource("4")
 defense_amount = 4
 effect_name = "Defense"
-description = "Gain 4 defense"
 
 [resource]
 script = ExtResource("1")
 card_name = "Outlaw's Intuition"
 energy_cost = 1
-description = "Gain 4 defense. Reveal the enemy's next intent."
 card_type = "Grit"
 card_icon = null
 flavor_text = "A good outlaw can read the wind before the storm hits."

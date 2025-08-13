@@ -1,15 +1,16 @@
 extends CardEffect
 class_name MultiHitDamage
 
+const EFFECT_NAME := "Multi-Hit Damage"
+
 @export var damage_per_hit: int = 3
 @export var hit_count: int = 3
 @export var ignores_defense: bool = false
 
 func _init() -> void:
-	effect_name = "Multi-Hit Damage"
-	description = "Deal %d damage %d times" % [damage_per_hit, hit_count]
+	pass
 
-func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
+func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	var total_damage = damage_per_hit * hit_count
 	
 	# Add damage to results (total damage for all hits)
@@ -31,7 +32,7 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 	
 	var defense_text: String = " (ignores defense)" if ignores_defense else ""
 	print("Applied %s effect from %s (%d damage x %d hits = %d total%s)" % [
-		effect_name, card_data.card_name, damage_per_hit, hit_count, total_damage, defense_text
+		get_effect_name(), card_data.card_name, damage_per_hit, hit_count, total_damage, defense_text
 	])
 	
 	# Add notification for multi-hit
@@ -45,3 +46,6 @@ func get_formatted_description() -> String:
 	if ignores_defense:
 		base_text += " (ignores defense)"
 	return base_text
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

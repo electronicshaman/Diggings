@@ -9,19 +9,16 @@
 script = ExtResource("4")
 cards_to_draw = 2
 effect_name = "First Card Draw"
-description = "If first card played this turn, draw 2 cards"
 
 [sub_resource type="Resource" id="DelayedDamage_1"]
 script = ExtResource("3")
 damage_amount = 2
 effect_name = "Delayed Damage"
-description = "Take 2 damage at the end of this turn"
 
 [resource]
 script = ExtResource("1")
 card_name = "Wanted Poster"
 energy_cost = 0
-description = "If this is the first card played this turn, draw 2 cards. Take 2 damage at the end of this turn."
 card_type = "Gamble"
 card_icon = null
 flavor_text = "Every outlaw knows their worth... and their price."

@@ -1,17 +1,17 @@
 extends CurioEffect
 class_name StatModifier
 
+const EFFECT_NAME := "Stat Modifier"
+
 @export var stat_name: String = "max_health"  # max_health, max_energy, max_sanity, defense, etc.
 @export var modifier_value: float = 0  # Amount to modify stat by
 @export var modifier_type: String = "flat"  # flat or percentage
 @export var apply_immediately: bool = false  # Apply to current value as well as max
 
 func _init() -> void:
-	effect_name = "Stat Modifier"
 	trigger_event = "passive"
-	description = "Modifies %s by %s" % [stat_name, _format_modifier()]
 
-func apply_effect(game_state: Node, curio_data: Resource, context: Dictionary) -> void:
+func apply_effect(game_state: Node, _curio_data: Resource, _context: Dictionary) -> void:
 	# Get player data
 	var player_data = _get_player_data(game_state)
 	if not player_data:
@@ -82,3 +82,6 @@ func _get_player_data(game_state: Node):
 func get_formatted_description() -> String:
 	var stat_display = stat_name.replace("_", " ").capitalize()
 	return "Modifies %s by %s" % [stat_display, _format_modifier()]
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

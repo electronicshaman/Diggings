@@ -1,17 +1,17 @@
 extends CurioEffect
 class_name CardModifier
 
+const EFFECT_NAME := "Card Modifier"
+
 @export var target_card_type: String = "all"  # all, attack, skill, power, fortune, or specific card name
 @export var modification_type: String = "damage"  # damage, cost, draw, return_to_hand
 @export var modification_value: int = 1
 @export var only_specific_card: String = ""  # If set, only affects cards with this name
 
 func _init() -> void:
-	effect_name = "Card Modifier"
 	trigger_event = "card_played"
-	description = _generate_description()
 
-func apply_effect(game_state: Node, curio_data: Resource, context: Dictionary) -> void:
+func apply_effect(game_state: Node, _curio_data: Resource, context: Dictionary) -> void:
 	var card = context.get("card", null)
 	var card_data = context.get("card_data", null)
 	
@@ -96,10 +96,13 @@ func _generate_description() -> String:
 		"return_to_hand":
 			desc = "%s return to hand after playing" % target_desc
 	
-	if super.only_first_per_turn:
+	if only_first_per_turn:
 		desc = "(First per turn) " + desc
 	
 	return desc
 
 func get_formatted_description() -> String:
 	return _generate_description()
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

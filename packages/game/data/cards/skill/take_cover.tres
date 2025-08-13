@@ -10,13 +10,11 @@ base_defense = 6
 bonus_defense = 2
 health_threshold = 0.5
 effect_name = "Conditional Defense"
-description = "Gain 6 Defense. If health below 50%, gain +2 Defense."
 
 [resource]
 script = ExtResource("1")
 card_name = "Take Cover"
 energy_cost = 1
-description = "Gain 6 Defense. If health below 50%, gain +2 Defense."
 card_type = "Grit"
 card_icon = null
 flavor_text = "Sometimes the best offense is not dying."

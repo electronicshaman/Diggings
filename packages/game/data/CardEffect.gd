@@ -27,3 +27,7 @@ func get_required_keys() -> Array[String]:
 	return []
 func get_formatted_description() -> String:
 	return description
+
+# Helper to retrieve a display name for the effect; override if needed.
+func get_effect_name() -> String:
+	return effect_name

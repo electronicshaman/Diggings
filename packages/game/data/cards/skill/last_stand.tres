@@ -9,18 +9,15 @@
 script = ExtResource("4")
 defense_amount = 12
 effect_name = "Defense"
-description = "Gain 12 defense"
 
 [sub_resource type="Resource" id="FatalDamagePrevention_1"]
 script = ExtResource("3")
 effect_name = "Fatal Damage Prevention"
-description = "Prevent fatal damage this turn (survive with 1 Health)"
 
 [resource]
 script = ExtResource("1")
 card_name = "Last Stand"
 energy_cost = 3
-description = "Gain 12 defense. Prevent fatal damage this turn (survive with 1 Health)."
 card_type = "Grit"
 card_icon = null
 flavor_text = "When there's nowhere left to run, you make your stand."

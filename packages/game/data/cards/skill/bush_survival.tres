@@ -10,13 +10,11 @@ base_heal = 6
 bonus_heal = 6
 health_threshold = 0.25
 effect_name = "Conditional Heal"
-description = "Heal 6. If below 25% health, heal 6 additional"
 
 [resource]
 script = ExtResource("1")
 card_name = "Bush Survival"
 energy_cost = 1
-description = "Heal 6. If below 25% health, heal 6 additional."
 card_type = "Grit"
 card_icon = null
 flavor_text = "The bush teaches you to make do with what you have."
