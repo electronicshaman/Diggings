@@ -163,8 +163,6 @@ func trigger_curio_effects(event_type: String, context: Dictionary = {}) -> void
 					var effect_name = "Unknown"
 					if effect and effect.has_method("get_effect_name"):
 						effect_name = effect.get_effect_name()
-					elif effect and effect.has("effect_name"):
-						effect_name = effect.effect_name
 					var curio_name = curio.curio_name if curio.curio_name else "Unknown"
 					GLog.debug("Triggering effect '%s' from curio '%s'" % [effect_name, curio_name])
 					effect.apply_effect(self, curio, context)

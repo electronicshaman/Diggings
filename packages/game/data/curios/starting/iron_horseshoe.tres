@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-effect_name = "Lucky Energy Save"
 description = "10% chance to not consume energy"
 trigger_event = "card_played"
 only_first_per_combat = false

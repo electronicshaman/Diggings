@@ -152,8 +152,6 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_data
 	if effect is CardEffect:
 		if effect.has_method("get_effect_name"):
 			effect_name = effect.get_effect_name()
-		elif _has_prop(effect, "effect_name"):
-			effect_name = effect.effect_name
 	
 	if DEBUG_ENABLED:
 		GLog.debug("Applied effect: %s" % effect_name)

@@ -8,11 +8,9 @@
 [sub_resource type="Resource" id="Defense_1"]
 script = ExtResource("4")
 defense_amount = 12
-effect_name = "Defense"
 
 [sub_resource type="Resource" id="FatalDamagePrevention_1"]
 script = ExtResource("3")
-effect_name = "Fatal Damage Prevention"
 
 [resource]
 script = ExtResource("1")

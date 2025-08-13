@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-effect_name = "Defense Bonus"
 description = "Gain 1 defense"
 trigger_event = "turn_start"
 only_first_per_combat = false

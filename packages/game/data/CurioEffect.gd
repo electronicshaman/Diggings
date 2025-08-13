@@ -6,7 +6,6 @@ const DEBUG_ENABLED: bool = true
 # Base class for all curio effects
 # Each effect is a modular resource that can be applied to curios
 
-@export var effect_name: String = "Base Curio Effect"
 @export var description: String = "Base effect description"
 
 # When this effect triggers
@@ -27,7 +26,7 @@ var triggered_this_turn: bool = false
 # context: Dictionary with contextual information (e.g., card_played, damage_amount, etc.)
 func apply_effect(_game_state: Node, _curio_data: Resource, _context: Dictionary) -> void:
 	GLog.warn("CurioEffect.apply_effect() called but not overridden!")
-	GLog.warn("Effect: %s" % effect_name)
+	GLog.warn("Effect: %s" % get_effect_name())
 
 # Check if this effect can trigger given the current context
 func can_trigger(_game_state: Node, _context: Dictionary) -> bool:
@@ -73,7 +72,13 @@ func get_formatted_description() -> String:
 
 # Helper to retrieve a display name for the effect; override if needed.
 func get_effect_name() -> String:
-	return effect_name
+	# Fallback to script filename or class name if subclass doesn't override
+	var s = get_script()
+	if s and s.has_method("get_path"):
+		var p = s.get_path()
+		if typeof(p) == TYPE_STRING and p != "":
+			return p.get_file().get_basename()
+	return get_class()
 
 # Get required context keys for this effect
 func get_required_context_keys() -> Array[String]:
@@ -83,6 +88,6 @@ func get_required_context_keys() -> Array[String]:
 func validate_context(context: Dictionary) -> bool:
 	for key in get_required_context_keys():
 		if not context.has(key):
-			GLog.warn("CurioEffect '%s' missing required context key: %s" % [effect_name, key])
+			GLog.warn("CurioEffect '%s' missing required context key: %s" % [get_effect_name(), key])
 			return false
 	return true

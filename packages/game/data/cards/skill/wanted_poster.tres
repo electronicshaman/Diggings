@@ -8,12 +8,10 @@
 [sub_resource type="Resource" id="FirstCardDraw_1"]
 script = ExtResource("4")
 cards_to_draw = 2
-effect_name = "First Card Draw"
 
 [sub_resource type="Resource" id="DelayedDamage_1"]
 script = ExtResource("3")
 damage_amount = 2
-effect_name = "Delayed Damage"
 
 [resource]
 script = ExtResource("1")

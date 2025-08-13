@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-effect_name = "Energy Boost"
 description = "Increase max energy by 1"
 trigger_event = "passive"
 only_first_per_combat = false

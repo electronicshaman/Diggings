@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-effect_name = "Gold Bonus"
 description = "Gain 3 gold"
 trigger_event = "combat_start"
 only_first_per_combat = false

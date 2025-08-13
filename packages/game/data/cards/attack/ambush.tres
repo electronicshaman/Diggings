@@ -9,7 +9,6 @@ script = ExtResource("3")
 first_card_damage = 15
 normal_damage = 6
 ignores_defense = false
-effect_name = "Ambush Damage"
 
 [resource]
 script = ExtResource("1")

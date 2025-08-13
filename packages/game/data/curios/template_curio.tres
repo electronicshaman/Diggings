@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-effect_name = "Template Effect"
 description = "Gain X resource when Y happens"
 trigger_event = "combat_start"
 only_first_per_combat = false

@@ -9,7 +9,6 @@ script = ExtResource("3")
 min_damage = 5
 max_damage = 9
 ignores_defense = false
-effect_name = "Random Damage"
 
 [resource]
 script = ExtResource("1")

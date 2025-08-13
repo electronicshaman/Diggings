@@ -6,7 +6,6 @@ const DEBUG_ENABLED: bool = true
 # Base class for all card effects
 # Each effect is a modular resource that can be applied to cards
 
-@export var effect_name: String = "Base Effect"
 @export var description: String = "Base effect description"
 
 # Virtual method to be overridden by specific effects
@@ -15,7 +14,7 @@ const DEBUG_ENABLED: bool = true
 # results: Dictionary containing effect results to modify
 func apply_effect(_duel_manager: Node, _card_data: Resource, _results: Dictionary) -> void:
 	GLog.warn("CardEffect.apply_effect() called but not overridden!")
-	GLog.warn("Effect: %s" % effect_name)
+	GLog.warn("Effect: %s" % get_effect_name())
 
 # Helper method for effects that need to check conditions
 func can_apply(_duel_manager: Node, _card_data: Resource) -> bool:
@@ -30,4 +29,10 @@ func get_formatted_description() -> String:
 
 # Helper to retrieve a display name for the effect; override if needed.
 func get_effect_name() -> String:
-	return effect_name
+	# Fallback to script filename or class name if subclass doesn't override
+	var s = get_script()
+	if s and s.has_method("get_path"):
+		var p = s.get_path()
+		if typeof(p) == TYPE_STRING and p != "":
+			return p.get_file().get_basename()
+	return get_class()

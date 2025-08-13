@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="Defense_1"]
 script = ExtResource("2")
-effect_name = "Defense"
 defense_amount = 5
 
 [resource]

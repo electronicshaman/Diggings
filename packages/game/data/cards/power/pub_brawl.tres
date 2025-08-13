@@ -6,12 +6,10 @@
 
 [sub_resource type="Resource" id="Draw_1"]
 script = ExtResource("2")
-effect_name = "Draw"
 cards_to_draw = 2
 
 [sub_resource type="Resource" id="Damage_1"]
 script = ExtResource("3")
-effect_name = "Damage"
 damage_amount = 2
 ignores_defense = false
 

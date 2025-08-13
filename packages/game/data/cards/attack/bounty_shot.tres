@@ -9,14 +9,12 @@
 script = ExtResource("3")
 damage_amount = 7
 ignores_defense = false
-effect_name = "Damage"
 
 [sub_resource type="Resource" id="QuickDrawDamage_1"]
 script = ExtResource("4")
 base_damage = 0
 quick_draw_bonus = 5
 ignores_defense = false
-effect_name = "Quick Draw Damage"
 
 [resource]
 script = ExtResource("1")

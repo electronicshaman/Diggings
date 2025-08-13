@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-effect_name = "First Card Discount"
 description = "First card each turn costs 1 less"
 trigger_event = "card_played"
 only_first_per_combat = false

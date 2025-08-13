@@ -7,12 +7,10 @@
 
 [sub_resource type="Resource" id="EnemyIntentReveal_1"]
 script = ExtResource("3")
-effect_name = "Enemy Intent Reveal"
 
 [sub_resource type="Resource" id="Defense_1"]
 script = ExtResource("4")
 defense_amount = 4
-effect_name = "Defense"
 
 [resource]
 script = ExtResource("1")

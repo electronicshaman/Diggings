@@ -7,7 +7,6 @@
 [sub_resource type="Resource" id="Draw_1"]
 script = ExtResource("3")
 cards_to_draw = 2
-effect_name = "Draw"
 
 [resource]
 script = ExtResource("1")

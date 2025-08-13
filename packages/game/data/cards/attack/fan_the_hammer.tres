@@ -9,7 +9,6 @@ script = ExtResource("3")
 damage_per_hit = 3
 hit_count = 3
 ignores_defense = false
-effect_name = "Multi-Hit Damage"
 
 [resource]
 script = ExtResource("1")

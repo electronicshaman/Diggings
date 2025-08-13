@@ -9,7 +9,6 @@ script = ExtResource("3")
 base_defense = 6
 bonus_defense = 2
 health_threshold = 0.5
-effect_name = "Conditional Defense"
 
 [resource]
 script = ExtResource("1")

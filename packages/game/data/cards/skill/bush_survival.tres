@@ -9,7 +9,6 @@ script = ExtResource("3")
 base_heal = 6
 bonus_heal = 6
 health_threshold = 0.25
-effect_name = "Conditional Heal"
 
 [resource]
 script = ExtResource("1")

@@ -5,7 +5,6 @@
 
 [sub_resource type="Resource" id="Gambling_1"]
 script = ExtResource("2")
-effect_name = "Gambling"
 success_chance = 0.5
 effect_multiplier = 2.0
 
