@@ -67,6 +67,9 @@ func generate_simple_map():
 	
 	# Create connections
 	create_connections_from_filtered(filtered_edges)
+
+	# Safety: if anything above left the graph disconnected, repair it
+	_repair_connectivity_if_needed()
 	
 	# Set starting node to the city
 	var city_node_id = find_city_node()
@@ -1019,6 +1022,30 @@ func _persist_current_map_state():
 	if DEBUG_ENABLED:
 		GLog.debug("Persisted simple_map with " + str(saved_nodes.size()) + " nodes and " + str(saved_edges.size()) + " edges")
 
+# =========================
+# Connectivity repair helpers
+# =========================
+
+func _repair_connectivity_if_needed(persist_after: bool = false):
+	var components = _get_connected_components()
+	if components.size() <= 1:
+		return
+	# Choose largest component as the main
+	var main_comp = components[0]
+	for comp in components:
+		if comp.size() > main_comp.size():
+			main_comp = comp
+	# Connect each other component via the shortest bridge
+	for comp in components:
+		if comp == main_comp:
+			continue
+		var bridge = _find_shortest_bridge(comp, main_comp)
+		if bridge.has("from") and bridge.has("to") and bridge.from != "" and bridge.to != "":
+			create_connection(bridge.from, bridge.to)
+			GLog.warn("Connectivity repaired: bridged " + bridge.from + " <-> " + bridge.to)
+	if persist_after:
+		_persist_current_map_state()
+
 func _restore_map_from_saved(data: Dictionary):
 	clear_map()
 
@@ -1096,5 +1123,38 @@ func _restore_map_from_saved(data: Dictionary):
 			if not nodes.is_empty():
 				set_current_player_node(nodes.keys()[0])
 
+	# Safety: if saved map is disconnected, repair and persist
+	_repair_connectivity_if_needed(true)
+
 	if DEBUG_ENABLED:
 		GLog.info("Restored map from save: nodes=" + str(nodes.size()) + ", edges=" + str(edges.size()))
+
+func _get_connected_components() -> Array:
+	var comps: Array = []
+	var visited: Dictionary = {}
+	for node_id in nodes.keys():
+		if node_id in visited:
+			continue
+		var comp: Array[String] = []
+		var queue: Array[String] = [node_id]
+		visited[node_id] = true
+		while not queue.is_empty():
+			var current: String = queue.pop_front()
+			comp.append(current)
+			for neigh in nodes[current].connections:
+				if not visited.has(neigh):
+					visited[neigh] = true
+					queue.append(neigh)
+		comps.append(comp)
+	return comps
+
+func _find_shortest_bridge(comp_a: Array[String], comp_b: Array[String]) -> Dictionary:
+	var best: Dictionary = {"from": "", "to": "", "dist": INF}
+	for a in comp_a:
+		var pa: Vector2 = nodes[a].position
+		for b in comp_b:
+			var pb: Vector2 = nodes[b].position
+			var d = pa.distance_to(pb)
+			if d < best.dist:
+				best = {"from": a, "to": b, "dist": d}
+	return best

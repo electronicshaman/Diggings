@@ -2,7 +2,9 @@ extends RefCounted
 class_name PlanarGraphValidator
 
 const DEBUG_ENABLED: bool = false
-const LineSegment = preload("res://scripts/map/LineSegment.gd")
+"""
+Note: LineSegment is globally available via class_name.
+"""
 
 # Structure to store crossing information
 class EdgeCrossing:
@@ -128,47 +130,71 @@ static func get_crossing_edges(graph: Dictionary, from_node_id: String, to_node_
 	return crossing_edges
 
 # Remove crossing edges to make graph planar (greedy approach)
-static func make_graph_planar_greedy(graph: Dictionary) -> Dictionary:
+static func make_graph_planar_greedy(graph: Dictionary, protected_edges: Array = []) -> Dictionary:
 	var result_graph = graph.duplicate(true)
-	var removed_edges: Array[MapEdge] = []
-	
+	var protected_set: Dictionary = {}
+	# Build a quick lookup for protected edges (treat as undirected)
+	for item in protected_edges:
+		if typeof(item) == TYPE_DICTIONARY and item.has("from") and item.has("to"):
+			var a = str(item.from)
+			var b = str(item.to)
+			protected_set[a + "->" + b] = true
+			protected_set[b + "->" + a] = true
+		elif typeof(item) == TYPE_STRING:
+			var key: String = item
+			protected_set[key] = true
+			# Also mark reversed direction to be safe
+			var parts = key.split("->")
+			if parts.size() == 2:
+				protected_set[parts[1] + "->" + parts[0]] = true
+
 	while true:
 		var crossings = find_edge_crossings(result_graph)
-		
 		if crossings.is_empty():
 			break  # Graph is now planar
-		
-		# Find the edge involved in the most crossings
+
+		# Count crossings per edge
 		var edge_crossing_count: Dictionary = {}
-		
 		for crossing in crossings:
-			var edge1_key = crossing.edge1.from_node + "->" + crossing.edge1.to_node
-			var edge2_key = crossing.edge2.from_node + "->" + crossing.edge2.to_node
-			
-			edge_crossing_count[edge1_key] = edge_crossing_count.get(edge1_key, 0) + 1
-			edge_crossing_count[edge2_key] = edge_crossing_count.get(edge2_key, 0) + 1
-		
-		# Find the edge with maximum crossings
-		var max_crossings = 0
-		var worst_edge_key = ""
-		
-		for edge_key in edge_crossing_count:
-			if edge_crossing_count[edge_key] > max_crossings:
-				max_crossings = edge_crossing_count[edge_key]
-				worst_edge_key = edge_key
-		
-		# Remove the worst edge
-		if worst_edge_key != "":
-			var parts = worst_edge_key.split("->")
-			if parts.size() == 2:
+			var k1 = crossing.edge1.from_node + "->" + crossing.edge1.to_node
+			var k2 = crossing.edge2.from_node + "->" + crossing.edge2.to_node
+			edge_crossing_count[k1] = edge_crossing_count.get(k1, 0) + 1
+			edge_crossing_count[k2] = edge_crossing_count.get(k2, 0) + 1
+
+		# Sort edges by crossing count descending
+		var candidates: Array[String] = []
+		for edge_key in edge_crossing_count.keys():
+			candidates.append(edge_key)
+		candidates.sort_custom(func(a, b): return edge_crossing_count[a] > edge_crossing_count[b])
+
+		var removed_one := false
+		for edge_key in candidates:
+			if protected_set.has(edge_key):
+				continue  # do not remove protected edges
+
+			var parts = edge_key.split("->")
+			if parts.size() != 2:
+				continue
+
+			# Try removing this edge only if connectivity is preserved
+			var temp_graph = result_graph.duplicate(true)
+			remove_edge_from_graph(temp_graph, parts[0], parts[1])
+			if is_graph_connected(temp_graph):
 				remove_edge_from_graph(result_graph, parts[0], parts[1])
-				
+				removed_one = true
 				if DEBUG_ENABLED:
-					GLog.debug("Removed edge " + worst_edge_key + " (involved in " + str(max_crossings) + " crossings)")
-	
-	if DEBUG_ENABLED:
-		GLog.debug("Made graph planar by removing " + str(removed_edges.size()) + " edges")
-	
+					GLog.debug("Removed edge " + edge_key + " (crossings: " + str(edge_crossing_count[edge_key]) + ") while preserving connectivity")
+				break
+			else:
+				if DEBUG_ENABLED:
+					GLog.debug("Skipping removal of " + edge_key + " to preserve connectivity")
+
+		if not removed_one:
+			# Can't remove any crossing edge without disconnecting; give up
+			if DEBUG_ENABLED:
+				GLog.debug("Unable to make graph planar without breaking connectivity; stopping greedy removal")
+			break
+
 	return result_graph
 
 # Remove an edge from the graph
@@ -240,24 +266,20 @@ static func is_graph_connected(graph: Dictionary) -> bool:
 	if edges.is_empty() and nodes.size() > 1:
 		return false
 	
-	# Use DFS to check connectivity
-	var visited = {}
+	# Use DFS/BFS to check connectivity
+	var visited: Dictionary = {}
 	var start_node = nodes.keys()[0]
-	var stack = [start_node]
-	
+	var stack: Array[String] = [start_node]
+
 	while not stack.is_empty():
 		var current = stack.pop_back()
-		
 		if current in visited:
 			continue
-		
 		visited[current] = true
-		
-		# Add connected nodes to stack
 		var node = nodes[current]
-		if node and node.has_method("get") and "connections" in node:
+		if node:
 			for connected in node.connections:
 				if connected not in visited:
 					stack.append(connected)
-	
+
 	return visited.size() == nodes.size()

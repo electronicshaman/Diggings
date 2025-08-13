@@ -2,11 +2,9 @@ extends Node
 class_name MapGenerator
 
 const DEBUG_ENABLED: bool = false
-const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
-const PoissonDiskLayout = preload("res://scripts/map/PoissonDiskLayout.gd")
-const DelaunayTriangulator = preload("res://scripts/map/DelaunayTriangulator.gd")
-const EdgePruner = preload("res://scripts/map/EdgePruner.gd")
-const PlanarGraphValidator = preload("res://scripts/map/PlanarGraphValidator.gd")
+"""
+Note: Classes are globally available via class_name; avoid shadowing preloads.
+"""
 
 # Map layout configuration
 @export var layout_config: MapLayoutConfig
@@ -93,9 +91,9 @@ func initialize_rules():
 	
 	GLog.debug("Initialized " + str(rules.size()) + " graph generation rules with config")
 
-func generate_map(seed: int = -1) -> Dictionary:
-	if seed != -1:
-		generation_seed = seed
+func generate_map(gen_seed: int = -1) -> Dictionary:
+	if gen_seed != -1:
+		generation_seed = gen_seed
 	else:
 		generation_seed = SeedManager.get_map_random_int(0, 2147483647)
 	
@@ -284,6 +282,12 @@ func post_process_graph():
 	# Enforce connection limits
 	enforce_connection_limits()
 	
+	# Final safety: if any step above disconnected the graph, reconnect
+	var reachable_final = find_reachable_nodes(graph.start_node)
+	if reachable_final.size() < graph.nodes.size():
+		GLog.warn("Graph became disconnected after enforcement; running final connectivity pass")
+		ensure_graph_connectivity()
+    
 	# Node positions already optimized during generation
 
 
@@ -291,16 +295,29 @@ func ensure_graph_connectivity():
 	# Enhanced connectivity check - ensure all nodes are reachable from start
 	var reachable = find_reachable_nodes(graph.start_node)
 	var all_nodes = graph.nodes.keys()
-	
+
 	for node_id in all_nodes:
 		if node_id not in reachable:
 			# Find the best local connection instead of just nearest
 			var best_connection = find_best_local_connection(node_id, reachable)
 			if best_connection != "":
 				connect_nodes(node_id, best_connection)
-				GLog.debug("Connected isolated node " + node_id + " to " + best_connection)
-				# Update reachable list
-				reachable.append(node_id)
+				if node_id in find_reachable_nodes(graph.start_node):
+					GLog.debug("Connected isolated node " + node_id + " to " + best_connection)
+					reachable.append(node_id)
+					continue
+			# Fallback: connect to nearest reachable node ignoring distance constraints
+			var fallback_target = find_nearest_node(node_id, reachable)
+			if fallback_target != "":
+				if not edge_exists(node_id, fallback_target):
+					var travel_time = SeedManager.get_map_random_int(2, 4)
+					var difficulty = SeedManager.get_map_random_int(1, 3)
+					var edge = MapEdge.new(node_id, fallback_target, travel_time, difficulty)
+					graph.edges.append(edge)
+					graph.nodes[node_id].connect_to(fallback_target)
+					graph.nodes[fallback_target].connect_to(node_id)
+					GLog.warn("Added bridge to ensure connectivity (non-planar path): " + node_id + " <-> " + fallback_target)
+				reachable = find_reachable_nodes(graph.start_node)
 
 func find_reachable_nodes(start_node: String) -> Array[String]:
 	var visited: Array[String] = []
@@ -546,7 +563,7 @@ func find_valid_position_with_spacing(base_pos: Vector2, preferred_angle: float,
 		return base_pos
 	
 	var min_spacing = layout_config.spacing_min
-	var max_distance = layout_config.spacing_max
+	var _max_distance = layout_config.spacing_max
 	var auto_adjust = layout_config.bounds_auto_adjust_spacing
 	
 	# Try the preferred position first
@@ -932,17 +949,42 @@ func ensure_planar_connectivity():
 	"""Ensure graph connectivity while maintaining planarity"""
 	var reachable = find_reachable_nodes(graph.start_node)
 	var all_nodes = graph.nodes.keys()
-	
+	var added_bridges: Array = []
+
 	for node_id in all_nodes:
 		if node_id not in reachable:
-			# Find a connection that won't create crossings
+			# Try a planar connection first
 			var best_connection = find_planar_connection(node_id, reachable)
 			if best_connection != "":
-				connect_nodes_if_planar(node_id, best_connection)
-				GLog.debug("Connected isolated node " + node_id + " to " + best_connection + " (planar)")
-				reachable.append(node_id)
+				if connect_nodes_if_planar(node_id, best_connection):
+					GLog.debug("Connected isolated node " + node_id + " to " + best_connection + " (planar)")
+					reachable.append(node_id)
+					continue
+
+			# If no planar edge exists, connect to the nearest reachable node as a temporary bridge
+			var fallback_target = find_nearest_node(node_id, reachable)
+			if fallback_target != "":
+				# Add the bridge ignoring planarity to guarantee connectivity
+				if not edge_exists(node_id, fallback_target):
+					var travel_time = SeedManager.get_map_random_int(2, 4)
+					var difficulty = SeedManager.get_map_random_int(1, 3)
+					var edge = MapEdge.new(node_id, fallback_target, travel_time, difficulty)
+					graph.edges.append(edge)
+					graph.nodes[node_id].connect_to(fallback_target)
+					graph.nodes[fallback_target].connect_to(node_id)
+					added_bridges.append({"from": node_id, "to": fallback_target})
+					GLog.warn("Added non-planar bridge to ensure connectivity: " + node_id + " <-> " + fallback_target)
+					# Update reachable set and continue
+					reachable = find_reachable_nodes(graph.start_node)
+				else:
+					reachable.append(node_id)
 			else:
-				GLog.warn("Could not find planar connection for isolated node: " + node_id)
+				GLog.warn("No reachable fallback target found for node: " + node_id)
+
+	# If we added any bridging edges that might create crossings, try to re-planarize while protecting those bridges
+	if not added_bridges.is_empty() and layout_config and layout_config.auto_fix_crossings:
+		GLog.debug("Replanarizing after adding bridges (protecting new edges)")
+		graph = PlanarGraphValidator.make_graph_planar_greedy(graph, added_bridges)
 
 func find_planar_connection(from_node_id: String, candidate_nodes: Array[String]) -> String:
 	"""Find the best connection that won't create edge crossings"""
@@ -1022,7 +1064,7 @@ func validate_final_planarity():
 			else:
 				GLog.warn("✗ Still have " + str(fixed_report.total_crossings) + " crossings after fix attempt")
 
-func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
+func generate_map_for_region(config: MapRegionConfig, region_seed: int) -> Dictionary:
 	"""Generate a complete map for a specific region"""
 	GLog.debug("Generating map for region: " + config.region_id)
 	
@@ -1033,8 +1075,8 @@ func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
 	layout_config.viewport_size = config.region_bounds
 	
 	# Initialize RNG with region-specific seed
-	generation_seed = seed
-	SeedManager.map_rng.seed = seed
+	generation_seed = region_seed
+	SeedManager.map_rng.seed = region_seed
 	
 	# Reset graph
 	graph = {
@@ -1117,7 +1159,7 @@ func generate_radial_paths_from_city(config: MapRegionConfig):
 			
 			last_node_id = node_id
 
-func create_branch_connection(from_node_id: String, config: MapRegionConfig):
+func create_branch_connection(from_node_id: String, _config: MapRegionConfig):
 	"""Create a branch or cross-connection from a node"""
 	var from_node = graph.nodes[from_node_id]
 	
