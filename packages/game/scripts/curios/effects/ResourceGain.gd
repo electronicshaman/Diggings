@@ -16,17 +16,15 @@ func apply_effect(game_state: Node, _curio_data: Resource, context: Dictionary) 
 	if not _check_condition(game_state, context):
 		return
 	
-	# Calculate actual amount
-	var actual_amount = amount
-	# Honor stacks when managed by CurioManager
+	# Calculate actual amount (random roll first if enabled)
+	var actual_amount = (randi_range(1, amount) if random_range else amount)
+	# Honor stacks when managed by CurioManager (multiply rolled/base amount)
 	if _curio_data and game_state and game_state.has_method("get_curio_stack_count"):
-		var curio_name: String = _curio_data.curio_name if _curio_data.has("curio_name") else ""
+		var curio_name: String = (_curio_data as CurioData).curio_name if (_curio_data is CurioData) else ""
 		if curio_name != "":
 			var stacks: int = int(game_state.get_curio_stack_count(curio_name))
 			if stacks > 1:
 				actual_amount *= stacks
-	if random_range:
-		actual_amount = randi_range(1, amount)
 	
 	# Apply the resource gain
 	match resource_type:
@@ -107,16 +105,33 @@ func _get_player_data(game_state: Node):
 	# If the caller provides a direct accessor (e.g., DuelManager), use it
 	if game_state.has_method("get_player_data"):
 		return game_state.get_player_data()
-	# Try accessing a DuelManager singleton to retrieve player data during combat
-	if game_state.has_node("/root/DuelManager"):
-		var dm = game_state.get_node("/root/DuelManager")
-		if dm and dm.has_method("get_player_data"):
-			return dm.get_player_data()
+	# Try to locate a DuelManager in the active scene tree
+	var dm = _find_duel_manager(game_state)
+	if dm and dm.has_method("get_player_data"):
+		return dm.get_player_data()
 	# Fallback: check if GameManager stores a player reference (legacy)
 	if game_state.has_node("/root/GameManager"):
 		var gm = game_state.get_node("/root/GameManager")
 		if gm.game_data.has("player"):
 			return gm.game_data["player"]
+	return null
+
+func _find_duel_manager(game_state: Node):
+	if not game_state or not game_state.get_tree():
+		return null
+	var root = game_state.get_tree().get_root()
+	if not root:
+		return null
+	# Breadth-first search for a node of type DuelManager
+	var queue: Array = [root]
+	while not queue.is_empty():
+		var node = queue.pop_front()
+		# Direct type check using class_name
+		if node is DuelManager:
+			return node
+		for child in node.get_children():
+			if child is Node:
+				queue.append(child)
 	return null
 
 func get_formatted_description() -> String:
