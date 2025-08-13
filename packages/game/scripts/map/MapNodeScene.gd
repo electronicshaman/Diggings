@@ -1,15 +1,15 @@
-extends Control
+extends Node2D
 class_name MapNodeScene
 
 const DEBUG_ENABLED: bool = true
 
 # Node references
-@onready var node_button: Button = $NodeButton
-@onready var background_icon: TextureRect = $BackgroundIcon
-@onready var node_icon: TextureRect = $NodeIcon
-@onready var node_label: Label = $NodeLabel
-@onready var state_indicator: Control = $StateIndicator
-@onready var outline: ColorRect = $StateIndicator/Outline
+@onready var click_area: Area2D = $ClickArea
+@onready var background_icon: MeshInstance2D = $BackgroundIcon
+@onready var node_icon: MeshInstance2D = $NodeIcon
+# @onready var node_label: Label = $NodeLabel  # Removed - using tooltips instead
+@onready var state_indicator: Node2D = $StateIndicator
+@onready var outline: MeshInstance2D = $StateIndicator/Outline
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 # Node data and state
@@ -19,87 +19,85 @@ var is_interactive: bool = false
 var is_highlighted: bool = false
 
 # Visual settings
-@export var node_size: Vector2 = Vector2(64, 64)
-@export var label_offset: Vector2 = Vector2(0, 70)
+@export var node_size: Vector2 = Vector2(32, 32)
+# @export var label_offset: Vector2 = Vector2(0, 70)  # Removed - no longer needed
 
-# Colors for different states and types
-var type_colors = {
-	MapNode.NodeType.CITY: Color.GOLD,
-	MapNode.NodeType.CAMP: Color.GREEN,
-	MapNode.NodeType.MINE: Color.ORANGE,
-	MapNode.NodeType.SETTLEMENT: Color.BLUE,
-	MapNode.NodeType.POI: Color.PURPLE,
-	MapNode.NodeType.JUNCTION: Color.GRAY,
-	MapNode.NodeType.BOSS: Color.RED
-}
+# Data-driven visual system - all colors come from NodeConfig resources
 
-var state_colors = {
-	MapNode.NodeState.LOCKED: Color(0.3, 0.3, 0.3, 0.5),
-	MapNode.NodeState.AVAILABLE: Color.WHITE,
-	MapNode.NodeState.CURRENT: Color.YELLOW,
-	MapNode.NodeState.COMPLETED: Color(0.8, 0.8, 0.8, 0.8)
-}
+# Debug overlay label (created on demand)
+var debug_label: Label = null
 
 # Signals
 signal node_clicked(node_id: String, event: InputEvent)
 signal node_hovered(node_id: String)
-signal node_unhovered(node_id: String)
-signal action_requested(node_id: String, action_name: String)
+signal node_unhovered()
+## Removed unused signal to avoid lint warnings
 
 func _ready():
 	# Set up the base scene structure
 	setup_visual_hierarchy()
 	connect_signals()
 
+# Global mouse detection to see if ANY events reach this node
+func _unhandled_input(event: InputEvent):
+	if event is InputEventMouseButton and event.pressed:
+		var global_pos = event.global_position
+		var local_pos = to_local(global_pos)
+		var rect = Rect2(Vector2.ZERO, node_size)
+		if rect.has_point(local_pos):
+			GLog.info("🎯 GLOBAL MOUSE over " + node_id + " at " + str(local_pos))
+
 func setup_visual_hierarchy():
 	"""Set up the visual layout and styling"""
-	# Configure main control
-	custom_minimum_size = node_size
-	size = node_size
+	# Node2D doesn't have size properties like Control nodes
+	# All sizing is handled by child nodes
 	
-	# Only configure nodes if they exist
-	if node_button:
-		node_button.flat = true
-		node_button.custom_minimum_size = node_size
-		node_button.size = node_size
-		node_button.position = Vector2.ZERO
+	# Configure click area if it exists
+	if click_area:
+		# Area2D doesn't need size configuration, handled by CollisionShape2D
+		pass
 	
 	if background_icon:
-		background_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		background_icon.size = node_size
-		background_icon.position = Vector2.ZERO
+		# MeshInstance2D positioning - centered on the node
+		background_icon.position = node_size * 0.5
+		if background_icon.mesh is QuadMesh:
+			(background_icon.mesh as QuadMesh).size = node_size
 	
 	if node_icon:
-		node_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		node_icon.size = node_size * 0.7  # Slightly smaller than background
-		node_icon.position = node_size * 0.15  # Center it
+		# Slightly smaller than background, centered
+		node_icon.position = node_size * 0.5
+		if node_icon.mesh is QuadMesh:
+			(node_icon.mesh as QuadMesh).size = node_size * 0.7
 	
-	if node_label:
-		node_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		node_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		node_label.position = label_offset
-		node_label.size = Vector2(node_size.x + 40, 20)  # Wider for text
+	# Label configuration removed - using tooltips instead
 	
 	if state_indicator:
-		state_indicator.size = node_size + Vector2(8, 8)  # Slightly larger
-		state_indicator.position = Vector2(-4, -4)  # Centered offset
+		# Offset for outline effect
+		state_indicator.position = Vector2(-4, -4)
 	
 	if outline:
-		outline.size = state_indicator.size if state_indicator else node_size + Vector2(8, 8)
-		outline.position = Vector2.ZERO
-		outline.color = Color.TRANSPARENT
+		# Centered on the state indicator with larger size for outline
+		outline.position = node_size * 0.5 + Vector2(4, 4)  # Offset to center
+		outline.modulate = Color.TRANSPARENT
+		if outline.mesh is QuadMesh:
+			(outline.mesh as QuadMesh).size = node_size + Vector2(8, 8)
 
 func connect_signals():
 	"""Connect internal signals"""
-	if node_button:
-		node_button.pressed.connect(_on_button_pressed)
-		node_button.mouse_entered.connect(_on_mouse_entered)
-		node_button.mouse_exited.connect(_on_mouse_exited)
+	if click_area:
+		click_area.input_event.connect(_on_area_input_event)
+		click_area.mouse_entered.connect(_on_mouse_entered)
+		click_area.mouse_exited.connect(_on_mouse_exited)
+		pass  # Signals connected
+	else:
+		GLog.error("CRITICAL: click_area is NULL - signals not connected!")
 
 func setup_node(id: String, data: MapNode):
 	"""Initialize this scene with node data"""
 	node_id = id
 	node_data = data
+	
+	# Setup node data
 	
 	if not node_data:
 		GLog.error("MapNodeScene setup failed: no node data provided")
@@ -115,56 +113,42 @@ func setup_node(id: String, data: MapNode):
 	GLog.debug("MapNodeScene setup complete for: " + node_data.get_type_name() + " (" + id + ")")
 
 func apply_type_customizations():
-	"""Apply visual customizations based on node type and resource properties"""
-	if not node_data:
+	"""Apply visual customizations from node's resource configuration"""
+	if not node_data or not node_data.config:
+		GLog.error("MapNodeScene cannot apply customizations without NodeConfig")
 		return
 	
-	# Get size from resource properties, with fallback to type-based defaults
-	var resource_size = node_data.get_visual_size() if node_data.config else Vector2.ZERO
-	if resource_size != Vector2.ZERO:
-		node_size = resource_size
-	else:
-		# Fallback to type-based sizes for compatibility
-		match node_data.type:
-			MapNode.NodeType.CITY:
-				node_size = Vector2(80, 80)
-			MapNode.NodeType.BOSS:
-				node_size = Vector2(90, 90)
-			MapNode.NodeType.JUNCTION:
-				node_size = Vector2(48, 48)
-			_:
-				node_size = Vector2(64, 64)
+	# All visual properties come from the NodeConfig resource
+	node_size = node_data.get_visual_size()
 	
-	# Apply the size to the control
-	custom_minimum_size = node_size
-	size = node_size
+	# Node2D doesn't have size properties like Control nodes
+	# Size is managed by child nodes
 	
 	# Update child node sizes to match
 	setup_visual_hierarchy()
 
 func update_visuals():
 	"""Update all visual elements based on current node data and state"""
-	if not node_data:
+	if not node_data or not node_data.config:
+		GLog.error("MapNodeScene.update_visuals() called without node data or config")
 		return
 	
-	# Update label
-	if node_label:
-		node_label.text = node_data.get_type_name()
-		node_label.modulate = get_label_color()
+	# Get the explicit color from resource based on current state
+	var state_color = node_data.config.get_state_color(node_data.get_state())
+	var base_visual_color = node_data.config.visual_color
 	
-	# Update background based on type
+	if DEBUG_ENABLED:
+		GLog.debug("Updating visuals for " + node_id + " - State: " + str(node_data.get_state()) + ", State Color: " + str(state_color) + ", Visual Color: " + str(base_visual_color))
+	
+	# Update background using explicit resource color
 	if background_icon:
-		background_icon.modulate = get_background_color()
-		# Set background texture if available
-		if node_data.config and node_data.config.background_texture:
-			background_icon.texture = node_data.config.background_texture
+		# Use state-specific color for background
+		background_icon.modulate = state_color
 	
-	# Update main icon
+	# Update main icon using explicit resource color
 	if node_icon:
-		node_icon.modulate = get_icon_color()
-		# Set icon texture if available
-		if node_data.config and node_data.config.icon_texture:
-			node_icon.texture = node_data.config.icon_texture
+		# Use base visual color for the main icon
+		node_icon.modulate = base_visual_color
 	
 	# Update state indicator
 	update_state_indicator()
@@ -174,82 +158,30 @@ func update_visuals():
 
 func update_state_indicator():
 	"""Update the visual state indicator (outline, glow, etc.)"""
-	if not outline or not node_data:
+	if not outline or not node_data or not node_data.config:
 		return
 	
 	var state = node_data.get_state()
-	var base_color = state_colors.get(state, Color.WHITE)
-	
-	# Check if the resource defines a custom glow color
-	var glow_color = node_data.get_glow_color() if node_data.config else Color.TRANSPARENT
+	var glow_color = node_data.get_glow_color()
 	
 	# Handle special states
 	if is_highlighted:
-		base_color = Color.CYAN
-		outline.color = Color(base_color.r, base_color.g, base_color.b, 0.8)
+		# Use resource-defined glow color instead of hardcoded cyan
+		outline.modulate = Color(glow_color.r, glow_color.g, glow_color.b, 0.8)
 	elif state == MapNode.NodeState.CURRENT:
-		if glow_color != Color.TRANSPARENT:
-			outline.color = glow_color
-		else:
-			outline.color = Color(Color.GOLD.r, Color.GOLD.g, Color.GOLD.b, 0.9)
+		outline.modulate = glow_color
 	elif state == MapNode.NodeState.AVAILABLE and is_interactive:
-		if glow_color != Color.TRANSPARENT:
-			# Use resource glow color but make it more subtle for available state
-			outline.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.6)
-		else:
-			outline.color = Color(Color.WHITE.r, Color.WHITE.g, Color.WHITE.b, 0.6)
+		# Use resource glow color but make it more subtle for available state
+		outline.modulate = Color(glow_color.r, glow_color.g, glow_color.b, 0.6)
 	elif state == MapNode.NodeState.LOCKED:
-		outline.color = Color.TRANSPARENT
+		outline.modulate = Color.TRANSPARENT
 	else:
-		outline.color = Color.TRANSPARENT
+		outline.modulate = Color.TRANSPARENT
 
-func get_background_color() -> Color:
-	"""Get the background color based on node type, resource properties, and state"""
-	var base_color = Color.WHITE
-	var alpha = node_data.get_state_alpha()
-	
-	# First check if the resource has a custom visual color
-	var resource_color = node_data.get_type_color()
-	if resource_color != Color.TRANSPARENT:
-		base_color = resource_color
-	else:
-		# Fallback to type-based colors
-		base_color = type_colors.get(node_data.type, Color.WHITE)
-		match node_data.type:
-			MapNode.NodeType.CITY:
-				base_color = Color.GOLD
-			MapNode.NodeType.CAMP:
-				base_color = Color.FOREST_GREEN
-			MapNode.NodeType.MINE:
-				base_color = Color.ORANGE
-			MapNode.NodeType.BOSS:
-				base_color = Color.DARK_RED
-			MapNode.NodeType.JUNCTION:
-				base_color = Color.GRAY
-			MapNode.NodeType.POI:
-				base_color = Color.PURPLE
-			MapNode.NodeType.SETTLEMENT:
-				base_color = Color.BLUE
-	
-	return Color(base_color.r, base_color.g, base_color.b, alpha)
-
-func get_icon_color() -> Color:
-	"""Get the icon color based on node state"""
-	var alpha = node_data.get_state_alpha()
-	return Color(1.0, 1.0, 1.0, alpha)
-
-func get_label_color() -> Color:
-	"""Get the label color based on node state"""
-	if node_data.state == MapNode.NodeState.LOCKED:
-		return Color(0.5, 0.5, 0.5, 0.7)
-	elif node_data.get_state() == MapNode.NodeState.CURRENT:
-		return Color.YELLOW
-	else:
-		return Color.WHITE
 
 func update_interactivity():
 	"""Update whether this node can be interacted with"""
-	if not node_button or not node_data:
+	if not click_area or not node_data:
 		return
 	
 	var new_interactive = node_data.is_interactive()
@@ -257,61 +189,34 @@ func update_interactivity():
 	if new_interactive != is_interactive:
 		is_interactive = new_interactive
 		
-		# Update button state
-		node_button.disabled = not is_interactive
+		# Update Area2D pickable state
+		click_area.input_pickable = is_interactive
 		
-		# Visual feedback for interactivity
-		if is_interactive:
-			node_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		else:
-			node_button.mouse_default_cursor_shape = Control.CURSOR_ARROW
+		# Interactivity updated
+		
+		# Note: Node2D doesn't have mouse_default_cursor_shape
+		# Cursor changes would need to be handled differently if needed
 		
 		# Update visual appearance
 		update_state_indicator()
 
 func update_tooltip():
 	"""Update the tooltip based on current node state and available actions"""
-	if not node_button or not node_data:
+	if not node_data:
 		return
 	
 	var tooltip_content = node_data.get_description()
 	
-	# Add type-specific information
-	match node_data.type:
-		MapNode.NodeType.CITY:
-			if node_data.get_custom_property("has_shop", false):
-				tooltip_content += "\nâ¢ Shop available"
-			if node_data.get_custom_property("has_deck_management", false):
-				tooltip_content += "\nâ¢ Deck management available"
-			if node_data.get_custom_property("heal_to_full", false):
-				tooltip_content += "\nâ¢ Full healing available"
-			tooltip_content += "\nâ¢ Safe haven - always revisitable"
-			
-		MapNode.NodeType.CAMP:
-			var heal_amount = node_data.get_custom_property("heal_amount", 15)
-			var rest_time = node_data.get_custom_property("rest_time", 4)
-			tooltip_content += "\nâ¢ Rest and heal " + str(heal_amount) + " HP"
-			tooltip_content += "\nâ¢ Takes " + str(rest_time) + " hours"
-			tooltip_content += "\nâ¢ Safe location"
-			
-		MapNode.NodeType.MINE:
-			var resource_type = node_data.get_custom_property("resource_type", "gold")
-			var danger_level = node_data.get_custom_property("danger_level", 1)
-			var exploration_time = node_data.get_custom_property("exploration_time", 6)
-			tooltip_content += "\nâ¢ Mine for " + resource_type
-			tooltip_content += "\nâ¢ Danger level: " + str(danger_level) + "/3"
-			tooltip_content += "\nâ¢ Takes " + str(exploration_time) + " hours"
-			tooltip_content += "\nâ¢ Risk vs reward location"
-			
-		MapNode.NodeType.BOSS:
-			var boss_name = node_data.get_custom_property("boss_name", "Boss")
-			var difficulty = node_data.get_custom_property("difficulty", 3)
-			var rewards_legendary = node_data.get_custom_property("rewards_legendary", false)
-			tooltip_content += "\nâ¢ Boss: " + boss_name
-			tooltip_content += "\nâ¢ Difficulty: " + str(difficulty) + "/5"
-			if rewards_legendary:
-				tooltip_content += "\nâ¢ Legendary rewards available"
-			tooltip_content += "\nâ¢ Completing defeats this region"
+	# Add custom properties from the config if they exist
+	if node_data.config:
+		var custom_props = node_data.config.custom_properties
+		
+		# Build tooltip from custom properties dynamically
+		if custom_props.has("tooltip_extras"):
+			var extras = custom_props["tooltip_extras"]
+			if extras is Array:
+				for extra in extras:
+					tooltip_content += "\n- " + str(extra)
 	
 	# Add state information
 	match node_data.get_state():
@@ -329,7 +234,10 @@ func update_tooltip():
 	if is_interactive and node_data.actions.size() > 0:
 		tooltip_content += "\n\nAvailable actions: " + str(node_data.actions.size())
 	
-	node_button.tooltip_text = tooltip_content
+	# Note: Node2D doesn't have tooltip_text property.
+	# In DEBUG, we can log the computed tooltip for verification.
+	if DEBUG_ENABLED:
+		GLog.debug("Tooltip for " + node_id + ":\n" + tooltip_content)
 
 func set_highlight(highlighted: bool):
 	"""Set whether this node should be highlighted"""
@@ -349,54 +257,93 @@ func play_select_animation():
 	if animation_player and animation_player.has_animation("select"):
 		animation_player.play("select")
 	else:
-		# Fallback animation using tween
+		# Get the current resource-based color for animation
+		var base_color = node_data.config.get_state_color(node_data.get_state()) if node_data and node_data.config else Color.WHITE
+		
+		# Fallback animation using tween with modulate effects
 		var tween = create_tween()
 		tween.parallel().tween_property(self, "scale", Vector2(1.2, 1.2), 0.1)
 		tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
 		tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.1)
+		tween.parallel().tween_property(self, "modulate", base_color, 0.1)
 		
-		# Type-specific selection effects
-		match node_data.type if node_data else MapNode.NodeType.JUNCTION:
-			MapNode.NodeType.BOSS:
-				# Dramatic flash effect for bosses
-				tween.parallel().tween_property(self, "modulate", Color.RED, 0.2)
-				tween.parallel().tween_property(self, "modulate", Color.WHITE, 0.1)
+		# Check for pulse effect from config
+		if node_data and node_data.config and node_data.config.pulse_effect:
+			# Dramatic flash effect for nodes with pulse enabled - blend with resource color
+			var pulse_color = node_data.config.visual_color
+			var blended_pulse = Color(pulse_color.r, pulse_color.g, pulse_color.b, base_color.a)
+			tween.parallel().tween_property(self, "modulate", blended_pulse, 0.2)
+			tween.parallel().tween_property(self, "modulate", base_color, 0.1)
 
 func play_discover_animation():
 	"""Play discovery animation when node becomes visible"""
 	if animation_player and animation_player.has_animation("discover"):
 		animation_player.play("discover")
 
+# Debug helpers
+func update_debug_badge(text: String, color: Color = Color.WHITE):
+	"""Show or update a tiny debug label above the node without intercepting input"""
+	if not debug_label:
+		debug_label = Label.new()
+		debug_label.name = "DebugLabel"
+		# Ensure this Control doesn't steal mouse input from Area2D
+		debug_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# Smaller text and positioned slightly above the node center
+		debug_label.scale = Vector2(0.75, 0.75)
+		add_child(debug_label)
+	# Position relative to current node size (above the top a bit)
+	debug_label.position = Vector2(node_size.x * 0.5 - 6.0, -12.0)
+	debug_label.text = text
+	debug_label.modulate = color
+	debug_label.visible = true
+
+func clear_debug_badge():
+	"""Hide the debug label if present"""
+	if debug_label:
+		debug_label.visible = false
+
 # Event handlers
-func _on_button_pressed():
-	"""Handle button press - emit click signal"""
-	GLog.debug("MapNodeScene button pressed: " + node_id)
+func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
+	"""Handle Area2D input events"""
+	GLog.info("🎯 AREA2D EVENT on " + node_id + ": " + str(event.get_class()))
 	
-	# Play selection animation
-	play_select_animation()
-	
-	# Emit the click signal
-	var dummy_event = InputEventMouseButton.new()
-	dummy_event.button_index = MOUSE_BUTTON_LEFT
-	dummy_event.pressed = true
-	node_clicked.emit(node_id, dummy_event)
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			GLog.info("🖱️ LEFT CLICK on " + node_id)
+			
+			if not is_interactive:
+				GLog.info("❌ Node " + node_id + " not interactive")
+				return
+			
+			# Play selection animation
+			play_select_animation()
+			
+			# Emit the click signal
+			GLog.info("✅ EMITTING click signal: " + node_id)
+			node_clicked.emit(node_id, event)
 
 func _on_mouse_entered():
 	"""Handle mouse hover enter"""
+	GLog.debug("🖱️ HOVER: " + node_id)
+	
 	node_hovered.emit(node_id)
 	
 	# Visual feedback
 	if is_interactive:
 		var tween = create_tween()
 		tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.1)
+		# Hover animation started
 
 func _on_mouse_exited():
 	"""Handle mouse hover exit"""
-	node_unhovered.emit(node_id)
+	GLog.debug("🖱️ UNHOVER: " + node_id)
+	
+	node_unhovered.emit()
 	
 	# Reset visual feedback
 	var tween = create_tween()
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.1)
+	# Unhover animation started
 
 # Public interface for external control
 func refresh():

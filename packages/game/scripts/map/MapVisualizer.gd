@@ -7,10 +7,8 @@ const DEBUG_ENABLED: bool = true
 const MapNodeScene = preload("res://scenes/map/MapNodeScene.tscn")
 
 # Visual settings
-@export var node_radius: float = 20.0
+@export var node_radius: float = 16.0
 @export var edge_width: float = 3.0
-@export var visible_node_alpha: float = 1.0
-@export var locked_node_alpha: float = 0.3
 @export var player_node_outline: float = 4.0
 
 # Colors
@@ -271,11 +269,8 @@ func create_node_visual(node_id: String, node: MapNode):
 	node_scene.set_position_centered(adjusted_position)
 	node_scene.z_index = 1  # Above edges
 	
-	# Apply visibility based on state
-	if node.state == MapNode.NodeState.LOCKED:
-		node_scene.modulate.a = locked_node_alpha
-	else:
-		node_scene.modulate.a = visible_node_alpha
+	# Apply resource-based colors properly
+	apply_node_colors(node_scene, node)
 	
 	# Connect signals
 	node_scene.node_clicked.connect(_on_node_scene_clicked)
@@ -299,40 +294,13 @@ func create_node_scene_for_type(node_type: MapNode.NodeType) -> MapNodeScene:
 	# when setup_node() is called with the actual MapNode data
 	return scene_instance
 
-func style_node_button(button: Button, node: MapNode):
-	var style_box = StyleBoxFlat.new()
+func apply_node_colors(node_scene: MapNodeScene, node: MapNode):
+	"""Apply colors to node using resource-defined state colors exactly"""
+	if not node or not node_scene or not node.config:
+		return
 	
-	# Base color from node type
-	style_box.bg_color = node.get_type_color()
-	style_box.corner_radius_top_left = node_radius
-	style_box.corner_radius_top_right = node_radius
-	style_box.corner_radius_bottom_left = node_radius
-	style_box.corner_radius_bottom_right = node_radius
-	
-	# Apply visibility based on state
-	if node.state == MapNode.NodeState.LOCKED:
-		style_box.bg_color.a = locked_node_alpha
-	else:
-		style_box.bg_color.a = visible_node_alpha
-	
-	# Player position outline
-	if graph_data.player_position == node.id:
-		style_box.border_width_left = player_node_outline
-		style_box.border_width_right = player_node_outline
-		style_box.border_width_top = player_node_outline
-		style_box.border_width_bottom = player_node_outline
-		style_box.border_color = player_color
-	
-	# Different styles for different states
-	button.add_theme_stylebox_override("normal", style_box)
-	button.add_theme_stylebox_override("hover", style_box.duplicate())
-	button.add_theme_stylebox_override("pressed", style_box.duplicate())
-	
-	# Tooltip
-	if node.state != MapNode.NodeState.LOCKED:
-		button.tooltip_text = node.get_description()
-	else:
-		button.tooltip_text = "Unexplored location"
+	# Use the state color exactly as defined in the MapNodeConfig resource
+	node_scene.modulate = node.get_state_color()
 
 func update_visibility():
 	# Update all node visibilities
@@ -347,41 +315,19 @@ func update_visibility():
 	update_edge_visibility()
 
 func update_node_interactivity(node_scene: MapNodeScene, node: MapNode):
-	var current_player_node = graph_data.nodes.get(graph_data.player_position)
-	var is_current_position = (node.id == graph_data.player_position)
+	# IMPORTANT: Do NOT override node states - respect the persistent discovery system
+	# Only update visual styling based on the node's current state
 	
-	# Update the node's state based on game logic
-	if node.state == MapNode.NodeState.LOCKED:
-		node_scene.modulate = Color(1, 1, 1, locked_node_alpha)
-	elif is_current_position:
-		node.set_state(MapNode.NodeState.CURRENT)
-		node_scene.modulate = Color(1, 1, 1, visible_node_alpha)
-	elif current_player_node and current_player_node.is_connected_to(node.id):
-		# Check if this node can be visited
-		var can_visit = true
-		
-		if node.state == MapNode.NodeState.COMPLETED:
-			# Use the node's can_revisit logic
-			can_visit = node.can_revisit()
-		
-		if can_visit:
-			node.set_state(MapNode.NodeState.AVAILABLE)
-			node_scene.modulate = Color(1, 1, 1, visible_node_alpha)
-		else:
-			node.set_state(MapNode.NodeState.COMPLETED)
-			node_scene.modulate = Color(1, 1, 1, 0.6)
-	else:
-		# Not connected or not accessible
-		if node.state == MapNode.NodeState.COMPLETED:
-			node.set_state(MapNode.NodeState.COMPLETED)
-		else:
-			node.set_state(MapNode.NodeState.LOCKED)
-		node_scene.modulate = Color(1, 1, 1, 0.6)
+	# Apply resource-based colors properly
+	apply_node_colors(node_scene, node)
 	
 	# Refresh the scene's visuals and interactivity
 	node_scene.refresh()
 
 func update_edge_visibility():
+	var current_player_node_id = graph_data.get("player_position", "")
+	var available_moves = map_generator.get_available_moves() if map_generator else []
+	
 	for line in edge_lines:
 		var edge = line.get_meta("edge_data", null) as MapEdge
 		if not edge:
@@ -393,8 +339,15 @@ func update_edge_visibility():
 		if not from_node or not to_node:
 			continue
 		
-		# Show edge if either node is not locked (visible)
-		if from_node.state != MapNode.NodeState.LOCKED or to_node.state != MapNode.NodeState.LOCKED:
+		# Show edge only if it connects current player position to an available destination
+		var connects_current_to_available = false
+		
+		if edge.from_node == current_player_node_id and edge.to_node in available_moves:
+			connects_current_to_available = true
+		elif edge.to_node == current_player_node_id and edge.from_node in available_moves:
+			connects_current_to_available = true
+		
+		if connects_current_to_available:
 			line.default_color = edge_visible_color
 			line.visible = true
 		else:

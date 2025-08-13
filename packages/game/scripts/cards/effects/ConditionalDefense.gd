@@ -1,13 +1,14 @@
 extends CardEffect
 class_name ConditionalDefense
 
+const EFFECT_NAME := "Conditional Defense"
+
 @export var base_defense: int = 6
 @export var bonus_defense: int = 2
 @export var health_threshold: float = 0.5  # 50% health
 
 func _init() -> void:
-	effect_name = "Conditional Defense"
-	description = "Gain %d Block. If health below %d%%, gain +%d Block." % [base_defense, int(health_threshold * 100), bonus_defense]
+	pass
 
 func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	var total_defense = base_defense
@@ -28,7 +29,10 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 	
 	# Add defense to results
 	results.defense += total_defense
-	print("Applied %s effect from %s (+%d defense, total: %d)" % [effect_name, card_data.card_name, total_defense, results.defense])
+	print("Applied %s effect from %s (+%d defense, total: %d)" % [get_effect_name(), card_data.card_name, total_defense, results.defense])
 
 func get_formatted_description() -> String:
 	return "Gain %d Block. If health below %d%%, gain +%d Block." % [base_defense, int(health_threshold * 100), bonus_defense]
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

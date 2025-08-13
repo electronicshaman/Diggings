@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3 uid="uid://d0vsjku52xguo"]
+
+[ext_resource type="Script" uid="uid://cqv21ssbdrhpk" path="res://scripts/map/MapNodeConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+node_name = "Camp"
+description = "A safe place to rest and recover."
+node_type = 1
+visual_size = Vector2(32, 32)
+visual_color = Color(0.0, 0.7, 0.0, 1)
+glow_color = Color(0.7, 0.7, 0.7, 0.5)
+pulse_effect = false
+state_color_locked = Color(0.3, 0.3, 0.3, 0.5)
+state_color_available = Color(1, 1, 1, 1)
+state_color_current = Color(1, 1, 0, 1)
+state_color_completed = Color(0.8, 0.8, 0.8, 0.8)
+state_color_known = Color(0.5, 0.5, 0.5, 0.5)
+safe = true
+can_revisit = true
+one_time_only = false
+always_accessible = false
+available_actions = Array[String](["rest", "quick_rest"])
+action_properties = {
+"quick_rest": {
+"description": "Take a brief rest.",
+"heal_amount": 8,
+"sanity_change": 5,
+"time_cost_hours": 2
+},
+"rest": {
+"description": "Rest by the campfire.",
+"heal_amount": 15,
+"sanity_change": 10,
+"time_cost_hours": 4
+}
+}
+custom_properties = {
+"camp_type": "standard",
+"heal_amount": 15
+}

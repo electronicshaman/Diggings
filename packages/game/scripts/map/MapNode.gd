@@ -1,6 +1,7 @@
 extends Resource
 class_name MapNode
 
+
 enum NodeType {
 	CITY,      # Central hub - safe haven with all services
 	CAMP,      # Rest and healing locations
@@ -12,10 +13,11 @@ enum NodeType {
 }
 
 enum NodeState {
-	LOCKED,      # Not accessible - grey/hidden
-	AVAILABLE,   # Can be visited - normal appearance  
+	LOCKED,      # Not visible - completely unknown
+	KNOWN,       # Visible but not reachable - discovered but can't travel  
+	AVAILABLE,   # Visible and clickable - can travel there now
 	CURRENT,     # Player's current location - highlighted
-	COMPLETED    # Already visited - contextual appearance
+	COMPLETED    # Previously visited - contextual appearance
 }
 
 @export var id: String = ""
@@ -27,90 +29,34 @@ enum NodeState {
 @export var state: NodeState = NodeState.LOCKED
 
 # Configuration resource that defines this node's properties and behavior
-@export var config: NodeConfig
+@export var config: MapNodeConfig
 
 # Available actions for this node (generated from config)  
-@export var actions: Array[NodeAction] = []
+@export var actions: Array[MapNodeAction] = []
 
-func _init(node_id: String = "", node_type: NodeType = NodeType.JUNCTION, pos: Vector2 = Vector2.ZERO, node_config: NodeConfig = null):
+func _init(node_id: String = "", pos: Vector2 = Vector2.ZERO, node_config: MapNodeConfig = null):
 	id = node_id
-	type = node_type
 	position = pos
-	config = node_config
 	
-	# If no config provided, create a default one based on type
-	if config == null:
-		config = _create_default_config(type)
-	
-	# Generate actions from config
-	_generate_actions_from_config()
-
-func set_config(new_config: NodeConfig):
-	"""Set a new configuration for this node"""
-	config = new_config
-	if config:
+	if node_config:
+		config = node_config
 		type = config.node_type
 		_generate_actions_from_config()
+	else:
+		GLog.error("MapNode created without MapNodeConfig - this should not happen in data-driven architecture")
 
-func _create_default_config(node_type: NodeType) -> NodeConfig:
-	"""Create a basic default config if none is provided"""
-	var config = NodeConfig.new()
-	config.node_type = node_type
-	
-	# Set basic defaults based on type
-	match node_type:
-		NodeType.CITY:
-			config.node_name = "City"
-			config.visual_color = Color.GOLD
-			config.visual_size = Vector2(80, 80)
-			config.safe = true
-			config.always_accessible = true
-			config.available_actions.append("rest")
-			config.available_actions.append("shop")
-		NodeType.CAMP:
-			config.node_name = "Camp"
-			config.visual_color = Color.FOREST_GREEN
-			config.visual_size = Vector2(64, 64)
-			config.safe = true
-			config.available_actions.append("rest")
-		NodeType.MINE:
-			config.node_name = "Mine"
-			config.visual_color = Color.ORANGE
-			config.visual_size = Vector2(70, 70)
-			config.available_actions.append("mine")
-			config.available_actions.append("explore")
-		NodeType.SETTLEMENT:
-			config.node_name = "Settlement"
-			config.visual_color = Color.BLUE
-			config.visual_size = Vector2(68, 68)
-			config.safe = true
-			config.available_actions.append("shop")
-			config.available_actions.append("trade")
-			config.available_actions.append("rest")
-		NodeType.POI:
-			config.node_name = "Point of Interest"
-			config.visual_color = Color.PURPLE
-			config.visual_size = Vector2(66, 66)
-			config.one_time_only = true
-			config.available_actions.append("investigate")
-		NodeType.JUNCTION:
-			config.node_name = "Junction"
-			config.visual_color = Color.GRAY
-			config.visual_size = Vector2(48, 48)
-			config.safe = true
-			config.available_actions.append("survey_paths")
-		NodeType.BOSS:
-			config.node_name = "Boss"
-			config.visual_color = Color.DARK_RED
-			config.visual_size = Vector2(90, 90)
-			config.one_time_only = true
-			config.can_revisit = false
-			config.available_actions.append("challenge")
-	
-	return config
+func set_config(new_config: MapNodeConfig):
+	"""Set a new configuration for this node"""
+	if not new_config:
+		GLog.error("Attempted to set null config on MapNode")
+		return
+		
+	config = new_config
+	type = config.node_type
+	_generate_actions_from_config()
 
 func _generate_actions_from_config():
-	"""Generate NodeAction objects from config data"""
+	"""Generate MapNodeAction objects from config data"""
 	actions.clear()
 	
 	if not config:
@@ -122,9 +68,9 @@ func _generate_actions_from_config():
 		if action:
 			actions.append(action)
 
-func _create_action_from_config(action_name: String) -> NodeAction:
-	"""Create a NodeAction from config data"""
-	var action = NodeAction.new()
+func _create_action_from_config(action_name: String) -> MapNodeAction:
+	"""Create a MapNodeAction from config data"""
+	var action = MapNodeAction.new()
 	action.action_name = action_name
 	
 	# Get action properties from config
@@ -189,14 +135,14 @@ func get_type_name() -> String:
 	if config:
 		return config.get_display_name()
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return "ERROR_NO_CONFIG"
 
 func get_type_color() -> Color:
 	if config:
 		return config.get_type_color()
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return Color.MAGENTA  # Obvious error color
 
 func discover() -> void:
@@ -216,7 +162,7 @@ func get_description() -> String:
 	if config:
 		return config.get_display_description()
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return "ERROR: No configuration data found for this node."
 
 # New state management methods
@@ -236,6 +182,9 @@ func is_interactive() -> bool:
 		NodeState.COMPLETED:
 			# Some completed nodes can be revisited
 			return can_revisit()
+		NodeState.KNOWN:
+			# Visible but not interactive - discovered but unreachable
+			return false
 		_:
 			return false
 
@@ -244,27 +193,37 @@ func can_revisit() -> bool:
 	if config:
 		return config.can_revisit
 	else:
-		GLog.error("MapNode " + id + " has no config! All nodes must have NodeConfig resources.")
+		GLog.error("MapNode " + id + " has no config! All nodes must have MapNodeConfig resources.")
 		return false
 
-func get_state_alpha() -> float:
-	"""Returns the visual alpha for this node's current state"""
-	match state:
-		NodeState.LOCKED:
-			return 0.3
-		NodeState.AVAILABLE:
-			return 1.0
-		NodeState.CURRENT:
-			return 1.0
-		NodeState.COMPLETED:
-			return 0.8 if can_revisit() else 0.6
-		_:
-			return 1.0
+func get_state_color() -> Color:
+	"""Returns the full color for this node's current state from resource configuration"""
+	if config:
+		return config.get_state_color(get_state())
+	else:
+		# Fallback to basic colors if no config (should not happen in normal operation)
+		match state:
+			NodeState.LOCKED:
+				return Color(0.3, 0.3, 0.3, 0.3)
+			NodeState.KNOWN:
+				return Color(0.5, 0.5, 1.0, 0.7)  # Blue tinted
+			NodeState.AVAILABLE:
+				return Color.GREEN
+			NodeState.CURRENT:
+				return Color.YELLOW
+			NodeState.COMPLETED:
+				return Color(0.8, 0.8, 0.8, 0.8)
+			_:
+				return Color.WHITE
 
-# NodeAction system methods
-func get_available_actions(player_data: Dictionary) -> Array[NodeAction]:
+func get_state_alpha() -> float:
+	"""Returns the visual alpha for this node's current state from resource configuration"""
+	return get_state_color().a
+
+# MapNodeAction system methods
+func get_available_actions(player_data: Dictionary) -> Array[MapNodeAction]:
 	"""Get all actions that the player can currently perform at this node"""
-	var available: Array[NodeAction] = []
+	var available: Array[MapNodeAction] = []
 	
 	for action in actions:
 		if action.can_execute(player_data, self):
@@ -292,7 +251,7 @@ func has_action(action_name: String) -> bool:
 			return true
 	return false
 
-func add_action(action: NodeAction):
+func add_action(action: MapNodeAction):
 	"""Add a new action to this node"""
 	if not has_action(action.action_name):
 		actions.append(action)
@@ -356,21 +315,4 @@ func set_custom_property(property_name: String, value):
 	if config:
 		config.set_custom_property(property_name, value)
 
-# Static helper method for loading node configs from .tres files
-static func load_config_from_file(file_path: String) -> NodeConfig:
-	"""Load a NodeConfig from a .tres file"""
-	if ResourceLoader.exists(file_path):
-		return load(file_path) as NodeConfig
-	else:
-		GLog.debug("NodeConfig file not found: " + file_path)
-		return null
-
-# Factory method for creating nodes with config files
-static func create_from_config_file(node_id: String, config_path: String, pos: Vector2 = Vector2.ZERO) -> MapNode:
-	"""Create a MapNode with configuration loaded from a .tres file"""
-	var node_config = load_config_from_file(config_path)
-	if node_config:
-		return MapNode.new(node_id, node_config.node_type, pos, node_config)
-	else:
-		GLog.debug("Failed to create node from config: " + config_path)
-		return MapNode.new(node_id, NodeType.JUNCTION, pos)
+# Factory method for creating nodes - config is required

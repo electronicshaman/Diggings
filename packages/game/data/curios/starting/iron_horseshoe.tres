@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://data/CurioData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/CardModifier.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+effect_name = "Lucky Energy Save"
+description = "10% chance to not consume energy"
+trigger_event = "card_played"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 0.1
+target_card_type = "all"
+modification_type = "cost"
+modification_value = 0
+only_specific_card = ""
+
+[resource]
+script = ExtResource("1")
+curio_name = "Iron Horseshoe"
+description = "10% chance to not consume energy when playing a card"
+icon = null
+flavor_text = "Said to bring good fortune to travelers and fortune seekers."
+mechanical_category = "Triggered"
+rarity = "Common"
+stackable = true
+max_stacks = 3
+effects = [SubResource("SubResource_1")]
+gold_cost = 100
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.2
+prospector_synergy = 1.1
+tracker_synergy = 1.0
+publican_synergy = 1.1
+glow_color = Color(0.7, 0.7, 0.7, 1.0)
+trigger_particle = null

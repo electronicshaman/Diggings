@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "framed_for_murder"
+element_type = "tragedy"
+display_name = "Framed for Murder"
+description = "Someone made sure you took the fall for a murder you didn't commit."
+flavor_text = "The blood wasn't on your hands, but the evidence said otherwise. Now every lawman wants your head."
+weight = 18.0
+class_compatibility = {
+  "Bushranger": 2.0,
+  "Prospector": 0.8,
+  "Tracker": 1.2,
+  "Publican": 0.7
+}
+stat_modifiers = {
+  "max_health": 10
+}
+percentage_modifiers = {}
+special_modifiers = {
+  "lawman_aggression": 1.5,
+  "bounty_on_head": 100
+}
+gameplay_rules = ["wanted_dead_or_alive"]
+conditional_modifiers = []
+compatible_next_elements = ["clear_name", "revenge", "find_real_killer"]
+incompatible_elements = []
+required_elements = ["wrongly_accused"]
+adds_objective = false
+objective_type = ""
+objective_value = 0
+objective_reward = ""
+icon = null
+color_theme = Color(0.4, 0.1, 0.1, 1.0)
+nickname_pool = ["The Accused", "Bloodhand", "Innocent", "Framed"]

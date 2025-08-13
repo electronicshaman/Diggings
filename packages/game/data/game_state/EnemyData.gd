@@ -1,6 +1,8 @@
 extends Resource
 class_name EnemyState
 
+const DEBUG_ENABLED: bool = true
+
 # EnemyState Resource - Enemy state using Stats resource
 # Simpler than PlayerData, focused on combat stats and AI state
 
@@ -251,10 +253,10 @@ func load_from_data(data: Dictionary):
 # Debug methods
 func print_status():
 	"""Print current enemy status for debugging"""
-	print("=== %s ===" % enemy_name)
+	GLog.debug("=== %s ===" % enemy_name)
 	if stats:
 		stats.print_status()
-	print("Stun: %d turns remaining" % stun_turns_remaining)
-	print("Pattern: %d" % current_pattern_index)
-	print("Turns alive: %d" % turns_alive)
-	print("Modifiers: %.1fx damage, %.1fx defense" % [damage_modifier, defense_modifier])
+	GLog.debug("Stun: %d turns remaining" % stun_turns_remaining)
+	GLog.debug("Pattern: %d" % current_pattern_index)
+	GLog.debug("Turns alive: %d" % turns_alive)
+	GLog.debug("Modifiers: %.1fx damage, %.1fx defense" % [damage_modifier, defense_modifier])

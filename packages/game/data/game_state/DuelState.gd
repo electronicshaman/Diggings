@@ -350,24 +350,24 @@ func load_from_data(data: Dictionary):
 # Debug methods
 func print_status():
 	"""Print complete duel status for debugging"""
-	print("=== DUEL STATE ===")
-	print("Turn %d (%s turn)" % [current_turn, "Player" if is_player_turn else "Enemy"])
-	print("Active: %s, Winner: %s" % [duel_active, winner if winner else "None"])
+	GLog.debug("=== DUEL STATE ===")
+	GLog.debug("Turn %d (%s turn)" % [current_turn, "Player" if is_player_turn else "Enemy"])
+	GLog.debug("Active: %s, Winner: %s" % [duel_active, winner if winner else "None"])
 	
 	if player_data:
-		print("\n--- PLAYER ---")
+		GLog.debug("\n--- PLAYER ---")
 		player_data.print_status()
 	
 	if enemy_data:
-		print("\n--- ENEMY ---")
+		GLog.debug("\n--- ENEMY ---")
 		enemy_data.print_status()
 	
-	print("\n--- CARD PILES ---")
-	print("Hand: %d cards" % (hand.size() if hand else 0))
-	print("Deck: %d cards" % (deck.size() if deck else 0))
-	print("Discard: %d cards" % (discard_pile.size() if discard_pile else 0))
-	print("Removed: %d cards" % (removed_pile.size() if removed_pile else 0))
-	print("==================")
+	GLog.debug("\n--- CARD PILES ---")
+	GLog.debug("Hand: %d cards" % (hand.size() if hand else 0))
+	GLog.debug("Deck: %d cards" % (deck.size() if deck else 0))
+	GLog.debug("Discard: %d cards" % (discard_pile.size() if discard_pile else 0))
+	GLog.debug("Removed: %d cards" % (removed_pile.size() if removed_pile else 0))
+	GLog.debug("==================")
 
 # Convenience accessors for backwards compatibility
 func get_player_state() -> PlayerData:

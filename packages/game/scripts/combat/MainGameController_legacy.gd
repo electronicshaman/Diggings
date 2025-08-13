@@ -25,7 +25,7 @@ var test_enemies = []
 var hand_cards = []
 
 func _ready():
-	print("MainGameController ready, loading test content...")
+	GLog.info("MainGameController ready, loading test content...")
 	
 	load_test_cards()
 	load_test_enemies()
@@ -64,7 +64,7 @@ func load_test_cards():
 		var card_data = load(path)
 		if card_data:
 			test_cards.append(card_data)
-			print("Loaded test card: %s" % card_data.card_name)
+			GLog.debug("Loaded test card: %s" % card_data.card_name)
 
 func load_test_enemies():
 	var enemy_paths = [
@@ -76,11 +76,11 @@ func load_test_enemies():
 		var enemy_data = load(path)
 		if enemy_data:
 			test_enemies.append(enemy_data)
-			print("Loaded test enemy: %s" % enemy_data.enemy_name)
+			GLog.debug("Loaded test enemy: %s" % enemy_data.enemy_name)
 
 func start_test_duel():
 	if test_cards.is_empty() or test_enemies.is_empty():
-		print("ERROR: No test content loaded!")
+		GLog.error("No test content loaded!")
 		return
 	
 	var player_deck: Array[CardData] = []
@@ -92,23 +92,23 @@ func start_test_duel():
 	duel_manager.start_new_duel(player_deck, enemy)
 
 func _on_duel_started():
-	print("Duel started! Updating UI...")
+	GLog.info("Duel started! Updating UI...")
 	update_ui()
 	refresh_hand_display()
 
 func _on_turn_started(is_player_turn: bool):
-	print("Turn started: %s" % ("Player" if is_player_turn else "Enemy"))
+	GLog.debug("Turn started: %s" % ("Player" if is_player_turn else "Enemy"))
 	update_ui()
 	refresh_hand_display()
 	end_turn_button.disabled = !is_player_turn
 
 func _on_card_played(card_data: CardData):
-	print("Card played: %s" % card_data.card_name)
+	GLog.debug("Card played: %s" % card_data.card_name)
 	update_ui()
 	refresh_hand_display()
 
 func _on_duel_ended(winner: String):
-	print("Duel ended! Winner: %s" % winner)
+	GLog.info("Duel ended! Winner: %s" % winner)
 	end_turn_button.disabled = true
 	
 	var result_text = "Victory!" if winner == "player" else "Defeat!"

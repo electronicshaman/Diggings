@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MapConfig" load_steps=2 format=3 uid="uid://qkbjg60uf0dt"]
+
+[ext_resource type="Script" uid="uid://lr3sliva7n1d" path="res://scripts/map/MapConfig.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+total_nodes = 25
+city_count = 1
+min_settlements = 3
+max_settlements = 4
+min_camps = 6
+max_camps = 8
+min_mines = 4
+max_mines = 6
+min_pois = 2
+max_pois = 4
+min_junctions = 3
+max_junctions = 5
+min_bosses = 0
+max_bosses = 1
+edge_color = Color(1, 1, 1, 1)
+edge_width = 4.0
+edge_z_index = 1
+node_z_index = 2
+max_edge_length = 300.0
+min_edges_per_node = 2

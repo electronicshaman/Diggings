@@ -1,7 +1,7 @@
 extends Node
 
-# Ensure NodeConfig class is loaded and registered
-const NodeConfig = preload("res://scripts/map/NodeConfig.gd")
+# Ensure MapNodeConfig class is loaded and registered
+const MapNodeConfig = preload("res://scripts/map/MapNodeConfig.gd")
 
 const DEBUG_ENABLED: bool = true
 
@@ -27,7 +27,9 @@ signal game_mode_changed(new_mode: GameMode)
 var current_state: GameState = GameState.MENU
 var current_mode: GameMode = GameMode.STANDARD
 var current_run_seed: int = 0
+var current_run_hash_seed: String = ""
 var current_character_class: String = ""
+var selected_character: GeneratedCharacter = null
 var is_run_active: bool = false
 
 var game_data: Dictionary = {}
@@ -83,30 +85,79 @@ func reset_run_statistics() -> void:
 		"events_encountered": 0
 	}
 
-func start_new_run(character_class: String, custom_seed: Variant = null, mode: GameMode = GameMode.STANDARD) -> void:
-	GLog.debug("Starting new run with class: " + character_class)
+func prepare_new_run() -> void:
+	"""Pre-establish seed for new run, affecting character generation and everything else."""
+	GLog.debug("Preparing new run - establishing seed")
 	
-	# Use custom seed if provided, otherwise use GameSettings custom seed, otherwise auto-generate
-	var seed_to_use = custom_seed
-	if seed_to_use == null:
-		seed_to_use = GameSettings.custom_seed if not GameSettings.custom_seed.is_empty() else null
+	# Clear any custom seeds from GameSettings to ensure fresh generation
+	# (unless player explicitly set one in settings menu)
+	# The custom seeds should only be used if player enters them in settings
+	# For normal "New Game", we want auto-generation
+	
+	# Get the effective seed from GameSettings (prioritizes hash seed over regular seed)
+	var seed_to_use = GameSettings.get_effective_seed()
+	if seed_to_use.is_empty():
+		seed_to_use = null  # Auto-generate
 	
 	# Initialize the seed system for this run
 	var final_seed = SeedManager.set_master_seed(seed_to_use)
 	SeedManager.start_run(seed_to_use)
 	
+	# Store both integer and hash seeds for the run
 	current_run_seed = final_seed
+	current_run_hash_seed = SeedManager.get_hash_seed_string()
+	
+	# Store the established seeds back to GameSettings for persistence
+	GameSettings.last_used_seed = final_seed
+	GameSettings.last_used_hash_seed = current_run_hash_seed
+	GameSettings.save_settings()
+	
+	GLog.info("New run prepared with seed: " + str(final_seed) + " (Hash: " + current_run_hash_seed + ")")
+
+func start_new_run(character_class: String, custom_seed: Variant = null, mode: GameMode = GameMode.STANDARD) -> void:
+	GLog.debug("Starting new run with class: " + character_class)
+	
+	if custom_seed != null:
+		# Override with custom seed (for direct API calls)
+		GLog.info("Using custom seed override: " + str(custom_seed))
+		var final_seed = SeedManager.set_master_seed(custom_seed)
+		SeedManager.start_run(custom_seed)
+		current_run_seed = final_seed
+		current_run_hash_seed = SeedManager.get_hash_seed_string()
+		GameSettings.last_used_seed = final_seed
+		GameSettings.last_used_hash_seed = current_run_hash_seed
+		GameSettings.save_settings()
+	elif current_run_seed == 0 or current_run_hash_seed.is_empty():
+		# No seed pre-established, fall back to auto-generation
+		GLog.warn("No seed pre-established for run, auto-generating from GameSettings")
+		var seed_to_use = GameSettings.get_effective_seed()
+		if seed_to_use.is_empty():
+			seed_to_use = null
+		var final_seed = SeedManager.set_master_seed(seed_to_use)
+		SeedManager.start_run(seed_to_use)
+		current_run_seed = final_seed
+		current_run_hash_seed = SeedManager.get_hash_seed_string()
+		GameSettings.last_used_seed = final_seed
+		GameSettings.last_used_hash_seed = current_run_hash_seed
+		GameSettings.save_settings()
+	else:
+		# Use the pre-established seed from prepare_new_run()
+		GLog.info("Using pre-established seed: " + str(current_run_seed) + " (Hash: " + current_run_hash_seed + ")")
+		# Ensure SeedManager has the run marked as active
+		if not SeedManager.is_run_active():
+			SeedManager.current_run_active = true
+	
 	current_character_class = character_class
 	current_mode = mode
 	is_run_active = true
 	run_start_time = Time.get_ticks_msec() / 1000.0
 	
-	# Store the seed used for this run
-	GameSettings.last_used_seed = final_seed
-	GameSettings.save_settings()
-	
 	initialize_game_data()
 	reset_run_statistics()
+	
+	# Apply character data if available
+	if selected_character:
+		apply_character_data()
 	
 	# Generate all maps for this run
 	generate_all_maps()
@@ -136,11 +187,72 @@ func save_run_statistics(victory: bool, duration: float) -> void:
 	run_statistics["duration"] = duration
 	run_statistics["character_class"] = current_character_class
 	run_statistics["seed"] = current_run_seed
+	run_statistics["hash_seed"] = current_run_hash_seed
 	run_statistics["mode"] = current_mode
 	run_statistics["floor_reached"] = game_data.get("current_floor", 0)
 	run_statistics["timestamp"] = Time.get_unix_time_from_system()
 	
+	# Add character name if available
+	if selected_character:
+		run_statistics["character_name"] = selected_character.full_name + " '" + selected_character.nickname + "'"
+	else:
+		run_statistics["character_name"] = current_character_class
+	
 	GLog.debug("Run statistics saved: " + str(run_statistics))
+	
+	# Save to run history for persistent tracking
+	RunHistoryManager.add_run(run_statistics)
+
+func apply_character_data() -> void:
+	"""Apply selected character data to game state"""
+	if not selected_character:
+		return
+	
+	GLog.info("Applying character data for: " + selected_character.full_name + " '" + selected_character.nickname + "'")
+	
+	# Apply stat modifiers to base stats
+	var base_stats = get_base_character_stats(current_character_class)
+	for stat in selected_character.stat_modifiers:
+		if base_stats.has(stat):
+			base_stats[stat] += selected_character.stat_modifiers[stat]
+	
+	# Apply starting gold
+	if base_stats.has("starting_gold"):
+		game_data["gold"] = base_stats["starting_gold"]
+	
+	# Add starting curio
+	if selected_character.starting_curio:
+		var curio_resource = selected_character.starting_curio
+		if curio_resource:
+			var curio_name = "Unknown Curio"
+			if curio_resource.curio_name:
+				curio_name = curio_resource.curio_name
+			
+			GLog.info("Character has starting curio: " + curio_name)
+			var success = CurioManager.add_curio(curio_resource)
+			if success:
+				GLog.info("Added starting curio: " + curio_name)
+			else:
+				GLog.warn("Failed to add starting curio: " + curio_name)
+	
+	# Store character in game data for access by other systems
+	game_data["character"] = selected_character
+	
+	GLog.info("Character data applied successfully")
+
+func get_base_character_stats(character_class: String) -> Dictionary:
+	"""Get base stats for a character class"""
+	match character_class:
+		"Bushranger":
+			return {"max_health": 55, "max_sanity": 90, "max_energy": 3, "starting_gold": 10}
+		"Prospector":
+			return {"max_health": 45, "max_sanity": 95, "max_energy": 3, "starting_gold": 15}
+		"Tracker":
+			return {"max_health": 50, "max_sanity": 105, "max_energy": 3, "starting_gold": 8}
+		"Publican":
+			return {"max_health": 60, "max_sanity": 85, "max_energy": 3, "starting_gold": 20}
+		_:
+			return {"max_health": 50, "max_sanity": 100, "max_energy": 3, "starting_gold": 10}
 
 func change_state(new_state: GameState) -> void:
 	if current_state == new_state:

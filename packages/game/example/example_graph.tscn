@@ -1,0 +1,475 @@
+[gd_scene load_steps=5 format=3 uid="uid://bfyn7p2kkxyrr"]
+
+[ext_resource type="Script" path="res://addons/force_directed_graph/force_directed_graph.gd" id="1_tdrpy"]
+[ext_resource type="Script" path="res://addons/force_directed_graph/fdg_spring.gd" id="2_1nm11"]
+[ext_resource type="PackedScene" uid="uid://4a16k5un23yg" path="res://example/custom_fdg_node.tscn" id="2_wtmdk"]
+[ext_resource type="Script" path="res://addons/force_directed_graph/fdg_node.gd" id="4_ia2fk"]
+
+[node name="ExampleGraph" type="Node2D"]
+script = ExtResource("1_tdrpy")
+
+[node name="Godot" parent="." instance=ExtResource("2_wtmdk")]
+position = Vector2(542.232, 241.11)
+
+[node name="usesNodes" type="Line2D" parent="Godot" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 250.0
+node_start = NodePath("..")
+node_end = NodePath("../../Nodes")
+
+[node name="usesScripting" type="Line2D" parent="Godot" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 250.0
+node_start = NodePath("..")
+node_end = NodePath("../../Scripting")
+
+[node name="writtenInC++" type="Line2D" parent="Godot" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 150.0
+node_start = NodePath("..")
+node_end = NodePath("../../C++")
+
+[node name="canUseGDExtensions" type="Line2D" parent="Godot" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 150.0
+node_start = NodePath("..")
+node_end = NodePath("../../GDExtension")
+
+[node name="hasForum" type="Line2D" parent="Godot" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 200.0
+node_start = NodePath("..")
+node_end = NodePath("../../GodotForum")
+
+[node name="AssetLib" type="Node2D" parent="."]
+position = Vector2(717.851, 525.087)
+script = ExtResource("4_ia2fk")
+draw_point = true
+point_color = Color(0.2, 0.635294, 0.886275, 1)
+
+[node name="Label" type="Label" parent="AssetLib"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "AssetLib
+"
+
+[node name="canDownloadAddons" type="Line2D" parent="AssetLib" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 300.0
+node_start = NodePath("..")
+node_end = NodePath("../../Addons")
+
+[node name="canDownloadGDExtensions" type="Line2D" parent="AssetLib" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 300.0
+node_start = NodePath("..")
+node_end = NodePath("../../GDExtension")
+
+[node name="GodotForum" type="Node2D" parent="."]
+position = Vector2(706.596, 375.633)
+script = ExtResource("4_ia2fk")
+radius = 40.0
+draw_point = true
+point_color = Color(0.277344, 0.546875, 0.746094, 1)
+
+[node name="Label" type="Label" parent="GodotForum"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Godot
+Forum"
+
+[node name="GodotDiscord" type="Node2D" parent="."]
+position = Vector2(840.893, 411.443)
+script = ExtResource("4_ia2fk")
+radius = 45.0
+draw_point = true
+point_color = Color(0.341176, 0.337255, 0.74902, 1)
+
+[node name="Label" type="Label" parent="GodotDiscord"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Godot
+Discord"
+horizontal_alignment = 1
+
+[node name="GodotReddit" type="Node2D" parent="."]
+position = Vector2(883.789, 537.121)
+script = ExtResource("4_ia2fk")
+radius = 30.0
+draw_point = true
+point_color = Color(0.952941, 0.298039, 0.164706, 1)
+
+[node name="Label" type="Label" parent="GodotReddit"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "r/Godot"
+horizontal_alignment = 1
+
+[node name="Scenes" type="Node2D" parent="."]
+position = Vector2(322.228, 199.467)
+script = ExtResource("4_ia2fk")
+radius = 30.0
+draw_point = true
+
+[node name="Label" type="Label" parent="Scenes"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Scenes
+"
+
+[node name="consistOfNodes" type="Line2D" parent="Scenes" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 250.0
+node_start = NodePath("..")
+node_end = NodePath("../../Nodes")
+
+[node name="Nodes" type="Node2D" parent="."]
+position = Vector2(397.757, 432.651)
+script = ExtResource("4_ia2fk")
+radius = 30.0
+draw_point = true
+
+[node name="Label" type="Label" parent="Nodes"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Nodes"
+metadata/_edit_use_anchors_ = true
+
+[node name="haveProperties" type="Line2D" parent="Nodes" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 100.0
+node_start = NodePath("..")
+node_end = NodePath("../../Properties")
+
+[node name="haveSignals" type="Line2D" parent="Nodes" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 100.0
+node_start = NodePath("..")
+node_end = NodePath("../../Signals")
+
+[node name="canAttachScripts" type="Line2D" parent="Nodes" node_paths=PackedStringArray("node_start", "node_end")]
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 150.0
+node_start = NodePath("..")
+node_end = NodePath("../../Scripting")
+
+[node name="Properties" type="Node2D" parent="."]
+position = Vector2(297.076, 390.876)
+script = ExtResource("4_ia2fk")
+radius = 20.0
+draw_point = true
+
+[node name="Label" type="Label" parent="Properties"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Properties"
+
+[node name="Signals" type="Node2D" parent="."]
+position = Vector2(309.464, 460.625)
+script = ExtResource("4_ia2fk")
+radius = 20.0
+draw_point = true
+
+[node name="Label" type="Label" parent="Signals"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Signals
+"
+
+[node name="Scripting" type="Node2D" parent="."]
+position = Vector2(539.481, 489.106)
+script = ExtResource("4_ia2fk")
+radius = 30.0
+draw_point = true
+
+[node name="Label" type="Label" parent="Scripting"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Scripting
+"
+
+[node name="canCreateAddons" type="Line2D" parent="Scripting" node_paths=PackedStringArray("node_start", "node_end")]
+position = Vector2(-139.421, -55.283)
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 150.0
+node_start = NodePath("../../Addons")
+node_end = NodePath("..")
+
+[node name="usesGDScript" type="Line2D" parent="Scripting" node_paths=PackedStringArray("node_start", "node_end")]
+position = Vector2(-277.053, -8.71011)
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 100.0
+node_start = NodePath("..")
+node_end = NodePath("../../GDScript")
+
+[node name="usesC#" type="Line2D" parent="Scripting" node_paths=PackedStringArray("node_start", "node_end")]
+position = Vector2(-277.053, -8.71011)
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 100.0
+node_start = NodePath("..")
+node_end = NodePath("../../C#")
+
+[node name="Addons" type="Node2D" parent="."]
+position = Vector2(416.332, 581.857)
+script = ExtResource("4_ia2fk")
+radius = 30.0
+draw_point = true
+
+[node name="Label" type="Label" parent="Addons"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "Addons
+"
+
+[node name="canCreateNodes" type="Line2D" parent="Addons" node_paths=PackedStringArray("node_start", "node_end")]
+position = Vector2(-29.0181, -128.191)
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 150.0
+node_start = NodePath("..")
+node_end = NodePath("../../Nodes")
+
+[node name="GDScript" type="Node2D" parent="."]
+position = Vector2(643.392, 457.995)
+script = ExtResource("4_ia2fk")
+radius = 20.0
+draw_point = true
+
+[node name="Label" type="Label" parent="GDScript"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "GDScript
+"
+
+[node name="GDExtension" type="Node2D" parent="."]
+position = Vector2(693.639, 228.696)
+script = ExtResource("4_ia2fk")
+radius = 30.0
+draw_point = true
+
+[node name="Label" type="Label" parent="GDExtension"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "GDExtension"
+
+[node name="canModifyNodes" type="Line2D" parent="GDExtension" node_paths=PackedStringArray("node_start", "node_end")]
+position = Vector2(-468.074, 273.099)
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 350.0
+node_start = NodePath("..")
+node_end = NodePath("../../Nodes")
+
+[node name="usesC++" type="Line2D" parent="GDExtension" node_paths=PackedStringArray("node_start", "node_end")]
+position = Vector2(-468.074, 273.099)
+width = 2.0
+script = ExtResource("2_1nm11")
+length = 100.0
+node_start = NodePath("..")
+node_end = NodePath("../../C++")
+
+[node name="C#" type="Node2D" parent="."]
+position = Vector2(595.064, 406.292)
+script = ExtResource("4_ia2fk")
+radius = 20.0
+draw_point = true
+
+[node name="Label" type="Label" parent="C#"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "C#"
+horizontal_alignment = 1
+
+[node name="C++" type="Node2D" parent="."]
+position = Vector2(643.751, 142.121)
+script = ExtResource("4_ia2fk")
+radius = 20.0
+draw_point = true
+
+[node name="Label" type="Label" parent="C++"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -13.0
+offset_right = 25.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+text = "C++"
+horizontal_alignment = 1

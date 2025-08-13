@@ -1,6 +1,8 @@
 extends CardEffect
 class_name FaustianBargain
 
+const EFFECT_NAME := "Faustian Bargain"
+
 # Faustian Bargain - Trade max stats permanently
 # "What profits a gunslinger if they gain the whole frontier but lose their soul?"
 
@@ -11,8 +13,7 @@ class_name FaustianBargain
 
 
 func _init() -> void:
-	effect_name = "Faustian Bargain"
-	description = get_formatted_description()
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add faustian bargain to results
@@ -27,7 +28,7 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 			"energy_gain": energy_gain
 		})
 		
-		print("Applied %s effect from %s" % [effect_name, card_data.card_name])
+		print("Applied %s effect from %s" % [get_effect_name(), card_data.card_name])
 
 func get_formatted_description() -> String:
 	var parts: Array[String] = []
@@ -44,3 +45,6 @@ func get_formatted_description() -> String:
 	if parts.size() > 0:
 		return "FAUSTIAN BARGAIN: " + " to ".join(parts)
 	return ""
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

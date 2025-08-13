@@ -1,6 +1,8 @@
 extends Resource
 class_name PlayerData
 
+const DEBUG_ENABLED: bool = true
+
 # PlayerData Resource - Complete player state using Stats resource
 # Replaces the old PlayerState Node with a more efficient resource-based approach
 
@@ -40,6 +42,10 @@ class_name PlayerData
 
 # Turn-end effects tracking
 @export var delayed_damage: int = 0
+
+# Curio system
+@export var curios: Array = []  # Array of CurioData resources
+@export var curio_stacks: Dictionary = {}  # curio_name -> stack count
 
 # Change tracking system
 var _change_listeners: Array[Callable] = []
@@ -314,6 +320,44 @@ func clear_hold_cards():
 	"""Clear all HOLD cards"""
 	hold_cards.clear()
 
+# Curio management
+func add_curio(curio: Resource) -> void:
+	"""Add a curio to the player's collection"""
+	if curio and curio not in curios:
+		curios.append(curio)
+		if curio.stackable if curio.has("stackable") else false:
+			var curio_name = curio.curio_name if curio.has("curio_name") else ""
+			var current = curio_stacks.get(curio_name, 0)
+			curio_stacks[curio_name] = current + 1
+		_emit_change("curio_added", null, curio)
+
+func remove_curio(curio: Resource) -> void:
+	"""Remove a curio from the player's collection"""
+	if curio and curio in curios:
+		curios.erase(curio)
+		var curio_name = curio.curio_name if curio.has("curio_name") else ""
+		if curio_stacks.has(curio_name):
+			curio_stacks.erase(curio_name)
+		_emit_change("curio_removed", curio, null)
+
+func has_curio(curio_name: String) -> bool:
+	"""Check if player has a specific curio"""
+	for curio in curios:
+		var check_name = curio.curio_name if curio.has("curio_name") else ""
+		if check_name == curio_name:
+			return true
+	return false
+
+func get_curio_stack_count(curio_name: String) -> int:
+	"""Get the stack count for a stackable curio"""
+	return curio_stacks.get(curio_name, 0)
+
+func get_curio_stat_modifier(stat_name: String) -> float:
+	"""Calculate cumulative stat modifiers from all curios"""
+	var total = 0.0
+	# This will be handled by CurioManager in practice
+	return total
+
 # Convenience property accessors for compatibility
 var current_health: int:
 	get: return stats.current_health if stats else 0
@@ -379,7 +423,8 @@ func get_save_data() -> Dictionary:
 		"gambling_duration": gambling_duration,
 		"cards_played_this_turn": cards_played_this_turn,
 		"damage_dealt_this_turn": damage_dealt_this_turn,
-		"damage_taken_this_turn": damage_taken_this_turn
+		"damage_taken_this_turn": damage_taken_this_turn,
+		"curio_stacks": curio_stacks.duplicate()
 	}
 	
 	# Save HOLD cards
@@ -388,6 +433,13 @@ func get_save_data() -> Dictionary:
 		if card.resource_path:
 			hold_card_paths.append(card.resource_path)
 	data["hold_card_paths"] = hold_card_paths
+	
+	# Save curios
+	var curio_paths: Array[String] = []
+	for curio in curios:
+		if curio.resource_path:
+			curio_paths.append(curio.resource_path)
+	data["curio_paths"] = curio_paths
 	
 	return data
 
@@ -422,12 +474,23 @@ func load_from_data(data: Dictionary):
 		var card_data = load(path) as CardData
 		if card_data:
 			hold_cards.append(card_data)
+	
+	# Load curios
+	curios.clear()
+	var curio_paths = data.get("curio_paths", [])
+	for path in curio_paths:
+		var curio_data = load(path)
+		if curio_data:
+			curios.append(curio_data)
+	
+	# Load curio stacks
+	curio_stacks = data.get("curio_stacks", {}).duplicate()
 
 # Debug methods
 func print_status():
 	"""Print current player status for debugging"""
 	if stats:
 		stats.print_status()
-	print("Class: %s" % get_display_name())
-	print("Cards played this turn: %d" % cards_played_this_turn)
-	print("HOLD cards: %d" % hold_cards.size())
+	GLog.debug("Class: %s" % get_display_name())
+	GLog.debug("Cards played this turn: %d" % cards_played_this_turn)
+	GLog.debug("HOLD cards: %d" % hold_cards.size())

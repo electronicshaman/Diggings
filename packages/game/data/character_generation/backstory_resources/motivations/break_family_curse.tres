@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "break_family_curse"
+element_type = "motivation"
+display_name = "Break Family Curse"
+description = "Your bloodline is cursed, and you must find a way to break it before it claims you too."
+flavor_text = "Three generations have died young and mad. You refuse to be the fourth."
+weight = 16.0
+class_compatibility = {
+  "Bushranger": 1.0,
+  "Prospector": 0.9,
+  "Tracker": 1.2,
+  "Publican": 2.0
+}
+stat_modifiers = {
+  "starting_corruption": 10
+}
+percentage_modifiers = {
+  "curse_resistance": 0.1,
+  "occult_knowledge_gain": 0.3
+}
+special_modifiers = {
+  "family_curse": true,
+  "supernatural_sensitivity": 1.5,
+  "curse_breaking_ability": true
+}
+gameplay_rules = ["cursed_bloodline"]
+conditional_modifiers = []
+compatible_next_elements = ["desperate", "knowledgeable", "brave"]
+incompatible_elements = ["blessed", "lucky"]
+required_elements = []
+adds_objective = true
+objective_type = "break_curse"
+objective_value = 1
+objective_reward = "curse_broken"
+icon = null
+color_theme = Color(0.5, 0.2, 0.3, 1.0)
+nickname_pool = ["Cursed", "Hex-Breaker", "Doomed", "Curse-Bearer", "The Afflicted"]

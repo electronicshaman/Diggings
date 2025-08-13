@@ -28,8 +28,10 @@ var statistics_tracking: bool = true
 
 @export_group("Seed Settings")
 var custom_seed: String = ""  # User-specified seed (empty = auto-generate)
+var custom_hash_seed: String = ""  # User-specified hash seed (takes precedence over custom_seed)
 var show_seed_in_ui: bool = true  # Show current seed in game UI
 var last_used_seed: int = 0  # Last seed used for a run
+var last_used_hash_seed: String = ""  # Last hash seed used for a run
 
 var settings_file_path: String = "user://settings.cfg"
 
@@ -59,8 +61,10 @@ func save_settings() -> void:
 	config.set_value("game", "statistics_tracking", statistics_tracking)
 	
 	config.set_value("seed", "custom_seed", custom_seed)
+	config.set_value("seed", "custom_hash_seed", custom_hash_seed)
 	config.set_value("seed", "show_seed_in_ui", show_seed_in_ui)
 	config.set_value("seed", "last_used_seed", last_used_seed)
+	config.set_value("seed", "last_used_hash_seed", last_used_hash_seed)
 	
 	var error := config.save(settings_file_path)
 	if error != OK:
@@ -96,8 +100,10 @@ func load_settings() -> void:
 	statistics_tracking = config.get_value("game", "statistics_tracking", statistics_tracking)
 	
 	custom_seed = config.get_value("seed", "custom_seed", custom_seed)
+	custom_hash_seed = config.get_value("seed", "custom_hash_seed", custom_hash_seed)
 	show_seed_in_ui = config.get_value("seed", "show_seed_in_ui", show_seed_in_ui)
 	last_used_seed = config.get_value("seed", "last_used_seed", last_used_seed)
+	last_used_hash_seed = config.get_value("seed", "last_used_hash_seed", last_used_hash_seed)
 	
 	GLog.debug("Settings loaded successfully")
 	apply_settings()
@@ -121,6 +127,22 @@ func set_setting(setting_name: String, value: Variant) -> void:
 	save_settings()
 	apply_settings()
 
+func get_effective_seed() -> String:
+	"""Get the seed that should be used for the next run.
+	
+	Returns:
+		Hash seed if available, otherwise custom_seed, or empty string for auto-generation
+	"""
+	if not custom_hash_seed.is_empty():
+		return custom_hash_seed
+	return custom_seed
+
+func clear_custom_seeds() -> void:
+	"""Clear custom seeds to allow auto-generation for new runs."""
+	custom_seed = ""
+	custom_hash_seed = ""
+	GLog.debug("Custom seeds cleared for auto-generation")
+
 func reset_to_defaults() -> void:
 	master_volume = 1.0
 	sfx_volume = 1.0
@@ -136,6 +158,8 @@ func reset_to_defaults() -> void:
 	difficulty = 1
 	tutorial_completed = false
 	statistics_tracking = true
+	custom_seed = ""
+	custom_hash_seed = ""
 	
 	save_settings()
 	apply_settings()

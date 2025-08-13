@@ -1,28 +1,26 @@
-[gd_resource type="NodeConfig" format=3]
+[gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3 uid="uid://7c22ejxg1ybb"]
+
+[ext_resource type="Script" uid="uid://cqv21ssbdrhpk" path="res://scripts/map/MapNodeConfig.gd" id="1"]
 
 [resource]
-node_type = 0
+script = ExtResource("1")
 node_name = "Goldfields Central"
 description = "The bustling heart of the goldfields region. A major city where fortune-seekers gather to trade, rest, and plan their next venture into the wilderness."
+node_type = 0
 visual_size = Vector2(80, 80)
-visual_color = Color(1, 0.843137, 0, 1)
-glow_color = Color(1, 0.8, 0, 0.8)
+visual_color = Color(0.745098, 0.745098, 0.745098, 1)
+glow_color = Color(0.7, 0.7, 0.7, 0.5)
+pulse_effect = false
+state_color_locked = Color(0.3, 0.3, 0.3, 0.5)
+state_color_available = Color(1, 1, 1, 1)
+state_color_current = Color(1, 1, 0, 1)
+state_color_completed = Color(0.8, 0.8, 0.8, 0.8)
+state_color_known = Color(0.5, 0.5, 0.5, 0.5)
 safe = true
 can_revisit = true
+one_time_only = false
 always_accessible = true
 available_actions = Array[String](["rest", "shop", "deck_management"])
-custom_properties = {
-"city_name": "Goldfields Central",
-"city_type": "major",
-"has_bank": true,
-"has_inn": true,
-"has_blacksmith": true,
-"has_library": true,
-"population": "large",
-"prosperity": "high",
-"safety_rating": 1.0,
-"specialties": ["mining_equipment", "maps", "provisions"]
-}
 action_properties = {
 "deck_management": {
 "can_remove_cards": true,
@@ -42,4 +40,16 @@ action_properties = {
 "shop_tier": 3,
 "special_items": ["legendary_equipment", "rare_cards"]
 }
+}
+custom_properties = {
+"city_name": "Goldfields Central",
+"city_type": "major",
+"has_bank": true,
+"has_blacksmith": true,
+"has_inn": true,
+"has_library": true,
+"population": "large",
+"prosperity": "high",
+"safety_rating": 1.0,
+"specialties": ["mining_equipment", "maps", "provisions"]
 }

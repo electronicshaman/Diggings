@@ -21,6 +21,7 @@ var deck_label: Label
 var discard_label: Label
 var turn_label: Label
 var phase_label: Label
+var seed_label: Label
 var end_turn_button: Button
 var debug_panel: Control
 
@@ -28,9 +29,15 @@ var hand_area: Node2D
 var hand_cards: Array[Node] = []
 var card_scene: PackedScene
 
+var curios_panel: Control
+var curios_list: HBoxContainer
+
 func _ready() -> void:
 	GLog.debug("UIController initialized - Managing the mortal interface")
 	card_scene = preload("res://scenes/cards/card.tscn")
+	
+	# Connect to UI notification events
+	EventBus.ui_notification.connect(_on_ui_notification)
 
 func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	game_controller = game_controller_ref
@@ -48,14 +55,23 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	discard_label = ui_references.get("discard")
 	turn_label = ui_references.get("turn")
 	phase_label = ui_references.get("phase")
+	seed_label = ui_references.get("seed")
 	end_turn_button = ui_references.get("end_turn_button")
 	debug_panel = ui_references.get("debug_panel")
 	hand_area = ui_references.get("hand_area")
+	curios_panel = ui_references.get("curios_panel")
+	curios_list = ui_references.get("curios_list")
 	
 	if game_controller:
 		game_controller.game_state_updated.connect(update_all_ui)
 		if "current_duel_state" in game_controller:
 			duel_state = game_controller.current_duel_state
+	
+	# Connect to CurioManager signals
+	if CurioManager:
+		CurioManager.curio_acquired.connect(_on_curio_acquired)
+		CurioManager.curio_removed.connect(_on_curio_removed)
+		CurioManager.curio_stack_changed.connect(_on_curio_stack_changed)
 	
 	setup_debug_buttons(ui_references)
 
@@ -83,6 +99,8 @@ func update_all_ui() -> void:
 	update_enemy_ui()
 	update_pile_ui()
 	update_turn_ui()
+	update_seed_ui()
+	update_curios_display()
 	refresh_hand_display()
 	ui_refresh_requested.emit()
 
@@ -177,6 +195,24 @@ func update_turn_ui() -> void:
 	else:
 		GLog.debug("end_turn_button is null - UI element missing")
 
+func update_seed_ui() -> void:
+	"""Update the seed display based on GameSettings."""
+	if not seed_label:
+		return
+	
+	# Only show seed if the setting is enabled
+	if GameSettings.show_seed_in_ui and SeedManager.is_run_active():
+		seed_label.visible = true
+		var hash_seed = SeedManager.get_hash_seed_string()
+		var is_thematic = SeedManager.is_thematic_seed(hash_seed)
+		
+		if is_thematic:
+			seed_label.text = "Seed: %s ✨" % hash_seed  # Special indicator for thematic seeds
+		else:
+			seed_label.text = "Seed: %s" % hash_seed
+	else:
+		seed_label.visible = false
+
 func refresh_hand_display() -> void:
 	clear_hand_display()
 	
@@ -246,3 +282,91 @@ func _on_set_energy_pressed() -> void:
 func _on_reset_duel_pressed() -> void:
 	if game_controller:
 		game_controller.start_test_duel()
+
+func _on_ui_notification(message: String, type: String) -> void:
+	"""Handle UI notifications like curio rewards"""
+	GLog.info("🎉 UI Notification [%s]: %s" % [type, message])
+	
+	# For now, just show in debug panel or console
+	# Later we can add popup notifications
+	if type == "reward":
+		GLog.info("Curio reward notification displayed!")
+
+func update_curios_display() -> void:
+	"""Update the display of active curios in the UI"""
+	if not curios_list:
+		return
+	
+	# Clear existing labels (except the first one which might be placeholder)
+	for child in curios_list.get_children():
+		if child != curios_list.get_child(0):
+			child.queue_free()
+	
+	# Get active curios from CurioManager
+	if not CurioManager:
+		return
+	
+	var active_curios = CurioManager.get_active_curios()
+	
+	if active_curios.is_empty():
+		# Show "No Curios" if empty
+		var label = curios_list.get_child(0) if curios_list.get_child_count() > 0 else null
+		if label and label is Label:
+			label.text = "No Curios"
+			label.modulate = Color.GRAY
+		return
+	
+	# Remove placeholder if we have curios
+	if curios_list.get_child_count() > 0:
+		curios_list.get_child(0).queue_free()
+	
+	# Add a label for each active curio
+	for curio in active_curios:
+		if not curio:
+			continue
+		
+		var label = Label.new()
+		var curio_name = curio.curio_name if curio.curio_name else "Unknown"
+		var stack_count = CurioManager.get_curio_stack_count(curio_name)
+		
+		# Format the text with stack count if applicable
+		if stack_count > 1:
+			label.text = "%s (x%d)" % [curio_name, stack_count]
+		else:
+			label.text = curio_name
+		
+		# Color based on rarity
+		if curio.has_method("get_rarity_color"):
+			label.modulate = curio.get_rarity_color()
+		else:
+			# Fallback color based on rarity string
+			var rarity = curio.rarity if curio.rarity else "Common"
+			match rarity:
+				"Rare":
+					label.modulate = Color.CYAN
+				"Legendary":
+					label.modulate = Color.GOLD
+				"Corrupted":
+					label.modulate = Color.PURPLE
+				_:
+					label.modulate = Color.WHITE
+		
+		# Add tooltip with description
+		if curio.description:
+			label.tooltip_text = curio.description
+		
+		curios_list.add_child(label)
+
+func _on_curio_acquired(curio: Resource) -> void:
+	"""Handle when a new curio is acquired"""
+	update_curios_display()
+	var curio_name = curio.curio_name if curio and curio.curio_name else "Unknown Curio"
+	EventBus.emit_ui_notification("Acquired: " + curio_name, "success")
+
+func _on_curio_removed(curio: Resource) -> void:
+	"""Handle when a curio is removed"""
+	update_curios_display()
+
+func _on_curio_stack_changed(curio: Resource, new_count: int) -> void:
+	"""Handle when a curio's stack count changes"""
+	update_curios_display()

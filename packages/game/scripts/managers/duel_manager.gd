@@ -28,7 +28,7 @@ func _ready():
 	
 	duel_state.add_change_listener(_on_duel_state_changed)
 
-func _on_duel_state_changed(change_type: String, data: Dictionary) -> void:
+func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 	GLog.debug("DuelState changed: %s" % change_type)
 	
 	match change_type:
@@ -255,7 +255,43 @@ func apply_card_results(results: Dictionary):
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
 	duel_state.end_duel(winner)
+	
+	# Check for curio rewards on player victory
+	if winner == "player":
+		_check_curio_reward()
+	
 	duel_ended.emit(winner)
+
+func _check_curio_reward():
+	# Simple curio reward system - 30% chance on victory
+	if randf() < 0.3:
+		# For now, only Lucky Nugget is implemented
+		var curio_paths = [
+			"res://data/curios/common/lucky_nugget.tres"
+		]
+		
+		var random_path = curio_paths[randi() % curio_paths.size()]
+		
+		# Try to load the curio resource
+		if ResourceLoader.exists(random_path):
+			var curio_resource = load(random_path)
+			
+			if curio_resource and has_node("/root/CurioManager"):
+				var cm = get_node("/root/CurioManager")
+				var success = cm.add_curio(curio_resource)
+				
+				if success:
+					GLog.info("🏆 Curio Reward: You found %s!" % curio_resource.curio_name)
+					GLog.info("   %s" % curio_resource.description)
+					
+					# Emit a reward event for UI display
+					EventBus.ui_notification.emit("Found curio: %s" % curio_resource.curio_name, "reward")
+				else:
+					GLog.debug("Could not add curio (may be at max stacks)")
+			else:
+				GLog.error("CurioManager not found or curio resource invalid")
+		else:
+			GLog.error("Curio resource not found at: %s" % random_path)
 
 func get_hand_cards() -> Array[CardData]:
 	return duel_state.hand.cards if duel_state.hand else []
@@ -270,3 +306,10 @@ func get_cards_played_this_turn() -> int:
 	if duel_state and duel_state.player_data:
 		return duel_state.player_data.cards_played_this_turn
 	return 0
+
+# Minimal getters expected by CardEffects validation
+func get_player_data():
+	return duel_state.player_data if duel_state else null
+
+func get_enemy_data():
+	return duel_state.enemy_data if duel_state else null

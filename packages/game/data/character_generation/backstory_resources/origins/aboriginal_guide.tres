@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "aboriginal_guide"
+element_type = "origin"
+display_name = "Aboriginal Guide"
+description = "Walks between two worlds, knowing the ancient paths and the new dangers."
+flavor_text = "The land speaks to those who know how to listen. Every rock, every tree has a story older than the gold rush."
+weight = 20.0
+class_compatibility = {
+  "Bushranger": 0.7,
+  "Prospector": 0.9,
+  "Tracker": 2.0,
+  "Publican": 0.6
+}
+stat_modifiers = {
+  "max_sanity": 10
+}
+percentage_modifiers = {
+  "corruption_resistance": 0.2
+}
+special_modifiers = {
+  "sacred_site_bonus": 2.0,
+  "see_hidden_paths": true
+}
+gameplay_rules = ["knows_true_names", "land_connection"]
+conditional_modifiers = []
+compatible_next_elements = ["tribe_massacred", "sacred_land_destroyed", "family_taken"]
+incompatible_elements = []
+required_elements = []
+adds_objective = false
+objective_type = ""
+objective_value = 0
+objective_reward = ""
+icon = null
+color_theme = Color(0.4, 0.6, 0.3, 1.0)
+nickname_pool = ["Pathfinder", "Ghost", "Shadow", "Dreamer", "Walker", "Guide"]

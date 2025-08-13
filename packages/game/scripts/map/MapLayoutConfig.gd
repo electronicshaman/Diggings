@@ -9,7 +9,7 @@ class_name MapLayoutConfig
 @export_group("Generation Limits")
 @export_range(5, 50, 1) var min_nodes: int = 20
 @export_range(5, 50, 1) var max_nodes: int = 30
-@export var viewport_size: Vector2 = Vector2(1280, 720)
+@export var viewport_size: Vector2 = Vector2(1920, 900)
 
 @export_group("Starting Position")
 @export_range(0.05, 0.5, 0.05) var start_x_ratio: float = 0.15  # How far from left edge (0.15 = 15% from left)
@@ -95,6 +95,14 @@ class_name MapLayoutConfig
 @export_range(0.0, 0.5, 0.05) var path_curve_randomness: float = 0.15   # Random variation in curve direction
 @export_range(8.0, 30.0, 1.0) var path_dash_length: float = 18.0        # Length of dashes in path lines
 @export_range(6.0, 25.0, 1.0) var path_gap_length: float = 12.0         # Length of gaps between dashes
+
+## PLANAR GRAPH GENERATION ##
+
+@export_group("Planar Graph System", "planar_")
+@export var use_planar_graph_generation: bool = false                    # Use Delaunay triangulation + pruning instead of rule-based generation
+@export_range(0.0, 1.0, 0.1) var planar_pruning_intensity: float = 0.6  # How aggressively to prune triangulation edges (0.0 = minimal, 1.0 = aggressive)
+@export var auto_fix_crossings: bool = true                             # Automatically attempt to fix edge crossings if found
+@export var validate_planarity: bool = true                             # Perform planarity validation during generation
 
 # Helper function to get preferred angle in radians with variation
 func get_movement_angle() -> float:

@@ -1,6 +1,8 @@
 extends CardEffect
 class_name Gambling
 
+const EFFECT_NAME := "Gambling"
+
 # Gambling Effect - Next card: Double all effects OR do nothing (50/50)
 # "Fortune favors the bold, but the house always wins eventually"
 
@@ -9,8 +11,7 @@ class_name Gambling
 
 
 func _init() -> void:
-	effect_name = "Gambling"
-	description = get_formatted_description()
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add gambling to results
@@ -22,7 +23,7 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 		"effect_multiplier": effect_multiplier
 	})
 	
-	print("Applied %s effect from %s (%.0f%% chance for %.1fx multiplier)" % [effect_name, card_data.card_name, success_chance * 100, effect_multiplier])
+	print("Applied %s effect from %s (%.0f%% chance for %.1fx multiplier)" % [get_effect_name(), card_data.card_name, success_chance * 100, effect_multiplier])
 
 func get_formatted_description() -> String:
 	var percentage: int = int(success_chance * 100)
@@ -30,3 +31,6 @@ func get_formatted_description() -> String:
 		return "Next card: %d%% chance to double all effects OR do nothing" % percentage
 	else:
 		return "Next card: %d%% chance to multiply effects by %.1fx OR do nothing" % [percentage, effect_multiplier]
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

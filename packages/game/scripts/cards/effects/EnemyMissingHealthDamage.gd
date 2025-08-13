@@ -1,6 +1,8 @@
 extends CardEffect
 class_name EnemyMissingHealthDamage
 
+const EFFECT_NAME := "Enemy Missing Health Damage"
+
 # Enemy Missing Health Damage - Deal damage equal to enemy's wounds
 # "The deeper the wound, the deadlier the strike"
 
@@ -10,8 +12,7 @@ class_name EnemyMissingHealthDamage
 
 
 func _init() -> void:
-	effect_name = "Enemy Missing Health Damage"
-	description = get_formatted_description()
+	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	# Add enemy missing health damage to results
@@ -24,7 +25,7 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 		"maximum_damage": maximum_damage
 	})
 	
-	print("Applied %s effect from %s (multiplier: %.1fx)" % [effect_name, card_data.card_name, damage_multiplier])
+	print("Applied %s effect from %s (multiplier: %.1fx)" % [get_effect_name(), card_data.card_name, damage_multiplier])
 
 func get_formatted_description() -> String:
 	var base_text: String = "Deal damage equal to enemy's missing health"
@@ -36,6 +37,9 @@ func get_formatted_description() -> String:
 		base_text += " (minimum %d)" % minimum_damage
 	
 	return base_text
+
+func get_effect_name() -> String:
+	return EFFECT_NAME
 
 # Static helper function for calculating damage
 static func calculate_enemy_missing_health_damage(enemy: EnemyState, params: Dictionary) -> int:

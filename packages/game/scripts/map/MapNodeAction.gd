@@ -1,5 +1,5 @@
 extends Resource
-class_name NodeAction
+class_name MapNodeAction
 
 # Base class for modular node actions/behaviors
 # Allows different node types to have specific behaviors without coupling
@@ -156,8 +156,8 @@ func get_description(player_data: Dictionary, node: Resource) -> String:
 	return desc
 
 # Static factory methods for common actions
-static func create_rest_action() -> NodeAction:
-	var action = NodeAction.new("rest", "Rest and Recover")
+static func create_rest_action() -> MapNodeAction:
+	var action = MapNodeAction.new("rest", "Rest and Recover")
 	action.heal_amount = 15
 	action.sanity_change = 10
 	action.time_cost_hours = 4
@@ -167,16 +167,16 @@ static func create_rest_action() -> NodeAction:
 	}
 	return action
 
-static func create_shop_action() -> NodeAction:
-	var action = NodeAction.new("shop", "Visit Shop")
+static func create_shop_action() -> MapNodeAction:
+	var action = MapNodeAction.new("shop", "Visit Shop")
 	action.properties = {
 		"description": "Browse and purchase items from the local merchant.",
 		"shop_tier": 1
 	}
 	return action
 
-static func create_explore_action() -> NodeAction:
-	var action = NodeAction.new("explore", "Explore Location")
+static func create_explore_action() -> MapNodeAction:
+	var action = MapNodeAction.new("explore", "Explore Location")
 	action.time_cost_hours = 2
 	action.properties = {
 		"description": "Thoroughly explore this location for hidden secrets.",
@@ -185,8 +185,8 @@ static func create_explore_action() -> NodeAction:
 	}
 	return action
 
-static func create_mine_action() -> NodeAction:
-	var action = NodeAction.new("mine", "Mine for Gold")
+static func create_mine_action() -> MapNodeAction:
+	var action = MapNodeAction.new("mine", "Mine for Gold")
 	action.time_cost_hours = 6
 	action.sanity_change = -5
 	action.properties = {
@@ -198,8 +198,8 @@ static func create_mine_action() -> NodeAction:
 	}
 	return action
 
-static func create_trade_action() -> NodeAction:
-	var action = NodeAction.new("trade", "Trade with Locals")
+static func create_trade_action() -> MapNodeAction:
+	var action = MapNodeAction.new("trade", "Trade with Locals")
 	action.time_cost_hours = 1
 	action.properties = {
 		"description": "Engage in trade with the local population.",
@@ -207,8 +207,8 @@ static func create_trade_action() -> NodeAction:
 	}
 	return action
 
-static func create_investigate_action() -> NodeAction:
-	var action = NodeAction.new("investigate", "Investigate Mystery")
+static func create_investigate_action() -> MapNodeAction:
+	var action = MapNodeAction.new("investigate", "Investigate Mystery")
 	action.time_cost_hours = 3
 	action.sanity_change = -10
 	action.one_time_only = true

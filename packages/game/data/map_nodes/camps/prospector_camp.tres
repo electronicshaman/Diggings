@@ -1,36 +1,38 @@
-[gd_resource type="NodeConfig" format=3]
+[gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3 uid="uid://c8xbk8txwx1py"]
+
+[ext_resource type="Script" uid="uid://cqv21ssbdrhpk" path="res://scripts/map/MapNodeConfig.gd" id="1"]
 
 [resource]
-node_type = 1
+script = ExtResource("1")
 node_name = "Prospector's Rest"
 description = "A well-used camping spot favored by prospectors. The fire pit shows signs of recent use and there are carved messages from previous visitors."
-visual_size = Vector2(64, 64)
-visual_color = Color(0.133333, 0.545098, 0.133333, 1)
-glow_color = Color(0, 0.8, 0.2, 0.7)
+node_type = 1
+visual_size = Vector2(32, 32)
+visual_color = Color(0.745098, 0.745098, 0.745098, 1)
+glow_color = Color(0.7, 0.7, 0.7, 0.5)
+pulse_effect = false
+state_color_locked = Color(0.519011, 0.742122, 0.254054, 1)
+state_color_available = Color(0.719313, 0.959173, 0.466484, 1)
+state_color_current = Color(1, 1, 0, 1)
+state_color_completed = Color(0.372549, 0.619608, 0.627451, 1)
+state_color_known = Color(1, 0.894118, 0.768627, 1)
 safe = true
 can_revisit = true
+one_time_only = false
+always_accessible = false
 available_actions = Array[String](["rest", "quick_rest", "tend_fire"])
-custom_properties = {
-"camp_type": "improved",
-"fire_quality": "excellent",
-"shelter_quality": "good",
-"water_source": true,
-"visibility": "good",
-"previous_visitors": ["prospectors", "traders"],
-"carved_messages": true
-}
 action_properties = {
-"rest": {
-"description": "Rest by the excellent campfire with good shelter from the elements.",
-"heal_amount": 18,
-"sanity_change": 12,
-"time_cost_hours": 4
-},
 "quick_rest": {
 "description": "Take advantage of the good shelter for a brief rest.",
 "heal_amount": 10,
 "sanity_change": 8,
 "time_cost_hours": 2
+},
+"rest": {
+"description": "Rest by the excellent campfire with good shelter from the elements.",
+"heal_amount": 18,
+"sanity_change": 12,
+"time_cost_hours": 4
 },
 "tend_fire": {
 "description": "The well-maintained fire pit provides excellent warmth and comfort.",
@@ -38,4 +40,13 @@ action_properties = {
 "sanity_change": 18,
 "time_cost_hours": 1
 }
+}
+custom_properties = {
+"camp_type": "improved",
+"carved_messages": true,
+"fire_quality": "excellent",
+"previous_visitors": ["prospectors", "traders"],
+"shelter_quality": "good",
+"visibility": "good",
+"water_source": true
 }

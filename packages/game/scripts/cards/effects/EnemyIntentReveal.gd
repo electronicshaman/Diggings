@@ -1,16 +1,17 @@
 extends CardEffect
 class_name EnemyIntentReveal
 
+const EFFECT_NAME := "Enemy Intent Reveal"
+
 func _init() -> void:
-	effect_name = "Enemy Intent Reveal"
-	description = "Reveal the enemy's next intent"
+	pass
 
 func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
 	var enemy_data = duel_manager.duel_state.enemy_data
 	if enemy_data:
 		enemy_data.reveal_intent()
 		print("Applied %s effect from %s (revealed enemy intent: %s)" % [
-			effect_name, card_data.card_name, enemy_data.get_intent_display()
+			get_effect_name(), card_data.card_name, enemy_data.get_intent_display()
 		])
 		
 		# Add notification about revealed intent
@@ -21,3 +22,6 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 
 func get_formatted_description() -> String:
 	return "Reveal the enemy's next intent"
+
+func get_effect_name() -> String:
+	return EFFECT_NAME

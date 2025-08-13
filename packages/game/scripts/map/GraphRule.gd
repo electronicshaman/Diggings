@@ -129,7 +129,8 @@ class LinearExtensionRule extends GraphRule:
 				GLog.debug("LinearExtensionRule: Cannot place node at " + str(dest_pos) + " due to spacing constraints")
 				return false
 			
-			var destination = MapNode.new(dest_id, dest_type, dest_pos)
+			var dest_config = MapNodeRegistry.get_random_config_for_type(dest_type)
+			var destination = MapNodeRegistry.create_node(dest_id, dest_config, dest_pos)
 			
 			# Add node to graph
 			nodes[dest_id] = destination
@@ -155,16 +156,14 @@ class LinearExtensionRule extends GraphRule:
 		else:
 			if config:
 				junction_pos = config.clamp_to_bounds(junction_pos)
-			else:
-				junction_pos.x = clamp(junction_pos.x, 50, 1230)
-				junction_pos.y = clamp(junction_pos.y, 50, 670)
 		
 		# Check if position is valid for spacing
 		if not _is_position_valid_for_spacing(graph, junction_pos):
 			GLog.debug("LinearExtensionRule: Cannot place junction at " + str(junction_pos) + " due to spacing constraints")
 			return false
 		
-		var junction = MapNode.new(junction_id, MapNode.NodeType.JUNCTION, junction_pos)
+		var junction_config = MapNodeRegistry.get_default_config_for_type(5)  # JUNCTION
+		var junction = MapNodeRegistry.create_node(junction_id, junction_config, junction_pos)
 		
 		# Create destination node using config
 		var dest_type
@@ -193,7 +192,8 @@ class LinearExtensionRule extends GraphRule:
 			GLog.debug("LinearExtensionRule: Cannot place destination at " + str(dest_pos) + " due to spacing constraints")
 			return false
 		
-		var destination = MapNode.new(dest_id, dest_type, dest_pos)
+		var dest_config = MapNodeRegistry.get_random_config_for_type(dest_type)
+		var destination = MapNodeRegistry.create_node(dest_id, dest_config, dest_pos)
 		
 		# Add nodes to graph
 		nodes[junction_id] = junction
@@ -258,7 +258,8 @@ class BranchCreationRule extends GraphRule:
 			GLog.debug("BranchCreationRule: Cannot place branch at " + str(dest_pos) + " due to spacing constraints")
 			return false
 		
-		var destination = MapNode.new(dest_id, dest_type, dest_pos)
+		var dest_config = MapNodeRegistry.get_random_config_for_type(dest_type)
+		var destination = MapNodeRegistry.create_node(dest_id, dest_config, dest_pos)
 		
 		# Add to graph
 		nodes[dest_id] = destination
@@ -301,7 +302,8 @@ class DestinationPlacementRule extends GraphRule:
 		junction.id = MapNode.NodeType.keys()[new_type].to_lower() + "_" + str(Time.get_ticks_msec())
 		
 		# Update properties based on new type
-		junction._init(junction.id, new_type, junction.position)
+		var new_config = MapNodeRegistry.get_default_config_for_type(new_type)
+		junction.set_config(new_config)
 		
 		applications_count += 1
 		GLog.debug("Applied Destination Placement rule: converted junction to " + junction.get_type_name())
@@ -465,12 +467,8 @@ class MinimumConnectionRule extends GraphRule:
 		
 		for node_id in nodes:
 			var node = nodes[node_id]
-			# Skip start node and intentional endpoints (some node types should be endpoints)
-			if node_id == graph.get("start_node", "") or node.connections.size() >= min_connections:
-				continue
-			
-			# Allow some node types to be endpoints (like remote mines or special POIs)
-			if node.type == MapNode.NodeType.POI and node.connections.size() >= 1:
+			# Skip nodes that already have enough connections
+			if node.connections.size() >= min_connections:
 				continue
 			
 			under_connected_nodes.append(node_id)

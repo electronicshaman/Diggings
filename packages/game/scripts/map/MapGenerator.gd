@@ -3,7 +3,10 @@ class_name MapGenerator
 
 const DEBUG_ENABLED: bool = false
 const MapLayoutConfig = preload("res://scripts/map/MapLayoutConfig.gd")
-const ForceDirectedLayout = preload("res://scripts/map/ForceDirectedLayout.gd")
+const PoissonDiskLayout = preload("res://scripts/map/PoissonDiskLayout.gd")
+const DelaunayTriangulator = preload("res://scripts/map/DelaunayTriangulator.gd")
+const EdgePruner = preload("res://scripts/map/EdgePruner.gd")
+const PlanarGraphValidator = preload("res://scripts/map/PlanarGraphValidator.gd")
 
 # Map layout configuration
 @export var layout_config: MapLayoutConfig
@@ -25,6 +28,7 @@ var graph: Dictionary = {
 # Player tracking for persistence
 var current_player_node_id: String = ""
 var visited_node_ids: Array[String] = []
+var discovered_node_ids: Array[String] = []
 
 # Available rules for generation
 var rules: Array[GraphRule] = []
@@ -43,10 +47,13 @@ func load_default_config():
 	if ResourceLoader.exists(config_path):
 		layout_config = load(config_path) as MapLayoutConfig
 		GLog.debug("Loaded map layout config from: " + config_path)
+		GLog.debug("Config viewport_size: " + str(layout_config.viewport_size))
+		GLog.debug("Config spacing_min: " + str(layout_config.spacing_min) + ", spacing_max: " + str(layout_config.spacing_max))
 	else:
 		# Create a default config if none exists
 		layout_config = MapLayoutConfig.new()
 		GLog.debug("Created default map layout config")
+		GLog.debug("Fallback viewport_size: " + str(layout_config.viewport_size))
 	
 	# Validate the config
 	var warnings = layout_config.validate_config()
@@ -103,25 +110,44 @@ func generate_map(seed: int = -1) -> Dictionary:
 		"generation_seed": generation_seed
 	}
 	
-	# Reset rule counters
-	for rule in rules:
-		rule.reset()
+	# Check if planar graph generation is enabled
+	if layout_config and layout_config.use_planar_graph_generation:
+		return generate_planar_map()
+	else:
+		return generate_traditional_map()
+
+func generate_traditional_map() -> Dictionary:
+	# Fallback to planar generation if traditional path is called
+	GLog.warn("Traditional map generation called - redirecting to planar generation")
+	return generate_planar_map()
+
+func generate_planar_map() -> Dictionary:
+	GLog.debug("Using planar graph generation with Delaunay triangulation")
 	
 	# Create starting node
 	create_start_node()
 	
-	# Generate the rest of the map
-	var generation_steps = 0
-	var max_steps = 50  # Prevent infinite loops
+	# Generate additional nodes using Poisson Disk Sampling for positioning
+	generate_nodes_with_poisson_sampling()
 	
-	while should_continue_generation() and generation_steps < max_steps:
-		apply_random_rule()
-		generation_steps += 1
+	# Create Delaunay triangulation for planar connectivity
+	apply_delaunay_triangulation()
 	
-	# Post-process the graph
-	post_process_graph()
+	# Prune edges to match game design requirements
+	prune_triangulation_edges()
 	
-	GLog.debug("Map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	# Post-process with planar graph constraints
+	GLog.debug("Starting planar post-processing...")
+	post_process_planar_graph()
+	GLog.debug("Planar post-processing complete")
+	
+	GLog.debug("Planar map generation complete: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	
+	# Validate planarity
+	if DEBUG_ENABLED:
+		var planarity_report = PlanarGraphValidator.generate_planarity_report(graph)
+		GLog.debug("Planarity report: " + str(planarity_report))
+	
 	map_generated.emit(graph)
 	return graph
 
@@ -129,7 +155,8 @@ func create_start_node():
 	var start_id = "start_camp"
 	# Position start node using config
 	var start_pos = layout_config.get_start_position() if layout_config else Vector2(192, 360)
-	var start_node = MapNode.new(start_id, MapNode.NodeType.CAMP, start_pos)
+	var start_config = MapNodeRegistry.get_default_config_for_type(1)  # CAMP
+	var start_node = MapNodeRegistry.create_node(start_id, start_config, start_pos)
 	start_node.set_state(MapNode.NodeState.CURRENT)
 	
 	graph.nodes[start_id] = start_node
@@ -138,12 +165,15 @@ func create_start_node():
 	current_player_node_id = start_id
 	visited_node_ids.clear()
 	visited_node_ids.append(start_id)
+	discovered_node_ids.clear()
+	discovered_node_ids.append(start_id)
 	
 	GLog.debug("Created starting node: " + start_id)
 
 func create_city_node(city_name: String, city_position: Vector2):
 	var city_id = "city_" + city_name.to_lower().replace(" ", "_")
-	var city_node = MapNode.new(city_id, MapNode.NodeType.CITY, city_position)
+	var city_config = MapNodeRegistry.get_default_config_for_type(0)  # CITY
+	var city_node = MapNodeRegistry.create_node(city_id, city_config, city_position)
 	city_node.set_state(MapNode.NodeState.CURRENT)  # City is current position since player starts there
 	city_node.set_custom_property("city_name", city_name)
 	
@@ -153,6 +183,8 @@ func create_city_node(city_name: String, city_position: Vector2):
 	current_player_node_id = city_id
 	visited_node_ids.clear()
 	visited_node_ids.append(city_id)
+	discovered_node_ids.clear()
+	discovered_node_ids.append(city_id)
 	
 	GLog.debug("Created city node: " + city_name + " at " + str(city_position))
 
@@ -252,12 +284,8 @@ func post_process_graph():
 	# Enforce connection limits
 	enforce_connection_limits()
 	
-	# Apply force-directed layout if enabled
-	if layout_config and layout_config.physics_enabled:
-		apply_force_directed_layout()
-	
-	# Set up fog of war (only start node visible)
-	setup_fog_of_war()
+	# Node positions already optimized during generation
+
 
 func ensure_graph_connectivity():
 	# Enhanced connectivity check - ensure all nodes are reachable from start
@@ -434,20 +462,14 @@ func convert_random_junction_to_type(target_type: MapNode.NodeType):
 		var junction = graph.nodes[junction_id]
 		junction.type = target_type
 		junction.id = MapNode.NodeType.keys()[target_type].to_lower() + "_" + str(Time.get_ticks_msec())
-		junction._init(junction.id, target_type, junction.position)
+		
+		# Get appropriate config for the new type and set it
+		var new_config = MapNodeRegistry.get_random_config_for_type(target_type)
+		junction.set_config(new_config)
 		
 		GLog.debug("Converted junction " + junction_id + " to " + junction.get_type_name())
 
-func setup_fog_of_war():
-	for node_id in graph.nodes:
-		var node = graph.nodes[node_id]
-		if node_id == graph.start_node:
-			node.set_state(MapNode.NodeState.CURRENT)
-		elif debug_show_all_nodes:
-			# Debug mode: show all nodes but mark them as available (not current)
-			node.set_state(MapNode.NodeState.AVAILABLE)
-		else:
-			node.set_state(MapNode.NodeState.LOCKED)
+
 
 func enforce_connection_limits():
 	"""Ensure no node exceeds the maximum connection limit"""
@@ -585,27 +607,103 @@ func move_player_to_node(target_node_id: String) -> bool:
 	
 	if target_node_id not in visited_node_ids:
 		visited_node_ids.append(target_node_id)
-	discover_adjacent_nodes(target_node_id)
+	discover_adjacent_nodes(target_node_id, 2)
 	
 	player_moved.emit(old_position, target_node_id)
 	GLog.debug("Player moved from " + old_position + " to " + target_node_id)
 	
 	return true
 
-func discover_adjacent_nodes(node_id: String):
+func discover_adjacent_nodes(node_id: String, max_distance: int = 1):
 	if not graph.nodes.has(node_id):
 		return
 	
-	var node = graph.nodes[node_id]
+	var current_round: Array[String] = [node_id]
+	var processed: Array[String] = [node_id]  # Don't rediscover starting node
 	
-	for connected_id in node.connections:
-		var connected_node = graph.nodes[connected_id]
-		if connected_node.state == MapNode.NodeState.LOCKED:
-			connected_node.set_state(MapNode.NodeState.AVAILABLE)
-			node_discovered.emit(connected_id)
+	for distance in range(1, max_distance + 1):
+		var next_round: Array[String] = []
+		
+		for current_node_id in current_round:
+			var current_node = graph.nodes[current_node_id]
+			
+			for connected_id in current_node.connections:
+				if connected_id not in processed:
+					var connected_node = graph.nodes[connected_id]
+					
+					# Only reveal nodes that haven't been discovered yet
+					if not is_node_discovered(connected_id):
+						connected_node.set_state(MapNode.NodeState.AVAILABLE)
+						add_discovered_node(connected_id)
+						node_discovered.emit(connected_id)
+					
+					next_round.append(connected_id)
+					processed.append(connected_id)
+		
+		current_round = next_round
+		if current_round.is_empty():
+			break  # No more nodes to discover
 
 func get_current_player_node() -> MapNode:
 	return graph.nodes.get(graph.player_position, null)
+
+# Discovery tracking methods
+func add_discovered_node(node_id: String):
+	"""Mark a node as permanently discovered"""
+	if node_id not in discovered_node_ids:
+		discovered_node_ids.append(node_id)
+		GLog.debug("Node permanently discovered: " + node_id)
+
+func is_node_discovered(node_id: String) -> bool:
+	"""Check if a node has been discovered"""
+	return node_id in discovered_node_ids
+
+func is_node_visited(node_id: String) -> bool:
+	"""Check if a node has been visited"""
+	return node_id in visited_node_ids
+
+func is_currently_reachable(node_id: String) -> bool:
+	"""Check if a node is currently reachable from the player's position"""
+	var current_node = get_current_player_node()
+	if not current_node:
+		return false
+	return current_node.is_connected_to(node_id)
+
+func restore_persistent_visibility():
+	"""Restore proper visibility for all nodes based on discovery and visit status"""
+	if debug_show_all_nodes:
+		GLog.debug("DEBUG MAP MODE: Overriding persistent visibility - all nodes set to AVAILABLE")
+		for node_id in graph.nodes:
+			var node = graph.nodes[node_id]
+			if node_id == current_player_node_id:
+				node.set_state(MapNode.NodeState.CURRENT)
+			else:
+				node.set_state(MapNode.NodeState.AVAILABLE)
+		return
+	
+	for node_id in graph.nodes:
+		var node = graph.nodes[node_id]
+		
+		if node_id == current_player_node_id:
+			# Current player position
+			node.set_state(MapNode.NodeState.CURRENT)
+		elif is_node_visited(node_id):
+			# Previously visited nodes - check if still reachable
+			if is_currently_reachable(node_id):
+				node.set_state(MapNode.NodeState.AVAILABLE if node.can_revisit() else MapNode.NodeState.COMPLETED)
+			else:
+				node.set_state(MapNode.NodeState.COMPLETED)
+		elif is_node_discovered(node_id):
+			# Discovered but not visited nodes - check if currently reachable
+			if is_currently_reachable(node_id):
+				node.set_state(MapNode.NodeState.AVAILABLE)
+			else:
+				node.set_state(MapNode.NodeState.KNOWN)  # NEW: Visible but unreachable
+		else:
+			# Unknown nodes remain locked
+			node.set_state(MapNode.NodeState.LOCKED)
+	
+	GLog.debug("Restored persistent visibility - " + str(discovered_node_ids.size()) + " discovered, " + str(visited_node_ids.size()) + " visited")
 
 func get_available_moves() -> Array[String]:
 	var current_node = get_current_player_node()
@@ -616,7 +714,8 @@ func get_available_moves() -> Array[String]:
 	
 	for connected_id in current_node.connections:
 		var connected_node = graph.nodes[connected_id]
-		if connected_node.state != MapNode.NodeState.LOCKED:  # Can only move to available nodes
+		if connected_node.state == MapNode.NodeState.AVAILABLE or \
+		   (connected_node.state == MapNode.NodeState.COMPLETED and connected_node.can_revisit()):
 			available.append(connected_id)
 	
 	return available
@@ -655,7 +754,9 @@ func get_serializable_data() -> Dictionary:
 		"start_node": graph.start_node,
 		"generation_seed": graph.get("generation_seed", generation_seed),
 		"max_nodes": layout_config.max_nodes if layout_config else default_max_nodes,
-		"min_nodes": layout_config.min_nodes if layout_config else default_min_nodes
+		"min_nodes": layout_config.min_nodes if layout_config else default_min_nodes,
+		"visited_nodes": visited_node_ids.duplicate(),
+		"discovered_nodes": discovered_node_ids.duplicate()
 	}
 
 func load_from_serializable_data(data: Dictionary):
@@ -684,7 +785,8 @@ func load_from_serializable_data(data: Dictionary):
 	for node_id in data.nodes:
 		var node_data = data.nodes[node_id]
 		var position = Vector2(node_data.position[0], node_data.position[1])
-		var node = MapNode.new(node_id, node_data.type, position)
+		var node_config = MapNodeRegistry.get_random_config_for_type(node_data.type)
+		var node = MapNodeRegistry.create_node(node_id, node_config, position)
 		
 		node.connections = node_data.connections.duplicate()
 		node.set_state(node_data.state)
@@ -703,7 +805,20 @@ func load_from_serializable_data(data: Dictionary):
 	graph.start_node = data.start_node
 	graph.generation_seed = data.get("generation_seed", generation_seed)
 	
+	# Restore tracking arrays
+	current_player_node_id = data.player_position
+	if data.has("visited_nodes"):
+		visited_node_ids = data.visited_nodes.duplicate()
+	else:
+		visited_node_ids = []
+	
+	if data.has("discovered_nodes"):
+		discovered_node_ids = data.discovered_nodes.duplicate()
+	else:
+		discovered_node_ids = []
+	
 	GLog.debug("Map restored from serializable data: " + str(graph.nodes.size()) + " nodes, " + str(graph.edges.size()) + " edges")
+	GLog.debug("Restored " + str(visited_node_ids.size()) + " visited nodes, " + str(discovered_node_ids.size()) + " discovered nodes")
 
 func apply_minimum_connections():
 	"""Apply the minimum connection rule to prevent dead ends"""
@@ -720,17 +835,192 @@ func apply_minimum_connections():
 	else:
 		GLog.warn("No minimum connection rule found")
 
-func apply_force_directed_layout():
-	"""Apply force-directed layout to optimize node positions"""
-	GLog.debug("Applying force-directed layout optimization...")
+# Removed apply_poisson_disk_layout() - redundant with initial Poisson sampling in generate_nodes_with_poisson_sampling()
+
+# New planar graph generation methods
+
+func generate_nodes_with_poisson_sampling():
+	"""Generate nodes using Poisson Disk Sampling for even distribution"""
+	var target_count = SeedManager.get_map_random_int(
+		layout_config.min_nodes if layout_config else default_min_nodes,
+		layout_config.max_nodes if layout_config else default_max_nodes
+	)
 	
-	var layout_optimizer = ForceDirectedLayout.new()
+	# We already have the start node, so generate target_count - 1 more
+	var additional_nodes = target_count - 1
+	
+	GLog.debug("Generating " + str(additional_nodes) + " additional nodes with Poisson sampling")
+	
+	# Use Poisson Disk Sampling to get well-distributed positions
+	var layout_optimizer = PoissonDiskLayout.new()
 	layout_optimizer.setup(layout_config)
 	
-	# Apply the layout optimization
-	graph = layout_optimizer.apply_layout(graph)
+	# Generate positions for all nodes (including start)
+	var all_positions = layout_optimizer.generate_poisson_positions(target_count)
 	
-	GLog.debug("Force-directed layout optimization complete")
+	# First position goes to start node (might adjust it)
+	if all_positions.size() > 0:
+		var start_node = graph.nodes[graph.start_node]
+		start_node.position = all_positions[0]
+	
+	# Create additional nodes at remaining positions
+	for i in range(1, min(all_positions.size(), target_count)):
+		var node_id = "node_" + str(i)
+		var node_type = layout_config.get_weighted_node_type() if layout_config else MapNode.NodeType.POI
+		var node_config = MapNodeRegistry.get_random_config_for_type(node_type)
+		var new_node = MapNodeRegistry.create_node(node_id, node_config, all_positions[i])
+		
+		graph.nodes[node_id] = new_node
+	
+	GLog.debug("Created " + str(graph.nodes.size()) + " nodes with Poisson distribution")
+
+func apply_delaunay_triangulation():
+	"""Apply Delaunay triangulation to create planar connectivity"""
+	GLog.debug("Applying Delaunay triangulation...")
+	
+	# Generate triangulation
+	graph = DelaunayTriangulator.triangulate_map_nodes(graph)
+	
+	if DEBUG_ENABLED:
+		var edge_count = graph.get("edges", []).size()
+		GLog.debug("Delaunay triangulation created " + str(edge_count) + " edges")
+		
+		# Validate that the result is actually planar
+		if PlanarGraphValidator.is_graph_planar(graph):
+			GLog.debug("✓ Triangulation is planar (no edge crossings)")
+		else:
+			GLog.warn("✗ Triangulation has edge crossings - this shouldn't happen!")
+
+func prune_triangulation_edges():
+	"""Intelligently prune edges from triangulation to match game design"""
+	GLog.debug("Pruning triangulation edges...")
+	
+	# Create pruning configuration
+	var pruning_config = EdgePruner.PruningConfig.new()
+	
+	if layout_config:
+		pruning_config.max_edge_length = layout_config.connection_max_distance
+		pruning_config.min_edge_length = layout_config.connection_min_distance
+		pruning_config.max_connections_per_node = layout_config.cleanup_max_connections_per_node
+		pruning_config.pruning_intensity = layout_config.planar_pruning_intensity
+	
+	# Apply intelligent pruning
+	graph = EdgePruner.prune_triangulation(graph, pruning_config)
+	
+	if DEBUG_ENABLED:
+		var edge_count = graph.get("edges", []).size()
+		GLog.debug("Pruning complete: " + str(edge_count) + " edges remaining")
+		
+		# Validate planarity is preserved
+		if PlanarGraphValidator.is_graph_planar(graph):
+			GLog.debug("✓ Graph remains planar after pruning")
+		else:
+			GLog.warn("✗ Graph has crossings after pruning!")
+
+func post_process_planar_graph():
+	"""Post-process a planar graph while maintaining planarity"""
+	# Balance node types (this doesn't affect connectivity)
+	balance_node_types()
+	
+	# Check connectivity and add minimal connections if needed (with planarity checking)
+	ensure_planar_connectivity()
+	
+	# Final planarity validation
+	validate_final_planarity()
+
+func ensure_planar_connectivity():
+	"""Ensure graph connectivity while maintaining planarity"""
+	var reachable = find_reachable_nodes(graph.start_node)
+	var all_nodes = graph.nodes.keys()
+	
+	for node_id in all_nodes:
+		if node_id not in reachable:
+			# Find a connection that won't create crossings
+			var best_connection = find_planar_connection(node_id, reachable)
+			if best_connection != "":
+				connect_nodes_if_planar(node_id, best_connection)
+				GLog.debug("Connected isolated node " + node_id + " to " + best_connection + " (planar)")
+				reachable.append(node_id)
+			else:
+				GLog.warn("Could not find planar connection for isolated node: " + node_id)
+
+func find_planar_connection(from_node_id: String, candidate_nodes: Array[String]) -> String:
+	"""Find the best connection that won't create edge crossings"""
+	if candidate_nodes.is_empty() or not graph.nodes.has(from_node_id):
+		return ""
+	
+	var from_node = graph.nodes[from_node_id]
+	var max_distance = layout_config.connection_max_distance if layout_config else 250.0
+	
+	# Find all candidates within reasonable distance
+	var valid_candidates: Array = []
+	
+	for candidate_id in candidate_nodes:
+		if graph.nodes.has(candidate_id):
+			var candidate_node = graph.nodes[candidate_id]
+			var distance = from_node.position.distance_to(candidate_node.position)
+			
+			if distance <= max_distance:
+				# Check if this connection would create crossings
+				if not PlanarGraphValidator.would_edge_create_crossing(graph, from_node_id, candidate_id):
+					valid_candidates.append({"id": candidate_id, "distance": distance})
+	
+	if valid_candidates.is_empty():
+		return ""
+	
+	# Sort by distance and return closest
+	valid_candidates.sort_custom(func(a, b): return a.distance < b.distance)
+	return valid_candidates[0].id
+
+func connect_nodes_if_planar(node_a: String, node_b: String) -> bool:
+	"""Connect two nodes only if it won't create edge crossings"""
+	if PlanarGraphValidator.would_edge_create_crossing(graph, node_a, node_b):
+		return false
+	
+	# Use the existing connect_nodes method but skip distance checks since we already validated
+	if not graph.nodes.has(node_a) or not graph.nodes.has(node_b):
+		return false
+	
+	# Check if already connected
+	if edge_exists(node_a, node_b):
+		return false
+	
+	# Create edge
+	var travel_time = SeedManager.get_map_random_int(2, 4)
+	var difficulty = SeedManager.get_map_random_int(1, 3)
+	var edge = MapEdge.new(node_a, node_b, travel_time, difficulty)
+	graph.edges.append(edge)
+	
+	# Update node connections
+	graph.nodes[node_a].connect_to(node_b)
+	graph.nodes[node_b].connect_to(node_a)
+	
+	GLog.debug("Connected " + node_a + " to " + node_b + " (planar)")
+	return true
+
+func validate_final_planarity():
+	"""Validate that the final graph is planar and log any issues"""
+	var report = PlanarGraphValidator.generate_planarity_report(graph)
+	
+	if report.is_planar:
+		GLog.debug("✓ Final graph is planar with " + str(report.total_nodes) + " nodes and " + str(report.total_edges) + " edges")
+	else:
+		GLog.warn("✗ Final graph has " + str(report.total_crossings) + " edge crossings!")
+		
+		if DEBUG_ENABLED:
+			for crossing in report.crossing_details:
+				GLog.debug("  Crossing: " + crossing.edge1 + " ✗ " + crossing.edge2)
+		
+		# Attempt to fix crossings
+		if layout_config and layout_config.auto_fix_crossings:
+			GLog.debug("Attempting to fix crossings...")
+			graph = PlanarGraphValidator.make_graph_planar_greedy(graph)
+			
+			var fixed_report = PlanarGraphValidator.generate_planarity_report(graph)
+			if fixed_report.is_planar:
+				GLog.debug("✓ Fixed all crossings - graph is now planar")
+			else:
+				GLog.warn("✗ Still have " + str(fixed_report.total_crossings) + " crossings after fix attempt")
 
 func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
 	"""Generate a complete map for a specific region"""
@@ -773,7 +1063,7 @@ func generate_map_for_region(config: MapRegionConfig, seed: int) -> Dictionary:
 	post_process_graph()
 	
 	# Discover adjacent nodes from the starting city so they become selectable
-	discover_adjacent_nodes(graph.start_node)
+	discover_adjacent_nodes(graph.start_node, 2)
 	
 	# Ensure player position sync
 	ensure_player_position_sync()
@@ -813,7 +1103,8 @@ func generate_radial_paths_from_city(config: MapRegionConfig):
 			# Create node with region-appropriate type
 			var node_type = config.get_random_node_type(SeedManager.map_rng)
 			var node_id = MapNode.NodeType.keys()[node_type].to_lower() + "_" + str(Time.get_ticks_msec()) + "_" + str(i) + "_" + str(j)
-			var new_node = MapNode.new(node_id, node_type, new_pos)
+			var node_config = MapNodeRegistry.get_random_config_for_type(node_type)
+			var new_node = MapNodeRegistry.create_node(node_id, node_config, new_pos)
 			
 			graph.nodes[node_id] = new_node
 			
@@ -855,7 +1146,8 @@ func add_boss_node(config: MapRegionConfig):
 	var boss_pos = config.get_boss_position()
 	var boss_id = "boss_" + config.region_id
 	
-	var boss_node = MapNode.new(boss_id, MapNode.NodeType.BOSS, boss_pos)
+	var boss_config = MapNodeRegistry.get_random_config_for_type(6)  # BOSS
+	var boss_node = MapNodeRegistry.create_node(boss_id, boss_config, boss_pos)
 	boss_node.set_custom_property("boss_name", config.boss_name)
 	boss_node.set_custom_property("boss_enemy_id", config.boss_enemy_id)
 	

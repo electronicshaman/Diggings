@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3 uid="uid://dgqx5hpay2ogs"]
+
+[ext_resource type="Script" uid="uid://cqv21ssbdrhpk" path="res://scripts/map/MapNodeConfig.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+node_name = "Settlement"
+description = "A bustling community with shops and traders."
+node_type = 3
+visual_size = Vector2(68, 68)
+visual_color = Color(0.0, 0.5, 1.0, 1)
+glow_color = Color(0.7, 0.7, 0.7, 0.5)
+pulse_effect = false
+state_color_locked = Color(0.3, 0.3, 0.3, 0.5)
+state_color_available = Color(1, 1, 1, 1)
+state_color_current = Color(1, 1, 0, 1)
+state_color_completed = Color(0.8, 0.8, 0.8, 0.8)
+state_color_known = Color(0.5, 0.5, 0.5, 0.5)
+safe = true
+can_revisit = true
+one_time_only = false
+always_accessible = false
+available_actions = Array[String](["shop", "trade", "rest"])
+action_properties = {
+"rest": {
+"cost_gold": 5,
+"description": "Rest at the local inn.",
+"heal_amount": 10,
+"sanity_change": 8,
+"time_cost_hours": 3
+},
+"shop": {
+"description": "Visit the local merchant.",
+"shop_tier": 1
+},
+"trade": {
+"description": "Trade with locals.",
+"time_cost_hours": 1
+}
+}
+custom_properties = {
+"has_shop": true,
+"settlement_type": "standard"
+}

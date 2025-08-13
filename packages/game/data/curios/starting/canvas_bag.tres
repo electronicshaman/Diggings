@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://data/CurioData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/StatModifier.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+effect_name = "Energy Boost"
+description = "Increase max energy by 1"
+trigger_event = "passive"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+stat_name = "max_energy"
+modifier_value = 1
+modifier_type = "flat"
+condition = ""
+
+[resource]
+script = ExtResource("1")
+curio_name = "Canvas Bag"
+description = "+1 max energy"
+icon = null
+flavor_text = "A sturdy prospector's satchel with surprisingly deep pockets."
+mechanical_category = "Resource"
+rarity = "Common"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1")]
+gold_cost = 150
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.0
+prospector_synergy = 1.3
+tracker_synergy = 1.1
+publican_synergy = 1.2
+glow_color = Color(0.7, 0.6, 0.4, 1.0)
+trigger_particle = null

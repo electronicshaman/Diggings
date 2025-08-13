@@ -1,6 +1,8 @@
 extends Resource
 class_name CardEffect
 
+const DEBUG_ENABLED: bool = true
+
 # Base class for all card effects
 # Each effect is a modular resource that can be applied to cards
 
@@ -12,8 +14,8 @@ class_name CardEffect
 # card_data: The card that triggered this effect
 # results: Dictionary containing effect results to modify
 func apply_effect(_duel_manager: Node, _card_data: Resource, _results: Dictionary) -> void:
-	print("WARNING: CardEffect.apply_effect() called but not overridden!")
-	print("Effect: %s" % effect_name)
+	GLog.warn("CardEffect.apply_effect() called but not overridden!")
+	GLog.warn("Effect: %s" % effect_name)
 
 # Helper method for effects that need to check conditions
 func can_apply(_duel_manager: Node, _card_data: Resource) -> bool:
@@ -25,3 +27,7 @@ func get_required_keys() -> Array[String]:
 	return []
 func get_formatted_description() -> String:
 	return description
+
+# Helper to retrieve a display name for the effect; override if needed.
+func get_effect_name() -> String:
+	return effect_name

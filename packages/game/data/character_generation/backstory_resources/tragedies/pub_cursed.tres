@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "pub_cursed"
+element_type = "tragedy"
+display_name = "Pub Cursed"
+description = "The pub you inherited came with more than just debts - it came with something ancient and malevolent."
+flavor_text = "The previous owners all died mysteriously. Now you understand why the price was so low."
+weight = 15.0
+class_compatibility = {
+  "Bushranger": 0.5,
+  "Prospector": 0.6,
+  "Tracker": 0.7,
+  "Publican": 2.0
+}
+stat_modifiers = {
+  "max_sanity": -15
+}
+percentage_modifiers = {
+  "corruption_gain": 0.2
+}
+special_modifiers = {
+  "cursed_establishment": true,
+  "supernatural_events_frequency": 2.0,
+  "patron_fear": 0.3
+}
+gameplay_rules = ["cursed_pub_events", "supernatural_manifestations"]
+conditional_modifiers = []
+compatible_next_elements = ["exorcism", "embrace_darkness", "sell_pub"]
+incompatible_elements = []
+required_elements = ["inherited_pub"]
+adds_objective = false
+objective_type = ""
+objective_value = 0
+objective_reward = ""
+icon = null
+color_theme = Color(0.3, 0.1, 0.4, 1.0)
+nickname_pool = ["Cursed", "Damned", "Haunted", "The Doomed", "Hex-Bearer"]

@@ -1,39 +1,50 @@
-[gd_resource type="NodeConfig" format=3]
+[gd_resource type="Resource" script_class="MapNodeConfig" load_steps=2 format=3 uid="uid://dm22nmmb12x7p"]
+
+[ext_resource type="Script" uid="uid://cqv21ssbdrhpk" path="res://scripts/map/MapNodeConfig.gd" id="1"]
 
 [resource]
-node_type = 5
+script = ExtResource("1")
 node_name = "Eagle's Pass"
 description = "A high mountain pass that offers excellent views of the surrounding valleys. Multiple paths wind down from this elevated crossroads."
+node_type = 5
 visual_size = Vector2(48, 48)
 visual_color = Color(0.501961, 0.501961, 0.501961, 1)
 glow_color = Color(0.7, 0.7, 0.7, 0.5)
+pulse_effect = false
+state_color_locked = Color(0.3, 0.3, 0.3, 0.5)
+state_color_available = Color(1, 1, 1, 1)
+state_color_current = Color(1, 1, 0, 1)
+state_color_completed = Color(0.8, 0.8, 0.8, 0.8)
+state_color_known = Color(0.5, 0.5, 0.5, 0.5)
 safe = true
 can_revisit = true
+one_time_only = false
+always_accessible = false
 available_actions = Array[String](["survey_paths", "brief_rest"])
-custom_properties = {
-"junction_type": "pass",
-"path_count": 4,
-"visibility_bonus": true,
-"pass_through": true,
-"landmark_quality": "major",
-"elevation": "high",
-"weather_exposed": true,
-"scenic_value": "excellent"
-}
 action_properties = {
-"survey_paths": {
-"description": "From this high vantage point, you can see far into the valleys below.",
-"time_cost_hours": 1,
-"reveals_connections": true,
-"reveals_distant_nodes": true,
-"info_type": "navigation",
-"visibility_range": "excellent"
-},
 "brief_rest": {
 "description": "Rest at this scenic overlook, though the mountain air is thin.",
 "heal_amount": 2,
 "sanity_change": 5,
+"scenic_bonus": true,
+"time_cost_hours": 1
+},
+"survey_paths": {
+"description": "From this high vantage point, you can see far into the valleys below.",
+"info_type": "navigation",
+"reveals_connections": true,
+"reveals_distant_nodes": true,
 "time_cost_hours": 1,
-"scenic_bonus": true
+"visibility_range": "excellent"
 }
+}
+custom_properties = {
+"elevation": "high",
+"junction_type": "pass",
+"landmark_quality": "major",
+"pass_through": true,
+"path_count": 4,
+"scenic_value": "excellent",
+"visibility_bonus": true,
+"weather_exposed": true
 }

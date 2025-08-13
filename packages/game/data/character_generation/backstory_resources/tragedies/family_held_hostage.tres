@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="BackstoryElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/character_generation/BackstoryElement.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+element_id = "family_held_hostage"
+element_type = "tragedy"
+display_name = "Family Held Hostage"
+description = "Your family is being held for ransom by ruthless criminals."
+flavor_text = "The letter was clear: 500 gold pieces in ten days, or you'll never see them again."
+weight = 15.0
+class_compatibility = {
+  "Bushranger": 1.2,
+  "Prospector": 1.8,
+  "Tracker": 1.0,
+  "Publican": 1.1
+}
+stat_modifiers = {}
+percentage_modifiers = {
+  "gold_gain": 0.1
+}
+special_modifiers = {
+  "desperation_bonus": true
+}
+gameplay_rules = ["desperate_for_gold"]
+conditional_modifiers = []
+compatible_next_elements = ["one_big_score", "save_family", "pay_ransom"]
+incompatible_elements = []
+required_elements = []
+adds_objective = true
+objective_type = "gold_target"
+objective_value = 500
+objective_reward = "family_saved"
+icon = null
+color_theme = Color(0.8, 0.2, 0.2, 1.0)
+nickname_pool = ["Desperate", "Driven", "Determined", "Haunted"]

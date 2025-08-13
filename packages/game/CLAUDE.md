@@ -1,168 +1,198 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding assistants when working with code in this repository.
 
 ## Project Overview
 
-This is a **Gold Rush Lovecraft card battler prototype** built in **Godot 4.4.1**. It's a roguelite card game set in the Australian gold rush with Lovecraftian horror elements, featuring 1v1 duels, hex-based exploration, and a day/night cycle.
+A roguelite card battler prototype built in Godot 4.4.x featuring Australian gold rush meets Lovecraftian horror. Core gameplay involves 1v1 card duels, procedural map exploration, and resource management.
 
 ## Core Architecture
 
-### MVC Pattern with Autoloads
+### MVC pattern with singleton autoloads
 
-The game uses a clean MVC architecture with Godot autoloads providing singleton services:
+The game follows strict MVC separation with specific responsibilities:
 
-- **MainGameController** (`scripts/combat/MainGameController.gd`) - Main orchestrator
-- **GameController** (`scripts/managers/game_controller.gd`) - Model (game state)
-- **UIController** (`scripts/managers/ui_controller.gd`) - View (UI updates)
-- **InputController** (`scripts/managers/input_controller.gd`) - Controller (input handling)
-- **DuelManager** (`scripts/managers/duel_manager.gd`) - Combat mechanics
+- MainGameController (`scripts/combat/MainGameController.gd`) – orchestrates combat scene controllers
+- GameController (`scripts/managers/game_controller.gd`) – model/game state façade over DuelManager/DuelState
+- UIController (`scripts/managers/ui_controller.gd`) – view updates and UI wiring
+- InputController (`scripts/managers/input_controller.gd`) – input routing
+- DuelManager (`scripts/managers/duel_manager.gd`) – duel flow and mechanics
 
-### Autoload System (Load Order Critical)
+### Autoloads (order from `project.godot`)
 
-```ini
-GameSettings    # Configuration first
-EventBus        # Communication layer
-SaveSystem      # Persistence
-ResourceManager # Asset loading
-ThemeManager    # Content theming
-GLog           # Logging system
-GameManager    # Game state
-SceneManager   # Scene transitions
+Order matters due to dependencies; current autoloads are:
+
+```text
+GameSettings        # Configuration
+EventBus            # Inter-system communication (signals + helpers)
+SaveSystem          # Persistence
+ResourceManager     # Asset management
+ThemeManager        # Theme loading
+SeedManager         # Procedural generation seeds (map RNG etc.)
+GLog                # Logging system
+GameManager         # High-level game state and stats
+SceneManager        # Scene transitions and preloading
+GDAIMCPRuntime      # MCP runtime for Godot editor control (dev only)
+MapNodeRegistry     # Map node type registration + factory
+CurioManager        # Curio acquisition, stacks, and signals
+CharacterGenerator  # Procedural character generation
+RunHistoryManager   # Run history and metrics
 ```
 
-### Card System
+### Event-driven communication
 
-- **CardData** (`scripts/cards/CardData.gd`) - Data definitions with modular effects
-- **Card** (`scripts/cards/Card.gd`) - Visual representation and interaction
-- **CardEffect** - Modular effect components in `scripts/cards/effects/`
-- **CardEffects** (`scripts/systems/card_effects.gd`) - Centralized effect resolver
+All systems communicate via the `EventBus` autoload (signals + helper methods). Use safe connect helpers and wrappers:
 
-### Character Classes
+```gdscript
+# Emitting via helper wrappers
+EventBus.emit_ui_notification("Game Ready", "success")
+EventBus.emit_game_event("turn_started", [1])  # emits if signal exists
 
-Four classes implemented in `data/characters/`:
+# Emitting signals directly
+EventBus.card_played.emit(card_node)
 
-- **Bushranger** (Attack specialist) - 55 HP, 90 Sanity, Ammo system
-- **Prospector** (Fortune specialist) - 45 HP, 110 Sanity, Risk/reward
-- **Tracker** (Skill specialist) - 50 HP, 105 Sanity, Setup/counter
-- **Publican** (Power specialist) - 50 HP, 95 Sanity, Brew tokens
-
-## Theme-Agnostic Design
-
-The core systems use **mechanical categories** independent of theme:
-
-- **Attack** - Direct damage cards
-- **Skill** - Utility effects (defense, buffs, card draw)
-- **Power** - Persistent combat upgrades (one per combat)
-- **Fortune** - Random/luck-based effects
-
-Theme-specific types (Gold, Grit, Grog, Gamble) are loaded dynamically via ThemeManager.
+# Safe connect to avoid duplicate connections
+EventBus.connect_safe("damage_dealt", Callable(self, "_on_damage_dealt"))
+```
 
 ## Development Commands
 
-### Running the Game
+### Running & testing (MCP plugin)
 
-- **Play current scene**: Use Godot's F6 or the play button
-- **Play main scene**: Use Godot's F5 or `mcp__godot-mcp__play_scene`
-- **Main scene**: `res://scenes/game/duel.tscn` (combat/duel scene)
+Requires the GDAI MCP Godot plugin enabled in this project. Useful commands:
+
+```text
+mcp__godot-mcp__open_scene(path: "res://scenes/ui/main_menu.tscn")
+mcp__godot-mcp__play_scene(scene_type: "main" | "current")
+mcp__godot-mcp__stop_running_scene()
+mcp__godot-mcp__get_godot_errors()
+mcp__godot-mcp__clear_output_logs()
+mcp__godot-mcp__get_scene_tree()
+mcp__godot-mcp__view_script(path: "res://scripts/managers/game_controller.gd")
+mcp__godot-mcp__get_running_scene_screenshot()
+```
 
 ### Debugging
 
-- **GLog system**: Use `GLog.debug("message")` - respects per-file `DEBUG_ENABLED` constants
-- **Debug panel**: Available in-game with buttons for testing
-- **Error checking**: Use `mcp__godot-mcp__get_godot_errors` to see current issues
+- GLog system: use GLog, not print (see `docs/GLOG_USAGE_GUIDE.md`)
+- Screenshots: `mcp__godot-mcp__get_editor_screenshot()` and `mcp__godot-mcp__get_running_scene_screenshot()`
 
-### Testing
+## Key Systems
 
-- Game automatically loads Bushranger character and starts a test duel
-- Test cards and enemies are loaded from `data/` directory
-- Debug buttons available for adding cards, modifying stats, resetting duels
+### Card system
 
-## Key File Locations
+- CardData resources in `data/cards/` organized by type (attack/skill/power/fortune)
+- Modular effects under `scripts/cards/effects/` (each effect is its own script)
+- Effect resolver at `scripts/systems/card_effects.gd`
+- Cards use theme-agnostic mechanical categories
 
-### Core Scripts
+### Map generation
 
-- `scripts/autoloads/` - Singleton systems (EventBus, GLog, GameManager, etc.)
-- `scripts/combat/MainGameController.gd` - Main game orchestrator
-- `scripts/managers/` - MVC controllers (game, ui, input, duel)
-- `scripts/cards/` - Card system and effects
-- `scripts/characters/CharacterClass.gd` - Character class definitions
+Planar graph pipeline using Delaunay triangulation with Poisson disk placement:
 
-### Data Resources
+- MapGenerator (`scripts/map/MapGenerator.gd`) – main generation
+- PoissonDiskLayout (`scripts/map/PoissonDiskLayout.gd`) – even node distribution
+- DelaunayTriangulator (`scripts/map/DelaunayTriangulator.gd`) – planar connectivity
+- EdgePruner (`scripts/map/EdgePruner.gd`) – prunes edges to design targets
+- PlanarGraphValidator (`scripts/map/PlanarGraphValidator.gd`) – planarity checks/fixes
+- GraphRule (`scripts/map/GraphRule.gd`) – rule-driven layout shaping
+- MapLayoutConfig script (`scripts/map/MapLayoutConfig.gd`) + resource (`data/map_layout_config.tres`)
+- MapNodeRegistry autoload – node creation/config selection
+- Debug scene: `scenes/debug/map_test.tscn`
 
-- `data/cards/` - Card definitions by type (attack, skill, power, fortune)
-- `data/characters/` - Character class resources (.tres files)
-- `data/enemies/` - Enemy definitions
-- `data/game_state/` - Game state data classes
+### Character classes
 
-### Scenes
+Four implemented classes with unique mechanics:
 
-- `scenes/game/duel.tscn` - Combat/duel scene (renamed from main_game)
-- `scenes/game/camp.tscn` - Camp rest scene
-- `scenes/game/junction.tscn` - Junction path selection scene
-- `scenes/cards/card.tscn` - Card visual template
+- Bushranger: attack specialist (HP ~55), ammo mechanics
+- Prospector: fortune/risk specialist (HP ~45), luck mechanics
+- Tracker: skill specialist (HP ~50), setup/counter
+- Publican: power specialist (HP ~50), brew tokens
 
-### Documentation
+## File Organization
 
-- `docs/` - Extensive documentation including:
-  - `high_level_summary.md` - Game design overview
-  - `architecture/SYSTEM_ARCHITECTURE.md` - Technical architecture
-  - `architecture/CHARACTER_CARD_RELATIONSHIPS.md` - Character-card system
-  - `GLOG_USAGE_GUIDE.md` - Logging system guide
+```
+data/
+  cards/           # Card resources by type
+  characters/      # Character class definitions
+  enemies/         # Enemy configurations
+  map_nodes/       # Map node resources (cities, camps, etc.)
+  maps/            # Regional map configurations
+  game_state/      # DuelState, PlayerData, EnemyData resources
+
+scripts/
+  autoloads/       # Singletons (EventBus, GLog, SceneManager, etc.)
+  cards/           # Card system, CardData, effects
+  combat/          # Controllers for duel scenes (e.g., MainGameController)
+  map/             # Map generation system (triangulation, rules, validator)
+  managers/        # MVC controllers (game/ui/input/duel)
+  systems/         # Cross-cutting systems (e.g., card_effects.gd)
+  ui/              # UI helpers/components
+
+scenes/
+  game/            # Gameplay scenes (duel, map, city hub, etc.)
+  ui/              # UI scenes (menus, settings, game over)
+  map/             # Map-related scenes and visualizers
+  debug/           # Debug/testing scenes (e.g., map_test.tscn)
+```
+
+## Current Development Focus
+
+### Current development focus (branch: `layout-baseline-31361ec`)
+
+- Planar map pipeline: Poisson placement → Delaunay → pruning → planarity validation
+- Region generation support via `MapRegionConfig.gd` and `generate_map_for_region`
+- Persistent visibility states (AVAILABLE/KNOWN/COMPLETED/CURRENT)
+- Debug map scene at `scenes/debug/map_test.tscn`
+- Tunable parameters in `data/map_layout_config.tres`
+
+### Known issues
+
+- UIReferenceManager class is referenced by `MainGameController.gd` but not found in repo; add it or refactor to direct node paths
+- Some UI node paths in `MainGameController.gd` may need verification
+- EventBus declares extra signals by design; unused ones are for upcoming features
+
+## Code Conventions
+
+### GDScript style
+
+- Add `const DEBUG_ENABLED: bool` per script; GLog respects per-file constants
+- Prefer Resources (.tres) for data definitions
+- Use EventBus for cross-system communication (with connect_safe)
+- Keep design theme-agnostic (mechanics over flavor)
+
+### Testing approach
+
+- No formal test framework; rely on debug scenes and in-game debug panel
+- Test scenes in `scenes/debug/` for isolated system testing
+- Use GLog extensively with per-file DEBUG toggles and min log level controls
 
 ## Important Patterns
 
-### Event Communication
+### Resource-based design
 
-All systems communicate via EventBus autoload:
+All content as Godot Resources for hot-reloading:
 
-```gdscript
-EventBus.card_played.emit(card_data)
-EventBus.damage_dealt.connect(_on_damage_dealt)
-```
+- Cards, characters, enemies as .tres files
+- Map configurations as resources
+- Theme definitions loadable at runtime
 
-### Logging
+### State machine combat
 
-Use GLog with per-file toggles:
+- Clear phases: PLAYER_TURN → RESOLVE_EFFECTS → ENEMY_TURN
+- Effects as data descriptions, not behavior
+- Centralized effect resolution in CardEffects system
 
-```gdscript
-const DEBUG_ENABLED: bool = true
-GLog.debug("Your message")  # Automatically checks DEBUG_ENABLED
-```
+### Node type registration
 
-### Character-Card Integration
+Map nodes are created via MapNodeRegistry:
 
-- Cards have `class_affinity` arrays for character restrictions
-- Characters have preferred/forbidden card types
-- Accessibility tiers: Starting/Class/Neutral/Rare
+- Each node type in `data/map_nodes/` categorized by folder
+- Dynamic/resource-driven creation (factory methods)
+- Extensible by adding new resources/configs
 
-### Data-Driven Design
+## Quick links
 
-- All content defined as Godot Resources (.tres files)
-- Hot-reloadable during development
-- Theme-agnostic core with theme layers
-
-## Common Issues
-
-### Scene Structure
-
-- Some UI node paths in MainGameController may be outdated
-- Missing UI elements cause node-not-found warnings
-- Card scene structure needs visual components properly positioned
-
-### Current Status
-
-- Combat system functional with test content
-- Character classes implemented with starting decks
-- Card effects system in place
-- Some unused signals in EventBus (expected for future features)
-- UI references need updating for current scene structure
-
-## Development Workflow
-
-1. Use GLog extensively for debugging
-2. All new cards should be Resources in `data/cards/`
-3. Follow character-card relationship patterns for class balance
-4. Test with debug panel buttons for rapid iteration
-5. Check `mcp__godot-mcp__get_godot_errors` before commits
-6. Maintain theme-agnostic core design principles
+- Logging: `docs/GLOG_USAGE_GUIDE.md`
+- Map config: `docs/MAP_CONFIG_GUIDE.md`
+- High-level summary: `docs/high_level_summary.md`
