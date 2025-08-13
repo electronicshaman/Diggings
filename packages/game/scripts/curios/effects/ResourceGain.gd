@@ -18,6 +18,13 @@ func apply_effect(game_state: Node, _curio_data: Resource, context: Dictionary) 
 	
 	# Calculate actual amount
 	var actual_amount = amount
+	# Honor stacks when managed by CurioManager
+	if _curio_data and game_state and game_state.has_method("get_curio_stack_count"):
+		var curio_name: String = _curio_data.curio_name if _curio_data.has("curio_name") else ""
+		if curio_name != "":
+			var stacks: int = int(game_state.get_curio_stack_count(curio_name))
+			if stacks > 1:
+				actual_amount *= stacks
 	if random_range:
 		actual_amount = randi_range(1, amount)
 	
@@ -55,11 +62,19 @@ func _check_condition(game_state: Node, context: Dictionary) -> bool:
 			return true
 
 func _add_gold(game_state: Node, value: int) -> void:
-	if game_state.has_node("/root/GameManager"):
+	# Prefer modifying the in-duel player stats if available
+	var player = _get_player_data(game_state)
+	var applied := false
+	if player and player.stats:
+		player.stats.gain_gold(value)
+		applied = true
+	# Fallback to global run gold if player context isn't available
+	if not applied and game_state.has_node("/root/GameManager"):
 		var gm = game_state.get_node("/root/GameManager")
 		gm.game_data["gold"] = gm.game_data.get("gold", 0) + value
-		if game_state.has_node("/root/EventBus"):
-			game_state.get_node("/root/EventBus").gold_changed.emit(value)
+	# Emit UI event if possible
+	if game_state.has_node("/root/EventBus"):
+		game_state.get_node("/root/EventBus").gold_changed.emit(value)
 
 func _add_energy(game_state: Node, value: int) -> void:
 	var player = _get_player_data(game_state)
@@ -89,9 +104,16 @@ func _draw_cards(game_state: Node, value: int) -> void:
 			dm.draw_cards(value)
 
 func _get_player_data(game_state: Node):
+	# If the caller provides a direct accessor (e.g., DuelManager), use it
 	if game_state.has_method("get_player_data"):
 		return game_state.get_player_data()
-	elif game_state.has_node("/root/GameManager"):
+	# Try accessing a DuelManager singleton to retrieve player data during combat
+	if game_state.has_node("/root/DuelManager"):
+		var dm = game_state.get_node("/root/DuelManager")
+		if dm and dm.has_method("get_player_data"):
+			return dm.get_player_data()
+	# Fallback: check if GameManager stores a player reference (legacy)
+	if game_state.has_node("/root/GameManager"):
 		var gm = game_state.get_node("/root/GameManager")
 		if gm.game_data.has("player"):
 			return gm.game_data["player"]
