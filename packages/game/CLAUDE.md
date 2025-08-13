@@ -1,176 +1,198 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding assistants when working with code in this repository.
 
 ## Project Overview
 
-A **roguelite card battler prototype** built in **Godot 4.4.1** featuring Australian gold rush meets Lovecraftian horror. Core gameplay involves 1v1 card duels, procedural map exploration, and resource management with a unique day/night cycle system.
+A roguelite card battler prototype built in Godot 4.4.x featuring Australian gold rush meets Lovecraftian horror. Core gameplay involves 1v1 card duels, procedural map exploration, and resource management.
 
 ## Core Architecture
 
-### MVC Pattern with Singleton Autoloads
+### MVC pattern with singleton autoloads
 
 The game follows strict MVC separation with specific responsibilities:
 
-- **MainGameController** (`scripts/combat/MainGameController.gd`) - Orchestrates all systems
-- **GameController** (`scripts/managers/game_controller.gd`) - Model layer (game state)
-- **UIController** (`scripts/managers/ui_controller.gd`) - View layer (UI updates)
-- **InputController** (`scripts/managers/input_controller.gd`) - Controller (input handling)
-- **DuelManager** (`scripts/managers/duel_manager.gd`) - Combat mechanics
+- MainGameController (`scripts/combat/MainGameController.gd`) – orchestrates combat scene controllers
+- GameController (`scripts/managers/game_controller.gd`) – model/game state façade over DuelManager/DuelState
+- UIController (`scripts/managers/ui_controller.gd`) – view updates and UI wiring
+- InputController (`scripts/managers/input_controller.gd`) – input routing
+- DuelManager (`scripts/managers/duel_manager.gd`) – duel flow and mechanics
 
-### Critical Autoload Order
+### Autoloads (order from `project.godot`)
 
-Order matters due to dependencies:
+Order matters due to dependencies; current autoloads are:
 
-```gdscript
-GameSettings    # Configuration
-EventBus        # Inter-system communication
-SaveSystem      # Persistence
-ResourceManager # Asset management
-ThemeManager    # Theme loading
-SeedManager     # Procedural generation seeds
-GLog           # Debug logging
-GameManager    # Game state
-SceneManager   # Scene transitions
-MapNodeRegistry # Map node type registration
+```text
+GameSettings        # Configuration
+EventBus            # Inter-system communication (signals + helpers)
+SaveSystem          # Persistence
+ResourceManager     # Asset management
+ThemeManager        # Theme loading
+SeedManager         # Procedural generation seeds (map RNG etc.)
+GLog                # Logging system
+GameManager         # High-level game state and stats
+SceneManager        # Scene transitions and preloading
+GDAIMCPRuntime      # MCP runtime for Godot editor control (dev only)
+MapNodeRegistry     # Map node type registration + factory
+CurioManager        # Curio acquisition, stacks, and signals
+CharacterGenerator  # Procedural character generation
+RunHistoryManager   # Run history and metrics
 ```
 
-### Event-Driven Communication
+### Event-driven communication
 
-All systems communicate via EventBus signals:
+All systems communicate via the `EventBus` autoload (signals + helper methods). Use safe connect helpers and wrappers:
 
 ```gdscript
-EventBus.card_played.emit(card_data)
-EventBus.damage_dealt.connect(_on_damage_dealt)
+# Emitting via helper wrappers
+EventBus.emit_ui_notification("Game Ready", "success")
+EventBus.emit_game_event("turn_started", [1])  # emits if signal exists
+
+# Emitting signals directly
+EventBus.card_played.emit(card_node)
+
+# Safe connect to avoid duplicate connections
+EventBus.connect_safe("damage_dealt", Callable(self, "_on_damage_dealt"))
 ```
 
 ## Development Commands
 
-### Running & Testing
+### Running & testing (MCP plugin)
 
-```gdscript
-# Play current scene (F6 in editor)
-mcp__godot-mcp__play_scene(scene_type: "current")
+Requires the GDAI MCP Godot plugin enabled in this project. Useful commands:
 
-# Play main menu (F5 in editor)
-mcp__godot-mcp__play_scene(scene_type: "main")
-
-# Check for errors
+```text
+mcp__godot-mcp__open_scene(path: "res://scenes/ui/main_menu.tscn")
+mcp__godot-mcp__play_scene(scene_type: "main" | "current")
+mcp__godot-mcp__stop_running_scene()
 mcp__godot-mcp__get_godot_errors()
-
-# Clear output logs
 mcp__godot-mcp__clear_output_logs()
+mcp__godot-mcp__get_scene_tree()
+mcp__godot-mcp__view_script(path: "res://scripts/managers/game_controller.gd")
+mcp__godot-mcp__get_running_scene_screenshot()
 ```
 
 ### Debugging
 
-- **GLog System**: Every file has `const DEBUG_ENABLED: bool` to control logging
-- **Debug Mode**: Map system has DEBUG mode for layout visualization (`scripts/debug/MapTest.gd`)
-- **Screenshot Tools**: Use `mcp__godot-mcp__get_editor_screenshot()` or `get_running_scene_screenshot()`
+- GLog system: use GLog, not print (see `docs/GLOG_USAGE_GUIDE.md`)
+- Screenshots: `mcp__godot-mcp__get_editor_screenshot()` and `mcp__godot-mcp__get_running_scene_screenshot()`
 
 ## Key Systems
 
-### Card System
+### Card system
 
-- **CardData** resources in `data/cards/` organized by type (attack/skill/power/fortune)
-- **Modular effects** in `scripts/cards/effects/` - each effect is a separate class
-- **CardEffects** resolver (`scripts/systems/card_effects.gd`) processes all effects
+- CardData resources in `data/cards/` organized by type (attack/skill/power/fortune)
+- Modular effects under `scripts/cards/effects/` (each effect is its own script)
+- Effect resolver at `scripts/systems/card_effects.gd`
 - Cards use theme-agnostic mechanical categories
 
-### Map Generation
+### Map generation
 
-Current implementation uses **Delaunay Triangulation** (Bowyer-Watson algorithm) for planar graph generation:
+Planar graph pipeline using Delaunay triangulation with Poisson disk placement:
 
-- **MapGenerator** (`scripts/map/MapGenerator.gd`) - Main generation logic
-- **DelaunayTriangulator** (`scripts/map/DelaunayTriangulator.gd`) - Creates planar connectivity
-- **PoissonDiskLayout** (`scripts/map/PoissonDiskLayout.gd`) - Initial node positioning
-- **EdgePruner** (`scripts/map/EdgePruner.gd`) - Intelligent edge reduction
-- **PlanarGraphValidator** (`scripts/map/PlanarGraphValidator.gd`) - Validates planarity
-- **MapLayoutConfig** (`data/map_layout_config.tres`) - Generation parameters
-- **MapNodeRegistry** autoload - Registers all node types dynamically
+- MapGenerator (`scripts/map/MapGenerator.gd`) – main generation
+- PoissonDiskLayout (`scripts/map/PoissonDiskLayout.gd`) – even node distribution
+- DelaunayTriangulator (`scripts/map/DelaunayTriangulator.gd`) – planar connectivity
+- EdgePruner (`scripts/map/EdgePruner.gd`) – prunes edges to design targets
+- PlanarGraphValidator (`scripts/map/PlanarGraphValidator.gd`) – planarity checks/fixes
+- GraphRule (`scripts/map/GraphRule.gd`) – rule-driven layout shaping
+- MapLayoutConfig script (`scripts/map/MapLayoutConfig.gd`) + resource (`data/map_layout_config.tres`)
+- MapNodeRegistry autoload – node creation/config selection
+- Debug scene: `scenes/debug/map_test.tscn`
 
-### Character Classes
+### Character classes
 
 Four implemented classes with unique mechanics:
 
-- **Bushranger**: Attack specialist, 55 HP, Ammo system
-- **Prospector**: Fortune/risk specialist, 45 HP, Luck mechanics  
-- **Tracker**: Skill specialist, 50 HP, Setup/counter gameplay
-- **Publican**: Power specialist, 50 HP, Brew token system
+- Bushranger: attack specialist (HP ~55), ammo mechanics
+- Prospector: fortune/risk specialist (HP ~45), luck mechanics
+- Tracker: skill specialist (HP ~50), setup/counter
+- Publican: power specialist (HP ~50), brew tokens
 
 ## File Organization
 
 ```
 data/
-  cards/         # Card resources by type
-  characters/    # Character class definitions
-  enemies/       # Enemy configurations
-  map_nodes/     # Map node types (cities, camps, etc.)
-  maps/          # Regional map configurations
+  cards/           # Card resources by type
+  characters/      # Character class definitions
+  enemies/         # Enemy configurations
+  map_nodes/       # Map node resources (cities, camps, etc.)
+  maps/            # Regional map configurations
+  game_state/      # DuelState, PlayerData, EnemyData resources
 
 scripts/
-  autoloads/     # Singleton services
-  cards/         # Card system and effects
-  combat/        # Combat controllers
-  map/           # Map generation system
-  managers/      # MVC controllers
-  ui/            # UI scene scripts
+  autoloads/       # Singletons (EventBus, GLog, SceneManager, etc.)
+  cards/           # Card system, CardData, effects
+  combat/          # Controllers for duel scenes (e.g., MainGameController)
+  map/             # Map generation system (triangulation, rules, validator)
+  managers/        # MVC controllers (game/ui/input/duel)
+  systems/         # Cross-cutting systems (e.g., card_effects.gd)
+  ui/              # UI helpers/components
 
 scenes/
-  game/          # Gameplay scenes (duel, map, etc.)
-  ui/            # UI scenes (menus, settings)
-  map/           # Map-related scenes
+  game/            # Gameplay scenes (duel, map, city hub, etc.)
+  ui/              # UI scenes (menus, settings, game over)
+  map/             # Map-related scenes and visualizers
+  debug/           # Debug/testing scenes (e.g., map_test.tscn)
 ```
 
 ## Current Development Focus
 
-### Map System (Active Branch: 2025-08-10-poisson-disk-sampling)
+### Current development focus (branch: `layout-baseline-31361ec`)
 
-- Using Delaunay triangulation (Bowyer-Watson algorithm) for planar graph generation
-- Poisson Disk Sampling for initial node positioning ensures even distribution
-- Edge pruning reduces triangulation to game-appropriate connectivity
-- Debug mode available via `scenes/debug/map_test.tscn`
-- Procedural generation with configurable parameters in `MapLayoutConfig`
+- Planar map pipeline: Poisson placement → Delaunay → pruning → planarity validation
+- Region generation support via `MapRegionConfig.gd` and `generate_map_for_region`
+- Persistent visibility states (AVAILABLE/KNOWN/COMPLETED/CURRENT)
+- Debug map scene at `scenes/debug/map_test.tscn`
+- Tunable parameters in `data/map_layout_config.tres`
 
-### Known Issues
+### Known issues
 
-- Some UI node paths in MainGameController may need updating
-- Unused signals in EventBus (reserved for future features)
-- Map visibility system being refined
+- UIReferenceManager class is referenced by `MainGameController.gd` but not found in repo; add it or refactor to direct node paths
+- Some UI node paths in `MainGameController.gd` may need verification
+- EventBus declares extra signals by design; unused ones are for upcoming features
 
 ## Code Conventions
 
-### GDScript Style
+### GDScript style
 
-- Use `const DEBUG_ENABLED: bool` in every file for logging control
+- Add `const DEBUG_ENABLED: bool` per script; GLog respects per-file constants
 - Prefer Resources (.tres) for data definitions
-- Use EventBus for all inter-system communication
-- Follow theme-agnostic design (mechanical categories, not theme-specific)
+- Use EventBus for cross-system communication (with connect_safe)
+- Keep design theme-agnostic (mechanics over flavor)
 
-### Testing Approach
+### Testing approach
 
-- No formal test framework - use debug scenes and in-game debug panel
+- No formal test framework; rely on debug scenes and in-game debug panel
 - Test scenes in `scenes/debug/` for isolated system testing
-- Use GLog.debug() extensively with per-file DEBUG toggles
+- Use GLog extensively with per-file DEBUG toggles and min log level controls
 
 ## Important Patterns
 
-### Resource-Based Design
+### Resource-based design
 
 All content as Godot Resources for hot-reloading:
+
 - Cards, characters, enemies as .tres files
 - Map configurations as resources
 - Theme definitions loadable at runtime
 
-### State Machine Combat
+### State machine combat
 
 - Clear phases: PLAYER_TURN → RESOLVE_EFFECTS → ENEMY_TURN
 - Effects as data descriptions, not behavior
 - Centralized effect resolution in CardEffects system
 
-### Node Type Registration
+### Node type registration
 
-Map nodes self-register via MapNodeRegistry:
+Map nodes are created via MapNodeRegistry:
+
 - Each node type in `data/map_nodes/` categorized by folder
-- Dynamic loading based on folder structure
-- Extensible without code changes
+- Dynamic/resource-driven creation (factory methods)
+- Extensible by adding new resources/configs
+
+## Quick links
+
+- Logging: `docs/GLOG_USAGE_GUIDE.md`
+- Map config: `docs/MAP_CONFIG_GUIDE.md`
+- High-level summary: `docs/high_level_summary.md`

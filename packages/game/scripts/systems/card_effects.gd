@@ -3,6 +3,20 @@ class_name CardEffects
 
 const DEBUG_ENABLED: bool = true
 
+## Safe property existence helper (Resources/Objects don't have has_property())
+func _has_prop(obj, prop_name: String) -> bool:
+	if obj == null:
+		return false
+	if obj is Dictionary:
+		return (obj as Dictionary).has(prop_name)
+	if obj is Object:
+		var o: Object = obj
+		var plist: Array = o.get_property_list()
+		for p in plist:
+			if typeof(p) == TYPE_DICTIONARY and (p as Dictionary).get("name", "") == prop_name:
+				return true
+	return false
+
 ## Apply card effects with comprehensive error handling and validation
 func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dictionary:
 	# Create default results dictionary
@@ -86,7 +100,7 @@ func _validate_card_effect_inputs(duel_manager: DuelManager, card_data: CardData
 	# Check for required properties on card data
 	var required_card_properties = ["card_name", "effects"]
 	for prop in required_card_properties:
-		if not card_data.has_property(prop):
+		if not _has_prop(card_data, prop):
 			result.error = ERR_INVALID_DATA
 			result.message = "CardData missing property: " + prop
 			return result
@@ -98,7 +112,7 @@ func _validate_card_effect_inputs(duel_manager: DuelManager, card_data: CardData
 		return result
 	
 	# Check duel state
-	if not duel_manager.has_property("duel_state") or not is_instance_valid(duel_manager.duel_state):
+	if not is_instance_valid(duel_manager.duel_state):
 		result.error = ERR_INVALID_DATA
 		result.message = "DuelManager has invalid duel_state"
 		return result
@@ -135,9 +149,7 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_data
 	result.success = true
 	
 	var effect_name = "Unknown"
-	if effect.has_property("effect_name"):
-		effect_name = effect.effect_name
-	elif "effect_name" in effect:
+	if effect is CardEffect and _has_prop(effect, "effect_name"):
 		effect_name = effect.effect_name
 	
 	if DEBUG_ENABLED:
@@ -149,11 +161,11 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_data
 func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -> void:
 	if not is_instance_valid(duel_manager):
 		return
-	
-	if not duel_manager.has_property("duel_state") or not is_instance_valid(duel_manager.duel_state):
+
+	if not is_instance_valid(duel_manager.duel_state):
 		return
-	
-	if not duel_manager.duel_state.has_property("player_data") or not is_instance_valid(duel_manager.duel_state.player_data):
+
+	if not is_instance_valid(duel_manager.duel_state.player_data):
 		return
 	
 	var player_data = duel_manager.duel_state.player_data
@@ -202,7 +214,7 @@ func get_card_value_estimate(card_data: CardData) -> int:
 	var value = 0
 	
 	# Validate effects array
-	if not card_data.has_property("effects") or not card_data.effects is Array:
+	if not (card_data.effects is Array):
 		push_warning("CardEffects: Card has no valid effects array for value estimation")
 		return 0
 	
@@ -215,10 +227,10 @@ func get_card_value_estimate(card_data: CardData) -> int:
 		value += effect_value
 	
 	# Subtract costs if available
-	if card_data.has_property("energy_cost") and card_data.energy_cost is int:
+	if _has_prop(card_data, "energy_cost") and card_data.energy_cost is int:
 		value -= card_data.energy_cost * 2
 	
-	if card_data.has_property("sanity_cost") and card_data.sanity_cost is int:
+	if _has_prop(card_data, "sanity_cost") and card_data.sanity_cost is int:
 		value -= card_data.sanity_cost
 	
 	return max(0, value)  # Ensure non-negative value
@@ -231,18 +243,18 @@ func _calculate_effect_value(effect: Resource) -> int:
 	var value = 0
 	
 	# Use type checking with error handling
-	if effect is Damage and effect.has_property("damage_amount"):
+	if effect is Damage and _has_prop(effect, "damage_amount"):
 		value = effect.damage_amount * 2
-	elif effect is RandomDamage and effect.has_property("min_damage") and effect.has_property("max_damage"):
+	elif effect is RandomDamage and _has_prop(effect, "min_damage") and _has_prop(effect, "max_damage"):
 		var avg_damage = (effect.min_damage + effect.max_damage) / 2.0
 		value = int(avg_damage * 2)
-	elif effect is Defense and effect.has_property("defense_amount"):
+	elif effect is Defense and _has_prop(effect, "defense_amount"):
 		value = effect.defense_amount * 2
-	elif effect is Heal and effect.has_property("heal_amount"):
+	elif effect is Heal and _has_prop(effect, "heal_amount"):
 		value = effect.heal_amount * 3
-	elif effect is Draw and effect.has_property("cards_to_draw"):
+	elif effect is Draw and _has_prop(effect, "cards_to_draw"):
 		value = effect.cards_to_draw * 3
-	elif effect is Stun and effect.has_property("stun_duration"):
+	elif effect is Stun and _has_prop(effect, "stun_duration"):
 		value = effect.stun_duration * 4
 	else:
 		# Generic effect value estimation
@@ -273,7 +285,7 @@ func get_effect_diagnostics(card_data: CardData) -> Dictionary:
 		"effect_types": []
 	}
 	
-	if not is_instance_valid(card_data) or not card_data.has_property("effects"):
+	if not is_instance_valid(card_data) or not (card_data.effects is Array):
 		return diagnostics
 	
 	diagnostics.effect_count = card_data.effects.size()

@@ -208,7 +208,7 @@ func get_state_color() -> Color:
 			NodeState.KNOWN:
 				return Color(0.5, 0.5, 1.0, 0.7)  # Blue tinted
 			NodeState.AVAILABLE:
-				return Color.WHITE
+				return Color.GREEN
 			NodeState.CURRENT:
 				return Color.YELLOW
 			NodeState.COMPLETED:

@@ -235,7 +235,9 @@ func _validate_enemy_data(enemy: Resource) -> bool:
 	if not is_instance_valid(enemy):
 		return false
 	
-	var required_properties = ["enemy_name", "health"]
+	# EnemyState exposes stats via convenience properties (current_health/max_health)
+	# Validate against actual properties rather than a non-existent "health"
+	var required_properties = ["enemy_name", "max_health"]
 	for prop in required_properties:
 		if not _has_prop(enemy, prop):
 			push_warning("GameController: Enemy missing property: " + prop)
@@ -478,7 +480,7 @@ func end_player_turn() -> Error:
 		push_error("GameController: Cannot end turn - Duel state is invalid")
 		return ERR_INVALID_DATA
 	
-	if not current_duel_state.has_property("is_player_turn"):
+	if not _has_prop(current_duel_state, "is_player_turn"):
 		push_warning("GameController: Cannot verify player turn state")
 		# Continue anyway - let DuelManager handle turn validation
 	elif not current_duel_state.is_player_turn:
@@ -501,7 +503,7 @@ func add_random_card_to_hand() -> Error:
 		push_error("GameController: Cannot add card - Duel state is invalid")
 		return ERR_INVALID_DATA
 	
-	if not current_duel_state.has_property("hand") or not is_instance_valid(current_duel_state.hand):
+	if not _has_prop(current_duel_state, "hand") or not is_instance_valid(current_duel_state.hand):
 		push_error("GameController: Cannot add card - Hand is invalid")
 		return ERR_INVALID_DATA
 	
@@ -519,7 +521,7 @@ func modify_player_health(amount: int) -> Error:
 		push_error("GameController: Cannot modify health - Duel state is invalid")
 		return ERR_INVALID_DATA
 	
-	if not current_duel_state.has_property("player_data") or not is_instance_valid(current_duel_state.player_data):
+	if not _has_prop(current_duel_state, "player_data") or not is_instance_valid(current_duel_state.player_data):
 		push_error("GameController: Cannot modify health - Player data is invalid")
 		return ERR_INVALID_DATA
 	
@@ -528,7 +530,7 @@ func modify_player_health(amount: int) -> Error:
 	# Validate required properties
 	var required_props = ["current_health", "max_health"]
 	for prop in required_props:
-		if not player_data.has_property(prop):
+		if not _has_prop(player_data, prop):
 			push_error("GameController: Player data missing property: " + prop)
 			return ERR_INVALID_DATA
 	
@@ -546,7 +548,7 @@ func modify_player_energy(amount: int) -> Error:
 		push_error("GameController: Cannot modify energy - Duel state is invalid")
 		return ERR_INVALID_DATA
 	
-	if not current_duel_state.has_property("player_data") or not is_instance_valid(current_duel_state.player_data):
+	if not _has_prop(current_duel_state, "player_data") or not is_instance_valid(current_duel_state.player_data):
 		push_error("GameController: Cannot modify energy - Player data is invalid")
 		return ERR_INVALID_DATA
 	
@@ -555,7 +557,7 @@ func modify_player_energy(amount: int) -> Error:
 	# Validate required properties
 	var required_props = ["current_energy", "max_energy"]
 	for prop in required_props:
-		if not player_data.has_property(prop):
+		if not _has_prop(player_data, prop):
 			push_error("GameController: Player data missing property: " + prop)
 			return ERR_INVALID_DATA
 	
@@ -575,7 +577,7 @@ func _on_duel_started() -> void:
 	# Emit event safely
 	if is_instance_valid(EventBus) and EventBus.has_signal("duel_started"):
 		var enemy_data = null
-		if is_instance_valid(current_duel_state) and current_duel_state.has_property("enemy_data"):
+		if is_instance_valid(current_duel_state) and _has_prop(current_duel_state, "enemy_data"):
 			enemy_data = current_duel_state.enemy_data
 		
 		EventBus.duel_started.emit(enemy_data)
@@ -604,7 +606,7 @@ func _on_turn_started(is_player_turn: bool) -> void:
 	# Emit event safely
 	if is_instance_valid(EventBus) and EventBus.has_signal("turn_started"):
 		var current_turn = 0
-		if is_instance_valid(current_duel_state) and current_duel_state.has_property("current_turn"):
+		if is_instance_valid(current_duel_state) and _has_prop(current_duel_state, "current_turn"):
 			current_turn = current_duel_state.current_turn
 		
 		EventBus.turn_started.emit(current_turn)
@@ -613,7 +615,7 @@ func _on_turn_started(is_player_turn: bool) -> void:
 
 func _on_card_played(card_data: CardData) -> void:
 	var card_name = "Unknown Card"
-	if is_instance_valid(card_data) and card_data.has_property("card_name"):
+	if is_instance_valid(card_data) and _has_prop(card_data, "card_name"):
 		card_name = card_data.card_name
 	
 	GLog.debug("Card played: " + card_name)

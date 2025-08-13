@@ -28,7 +28,7 @@ func _ready():
 	
 	duel_state.add_change_listener(_on_duel_state_changed)
 
-func _on_duel_state_changed(change_type: String, data: Dictionary) -> void:
+func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 	GLog.debug("DuelState changed: %s" % change_type)
 	
 	match change_type:
@@ -306,3 +306,10 @@ func get_cards_played_this_turn() -> int:
 	if duel_state and duel_state.player_data:
 		return duel_state.player_data.cards_played_this_turn
 	return 0
+
+# Minimal getters expected by CardEffects validation
+func get_player_data():
+	return duel_state.player_data if duel_state else null
+
+func get_enemy_data():
+	return duel_state.enemy_data if duel_state else null
