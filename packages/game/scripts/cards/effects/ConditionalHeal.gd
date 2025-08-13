@@ -32,7 +32,7 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 	
 	var bonus_text = " (+%d desperate bonus)" % bonus_heal if is_desperate else ""
 	print("Applied %s effect from %s (+%d heal%s, total: %d)" % [
-		effect_name, card_data.card_name, total_heal, bonus_text, results.heal
+		get_effect_name(), card_data.card_name, total_heal, bonus_text, results.heal
 	])
 
 func get_formatted_description() -> String:

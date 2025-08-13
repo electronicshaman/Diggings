@@ -11,7 +11,7 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 	if player_data and player_data.stats:
 		player_data.stats.activate_fatal_damage_prevention()
 		print("Applied %s effect from %s (player cannot die this turn)" % [
-			effect_name, card_data.card_name
+			get_effect_name(), card_data.card_name
 		])
 		
 		# Add notification about fatal damage prevention
