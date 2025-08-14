@@ -4,6 +4,11 @@ class_name DuelManager
 # Per-file debug control (GLog will check this)
 const DEBUG_ENABLED: bool = true
 
+# Timing constants for card playing
+const CARD_STAGE_DELAY: float = 0.5  # Time card sits on battlefield before resolving
+const ENEMY_CARD_PLAY_DELAY: float = 1.5  # Time between enemy card plays  
+const ENEMY_TURN_START_DELAY: float = 1.0  # Delay before enemy starts
+
 @export_group("Duel Configuration")
 @export var duel_state: DuelState
 @export_range(3, 10) var initial_hand_size: int = 5
@@ -87,8 +92,7 @@ func start_player_turn() -> void:
 func end_player_turn() -> void:
 	GLog.debug("Ending player turn")
 	
-	# Resolve battlefield before ending turn
-	resolve_battlefield()
+	# No battlefield resolution needed - cards resolve immediately when played
 	
 	# Process player end-of-turn effects (like delayed damage)
 	if duel_state.player_data:
@@ -105,6 +109,9 @@ func start_enemy_turn():
 	
 	duel_state.start_enemy_turn()
 	turn_started.emit(false)
+	
+	# Add delay before enemy starts acting
+	await get_tree().create_timer(ENEMY_TURN_START_DELAY).timeout
 	
 	process_enemy_turn()
 
@@ -128,7 +135,7 @@ func process_enemy_turn():
 		enemy.stats.current_energy = enemy.stats.max_energy
 	
 	# Execute enemy AI to play cards
-	execute_enemy_ai_turn(enemy)
+	await execute_enemy_ai_turn(enemy)
 	
 	end_enemy_turn()
 
@@ -161,8 +168,12 @@ func execute_enemy_ai_turn(enemy: EnemyState):
 		var card_to_play = select_card_by_ai_type(enemy, playable_cards)
 		
 		if card_to_play:
-			play_enemy_card(enemy, card_to_play)
+			await play_enemy_card(enemy, card_to_play)
 			cards_played += 1
+			
+			# Add delay between card plays for readability
+			if cards_played < max_cards_to_play:
+				await get_tree().create_timer(ENEMY_CARD_PLAY_DELAY).timeout
 			
 			# Update playable cards after spending energy
 			playable_cards = get_enemy_playable_cards(enemy)
@@ -258,28 +269,36 @@ func select_card_by_ai_type(enemy: EnemyState, playable_cards: Array[CardData]) 
 			return playable_cards[0]
 
 func play_enemy_card(enemy: EnemyState, card: CardData):
-	"""Stage an enemy card on the battlefield"""
-	GLog.info("Enemy stages: %s (Cost: %d)" % [card.card_name, card.energy_cost])
+	"""Play an enemy card with immediate resolution"""
+	GLog.info("Enemy plays: %s (Cost: %d)" % [card.card_name, card.energy_cost])
 	
-	# Spend energy upfront when staging
+	# Spend energy upfront
 	if enemy.stats:
 		enemy.stats.current_energy -= card.energy_cost
 	
-	# Move card from enemy hand to shared battlefield
+	# Move card from enemy hand to battlefield temporarily
 	if enemy.enemy_hand.remove_card(card):
 		duel_state.battlefield.add_card(card)
-		# Track that this card was played by enemy (for future battlefield resolution)
-		# For now we'll resolve immediately but this sets up future battlefield staging
 		GLog.debug("Enemy card '%s' staged on battlefield" % card.card_name)
 	
-	# Emit event for UI updates
+	# Emit event for UI to show card
 	enemy_card_played.emit(card)
+	
+	# Wait for player to see the card
+	await get_tree().create_timer(ENEMY_CARD_PLAY_DELAY).timeout
+	
+	# Immediately resolve the card
+	resolve_single_card(card, false)
+	
+	# Check if duel is over after each card
+	if duel_state.is_duel_over():
+		var winner = "player" if duel_state.enemy_data.is_dead() else "enemy"
+		end_duel(winner)
 
 func end_enemy_turn():
 	GLog.debug("Ending enemy turn")
 	
-	# Resolve enemy battlefield before ending turn  
-	resolve_enemy_battlefield()
+	# No battlefield resolution needed - cards resolve immediately when played
 	
 	duel_state.end_enemy_turn()
 	turn_ended.emit(false)
@@ -301,12 +320,12 @@ func play_card(card_data: CardData):
 		GLog.warn("Cannot play card: %s" % card_data.card_name)
 		return
 	
-	GLog.info("Staging card to battlefield: %s" % card_data.card_name)
+	GLog.info("Playing card: %s" % card_data.card_name)
 	
 	var player = duel_state.player_data
 	var actual_cost = player.get_actual_energy_cost(card_data.energy_cost, card_data.card_type)
 	
-	# Pay costs upfront when staging to battlefield
+	# Pay costs upfront
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_data.sanity_cost)
 	
@@ -314,16 +333,25 @@ func play_card(card_data: CardData):
 	player.cards_played_this_turn += 1
 	player.apply_card_cost_reductions()
 	
-	# Move card to battlefield (effects will resolve later)
+	# Move card to battlefield temporarily for visual feedback
 	duel_state.play_card(card_data)
 	
-	# Emit event for UI updates
+	# Emit event for UI to show card on battlefield
 	card_played.emit(card_data)
 	
 	# Track this card for enemy memory
 	track_player_card_for_enemy_memory(card_data)
 	
-	# Don't check duel over here - wait for battlefield resolution
+	# Brief delay to show card on battlefield
+	await get_tree().create_timer(CARD_STAGE_DELAY).timeout
+	
+	# Immediately resolve the card
+	resolve_single_card(card_data, true)
+	
+	# Check if duel is over after each card
+	if duel_state.is_duel_over():
+		var winner = "player" if duel_state.enemy_data.is_dead() else "enemy"
+		end_duel(winner)
 
 func apply_card_results(results: Dictionary):
 	var player = duel_state.player_data
@@ -450,6 +478,43 @@ func track_player_card_for_enemy_memory(card: CardData):
 	var enemy = duel_state.enemy_data as EnemyState
 	if enemy:
 		enemy.add_to_player_memory(card.card_name)
+
+func resolve_single_card(card_data: CardData, is_player_card: bool):
+	"""Immediately resolve a single card and move it to discard"""
+	if not duel_state or not card_data:
+		return
+	
+	GLog.info("Resolving card: %s" % card_data.card_name)
+	
+	# Remove from battlefield
+	duel_state.battlefield.remove_card(card_data)
+	
+	# Execute card effects
+	var results = card_effects_processor.apply_card_effects(self, card_data)
+	
+	if is_player_card:
+		apply_card_results(results)
+		
+		# Move to player's final destination
+		match card_data.card_handling:
+			"Standard", "Equipped", "Flash", "Keep":
+				duel_state.discard_pile.add_card(card_data)
+			"Oneshot":
+				duel_state.removed_pile.add_card(card_data)
+			_:
+				duel_state.discard_pile.add_card(card_data)
+		
+		GLog.debug("Resolved player card: %s" % card_data.card_name)
+	else:
+		# Enemy card
+		var enemy = duel_state.enemy_data as EnemyState
+		apply_enemy_card_results(results, enemy)
+		
+		# Move to enemy's discard
+		if enemy:
+			enemy.enemy_discard.add_card(card_data)
+		
+		GLog.debug("Resolved enemy card: %s" % card_data.card_name)
 
 # Minimal getters expected by CardEffects validation
 func get_player_data():
