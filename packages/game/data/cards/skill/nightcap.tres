@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Defense.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/HoldBonus.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/cards/effects/TurnEnd.gd" id="4"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+defense_amount = 6
+
+[sub_resource type="Resource" id="HoldBonus_1"]
+script = ExtResource("3")
+turns_required = 2
+bonus_damage = 0
+bonus_defense = 4
+bonus_healing = 2
+bonus_energy = 0
+card_type_filter = ""
+
+[sub_resource type="Resource" id="TurnEnd_1"]
+script = ExtResource("4")
+condition = ""
+condition_value = 0
+
+[resource]
+script = ExtResource("1")
+card_name = "Nightcap"
+energy_cost = 1
+description = "End your turn. Gain 6 block. If held for 2 turns: Gain +4 block and heal 2."
+card_type = "Grog"
+effects = [SubResource("Defense_1"), SubResource("HoldBonus_1"), SubResource("TurnEnd_1")]
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = ["Publican"]
+accessibility_tier = "Class"
+mechanical_category = "Skill"

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Defense.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Draw.gd" id="3"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+defense_amount = 8
+
+[sub_resource type="Resource" id="Draw_1"]
+script = ExtResource("3")
+cards_to_draw = 1
+
+[resource]
+script = ExtResource("1")
+card_name = "Last Call"
+energy_cost = 1
+description = "Gain 8 block. Draw 1 card. Exhaust."
+card_type = "Grog"
+effects = [SubResource("Defense_1"), SubResource("Draw_1")]
+sanity_cost = 0
+card_handling = "Exhaust"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = ["Publican"]
+accessibility_tier = "Class"
+mechanical_category = "Skill"

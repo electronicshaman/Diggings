@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Defense.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/EnemyDebuff.gd" id="3"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+defense_amount = 5
+
+[sub_resource type="Resource" id="EnemyDebuff_1"]
+script = ExtResource("3")
+damage_reduction = 3
+defense_reduction = 0
+duration = 1
+debuff_type = "weaken"
+
+[resource]
+script = ExtResource("1")
+card_name = "Smooth Talk"
+energy_cost = 1
+description = "Gain 5 block. Enemy deals -3 damage next attack."
+card_type = "Grog"
+effects = [SubResource("Defense_1"), SubResource("EnemyDebuff_1")]
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = ["Publican"]
+accessibility_tier = "Class"
+mechanical_category = "Skill"

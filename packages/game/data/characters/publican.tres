@@ -5,19 +5,19 @@
 [resource]
 script = ExtResource("1")
 character_class_name = "Publican"
-description = "Pub owner and social hub manager. Specializes in persistent effects, brewing mechanics, and community influence."
+description = "Pub owner and social hub manager. Specializes in defensive play, energy generation, and patient hold-based effects."
 mechanical_specialization = "Power"
 difficulty_rating = 3
 base_health = 50
 base_sanity = 95
 base_energy = 4
 starting_gold = 20
-starting_deck = Array[Resource]([])
+starting_deck_paths = Array[String](["res://data/cards/attack/aged_whiskey.tres", "res://data/cards/skill/vintage_wine.tres", "res://data/cards/skill/homebrew.tres", "res://data/cards/skill/homebrew.tres", "res://data/cards/skill/nightcap.tres", "res://data/cards/skill/bar_fortification.tres", "res://data/cards/power/bouncers_presence.tres", "res://data/cards/skill/last_call.tres", "res://data/cards/skill/smooth_talk.tres", "res://data/cards/skill/free_drinks.tres", "res://data/cards/skill/free_drinks.tres", "res://data/cards/skill/happy_hour.tres", "res://data/cards/power/pub_brawl.tres", "res://data/cards/power/house_rules.tres", "res://data/cards/skill/vintage_wine.tres"])
 starting_deck_size = 15
 passive_abilities = Array[String](["Social Hub", "House Advantage", "Community Leader"])
-active_abilities = Array[String](["Free Drinks"])
-unique_resources = Array[String](["Brew Tokens"])
-class_exclusive_cards = Array[String](["Serve Grog", "Bar Fight", "Smooth Talk", "Last Orders", "House Rules", "Publican's Authority", "Happy Hour", "Share a Round", "Liquid Courage", "Drinking Contest", "Nightcap", "Social Network"])
+active_abilities = Array[String]([])
+unique_resources = Array[String]([])
+class_exclusive_cards = Array[String](["Aged Whiskey", "Vintage Wine", "Homebrew", "Nightcap", "Bar Fortification", "Bouncer's Presence", "Last Call", "Smooth Talk", "Free Drinks", "Happy Hour", "Pub Brawl", "House Rules"])
 preferred_card_types = Array[String](["Grog"])
 forbidden_card_types = Array[String]([])
 unlocked_by_default = true

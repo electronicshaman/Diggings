@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/DefenseToHealing.gd" id="2"]
+
+[sub_resource type="Resource" id="DefenseToHealing_1"]
+script = ExtResource("2")
+conversion_ratio = 0.5
+minimum_block = 0
+maximum_healing = 0
+
+[resource]
+script = ExtResource("1")
+card_name = "House Rules"
+energy_cost = 3
+description = "Your Defense cards heal you for half their block value."
+card_type = "Grog"
+effects = [SubResource("DefenseToHealing_1")]
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = ["Publican"]
+accessibility_tier = "Class"
+mechanical_category = "Power"

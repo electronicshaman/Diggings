@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/effects/Power.gd" id="2"]
+
+[sub_resource type="Resource" id="Power_1"]
+script = ExtResource("2")
+power_type = "defense"
+power_value = 3
+trigger = "turn_start"
+stacks = true
+
+[resource]
+script = ExtResource("1")
+card_name = "Bouncer's Presence"
+energy_cost = 2
+description = "At the start of each turn, gain 3 block."
+card_type = "Grog"
+effects = [SubResource("Power_1")]
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = ["Publican"]
+accessibility_tier = "Class"
+mechanical_category = "Power"

@@ -2,24 +2,29 @@
 
 [ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/cards/effects/Damage.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/Defense.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/cards/effects/HoldBonus.gd" id="3"]
 
 [sub_resource type="Resource" id="Damage_1"]
 script = ExtResource("2")
-damage_amount = 15
+damage_amount = 8
 ignores_defense = false
 
-[sub_resource type="Resource" id="Defense_1"]
+[sub_resource type="Resource" id="HoldBonus_1"]
 script = ExtResource("3")
-defense_amount = 6
+turns_required = 2
+bonus_damage = 6
+bonus_defense = 0
+bonus_healing = 0
+bonus_energy = 0
+card_type_filter = ""
 
 [resource]
 script = ExtResource("1")
-card_name = "Pub Brawl"
-energy_cost = 3
-description = "Deal 15 damage. Gain 6 block."
+card_name = "Aged Whiskey"
+energy_cost = 2
+description = "Deal 8 damage. If held for 2 turns: Deal +6 damage (14 total)."
 card_type = "Grog"
-effects = [SubResource("Damage_1"), SubResource("Defense_1")]
+effects = [SubResource("Damage_1"), SubResource("HoldBonus_1")]
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
