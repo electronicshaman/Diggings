@@ -425,6 +425,13 @@ func end_duel(winner: String):
 	# Check for curio rewards on player victory
 	if winner == "player":
 		_check_curio_reward()
+		# Load victory reward scene for card selection
+		await get_tree().create_timer(1.0).timeout  # Brief pause before transition
+		SceneManager.load_scene("res://scenes/ui/victory_reward.tscn")
+	else:
+		# Player lost - go to game over or appropriate scene
+		await get_tree().create_timer(1.0).timeout
+		SceneManager.load_scene_by_name("game_over")
 	
 	duel_ended.emit(winner)
 
