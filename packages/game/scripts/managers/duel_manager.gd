@@ -136,19 +136,12 @@ func load_enemy_deck(enemy: EnemyState):
 	"""Load the enemy's deck from configured card paths"""
 	GLog.info("Loading enemy deck for %s" % enemy.enemy_name)
 	
-	# Clear existing deck
-	enemy.enemy_deck.clear()
+	# Clear existing piles
 	enemy.enemy_hand.clear()
 	enemy.enemy_discard.clear()
 	
-	# Load cards from paths
-	for card_path in enemy.enemy_deck_paths:
-		var card_data = load(card_path) as CardData
-		if card_data:
-			enemy.enemy_deck.add_card(card_data)
-			GLog.debug("Added card to enemy deck: %s" % card_data.card_name)
-		else:
-			GLog.error("Failed to load enemy card from path: %s" % card_path)
+	# Initialize deck from DeckData resource or legacy paths
+	enemy.initialize_deck_from_data()
 	
 	# Shuffle the deck
 	enemy.enemy_deck.shuffle()

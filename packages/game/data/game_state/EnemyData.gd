@@ -33,7 +33,8 @@ const DEBUG_ENABLED: bool = true
 @export var defense_modifier: float = 1.0
 
 # Enemy deck configuration
-@export var enemy_deck_paths: Array[String] = []  # Card resource paths for enemy deck
+@export var enemy_deck_data: DeckData  # Deck resource containing cards and strategy info
+@export var enemy_deck_paths: Array[String] = []  # DEPRECATED: Legacy card paths (use enemy_deck_data instead)
 @export var ai_type: String = "aggressive"  # aggressive, defensive, balanced, cunning
 @export var hand_size_limit: int = 7
 @export var cards_per_turn: int = 5  # Cards to draw each turn
@@ -352,6 +353,7 @@ func get_save_data() -> Dictionary:
 		"enemy_hand": enemy_hand.get_save_data() if enemy_hand else {},
 		"enemy_deck": enemy_deck.get_save_data() if enemy_deck else {},
 		"enemy_discard": enemy_discard.get_save_data() if enemy_discard else {},
+		"enemy_deck_data_path": enemy_deck_data.resource_path if enemy_deck_data else "",
 		"enemy_deck_paths": enemy_deck_paths,
 		"ai_type": ai_type,
 		"player_card_history": player_card_history
@@ -379,9 +381,66 @@ func load_from_data(data: Dictionary):
 	enemy_hand.load_from_data(data.get("enemy_hand", {}))
 	enemy_deck.load_from_data(data.get("enemy_deck", {}))
 	enemy_discard.load_from_data(data.get("enemy_discard", {}))
+	# Load deck data
+	var deck_data_path = data.get("enemy_deck_data_path", "")
+	if deck_data_path != "":
+		enemy_deck_data = load(deck_data_path) as DeckData
+	
 	enemy_deck_paths = data.get("enemy_deck_paths", [])
 	ai_type = data.get("ai_type", "aggressive")
 	player_card_history = data.get("player_card_history", [])
+
+# Deck loading helper methods
+func initialize_deck_from_data():
+	"""Load deck cards from DeckData resource or fallback to legacy paths"""
+	if not enemy_deck:
+		enemy_deck = CardPile.new("enemy_deck")
+	else:
+		enemy_deck.clear()
+	
+	# Try to load from DeckData resource first
+	if enemy_deck_data:
+		GLog.debug("Loading enemy deck from DeckData resource: %s" % enemy_deck_data.deck_name) if DEBUG_ENABLED else null
+		var deck_pile = enemy_deck_data.to_card_pile()
+		deck_pile.move_all_to(enemy_deck)
+		GLog.debug("Loaded %d cards from DeckData" % enemy_deck.size()) if DEBUG_ENABLED else null
+		return
+	
+	# Fallback to legacy enemy_deck_paths
+	if not enemy_deck_paths.is_empty():
+		GLog.debug("Loading enemy deck from legacy paths (%d cards)" % enemy_deck_paths.size()) if DEBUG_ENABLED else null
+		var loaded_count = 0
+		for path in enemy_deck_paths:
+			var card_data: CardData = load(path) as CardData
+			if card_data:
+				enemy_deck.add_card(card_data)
+				loaded_count += 1
+			else:
+				GLog.error("Failed to load card from legacy path: %s" % path)
+		GLog.debug("Loaded %d/%d cards from legacy paths" % [loaded_count, enemy_deck_paths.size()]) if DEBUG_ENABLED else null
+	else:
+		GLog.warn("No deck data or legacy paths found for enemy: %s" % enemy_name)
+
+func get_deck_strategy() -> String:
+	"""Get enemy's preferred strategy from deck data or AI type"""
+	if enemy_deck_data and enemy_deck_data.preferred_strategy:
+		return enemy_deck_data.preferred_strategy
+	else:
+		return ai_type  # fallback to AI type
+
+func get_deck_theme() -> String:
+	"""Get enemy's deck theme"""
+	if enemy_deck_data:
+		return enemy_deck_data.deck_theme
+	else:
+		return "unknown"
+
+func get_deck_difficulty() -> int:
+	"""Get enemy's deck difficulty level"""
+	if enemy_deck_data:
+		return enemy_deck_data.difficulty_level
+	else:
+		return 1  # default difficulty
 
 # Debug methods
 func print_status():
@@ -394,6 +453,8 @@ func print_status():
 	GLog.debug("Turns alive: %d" % turns_alive)
 	GLog.debug("Modifiers: %.1fx damage, %.1fx defense" % [damage_modifier, defense_modifier])
 	GLog.debug("AI Type: %s" % ai_type)
+	if enemy_deck_data:
+		GLog.debug("Deck: %s (%s theme, difficulty %d)" % [enemy_deck_data.deck_name, enemy_deck_data.deck_theme, enemy_deck_data.difficulty_level])
 	GLog.debug("Hand: %d cards" % (enemy_hand.size() if enemy_hand else 0))
 	GLog.debug("Deck: %d cards" % (enemy_deck.size() if enemy_deck else 0))
 	GLog.debug("Discard: %d cards" % (enemy_discard.size() if enemy_discard else 0))

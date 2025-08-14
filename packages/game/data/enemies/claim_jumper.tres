@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="EnemyState" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="EnemyState" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://data/game_state/EnemyData.gd" id="1"]
 [ext_resource type="Script" path="res://data/Stats.gd" id="2"]
+[ext_resource type="Resource" uid="uid://bs7k2xma8k8gy" path="res://data/decks/enemy/claim_jumper_deck.tres" id="3_claim_jumper_deck"]
 
 [sub_resource type="Resource" id="Stats_1"]
 script = ExtResource("2")
@@ -23,7 +24,7 @@ current_pattern_index = 0
 turns_alive = 0
 damage_modifier = 1.0
 defense_modifier = 1.0
-enemy_deck_paths = Array[String](["res://data/cards/attack/pickaxe_strike.tres", "res://data/cards/attack/pickaxe_strike.tres", "res://data/cards/attack/quick_shot.tres", "res://data/cards/attack/wild_shot.tres", "res://data/cards/skill/take_cover.tres", "res://data/cards/skill/take_cover.tres", "res://data/cards/fortune/strike_it_rich.tres", "res://data/cards/attack/ambush.tres"])
+enemy_deck_data = ExtResource("3_claim_jumper_deck")
 ai_type = "aggressive"
 hand_size_limit = 7
 cards_per_turn = 5
