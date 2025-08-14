@@ -52,6 +52,7 @@ custom_properties = {
 "abandonment_reason": "mysterious_incident",
 "danger_signs": ["collapsed_sections", "strange_sounds", "cold_spots"],
 "depth": "deep",
+"duel_chance": 1.0,
 "mine_type": "gold",
 "monster_presence": "moderate",
 "previous_activity": "abandoned",

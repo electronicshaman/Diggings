@@ -182,3 +182,21 @@ func update_visual_state():
 		# Normal appearance
 		$CardBackground.color = base_color
 		position.y += 10 if position.y < 500 else 0  # Reset position if lifted
+
+func show_as_card_back():
+	"""Display this card as a card back (hide information)"""
+	# Hide card info
+	if has_node("CardInfo"):
+		$CardInfo.visible = false
+	
+	# Show card back styling
+	if has_node("CardBackground"):
+		$CardBackground.color = Color(0.3, 0.2, 0.1, 1)  # Brown card back
+	
+	if has_node("CardInner"):
+		$CardInner.color = Color(0.4, 0.3, 0.2, 1)  # Slightly lighter brown
+	
+	# Optional: Add card back pattern or text
+	if has_node("TypeSymbol"):
+		$TypeSymbol.text = "?"
+		$TypeSymbol.visible = true

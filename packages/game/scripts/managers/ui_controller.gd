@@ -29,6 +29,12 @@ var hand_area: Node2D
 var hand_cards: Array[Node] = []
 var card_scene: PackedScene
 
+# Battlefield system - visual areas
+var enemy_hand_area: Node2D
+var battlefield_area: Node2D
+var enemy_hand_cards: Array[Node] = []
+var battlefield_cards: Array[Node] = []
+
 var curios_panel: Control
 var curios_list: HBoxContainer
 
@@ -59,6 +65,9 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	end_turn_button = ui_references.get("end_turn_button")
 	debug_panel = ui_references.get("debug_panel")
 	hand_area = ui_references.get("hand_area")
+	enemy_hand_area = ui_references.get("enemy_hand_area")
+	battlefield_area = ui_references.get("battlefield_area")
+	
 	curios_panel = ui_references.get("curios_panel")
 	curios_list = ui_references.get("curios_list")
 	
@@ -102,6 +111,8 @@ func update_all_ui() -> void:
 	update_seed_ui()
 	update_curios_display()
 	refresh_hand_display()
+	refresh_enemy_hand_display()
+	refresh_battlefield_display()
 	ui_refresh_requested.emit()
 
 func update_player_ui() -> void:
@@ -249,6 +260,67 @@ func _on_hand_card_played(card_node: Node) -> void:
 	var card_data = card_node.get("card_data")
 	if card_data and game_controller:
 		game_controller.play_card(card_data)
+
+func refresh_enemy_hand_display() -> void:
+	clear_enemy_hand_display()
+	
+	if not duel_state or not duel_state.enemy_data or not enemy_hand_area:
+		return
+	
+	var enemy_hand_data = duel_state.enemy_data.enemy_hand.cards if duel_state.enemy_data.enemy_hand else []
+	
+	for i in range(enemy_hand_data.size()):
+		var card_instance = card_scene.instantiate()
+		enemy_hand_area.add_child(card_instance)
+		enemy_hand_cards.append(card_instance)
+		
+		var card_spacing = 120
+		var total_width = (enemy_hand_data.size() - 1) * card_spacing
+		var start_x = -total_width / 2
+		card_instance.position.x = start_x + i * card_spacing
+		card_instance.position.y = 0
+		card_instance.scale = Vector2(0.8, 0.8)  # Smaller enemy cards
+		
+		# Show as card back (enemy cards are hidden)
+		card_instance.show_as_card_back()
+
+func clear_enemy_hand_display() -> void:
+	for card_node in enemy_hand_cards:
+		if is_instance_valid(card_node):
+			card_node.queue_free()
+	enemy_hand_cards.clear()
+
+func refresh_battlefield_display() -> void:
+	clear_battlefield_display()
+	
+	if not duel_state or not duel_state.battlefield or not battlefield_area:
+		return
+	
+	var battlefield_data = duel_state.battlefield.cards
+	
+	for i in range(battlefield_data.size()):
+		var card_data = battlefield_data[i]
+		var card_instance = card_scene.instantiate()
+		battlefield_area.add_child(card_instance)
+		battlefield_cards.append(card_instance)
+		
+		var card_spacing = 140
+		var total_width = (battlefield_data.size() - 1) * card_spacing
+		var start_x = -total_width / 2
+		card_instance.position.x = start_x + i * card_spacing
+		card_instance.position.y = 0
+		card_instance.scale = Vector2(0.9, 0.9)  # Slightly smaller battlefield cards
+		
+		card_instance.card_data = card_data
+		card_instance.setup_card_visuals()
+		
+		# TODO: Differentiate between player and enemy cards visually
+		
+func clear_battlefield_display() -> void:
+	for card_node in battlefield_cards:
+		if is_instance_valid(card_node):
+			card_node.queue_free()
+	battlefield_cards.clear()
 
 func show_duel_result(winner: String) -> void:
 	if phase_label:

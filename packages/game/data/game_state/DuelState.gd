@@ -16,6 +16,7 @@ const DEBUG_ENABLED: bool = true
 @export var deck: CardPile
 @export var discard_pile: CardPile
 @export var removed_pile: CardPile
+@export var battlefield: CardPile
 
 # Duel flow state
 @export var current_turn: int = 1
@@ -50,6 +51,9 @@ func _init():
 	if not removed_pile:
 		removed_pile = CardPile.new("removed")
 	
+	if not battlefield:
+		battlefield = CardPile.new("battlefield")
+	
 	# Set up change forwarding
 	setup_change_forwarding()
 
@@ -72,6 +76,9 @@ func setup_change_forwarding():
 	
 	if removed_pile:
 		removed_pile.add_change_listener(_forward_removed_change)
+	
+	if battlefield:
+		battlefield.add_change_listener(_forward_battlefield_change)
 
 func add_change_listener(callback: Callable):
 	"""Add a callback to be notified of duel state changes"""
@@ -107,6 +114,9 @@ func _forward_discard_change(change_type: String, data: Dictionary):
 
 func _forward_removed_change(change_type: String, data: Dictionary):
 	_emit_change("removed_" + change_type, data)
+
+func _forward_battlefield_change(change_type: String, data: Dictionary):
+	_emit_change("battlefield_" + change_type, data)
 
 # Duel flow management
 func start_duel():
@@ -152,6 +162,9 @@ func start_player_turn():
 
 func end_player_turn():
 	"""End the current player turn"""
+	# Resolve any cards left on battlefield
+	resolve_battlefield()
+	
 	# Discard all non-Keep cards from hand
 	discard_non_keep_cards()
 	
@@ -203,27 +216,43 @@ func draw_cards(count: int) -> Array[CardData]:
 	return drawn_cards
 
 func play_card(card_data: CardData):
-	"""Move card from hand to appropriate pile based on handling"""
+	"""Move card from hand to battlefield for staging"""
 	if not hand.remove_card(card_data):
 		GLog.warn("Tried to play card not in hand: %s" % card_data.card_name)
 		return  # Card not in hand
 	
-	GLog.debug("Playing card '%s' with handling: %s" % [card_data.card_name, card_data.card_handling])
+	GLog.debug("Playing card '%s' to battlefield" % card_data.card_name)
 	
-	# Determine destination based on card handling
-	match card_data.card_handling:
-		"Standard", "Equipped", "Flash", "Keep":
-			# Most cards go to discard pile when played
-			discard_pile.add_card(card_data)
-			GLog.debug("Card '%s' moved to discard pile" % card_data.card_name)
-		"Oneshot":
-			# Oneshot cards are removed from the game
-			removed_pile.add_card(card_data)
-			GLog.debug("Card '%s' removed from game (Oneshot)" % card_data.card_name)
-		_:
-			# Default behavior is to discard
-			discard_pile.add_card(card_data)
-			GLog.warn("Unknown card handling '%s' for card '%s', defaulting to discard" % [card_data.card_handling, card_data.card_name])
+	# All played cards go to battlefield first
+	battlefield.add_card(card_data)
+	GLog.debug("Card '%s' staged on battlefield" % card_data.card_name)
+
+func resolve_battlefield():
+	"""Process all cards on the battlefield and move them to final destinations"""
+	GLog.info("Resolving battlefield with %d cards" % battlefield.size())
+	
+	var cards_to_resolve = battlefield.cards.duplicate()  # Copy to avoid modification during iteration
+	
+	for card_data in cards_to_resolve:
+		# Remove from battlefield first
+		battlefield.remove_card(card_data)
+		
+		# Determine final destination based on card handling
+		match card_data.card_handling:
+			"Standard", "Equipped", "Flash", "Keep":
+				# Most cards go to discard pile after resolution
+				discard_pile.add_card(card_data)
+				GLog.debug("Card '%s' resolved to discard pile" % card_data.card_name)
+			"Oneshot":
+				# Oneshot cards are removed from the game
+				removed_pile.add_card(card_data)
+				GLog.debug("Card '%s' resolved and removed from game (Oneshot)" % card_data.card_name)
+			_:
+				# Default behavior is to discard
+				discard_pile.add_card(card_data)
+				GLog.warn("Unknown card handling '%s' for card '%s', defaulting to discard" % [card_data.card_handling, card_data.card_name])
+	
+	GLog.info("Battlefield resolved, %d cards processed" % cards_to_resolve.size())
 
 func discard_card(card_data: CardData):
 	"""Move card from hand to discard pile"""
@@ -303,6 +332,7 @@ func get_save_data() -> Dictionary:
 		"hand": hand.get_save_data() if hand else {},
 		"deck": deck.get_save_data() if deck else {},
 		"discard_pile": discard_pile.get_save_data() if discard_pile else {},
+		"battlefield": battlefield.get_save_data() if battlefield else {},
 		"removed_pile": removed_pile.get_save_data() if removed_pile else {},
 		"current_turn": current_turn,
 		"is_player_turn": is_player_turn,
@@ -325,6 +355,8 @@ func load_from_data(data: Dictionary):
 		deck = CardPile.new("deck")
 	if not discard_pile:
 		discard_pile = CardPile.new("discard")
+	if not battlefield:
+		battlefield = CardPile.new("battlefield")
 	if not removed_pile:
 		removed_pile = CardPile.new("removed")
 	
@@ -334,6 +366,7 @@ func load_from_data(data: Dictionary):
 	hand.load_from_data(data.get("hand", {}))
 	deck.load_from_data(data.get("deck", {}))
 	discard_pile.load_from_data(data.get("discard_pile", {}))
+	battlefield.load_from_data(data.get("battlefield", {}))
 	removed_pile.load_from_data(data.get("removed_pile", {}))
 	
 	# Load duel state
@@ -366,6 +399,7 @@ func print_status():
 	GLog.debug("Hand: %d cards" % (hand.size() if hand else 0))
 	GLog.debug("Deck: %d cards" % (deck.size() if deck else 0))
 	GLog.debug("Discard: %d cards" % (discard_pile.size() if discard_pile else 0))
+	GLog.debug("Battlefield: %d cards" % (battlefield.size() if battlefield else 0))
 	GLog.debug("Removed: %d cards" % (removed_pile.size() if removed_pile else 0))
 	GLog.debug("==================")
 
@@ -384,6 +418,9 @@ func get_deck() -> CardPile:
 
 func get_discard_pile() -> CardPile:
 	return discard_pile
+
+func get_battlefield() -> CardPile:
+	return battlefield
 
 func get_removed_pile() -> CardPile:
 	return removed_pile

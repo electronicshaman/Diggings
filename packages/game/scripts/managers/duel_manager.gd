@@ -14,6 +14,7 @@ signal turn_started(is_player_turn: bool)
 signal turn_ended(is_player_turn: bool)
 signal card_played(card: CardData)
 signal duel_ended(winner: String)
+signal enemy_card_played(card: CardData)
 
 var card_effects_processor: CardEffects
 
@@ -54,8 +55,12 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	
 	duel_state.start_duel()
 	
-	# Set initial enemy intent
-	set_enemy_intent_for_next_turn(enemy_data)
+	# Load enemy deck
+	load_enemy_deck(enemy_data as EnemyState)
+	
+	# Draw initial enemy hand
+	var enemy_initial_draw = (enemy_data as EnemyState).draw_cards(5)
+	GLog.info("Drew initial enemy hand: %d cards" % enemy_initial_draw.size())
 	
 	draw_initial_hand()
 	
@@ -82,6 +87,9 @@ func start_player_turn() -> void:
 func end_player_turn() -> void:
 	GLog.debug("Ending player turn")
 	
+	# Resolve battlefield before ending turn
+	resolve_battlefield()
+	
 	# Process player end-of-turn effects (like delayed damage)
 	if duel_state.player_data:
 		duel_state.player_data.end_turn()
@@ -101,77 +109,184 @@ func start_enemy_turn():
 	process_enemy_turn()
 
 func process_enemy_turn():
-	var enemy = duel_state.enemy_data
+	var enemy = duel_state.enemy_data as EnemyState
 	
 	if enemy.is_stunned():
 		GLog.debug("Enemy is stunned, skipping turn")
 		enemy.reduce_stun()
-		# Set intent for next turn even when stunned
-		set_enemy_intent_for_next_turn(enemy)
 		end_enemy_turn()
 		return
 	
-	# Execute current intent if it exists
-	execute_enemy_intent(enemy)
+	# Draw cards at start of enemy turn
+	var cards_to_draw = min(enemy.cards_per_turn, enemy.hand_size_limit - enemy.enemy_hand.size())
+	if cards_to_draw > 0:
+		var drawn = enemy.draw_cards(cards_to_draw)
+		GLog.debug("Enemy drew %d cards" % drawn.size())
 	
-	# Set intent for next turn
-	set_enemy_intent_for_next_turn(enemy)
+	# Reset enemy energy for this turn
+	if enemy.stats:
+		enemy.stats.current_energy = enemy.stats.max_energy
+	
+	# Execute enemy AI to play cards
+	execute_enemy_ai_turn(enemy)
 	
 	end_enemy_turn()
 
-func execute_enemy_intent(enemy):
-	"""Execute the enemy's current intent"""
-	var intent = enemy.current_intent
-	var intent_value = enemy.intent_value
+func load_enemy_deck(enemy: EnemyState):
+	"""Load the enemy's deck from configured card paths"""
+	GLog.info("Loading enemy deck for %s" % enemy.enemy_name)
 	
-	match intent:
-		"Attack":
-			var damage = intent_value if intent_value > 0 else (5 + (enemy.turns_alive * 2))
-			GLog.info("Enemy attacks for %d damage!" % damage)
-			var actual_damage = duel_state.player_data.take_damage(damage)
-			GLog.info("Player took %d damage (after defense)" % actual_damage)
+	# Clear existing deck
+	enemy.enemy_deck.clear()
+	enemy.enemy_hand.clear()
+	enemy.enemy_discard.clear()
+	
+	# Load cards from paths
+	for card_path in enemy.enemy_deck_paths:
+		var card_data = load(card_path) as CardData
+		if card_data:
+			enemy.enemy_deck.add_card(card_data)
+			GLog.debug("Added card to enemy deck: %s" % card_data.card_name)
+		else:
+			GLog.error("Failed to load enemy card from path: %s" % card_path)
+	
+	# Shuffle the deck
+	enemy.enemy_deck.shuffle()
+	GLog.info("Enemy deck loaded: %d cards" % enemy.enemy_deck.size())
+
+func execute_enemy_ai_turn(enemy: EnemyState):
+	"""Execute the enemy's AI to play cards from hand"""
+	GLog.info("Enemy AI (%s) is taking its turn" % enemy.ai_type)
+	
+	var cards_played = 0
+	var max_cards_to_play = 3  # Limit cards per turn for balance
+	
+	# Get playable cards based on energy
+	var playable_cards = get_enemy_playable_cards(enemy)
+	
+	while playable_cards.size() > 0 and cards_played < max_cards_to_play:
+		var card_to_play = select_card_by_ai_type(enemy, playable_cards)
 		
-		"Defend":
-			var defense = intent_value if intent_value > 0 else 8
-			enemy.gain_defense(defense)
-			GLog.info("Enemy gained %d defense!" % defense)
+		if card_to_play:
+			play_enemy_card(enemy, card_to_play)
+			cards_played += 1
+			
+			# Update playable cards after spending energy
+			playable_cards = get_enemy_playable_cards(enemy)
+		else:
+			break
+	
+	if cards_played == 0:
+		GLog.info("Enemy couldn't play any cards this turn")
+	else:
+		GLog.info("Enemy played %d cards this turn" % cards_played)
+
+func get_enemy_playable_cards(enemy: EnemyState) -> Array[CardData]:
+	"""Get cards the enemy can afford to play"""
+	var playable: Array[CardData] = []
+	var current_energy = enemy.stats.current_energy if enemy.stats else 0
+	
+	for card in enemy.enemy_hand.cards:
+		if card.energy_cost <= current_energy:
+			playable.append(card)
+	
+	return playable
+
+func select_card_by_ai_type(enemy: EnemyState, playable_cards: Array[CardData]) -> CardData:
+	"""Select which card to play based on AI personality"""
+	if playable_cards.is_empty():
+		return null
+	
+	match enemy.ai_type:
+		"aggressive":
+			# Prioritize attack cards
+			for card in playable_cards:
+				if card.mechanical_category == "Attack":
+					return card
+			# Fall back to any card
+			return playable_cards[0]
 		
-		"Special":
-			GLog.info("Enemy performs special action!")
-			# Could be stun, heal, buff, etc. - for now just a basic attack
-			var damage = 3 + enemy.turns_alive
-			var actual_damage = duel_state.player_data.take_damage(damage)
-			GLog.info("Player took %d special damage (after defense)" % actual_damage)
+		"defensive":
+			# Prioritize skill/defense cards
+			for card in playable_cards:
+				if card.mechanical_category == "Skill":
+					return card
+			# Fall back to cheapest card
+			var cheapest = playable_cards[0]
+			for card in playable_cards:
+				if card.energy_cost < cheapest.energy_cost:
+					cheapest = card
+			return cheapest
+		
+		"balanced":
+			# Mix of attack and defense based on situation
+			var player_health_ratio = duel_state.player_data.stats.get_health_percentage()
+			var enemy_health_ratio = enemy.stats.get_health_percentage()
+			
+			if enemy_health_ratio < 0.3:
+				# Low health, play defensively
+				for card in playable_cards:
+					if card.mechanical_category == "Skill":
+						return card
+			elif player_health_ratio < 0.3:
+				# Player low health, be aggressive
+				for card in playable_cards:
+					if card.mechanical_category == "Attack":
+						return card
+			
+			# Default: play highest cost card we can afford
+			var best = playable_cards[0]
+			for card in playable_cards:
+				if card.energy_cost > best.energy_cost:
+					best = card
+			return best
+		
+		"cunning":
+			# Adapt based on player patterns
+			var most_played = enemy.get_player_most_played_card()
+			
+			# Try to counter common player patterns
+			if "Strike" in most_played or "Attack" in most_played:
+				# Player plays lots of attacks, prioritize defense
+				for card in playable_cards:
+					if card.mechanical_category == "Skill":
+						return card
+			elif "Block" in most_played or "Defend" in most_played:
+				# Player plays defensively, be aggressive
+				for card in playable_cards:
+					if card.mechanical_category == "Attack":
+						return card
+			
+			# Default: random selection for unpredictability
+			return playable_cards[randi() % playable_cards.size()]
 		
 		_:
-			# Default/Unknown intent - basic attack
-			var damage = 5 + (enemy.turns_alive * 2)
-			GLog.info("Enemy attacks for %d damage!" % damage)
-			var actual_damage = duel_state.player_data.take_damage(damage)
-			GLog.info("Player took %d damage (after defense)" % actual_damage)
+			# Default AI: play first available card
+			return playable_cards[0]
 
-func set_enemy_intent_for_next_turn(enemy):
-	"""Set enemy intent for the next turn based on simple AI"""
-	var turn = enemy.turns_alive + 1
+func play_enemy_card(enemy: EnemyState, card: CardData):
+	"""Stage an enemy card on the battlefield"""
+	GLog.info("Enemy stages: %s (Cost: %d)" % [card.card_name, card.energy_cost])
 	
-	# Simple pattern-based AI
-	if turn % 4 == 1:
-		# Turn 1, 5, 9, etc: Big attack
-		enemy.set_intent("Attack", 8 + (turn * 2))
-	elif turn % 4 == 2:
-		# Turn 2, 6, 10, etc: Defend
-		enemy.set_intent("Defend", 6 + turn)
-	elif turn % 4 == 3:
-		# Turn 3, 7, 11, etc: Medium attack
-		enemy.set_intent("Attack", 5 + turn)
-	else:
-		# Turn 4, 8, 12, etc: Special
-		enemy.set_intent("Special", 0)
+	# Spend energy upfront when staging
+	if enemy.stats:
+		enemy.stats.current_energy -= card.energy_cost
 	
-	GLog.debug("Enemy intent set to: %s (%d)" % [enemy.current_intent, enemy.intent_value])
+	# Move card from enemy hand to shared battlefield
+	if enemy.enemy_hand.remove_card(card):
+		duel_state.battlefield.add_card(card)
+		# Track that this card was played by enemy (for future battlefield resolution)
+		# For now we'll resolve immediately but this sets up future battlefield staging
+		GLog.debug("Enemy card '%s' staged on battlefield" % card.card_name)
+	
+	# Emit event for UI updates
+	enemy_card_played.emit(card)
 
 func end_enemy_turn():
 	GLog.debug("Ending enemy turn")
+	
+	# Resolve enemy battlefield before ending turn  
+	resolve_enemy_battlefield()
 	
 	duel_state.end_enemy_turn()
 	turn_ended.emit(false)
@@ -193,30 +308,29 @@ func play_card(card_data: CardData):
 		GLog.warn("Cannot play card: %s" % card_data.card_name)
 		return
 	
-	GLog.info("Playing card: %s" % card_data.card_name)
+	GLog.info("Staging card to battlefield: %s" % card_data.card_name)
 	
 	var player = duel_state.player_data
 	var actual_cost = player.get_actual_energy_cost(card_data.energy_cost, card_data.card_type)
 	
+	# Pay costs upfront when staging to battlefield
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_data.sanity_cost)
 	
-	# Apply effects BEFORE incrementing cards_played_this_turn so effects can check if this is the first card
-	var results = card_effects_processor.apply_card_effects(self, card_data)
-	
-	apply_card_results(results)
-	
-	# Now increment the counter and apply cost reductions
+	# Increment counter for this turn
 	player.cards_played_this_turn += 1
 	player.apply_card_cost_reductions()
 	
+	# Move card to battlefield (effects will resolve later)
 	duel_state.play_card(card_data)
 	
+	# Emit event for UI updates
 	card_played.emit(card_data)
 	
-	if duel_state.is_duel_over():
-		var winner = duel_state.get_winner()
-		end_duel(winner)
+	# Track this card for enemy memory
+	track_player_card_for_enemy_memory(card_data)
+	
+	# Don't check duel over here - wait for battlefield resolution
 
 func apply_card_results(results: Dictionary):
 	var player = duel_state.player_data
@@ -251,6 +365,37 @@ func apply_card_results(results: Dictionary):
 	if results.has("delayed_damage") and results.delayed_damage > 0:
 		player.delayed_damage += results.delayed_damage
 		GLog.debug("Added %d delayed damage (total: %d)" % [results.delayed_damage, player.delayed_damage])
+
+func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
+	"""Apply card results when enemy plays a card (reversed targets)"""
+	var player = duel_state.player_data
+	
+	if results.has("damage") and results.damage > 0:
+		var actual_damage = player.take_damage(results.damage)
+		GLog.info("Enemy dealt %d damage to player" % actual_damage)
+	
+	if results.has("defense") and results.defense > 0:
+		enemy.gain_defense(results.defense)
+		GLog.debug("Enemy gained %d defense" % results.defense)
+	
+	if results.has("heal") and results.heal > 0:
+		enemy.heal(results.heal)
+		GLog.debug("Enemy healed %d health" % results.heal)
+	
+	if results.has("draw") and results.draw > 0:
+		var drawn = enemy.draw_cards(results.draw)
+		GLog.debug("Enemy drew %d cards" % drawn.size())
+	
+	if results.has("energy_restore") and results.energy_restore > 0:
+		if enemy.stats:
+			enemy.stats.restore_energy(results.energy_restore)
+		GLog.debug("Enemy restored %d energy" % results.energy_restore)
+	
+	if results.has("stun_enemy") and results.stun_enemy > 0:
+		# Enemy cards that stun would stun the player
+		if player.has_method("apply_stun"):
+			player.apply_stun(results.stun_enemy)
+		GLog.info("Player stunned for %d turns" % results.stun_enemy)
 
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
@@ -307,9 +452,77 @@ func get_cards_played_this_turn() -> int:
 		return duel_state.player_data.cards_played_this_turn
 	return 0
 
+func track_player_card_for_enemy_memory(card: CardData):
+	"""Track cards played by player for enemy AI adaptation"""
+	var enemy = duel_state.enemy_data as EnemyState
+	if enemy:
+		enemy.add_to_player_memory(card.card_name)
+
 # Minimal getters expected by CardEffects validation
 func get_player_data():
 	return duel_state.player_data if duel_state else null
 
 func get_enemy_data():
 	return duel_state.enemy_data if duel_state else null
+
+func resolve_battlefield():
+	"""Process all cards on the battlefield"""
+	if not duel_state or not duel_state.battlefield:
+		return
+	
+	GLog.info("Resolving battlefield with %d cards" % duel_state.battlefield.size())
+	
+	var cards_to_resolve = duel_state.battlefield.cards.duplicate()
+	var enemy = duel_state.enemy_data as EnemyState
+	
+	for card_data in cards_to_resolve:
+		# Remove from battlefield
+		duel_state.battlefield.remove_card(card_data)
+		
+		# Execute card effects
+		var results = card_effects_processor.apply_card_effects(self, card_data)
+		
+		# For now, assume cards in player's deck are player cards
+		# In the future, we may need proper card ownership tracking
+		var is_player_card = _is_player_card(card_data)
+		
+		if is_player_card:
+			apply_card_results(results)
+			
+			# Move to player's final destination
+			match card_data.card_handling:
+				"Standard", "Equipped", "Flash", "Keep":
+					duel_state.discard_pile.add_card(card_data)
+				"Oneshot":
+					duel_state.removed_pile.add_card(card_data)
+				_:
+					duel_state.discard_pile.add_card(card_data)
+			
+			GLog.debug("Resolved player card: %s" % card_data.card_name)
+		else:
+			# Enemy card
+			apply_enemy_card_results(results, enemy)
+			
+			# Move to enemy discard pile
+			if enemy:
+				enemy.enemy_discard.add_card(card_data)
+			
+			GLog.debug("Resolved enemy card: %s" % card_data.card_name)
+
+func _is_player_card(card_data: CardData) -> bool:
+	"""Determine if a card belongs to the player (simple heuristic for now)"""
+	# Check if card is in player's original deck (this is a temporary solution)
+	for player_card in duel_state.deck.cards:
+		if player_card.card_name == card_data.card_name:
+			return true
+	
+	for player_card in duel_state.discard_pile.cards:
+		if player_card.card_name == card_data.card_name:
+			return true
+	
+	# If not found in player piles, assume it's an enemy card
+	return false
+
+func resolve_enemy_battlefield():
+	"""Enemy cards are now processed in the main resolve_battlefield() function"""
+	GLog.debug("Enemy cards resolved through main battlefield resolution")

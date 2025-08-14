@@ -38,6 +38,7 @@ action_properties = {
 }
 custom_properties = {
 "danger_level": 2,
+"duel_chance": 1.0,
 "exploration_time": 6,
 "resource_type": "gold"
 }

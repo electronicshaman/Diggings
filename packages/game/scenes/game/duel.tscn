@@ -136,8 +136,14 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Defense: 0"
 
+[node name="EnemyHandArea" type="Node2D" parent="UI/Control"]
+position = Vector2(576, 240)
+
+[node name="BattlefieldArea" type="Node2D" parent="UI/Control"]
+position = Vector2(576, 400)
+
 [node name="HandArea" type="Node2D" parent="UI/Control"]
-position = Vector2(576, 316)
+position = Vector2(576, 640)
 
 [node name="PileIndicatorsLeft" type="HBoxContainer" parent="UI/Control"]
 layout_mode = 1
@@ -269,9 +275,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -300.0
-offset_top = 238.0
+offset_top = 303.0
 offset_right = 300.0
-offset_bottom = 338.0
+offset_bottom = 403.0
 grow_horizontal = 2
 grow_vertical = 2
 

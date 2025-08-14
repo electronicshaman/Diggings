@@ -9,6 +9,11 @@ const DEBUG_ENABLED: bool = true
 # Core stats using our Stats resource
 @export var stats: Stats
 
+# Card collections for enemy dueling
+@export var enemy_hand: CardPile
+@export var enemy_deck: CardPile
+@export var enemy_discard: CardPile
+
 # Enemy identification
 @export var enemy_name: String = ""
 @export var description: String = ""
@@ -27,6 +32,16 @@ const DEBUG_ENABLED: bool = true
 @export var damage_modifier: float = 1.0
 @export var defense_modifier: float = 1.0
 
+# Enemy deck configuration
+@export var enemy_deck_paths: Array[String] = []  # Card resource paths for enemy deck
+@export var ai_type: String = "aggressive"  # aggressive, defensive, balanced, cunning
+@export var hand_size_limit: int = 7
+@export var cards_per_turn: int = 5  # Cards to draw each turn
+
+# Memory system for tracking player patterns
+@export var player_card_history: Array[String] = []  # Track last N cards played by player
+@export var player_pattern_memory_size: int = 3
+
 # Change tracking system
 var _change_listeners: Array[Callable] = []
 
@@ -35,8 +50,23 @@ func _init():
 	if not stats:
 		stats = Stats.new()
 	
+	# Initialize card piles
+	if not enemy_hand:
+		enemy_hand = CardPile.new("enemy_hand", hand_size_limit)
+	
+	if not enemy_deck:
+		enemy_deck = CardPile.new("enemy_deck")
+	
+	if not enemy_discard:
+		enemy_discard = CardPile.new("enemy_discard")
+	
 	# Forward stats change notifications
 	stats.add_change_listener(_forward_stats_change)
+	
+	# Forward card pile change notifications
+	enemy_hand.add_change_listener(_forward_hand_change)
+	enemy_deck.add_change_listener(_forward_deck_change)
+	enemy_discard.add_change_listener(_forward_discard_change)
 
 func add_change_listener(callback: Callable):
 	"""Add a callback to be notified of enemy data changes"""
@@ -55,6 +85,18 @@ func _emit_change(change_type: String, old_value = null, new_value = null):
 func _forward_stats_change(change_type: String, old_value, new_value):
 	"""Forward stats changes to our listeners"""
 	_emit_change(change_type, old_value, new_value)
+
+func _forward_hand_change(change_type: String, data: Dictionary):
+	"""Forward hand changes to our listeners"""
+	_emit_change("enemy_hand_" + change_type, null, data)
+
+func _forward_deck_change(change_type: String, data: Dictionary):
+	"""Forward deck changes to our listeners"""
+	_emit_change("enemy_deck_" + change_type, null, data)
+
+func _forward_discard_change(change_type: String, data: Dictionary):
+	"""Forward discard changes to our listeners"""
+	_emit_change("enemy_discard_" + change_type, null, data)
 
 # Stats convenience methods (forward to Stats resource)
 func is_alive() -> bool:
@@ -223,6 +265,78 @@ func reset_for_new_duel():
 	turns_alive = 0
 	damage_modifier = 1.0
 	defense_modifier = 1.0
+	
+	# Clear card piles
+	if enemy_hand:
+		enemy_hand.clear()
+	if enemy_deck:
+		enemy_deck.clear()
+	if enemy_discard:
+		enemy_discard.clear()
+	
+	# Clear player pattern memory
+	player_card_history.clear()
+
+# Card management methods
+func draw_cards(count: int) -> Array[CardData]:
+	"""Draw cards from deck to hand"""
+	var drawn_cards: Array[CardData] = []
+	
+	for i in range(count):
+		if enemy_deck.is_empty():
+			# Shuffle discard back into deck
+			if not enemy_discard.is_empty():
+				enemy_discard.shuffle()
+				enemy_discard.move_all_to(enemy_deck)
+				enemy_deck.shuffle()
+		
+		var card = enemy_deck.draw_top()
+		if card and enemy_hand.add_card(card):
+			drawn_cards.append(card)
+		else:
+			# Hand is full, put card back
+			if card:
+				enemy_deck.add_card(card)
+			break
+	
+	return drawn_cards
+
+func play_card(card_data: CardData):
+	"""Move card from hand to discard"""
+	if enemy_hand.remove_card(card_data):
+		enemy_discard.add_card(card_data)
+
+func discard_card(card_data: CardData):
+	"""Discard a card from hand"""
+	if enemy_hand.remove_card(card_data):
+		enemy_discard.add_card(card_data)
+
+func add_to_player_memory(card_name: String):
+	"""Track cards played by the player"""
+	player_card_history.append(card_name)
+	if player_card_history.size() > player_pattern_memory_size:
+		player_card_history.pop_front()
+
+func get_player_most_played_card() -> String:
+	"""Get the most frequently played card by player from memory"""
+	if player_card_history.is_empty():
+		return ""
+	
+	var card_counts = {}
+	for card_name in player_card_history:
+		if card_name in card_counts:
+			card_counts[card_name] += 1
+		else:
+			card_counts[card_name] = 1
+	
+	var most_played = ""
+	var max_count = 0
+	for card_name in card_counts:
+		if card_counts[card_name] > max_count:
+			max_count = card_counts[card_name]
+			most_played = card_name
+	
+	return most_played
 
 # Serialization support
 func get_save_data() -> Dictionary:
@@ -234,12 +348,24 @@ func get_save_data() -> Dictionary:
 		"current_pattern_index": current_pattern_index,
 		"turns_alive": turns_alive,
 		"damage_modifier": damage_modifier,
-		"defense_modifier": defense_modifier
+		"defense_modifier": defense_modifier,
+		"enemy_hand": enemy_hand.get_save_data() if enemy_hand else {},
+		"enemy_deck": enemy_deck.get_save_data() if enemy_deck else {},
+		"enemy_discard": enemy_discard.get_save_data() if enemy_discard else {},
+		"enemy_deck_paths": enemy_deck_paths,
+		"ai_type": ai_type,
+		"player_card_history": player_card_history
 	}
 
 func load_from_data(data: Dictionary):
 	if not stats:
 		stats = Stats.new()
+	if not enemy_hand:
+		enemy_hand = CardPile.new("enemy_hand", hand_size_limit)
+	if not enemy_deck:
+		enemy_deck = CardPile.new("enemy_deck")
+	if not enemy_discard:
+		enemy_discard = CardPile.new("enemy_discard")
 	
 	stats.load_from_data(data.get("stats", {}))
 	enemy_name = data.get("enemy_name", "")
@@ -249,6 +375,13 @@ func load_from_data(data: Dictionary):
 	turns_alive = data.get("turns_alive", 0)
 	damage_modifier = data.get("damage_modifier", 1.0)
 	defense_modifier = data.get("defense_modifier", 1.0)
+	
+	enemy_hand.load_from_data(data.get("enemy_hand", {}))
+	enemy_deck.load_from_data(data.get("enemy_deck", {}))
+	enemy_discard.load_from_data(data.get("enemy_discard", {}))
+	enemy_deck_paths = data.get("enemy_deck_paths", [])
+	ai_type = data.get("ai_type", "aggressive")
+	player_card_history = data.get("player_card_history", [])
 
 # Debug methods
 func print_status():
@@ -260,3 +393,8 @@ func print_status():
 	GLog.debug("Pattern: %d" % current_pattern_index)
 	GLog.debug("Turns alive: %d" % turns_alive)
 	GLog.debug("Modifiers: %.1fx damage, %.1fx defense" % [damage_modifier, defense_modifier])
+	GLog.debug("AI Type: %s" % ai_type)
+	GLog.debug("Hand: %d cards" % (enemy_hand.size() if enemy_hand else 0))
+	GLog.debug("Deck: %d cards" % (enemy_deck.size() if enemy_deck else 0))
+	GLog.debug("Discard: %d cards" % (enemy_discard.size() if enemy_discard else 0))
+	GLog.debug("Player memory: %s" % str(player_card_history))
