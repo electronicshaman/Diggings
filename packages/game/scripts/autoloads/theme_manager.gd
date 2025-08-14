@@ -38,6 +38,8 @@ static func get_card_handling_display_name(handling: String) -> String:
 			return "Flash"
 		"Keep":
 			return "Keep"
+		"Hold":
+			return "Hold"
 		"Oneshot":
 			return "Oneshot"
 		_:
@@ -70,6 +72,14 @@ static func get_card_handling_definition(handling: String) -> Dictionary:
 				"triggers_on_draw": true
 			}
 		"Keep":
+			return {
+				"discards_after_use": false,
+				"discards_end_of_turn": false,
+				"starts_in_hand": false,
+				"removed_after_use": false,
+				"triggers_on_draw": false
+			}
+		"Hold":
 			return {
 				"discards_after_use": false,
 				"discards_end_of_turn": false,

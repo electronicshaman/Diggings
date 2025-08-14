@@ -165,8 +165,8 @@ func end_player_turn():
 	# Resolve any cards left on battlefield
 	resolve_battlefield()
 	
-	# Discard all non-Keep cards from hand
-	discard_non_keep_cards()
+	# Discard all non-Hold cards from hand
+	discard_non_hold_cards()
 	
 	if player_data:
 		player_data.end_turn()
@@ -239,10 +239,14 @@ func resolve_battlefield():
 		
 		# Determine final destination based on card handling
 		match card_data.card_handling:
-			"Standard", "Equipped", "Flash", "Keep":
+			"Standard", "Equipped", "Flash":
 				# Most cards go to discard pile after resolution
 				discard_pile.add_card(card_data)
 				GLog.debug("Card '%s' resolved to discard pile" % card_data.card_name)
+			"Hold":
+				# Hold cards return to hand instead of being discarded
+				hand.add_card(card_data)
+				GLog.debug("Card '%s' returned to hand (Hold)" % card_data.card_name)
 			"Oneshot":
 				# Oneshot cards are removed from the game
 				removed_pile.add_card(card_data)
@@ -264,17 +268,17 @@ func remove_card_from_game(card_data: CardData):
 	if hand.remove_card(card_data):
 		removed_pile.add_card(card_data)
 
-func discard_non_keep_cards():
-	"""Discard all cards that don't have Keep handling from hand"""
+func discard_non_hold_cards():
+	"""Discard all cards that don't have Hold handling from hand"""
 	var cards_to_discard: Array[CardData] = []
 	
 	# Check each card in hand to see if it should be discarded
 	for card in hand.cards:
-		# Check if this card has "Keep" handling
-		if card.card_handling != "Keep":
+		# Check if this card has "Hold" handling
+		if card.card_handling != "Hold":
 			cards_to_discard.append(card)
 	
-	# Discard the non-keep cards
+	# Discard the non-hold cards
 	for card in cards_to_discard:
 		discard_card(card)
 		GLog.debug("Discarding card at end of turn: %s" % card.card_name)

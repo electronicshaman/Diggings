@@ -504,8 +504,10 @@ func resolve_single_card(card_data: CardData, is_player_card: bool):
 		
 		# Move to player's final destination
 		match card_data.card_handling:
-			"Standard", "Equipped", "Flash", "Keep":
+			"Standard", "Equipped", "Flash":
 				duel_state.discard_pile.add_card(card_data)
+			"Hold":
+				duel_state.hand.add_card(card_data)
 			"Oneshot":
 				duel_state.removed_pile.add_card(card_data)
 			_:
@@ -556,8 +558,10 @@ func resolve_battlefield():
 			
 			# Move to player's final destination
 			match card_data.card_handling:
-				"Standard", "Equipped", "Flash", "Keep":
+				"Standard", "Equipped", "Flash":
 					duel_state.discard_pile.add_card(card_data)
+				"Hold":
+					duel_state.hand.add_card(card_data)
 				"Oneshot":
 					duel_state.removed_pile.add_card(card_data)
 				_:
