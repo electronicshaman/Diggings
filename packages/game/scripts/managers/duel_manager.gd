@@ -53,8 +53,9 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	duel_state.hand.clear()
 	duel_state.removed_pile.clear()
 	
-	for card in player_deck:
-		duel_state.deck.add_card(card)
+	# Convert CardData array to CardInstance array
+	for card_data in player_deck:
+		duel_state.deck.add_card_data(card_data)
 	
 	duel_state.deck.shuffle()
 	
@@ -315,32 +316,32 @@ func can_play_card(card_data: CardData) -> bool:
 	
 	return player.can_afford_card(actual_cost, card_data.sanity_cost)
 
-func play_card(card_data: CardData):
-	if not can_play_card(card_data):
-		GLog.warn("Cannot play card: %s" % card_data.card_name)
+func play_card(card_instance: CardInstance):
+	if not can_play_card(card_instance.card_data):
+		GLog.warn("Cannot play card: %s" % card_instance.get_card_name())
 		return
 	
-	GLog.info("Playing card: %s" % card_data.card_name)
+	GLog.info("Playing card: %s" % card_instance.get_card_name())
 	
 	var player = duel_state.player_data
-	var actual_cost = player.get_actual_energy_cost(card_data.energy_cost, card_data.card_type)
+	var actual_cost = player.get_actual_energy_cost(card_instance.get_energy_cost(), card_instance.get_card_type())
 	
 	# Pay costs upfront
 	player.pay_energy(actual_cost)
-	player.pay_sanity(card_data.sanity_cost)
+	player.pay_sanity(card_instance.get_sanity_cost())
 	
 	# Increment counter for this turn
 	player.cards_played_this_turn += 1
 	player.apply_card_cost_reductions()
 	
 	# Move card to battlefield temporarily for visual feedback
-	duel_state.play_card(card_data)
+	duel_state.play_card(card_instance)
 	
 	# Emit event for UI to show card on battlefield
-	card_played.emit(card_data)
+	card_played.emit(card_instance)
 	
 	# Track this card for enemy memory
-	track_player_card_for_enemy_memory(card_data)
+	track_player_card_for_enemy_memory(card_instance.card_data)
 	
 	# Brief delay to show card on battlefield
 	await get_tree().create_timer(CARD_STAGE_DELAY).timeout
@@ -466,8 +467,14 @@ func _check_curio_reward():
 		else:
 			GLog.error("Curio resource not found at: %s" % random_path)
 
-func get_hand_cards() -> Array[CardData]:
+func get_hand_cards() -> Array[CardInstance]:
 	return duel_state.hand.cards if duel_state.hand else []
+
+# Compatibility method for UI that expects CardData
+func get_hand_card_data() -> Array[CardData]:
+	if duel_state and duel_state.hand:
+		return duel_state.hand.get_card_data_array()
+	return []
 
 func get_deck_count() -> int:
 	return duel_state.deck.size() if duel_state.deck else 0
@@ -486,44 +493,44 @@ func track_player_card_for_enemy_memory(card: CardData):
 	if enemy:
 		enemy.add_to_player_memory(card.card_name)
 
-func resolve_single_card(card_data: CardData, is_player_card: bool):
+func resolve_single_card(card_instance: CardInstance, is_player_card: bool):
 	"""Immediately resolve a single card and move it to discard"""
-	if not duel_state or not card_data:
+	if not duel_state or not card_instance:
 		return
 	
-	GLog.info("Resolving card: %s" % card_data.card_name)
+	GLog.info("Resolving card: %s" % card_instance.get_card_name())
 	
 	# Remove from battlefield
-	duel_state.battlefield.remove_card(card_data)
+	duel_state.battlefield.remove_card(card_instance)
 	
-	# Execute card effects
-	var results = card_effects_processor.apply_card_effects(self, card_data)
+	# Execute card effects - pass the CardInstance to the effects processor
+	var results = card_effects_processor.apply_card_instance_effects(self, card_instance)
 	
 	if is_player_card:
 		apply_card_results(results)
 		
 		# Move to player's final destination
-		match card_data.card_handling:
+		match card_instance.get_card_handling():
 			"Standard", "Equipped", "Flash":
-				duel_state.discard_pile.add_card(card_data)
+				duel_state.discard_pile.add_card(card_instance)
 			"Hold":
-				duel_state.hand.add_card(card_data)
+				duel_state.hand.add_card(card_instance)
 			"Oneshot":
-				duel_state.removed_pile.add_card(card_data)
+				duel_state.removed_pile.add_card(card_instance)
 			_:
-				duel_state.discard_pile.add_card(card_data)
+				duel_state.discard_pile.add_card(card_instance)
 		
-		GLog.debug("Resolved player card: %s" % card_data.card_name)
+		GLog.debug("Resolved player card: %s" % card_instance.get_card_name())
 	else:
 		# Enemy card
 		var enemy = duel_state.enemy_data as EnemyState
 		apply_enemy_card_results(results, enemy)
 		
-		# Move to enemy's discard
+		# Move to enemy's discard - note: enemies still use CardData for now
 		if enemy:
-			enemy.enemy_discard.add_card(card_data)
+			enemy.enemy_discard.add_card_data(card_instance.card_data)
 		
-		GLog.debug("Resolved enemy card: %s" % card_data.card_name)
+		GLog.debug("Resolved enemy card: %s" % card_instance.get_card_name())
 
 # Minimal getters expected by CardEffects validation
 func get_player_data():
@@ -542,41 +549,41 @@ func resolve_battlefield():
 	var cards_to_resolve = duel_state.battlefield.cards.duplicate()
 	var enemy = duel_state.enemy_data as EnemyState
 	
-	for card_data in cards_to_resolve:
+	for card_instance in cards_to_resolve:
 		# Remove from battlefield
-		duel_state.battlefield.remove_card(card_data)
+		duel_state.battlefield.remove_card(card_instance)
 		
 		# Execute card effects
-		var results = card_effects_processor.apply_card_effects(self, card_data)
+		var results = card_effects_processor.apply_card_instance_effects(self, card_instance)
 		
 		# For now, assume cards in player's deck are player cards
 		# In the future, we may need proper card ownership tracking
-		var is_player_card = _is_player_card(card_data)
+		var is_player_card = _is_player_card(card_instance.card_data)
 		
 		if is_player_card:
 			apply_card_results(results)
 			
 			# Move to player's final destination
-			match card_data.card_handling:
+			match card_instance.get_card_handling():
 				"Standard", "Equipped", "Flash":
-					duel_state.discard_pile.add_card(card_data)
+					duel_state.discard_pile.add_card(card_instance)
 				"Hold":
-					duel_state.hand.add_card(card_data)
+					duel_state.hand.add_card(card_instance)
 				"Oneshot":
-					duel_state.removed_pile.add_card(card_data)
+					duel_state.removed_pile.add_card(card_instance)
 				_:
-					duel_state.discard_pile.add_card(card_data)
+					duel_state.discard_pile.add_card(card_instance)
 			
-			GLog.debug("Resolved player card: %s" % card_data.card_name)
+			GLog.debug("Resolved player card: %s" % card_instance.get_card_name())
 		else:
 			# Enemy card
 			apply_enemy_card_results(results, enemy)
 			
 			# Move to enemy discard pile
 			if enemy:
-				enemy.enemy_discard.add_card(card_data)
+				enemy.enemy_discard.add_card_data(card_instance.card_data)
 			
-			GLog.debug("Resolved enemy card: %s" % card_data.card_name)
+			GLog.debug("Resolved enemy card: %s" % card_instance.get_card_name())
 
 func _is_player_card(card_data: CardData) -> bool:
 	"""Determine if a card belongs to the player (simple heuristic for now)"""

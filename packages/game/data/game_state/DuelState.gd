@@ -165,6 +165,9 @@ func end_player_turn():
 	# Resolve any cards left on battlefield
 	resolve_battlefield()
 	
+	# Increment hold counters for cards remaining in hand
+	increment_hand_hold_counters()
+	
 	# Discard all non-Hold cards from hand
 	discard_non_hold_cards()
 	
@@ -215,17 +218,17 @@ func draw_cards(count: int) -> Array[CardData]:
 	
 	return drawn_cards
 
-func play_card(card_data: CardData):
+func play_card(card_instance: CardInstance):
 	"""Move card from hand to battlefield for staging"""
-	if not hand.remove_card(card_data):
-		GLog.warn("Tried to play card not in hand: %s" % card_data.card_name)
+	if not hand.remove_card(card_instance):
+		GLog.warn("Tried to play card not in hand: %s" % card_instance.get_card_name())
 		return  # Card not in hand
 	
-	GLog.debug("Playing card '%s' to battlefield" % card_data.card_name)
+	GLog.debug("Playing card '%s' to battlefield" % card_instance.get_card_name())
 	
 	# All played cards go to battlefield first
-	battlefield.add_card(card_data)
-	GLog.debug("Card '%s' staged on battlefield" % card_data.card_name)
+	battlefield.add_card(card_instance)
+	GLog.debug("Card '%s' staged on battlefield" % card_instance.get_card_name())
 
 func resolve_battlefield():
 	"""Process all cards on the battlefield and move them to final destinations"""
@@ -233,58 +236,72 @@ func resolve_battlefield():
 	
 	var cards_to_resolve = battlefield.cards.duplicate()  # Copy to avoid modification during iteration
 	
-	for card_data in cards_to_resolve:
+	for card_instance in cards_to_resolve:
 		# Remove from battlefield first
-		battlefield.remove_card(card_data)
+		battlefield.remove_card(card_instance)
 		
 		# Determine final destination based on card handling
-		match card_data.card_handling:
+		match card_instance.get_card_handling():
 			"Standard", "Equipped", "Flash":
 				# Most cards go to discard pile after resolution
-				discard_pile.add_card(card_data)
-				GLog.debug("Card '%s' resolved to discard pile" % card_data.card_name)
+				discard_pile.add_card(card_instance)
+				GLog.debug("Card '%s' resolved to discard pile" % card_instance.get_card_name())
 			"Hold":
 				# Hold cards return to hand instead of being discarded
-				hand.add_card(card_data)
-				GLog.debug("Card '%s' returned to hand (Hold)" % card_data.card_name)
+				hand.add_card(card_instance)
+				GLog.debug("Card '%s' returned to hand (Hold)" % card_instance.get_card_name())
 			"Oneshot":
 				# Oneshot cards are removed from the game
-				removed_pile.add_card(card_data)
-				GLog.debug("Card '%s' resolved and removed from game (Oneshot)" % card_data.card_name)
+				removed_pile.add_card(card_instance)
+				GLog.debug("Card '%s' resolved and removed from game (Oneshot)" % card_instance.get_card_name())
 			_:
 				# Default behavior is to discard
-				discard_pile.add_card(card_data)
-				GLog.warn("Unknown card handling '%s' for card '%s', defaulting to discard" % [card_data.card_handling, card_data.card_name])
+				discard_pile.add_card(card_instance)
+				GLog.warn("Unknown card handling '%s' for card '%s', defaulting to discard" % [card_instance.get_card_handling(), card_instance.get_card_name()])
 	
 	GLog.info("Battlefield resolved, %d cards processed" % cards_to_resolve.size())
 
-func discard_card(card_data: CardData):
+func discard_card(card_instance: CardInstance):
 	"""Move card from hand to discard pile"""
-	if hand.remove_card(card_data):
-		discard_pile.add_card(card_data)
+	if hand.remove_card(card_instance):
+		# Reset turns held when moving to discard
+		card_instance.reset_turns_held()
+		discard_pile.add_card(card_instance)
 
-func remove_card_from_game(card_data: CardData):
+func remove_card_from_game(card_instance: CardInstance):
 	"""Move card from hand to removed pile"""
-	if hand.remove_card(card_data):
-		removed_pile.add_card(card_data)
+	if hand.remove_card(card_instance):
+		card_instance.reset_turns_held()
+		removed_pile.add_card(card_instance)
 
 func discard_non_hold_cards():
 	"""Discard all cards that don't have Hold handling from hand"""
-	var cards_to_discard: Array[CardData] = []
+	var cards_to_discard: Array[CardInstance] = []
 	
 	# Check each card in hand to see if it should be discarded
 	for card in hand.cards:
 		# Check if this card has "Hold" handling
-		if card.card_handling != "Hold":
+		if card.get_card_handling() != "Hold":
 			cards_to_discard.append(card)
 	
 	# Discard the non-hold cards
 	for card in cards_to_discard:
 		discard_card(card)
-		GLog.debug("Discarding card at end of turn: %s" % card.card_name)
+		GLog.debug("Discarding card at end of turn: %s" % card.get_card_name())
 	
 	if cards_to_discard.size() > 0:
 		GLog.info("Discarded %d cards at end of turn" % cards_to_discard.size())
+
+func increment_hand_hold_counters():
+	"""Increment turns_held counter for all cards in hand"""
+	var hold_cards_count = 0
+	for card_instance in hand.cards:
+		card_instance.increment_turns_held()
+		if card_instance.get_card_handling() == "Hold":
+			hold_cards_count += 1
+	
+	if hold_cards_count > 0:
+		GLog.info("Incremented hold counters for %d cards in hand" % hold_cards_count)
 
 # State queries
 func can_play_cards() -> bool:

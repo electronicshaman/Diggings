@@ -19,11 +19,16 @@ func _has_prop(obj, prop_name: String) -> bool:
 
 ## Apply card effects with comprehensive error handling and validation
 func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dictionary:
+	# Legacy method for compatibility - convert to minimal CardInstance
+	var temp_instance = CardInstance.new(card_data)
+	return apply_card_instance_effects(duel_manager, temp_instance)
+
+func apply_card_instance_effects(duel_manager: DuelManager, card_instance: CardInstance) -> Dictionary:
 	# Create default results dictionary
 	var results = _create_default_results()
 	
 	# Validate inputs
-	var validation_result = _validate_card_effect_inputs(duel_manager, card_data)
+	var validation_result = _validate_card_effect_inputs(duel_manager, card_instance.card_data)
 	if validation_result.error != OK:
 		push_error("CardEffects: Cannot apply effects - %s" % validation_result.message)
 		return results
@@ -33,12 +38,12 @@ func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dicti
 	var failed_effects = 0
 	
 	if DEBUG_ENABLED:
-		GLog.debug("Processing %d effects for card: %s" % [card_data.effects.size(), card_data.card_name])
+		GLog.debug("Processing %d effects for card: %s" % [card_instance.card_data.effects.size(), card_instance.get_card_name()])
 	
-	for i in range(card_data.effects.size()):
-		var effect = card_data.effects[i]
+	for i in range(card_instance.card_data.effects.size()):
+		var effect = card_instance.card_data.effects[i]
 		
-		var effect_result = _apply_single_effect(effect, duel_manager, card_data, results, i)
+		var effect_result = _apply_single_effect(effect, duel_manager, card_instance, results, i)
 		if effect_result.success:
 			processed_effects += 1
 		else:
@@ -120,7 +125,7 @@ func _validate_card_effect_inputs(duel_manager: DuelManager, card_data: CardData
 	return result
 
 ## Apply a single effect with error handling
-func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_data: CardData, results: Dictionary, effect_index: int) -> Dictionary:
+func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_instance: CardInstance, results: Dictionary, effect_index: int) -> Dictionary:
 	var result = {"success": false, "error_message": ""}
 	
 	# Validate effect
@@ -138,14 +143,17 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_data
 		return result
 	
 	# Check if effect can be applied in current context
-	var can_apply: bool = effect.can_apply(duel_manager, card_data)
+	var can_apply: bool = effect.can_apply(duel_manager, card_instance.card_data)
 	
 	if not can_apply:
 		result.error_message = "Effect %d cannot be applied in current context" % effect_index
 		return result
 	
-	# Apply the effect
-	effect.apply_effect(duel_manager, card_data, results)
+	# Apply the effect - pass CardInstance if effect supports it, otherwise CardData
+	if effect.has_method("apply_effect_with_instance"):
+		effect.apply_effect_with_instance(duel_manager, card_instance, results)
+	else:
+		effect.apply_effect(duel_manager, card_instance.card_data, results)
 	result.success = true
 	
 	var effect_name = "Unknown"

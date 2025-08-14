@@ -8,7 +8,7 @@ const DEBUG_ENABLED = true
 # Part of the resource-based architecture migration for better performance and reusability
 
 # Card storage
-@export var cards: Array[CardData] = []
+@export var cards: Array[CardInstance] = []
 @export var pile_type: String = "generic"  # "hand", "deck", "discard", "removed"
 @export var max_size: int = -1  # -1 for unlimited
 
@@ -50,13 +50,13 @@ func _emit_change(change_type: String, data: Dictionary = {}) -> void:
 # Basic pile operations
 
 # Add a card to the pile, returns true if successful
-func add_card(card_data: CardData) -> bool:
+func add_card(card_instance: CardInstance) -> bool:
 	GLog.debug("add_card() called on %s pile" % pile_type)
-	if not card_data:
+	if not card_instance:
 		GLog.error("Attempted to add null card")
 		return false
 	
-	GLog.debug("Adding card: '%s' (type: %s, cost: %d)" % [card_data.card_name, card_data.card_type, card_data.energy_cost])
+	GLog.debug("Adding card: '%s' (type: %s, cost: %d)" % [card_instance.get_card_name(), card_instance.get_card_type(), card_instance.get_energy_cost()])
 	GLog.trace("Current pile size: %d, max_size: %d" % [cards.size(), max_size])
 	
 	# Check size limit
@@ -64,19 +64,19 @@ func add_card(card_data: CardData) -> bool:
 		GLog.warn("Pile is full, cannot add card")
 		return false
 	
-	cards.append(card_data)
+	cards.append(card_instance)
 	GLog.debug("Card added successfully. New pile size: %d" % cards.size())
-	_emit_change("card_added", {"card": card_data})
+	_emit_change("card_added", {"card": card_instance})
 	return true
 
 # Add multiple cards to the pile, returns number of cards actually added
-func add_cards(card_list: Array[CardData]) -> int:
+func add_cards(card_list: Array[CardInstance]) -> int:
 	GLog.debug("add_cards() called with %d cards for %s pile" % [card_list.size(), pile_type])
 	var added_count: int = 0
 	for i in range(card_list.size()):
-		var card_data = card_list[i]
-		GLog.trace("Adding card %d/%d: '%s'" % [i + 1, card_list.size(), card_data.card_name if card_data else "null"])
-		if add_card(card_data):
+		var card_instance = card_list[i]
+		GLog.trace("Adding card %d/%d: '%s'" % [i + 1, card_list.size(), card_instance.get_card_name() if card_instance else "null"])
+		if add_card(card_instance):
 			added_count += 1
 		else:
 			GLog.debug("Failed to add card, stopping bulk add")
@@ -85,100 +85,100 @@ func add_cards(card_list: Array[CardData]) -> int:
 	return added_count
 
 # Remove a specific card from the pile, returns true if found and removed
-func remove_card(card_data: CardData) -> bool:
-	GLog.debug("remove_card() called for '%s' from %s pile" % [card_data.card_name if card_data else "null", pile_type])
-	var index: int = cards.find(card_data)
+func remove_card(card_instance: CardInstance) -> bool:
+	GLog.debug("remove_card() called for '%s' from %s pile" % [card_instance.get_card_name() if card_instance else "null", pile_type])
+	var index: int = cards.find(card_instance)
 	GLog.trace("Card found at index: %d" % index)
 	if index >= 0:
 		cards.remove_at(index)
 		GLog.debug("Card removed successfully. New pile size: %d" % cards.size())
-		_emit_change("card_removed", {"card": card_data})
+		_emit_change("card_removed", {"card": card_instance})
 		return true
 	GLog.debug("Card not found in pile")
 	return false
 
 # Remove card at specific index, returns the removed card or null
-func remove_card_at(index: int) -> CardData:
+func remove_card_at(index: int) -> CardInstance:
 	GLog.debug("remove_card_at() called with index %d for %s pile (size: %d)" % [index, pile_type, cards.size()])
 	if index < 0 or index >= cards.size():
 		GLog.error("Index out of bounds")
 		return null
 	
-	var removed_card: CardData = cards[index]
-	GLog.debug("Removing card: '%s'" % removed_card.card_name)
+	var removed_card: CardInstance = cards[index]
+	GLog.debug("Removing card: '%s'" % removed_card.get_card_name())
 	cards.remove_at(index)
 	GLog.debug("Card removed successfully. New pile size: %d" % cards.size())
 	_emit_change("card_removed", {"card": removed_card, "index": index})
 	return removed_card
 
 # Get card at specific index without removing it
-func get_card_at(index: int) -> CardData:
+func get_card_at(index: int) -> CardInstance:
 	GLog.trace("get_card_at() called with index %d for %s pile (size: %d)" % [index, pile_type, cards.size()])
 	if index < 0 or index >= cards.size():
 		GLog.error("Index out of bounds")
 		return null
 	var card = cards[index]
-	GLog.trace("Retrieved card: '%s'" % card.card_name)
+	GLog.trace("Retrieved card: '%s'" % card.get_card_name())
 	return card
 
 # Peek at the top card without removing it
-func peek_top() -> CardData:
+func peek_top() -> CardInstance:
 	GLog.trace("peek_top() called for %s pile (size: %d)" % [pile_type, cards.size()])
 	if cards.is_empty():
 		GLog.trace("Pile is empty, returning null")
 		return null
 	var card = cards[cards.size() - 1]
-	GLog.trace("Top card: '%s'" % card.card_name)
+	GLog.trace("Top card: '%s'" % card.get_card_name())
 	return card
 
 # Peek at the bottom card without removing it
-func peek_bottom() -> CardData:
+func peek_bottom() -> CardInstance:
 	GLog.trace("peek_bottom() called for %s pile (size: %d)" % [pile_type, cards.size()])
 	if cards.is_empty():
 		GLog.trace("Pile is empty, returning null")
 		return null
 	var card = cards[0]
-	GLog.trace("Bottom card: '%s'" % card.card_name)
+	GLog.trace("Bottom card: '%s'" % card.get_card_name())
 	return card
 
 # Draw (remove and return) the top card
-func draw_top() -> CardData:
+func draw_top() -> CardInstance:
 	GLog.debug("draw_top() called for %s pile (size: %d)" % [pile_type, cards.size()])
 	if cards.is_empty():
 		GLog.warn("Pile is empty, cannot draw")
 		return null
 	
-	var drawn_card: CardData = cards[cards.size() - 1]
-	GLog.debug("Drawing top card: '%s'" % drawn_card.card_name)
+	var drawn_card: CardInstance = cards[cards.size() - 1]
+	GLog.debug("Drawing top card: '%s'" % drawn_card.get_card_name())
 	cards.remove_at(cards.size() - 1)
 	GLog.debug("Card drawn successfully. New pile size: %d" % cards.size())
 	_emit_change("card_drawn", {"card": drawn_card, "from": "top"})
 	return drawn_card
 
 # Draw (remove and return) the bottom card
-func draw_bottom() -> CardData:
+func draw_bottom() -> CardInstance:
 	GLog.debug("draw_bottom() called for %s pile (size: %d)" % [pile_type, cards.size()])
 	if cards.is_empty():
 		GLog.warn("Pile is empty, cannot draw")
 		return null
 	
-	var drawn_card: CardData = cards[0]
-	GLog.debug("Drawing bottom card: '%s'" % drawn_card.card_name)
+	var drawn_card: CardInstance = cards[0]
+	GLog.debug("Drawing bottom card: '%s'" % drawn_card.get_card_name())
 	cards.remove_at(0)
 	GLog.debug("Card drawn successfully. New pile size: %d" % cards.size())
 	_emit_change("card_drawn", {"card": drawn_card, "from": "bottom"})
 	return drawn_card
 
 # Draw (remove and return) a random card
-func draw_random() -> CardData:
+func draw_random() -> CardInstance:
 	GLog.debug("draw_random() called for %s pile (size: %d)" % [pile_type, cards.size()])
 	if cards.is_empty():
 		GLog.warn("Pile is empty, cannot draw")
 		return null
 	
 	var index: int = randi() % cards.size()
-	var drawn_card: CardData = cards[index]
-	GLog.debug("Drawing random card at index %d: '%s'" % [index, drawn_card.card_name])
+	var drawn_card: CardInstance = cards[index]
+	GLog.debug("Drawing random card at index %d: '%s'" % [index, drawn_card.get_card_name()])
 	cards.remove_at(index)
 	GLog.debug("Card drawn successfully. New pile size: %d" % cards.size())
 	_emit_change("card_drawn", {"card": drawn_card, "from": "random"})
@@ -219,14 +219,14 @@ func clear() -> void:
 # Sort cards by energy cost (ascending)
 func sort_by_cost() -> void:
 	GLog.debug("sort_by_cost() called for %s pile (size: %d)" % [pile_type, cards.size()])
-	cards.sort_custom(func(a: CardData, b: CardData) -> bool: return a.energy_cost < b.energy_cost)
+	cards.sort_custom(func(a: CardInstance, b: CardInstance) -> bool: return a.get_energy_cost() < b.get_energy_cost())
 	GLog.debug("Pile sorted by cost")
 	_emit_change("pile_sorted", {"sort_type": "cost"})
 
 # Sort cards by name (alphabetical)
 func sort_by_name() -> void:
 	GLog.debug("sort_by_name() called for %s pile (size: %d)" % [pile_type, cards.size()])
-	cards.sort_custom(func(a: CardData, b: CardData) -> bool: return a.card_name < b.card_name)
+	cards.sort_custom(func(a: CardInstance, b: CardInstance) -> bool: return a.get_card_name() < b.get_card_name())
 	GLog.debug("Pile sorted by name")
 	_emit_change("pile_sorted", {"sort_type": "name"})
 
@@ -234,8 +234,8 @@ func sort_by_name() -> void:
 func sort_by_type() -> void:
 	GLog.debug("sort_by_type() called for %s pile (size: %d)" % [pile_type, cards.size()])
 	var type_order: Dictionary = {"Lead": 0, "Leather": 1, "Liquor": 2, "Luck": 3}
-	cards.sort_custom(func(a: CardData, b: CardData) -> bool: 
-		return type_order.get(a.card_type, 99) < type_order.get(b.card_type, 99)
+	cards.sort_custom(func(a: CardInstance, b: CardInstance) -> bool: 
+		return type_order.get(a.get_card_type(), 99) < type_order.get(b.get_card_type(), 99)
 	)
 	GLog.debug("Pile sorted by type")
 	_emit_change("pile_sorted", {"sort_type": "type"})
@@ -319,9 +319,9 @@ func is_full() -> bool:
 	return full
 
 # Check if the pile contains a specific card
-func has_card(card_data: CardData) -> bool:
-	var contains = card_data in cards
-	GLog.trace("has_card() called for '%s' in %s pile: %s" % [card_data.card_name if card_data else "null", pile_type, "true" if contains else "false"])
+func has_card(card_instance: CardInstance) -> bool:
+	var contains = card_instance in cards
+	GLog.trace("has_card() called for '%s' in %s pile: %s" % [card_instance.get_card_name() if card_instance else "null", pile_type, "true" if contains else "false"])
 	return contains
 
 # Count cards of a specific type
@@ -329,7 +329,7 @@ func count_by_type(card_type: String) -> int:
 	GLog.trace("count_by_type() called for type '%s' in %s pile" % [card_type, pile_type])
 	var count: int = 0
 	for card in cards:
-		if card.card_type == card_type:
+		if card.get_card_type() == card_type:
 			count += 1
 	GLog.trace("Found %d cards of type '%s'" % [count, card_type])
 	return count
@@ -339,27 +339,27 @@ func count_by_cost(cost: int) -> int:
 	GLog.trace("count_by_cost() called for cost %d in %s pile" % [cost, pile_type])
 	var count: int = 0
 	for card in cards:
-		if card.energy_cost == cost:
+		if card.get_energy_cost() == cost:
 			count += 1
 	GLog.trace("Found %d cards with cost %d" % [count, cost])
 	return count
 
 # Get all cards of a specific type
-func get_cards_by_type(card_type: String) -> Array[CardData]:
+func get_cards_by_type(card_type: String) -> Array[CardInstance]:
 	GLog.trace("get_cards_by_type() called for type '%s' in %s pile" % [card_type, pile_type])
-	var result: Array[CardData] = []
+	var result: Array[CardInstance] = []
 	for card in cards:
-		if card.card_type == card_type:
+		if card.get_card_type() == card_type:
 			result.append(card)
 	GLog.trace("Found %d cards of type '%s'" % [result.size(), card_type])
 	return result
 
 # Get all cards with specific energy cost
-func get_cards_by_cost(cost: int) -> Array[CardData]:
+func get_cards_by_cost(cost: int) -> Array[CardInstance]:
 	GLog.trace("get_cards_by_cost() called for cost %d in %s pile" % [cost, pile_type])
-	var result: Array[CardData] = []
+	var result: Array[CardInstance] = []
 	for card in cards:
-		if card.energy_cost == cost:
+		if card.get_energy_cost() == cost:
 			result.append(card)
 	GLog.trace("Found %d cards with cost %d" % [result.size(), cost])
 	return result
@@ -369,7 +369,7 @@ func get_card_names() -> Array[String]:
 	GLog.trace("get_card_names() called for %s pile" % pile_type)
 	var names: Array[String] = []
 	for card in cards:
-		names.append(card.card_name)
+		names.append(card.get_card_name())
 	GLog.trace("Retrieved %d card names" % names.size())
 	return names
 
@@ -378,17 +378,16 @@ func get_card_names() -> Array[String]:
 # Get save data dictionary for serialization
 func get_save_data() -> Dictionary:
 	GLog.debug("get_save_data() called for %s pile" % pile_type)
-	var card_paths: Array[String] = []
+	var card_data_list: Array[Dictionary] = []
 	for card in cards:
-		if card.resource_path:
-			card_paths.append(card.resource_path)
+		card_data_list.append(card.get_save_data())
 	
 	var save_data = {
 		"pile_type": pile_type,
 		"max_size": max_size,
-		"card_paths": card_paths
+		"card_instances": card_data_list
 	}
-	GLog.debug("Save data prepared: %d cards, type='%s'" % [card_paths.size(), pile_type])
+	GLog.debug("Save data prepared: %d cards, type='%s'" % [card_data_list.size(), pile_type])
 	return save_data
 
 # Load pile from save data dictionary
@@ -398,20 +397,21 @@ func load_from_data(data: Dictionary) -> void:
 	pile_type = data.get("pile_type", pile_type)
 	max_size = data.get("max_size", max_size)
 	
-	# Load cards from paths
+	# Load card instances from save data
 	cards.clear()
-	var card_paths: Array = data.get("card_paths", [])
-	GLog.debug("Loading %d cards from paths..." % card_paths.size())
+	var card_instances_data: Array = data.get("card_instances", [])
+	GLog.debug("Loading %d card instances..." % card_instances_data.size())
 	var loaded_count = 0
-	for path: String in card_paths:
-		var card_data: CardData = load(path) as CardData
-		if card_data:
-			cards.append(card_data)
+	for instance_data in card_instances_data:
+		var card_instance = CardInstance.new()
+		card_instance.load_from_save_data(instance_data)
+		if card_instance.card_data:
+			cards.append(card_instance)
 			loaded_count += 1
-			GLog.trace("Loaded card %d/%d: '%s'" % [loaded_count, card_paths.size(), card_data.card_name])
+			GLog.trace("Loaded card instance %d/%d: '%s'" % [loaded_count, card_instances_data.size(), card_instance.get_card_name()])
 		else:
-			GLog.error("Failed to load card from path: %s" % path)
-	GLog.debug("Load completed: %d/%d cards loaded successfully" % [loaded_count, card_paths.size()])
+			GLog.error("Failed to load card instance: %s" % str(instance_data))
+	GLog.debug("Load completed: %d/%d card instances loaded successfully" % [loaded_count, card_instances_data.size()])
 
 # Debug methods
 
@@ -419,5 +419,29 @@ func load_from_data(data: Dictionary) -> void:
 func print_contents() -> void:
 	GLog.info("=== %s Pile (%d cards) ===" % [pile_type.capitalize(), cards.size()])
 	for i in range(cards.size()):
-		GLog.info("%d. %s (%s, %d energy)" % [i + 1, cards[i].card_name, cards[i].card_type, cards[i].energy_cost])
+		GLog.info("%d. %s (%s, %d energy, held: %d)" % [i + 1, cards[i].get_card_name(), cards[i].get_card_type(), cards[i].get_energy_cost(), cards[i].turns_held])
 	GLog.info("========================")
+
+# Utility methods for compatibility with existing CardData-based code
+
+# Create and add a CardInstance from CardData
+func add_card_data(card_data: CardData) -> bool:
+	if not card_data:
+		return false
+	var card_instance = CardInstance.new(card_data)
+	return add_card(card_instance)
+
+# Create and add multiple CardInstances from CardData array
+func add_card_data_array(card_data_array: Array[CardData]) -> int:
+	var added_count = 0
+	for card_data in card_data_array:
+		if add_card_data(card_data):
+			added_count += 1
+	return added_count
+
+# Get all CardData references (for compatibility)
+func get_card_data_array() -> Array[CardData]:
+	var result: Array[CardData] = []
+	for card_instance in cards:
+		result.append(card_instance.card_data)
+	return result
