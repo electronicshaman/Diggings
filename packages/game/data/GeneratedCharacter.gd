@@ -44,9 +44,9 @@ class_name GeneratedCharacter
 # BASE STATS (Modified by backstory)
 # ============================================
 @export_group("Stats")
-@export var max_health: int = 50
-@export var max_sanity: int = 100
-@export var max_energy: int = 3
+@export var base_health: int = 50
+@export var base_sanity: int = 100
+@export var base_energy: int = 3
 @export var base_defense: int = 0
 
 # ============================================
@@ -92,12 +92,12 @@ func apply_backstory_modifiers() -> void:
 			# Apply stat modifiers
 			for stat in element.stat_modifiers:
 				match stat:
-					"max_health":
-						max_health += element.stat_modifiers[stat]
-					"max_sanity":
-						max_sanity += element.stat_modifiers[stat]
-					"max_energy":
-						max_energy += element.stat_modifiers[stat]
+					"base_health":
+						base_health += element.stat_modifiers[stat]
+					"base_sanity":
+						base_sanity += element.stat_modifiers[stat]
+					"base_energy":
+						base_energy += element.stat_modifiers[stat]
 					"starting_gold":
 						starting_gold += element.stat_modifiers[stat]
 					"starting_corruption":
@@ -120,9 +120,9 @@ func apply_backstory_modifiers() -> void:
 func get_modifier_dict() -> Dictionary:
 	"""Get a dictionary representation of all modifiers for processing."""
 	return {
-		"max_health": max_health,
-		"max_sanity": max_sanity,
-		"max_energy": max_energy,
+		"base_health": base_health,
+		"base_sanity": base_sanity,
+		"base_energy": base_energy,
 		"starting_gold": starting_gold,
 		"starting_corruption": starting_corruption,
 		"stat_modifiers": stat_modifiers,
@@ -133,12 +133,12 @@ func get_modifier_dict() -> Dictionary:
 
 func apply_modifier_dict(mod_dict: Dictionary) -> void:
 	"""Apply a modifier dictionary back to this character."""
-	if mod_dict.has("max_health"):
-		max_health = mod_dict["max_health"]
-	if mod_dict.has("max_sanity"):
-		max_sanity = mod_dict["max_sanity"]
-	if mod_dict.has("max_energy"):
-		max_energy = mod_dict["max_energy"]
+	if mod_dict.has("base_health"):
+		base_health = mod_dict["base_health"]
+	if mod_dict.has("base_sanity"):
+		base_sanity = mod_dict["base_sanity"]
+	if mod_dict.has("base_energy"):
+		base_energy = mod_dict["base_energy"]
 	if mod_dict.has("starting_gold"):
 		starting_gold = mod_dict["starting_gold"]
 	if mod_dict.has("starting_corruption"):
@@ -232,9 +232,9 @@ func get_save_data() -> Dictionary:
 		"starting_curio_id": starting_curio_id,
 		"backstory_summary": backstory_summary,
 		"stats": {
-			"max_health": max_health,
-			"max_sanity": max_sanity,
-			"max_energy": max_energy,
+			"base_health": base_health,
+			"base_sanity": base_sanity,
+			"base_energy": base_energy,
 			"starting_gold": starting_gold,
 			"starting_corruption": starting_corruption
 		},
@@ -270,9 +270,9 @@ func load_from_save_data(data: Dictionary) -> void:
 	
 	if data.has("stats"):
 		var stats = data["stats"]
-		max_health = stats.get("max_health", 50)
-		max_sanity = stats.get("max_sanity", 100)
-		max_energy = stats.get("max_energy", 3)
+		base_health = stats.get("base_health", 50)
+		base_sanity = stats.get("base_sanity", 100)
+		base_energy = stats.get("base_energy", 3)
 		starting_gold = stats.get("starting_gold", 10)
 		starting_corruption = stats.get("starting_corruption", 0)
 	

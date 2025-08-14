@@ -49,9 +49,9 @@ func get_display_name() -> String:
 
 func get_starting_stats() -> Dictionary:
 	return {
-		"max_health": base_health,
-		"max_sanity": base_sanity, 
-		"max_energy": base_energy,
+		"base_health": base_health,
+		"base_sanity": base_sanity, 
+		"base_energy": base_energy,
 		"starting_gold": starting_gold
 	}
 

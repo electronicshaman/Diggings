@@ -121,9 +121,9 @@ func generate_character(character_class: String) -> GeneratedCharacter:
 	
 	# Apply base stats for class
 	var base_stats = get_base_character_stats(character_class)
-	character.max_health = base_stats.get("max_health", 50)
-	character.max_sanity = base_stats.get("max_sanity", 100)
-	character.max_energy = base_stats.get("max_energy", 3)
+	character.base_health = base_stats.get("base_health", 50)
+	character.base_sanity = base_stats.get("base_sanity", 100)
+	character.base_energy = base_stats.get("base_energy", 3)
 	character.starting_gold = base_stats.get("starting_gold", 10)
 	character.starting_corruption = 0
 	
@@ -135,12 +135,12 @@ func generate_character(character_class: String) -> GeneratedCharacter:
 	# Apply stat modifiers
 	for stat in stat_mods:
 		match stat:
-			"max_health":
-				character.max_health += stat_mods[stat]
-			"max_sanity":
-				character.max_sanity += stat_mods[stat]
-			"max_energy":
-				character.max_energy += stat_mods[stat]
+			"base_health":
+				character.base_health += stat_mods[stat]
+			"base_sanity":
+				character.base_sanity += stat_mods[stat]
+			"base_energy":
+				character.base_energy += stat_mods[stat]
 			"starting_gold":
 				character.starting_gold += stat_mods[stat]
 			"starting_corruption":
@@ -175,13 +175,13 @@ func generate_character(character_class: String) -> GeneratedCharacter:
 			break
 	
 	# Add some random variation within bounds
-	character.max_health += SeedManager.get_character_random_int(-3, 5)
-	character.max_sanity += SeedManager.get_character_random_int(-5, 5)
+	character.base_health += SeedManager.get_character_random_int(-3, 5)
+	character.base_sanity += SeedManager.get_character_random_int(-5, 5)
 	character.starting_gold += SeedManager.get_character_random_int(-2, 5)
 	
 	# Ensure minimum values
-	character.max_health = max(character.max_health, 25)
-	character.max_sanity = max(character.max_sanity, 50)
+	character.base_health = max(character.base_health, 25)
+	character.base_sanity = max(character.base_sanity, 50)
 	character.starting_gold = max(character.starting_gold, 0)
 	
 	GLog.info("Generated character: " + character.formatted_name + " the " + character_class)
@@ -460,7 +460,7 @@ func get_base_character_stats(character_class: String) -> Dictionary:
 	
 	GLog.warn("Failed to load character resource for %s, using fallback stats" % character_class)
 	# Fallback stats if resource loading fails
-	return {"max_health": 50, "max_sanity": 100, "max_energy": 3, "starting_gold": 10}
+	return {"base_health": 50, "base_sanity": 100, "base_energy": 3, "starting_gold": 10}
 
 func generate_simple_name(character_class: String) -> String:
 	var names = ["Jack", "Mary", "William", "Sarah", "Thomas", "Elizabeth", "James", "Margaret", "John", "Catherine"]

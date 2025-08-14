@@ -131,9 +131,9 @@ func get_backstory_summary(character: GeneratedCharacter) -> String:
 
 func get_stats_display(character: GeneratedCharacter) -> String:
 	var display = ""
-	display += "Health: " + str(character.max_health)
-	display += " | Sanity: " + str(character.max_sanity)
-	display += " | Energy: " + str(character.max_energy)
+	display += "Health: " + str(character.base_health)
+	display += " | Sanity: " + str(character.base_sanity)
+	display += " | Energy: " + str(character.base_energy)
 	display += "\nGold: " + str(character.starting_gold)
 	
 	# Show significant modifiers
@@ -160,7 +160,7 @@ func get_base_stats(character_class: String) -> Dictionary:
 	
 	GLog.warn("Failed to load character resource for %s, using fallback stats" % character_class)
 	# Fallback stats if resource loading fails
-	return {"max_health": 50, "max_sanity": 100, "max_energy": 3, "starting_gold": 10}
+	return {"base_health": 50, "base_sanity": 100, "base_energy": 3, "starting_gold": 10}
 
 func get_starting_curio_display(character: GeneratedCharacter) -> String:
 	# Get the curio resource 
