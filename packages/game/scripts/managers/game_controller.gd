@@ -30,6 +30,10 @@ func _has_prop(obj, prop_name: String) -> bool:
 				return true
 	return false
 
+## Get character resource path from class name
+func get_character_resource_path(character_class: String) -> String:
+	return "res://data/characters/" + character_class.to_lower() + ".tres"
+
 func _ready() -> void:
 	GLog.debug("GameController initialized - Managing the cosmic game state")
 	_safe_load_test_content()
@@ -106,8 +110,10 @@ func _safe_load_test_content() -> void:
 func _load_bushranger_character() -> Dictionary:
 	var result = {"success": false, "error_message": ""}
 	
-	GLog.debug("Loading Bushranger character class...")
-	var character_path = "res://data/characters/bushranger.tres"
+	# Get selected character class from GameManager, fallback to Bushranger
+	var character_class = GameManager.current_character_class if GameManager.current_character_class != "" else "Bushranger"
+	GLog.debug("Loading %s character class..." % character_class)
+	var character_path = get_character_resource_path(character_class)
 	
 	# Use ResourceManager for safer loading
 	if is_instance_valid(ResourceManager):

@@ -49,10 +49,10 @@ func get_display_name() -> String:
 
 func get_starting_stats() -> Dictionary:
 	return {
-		"health": base_health,
-		"sanity": base_sanity, 
-		"energy": base_energy,
-		"gold": starting_gold
+		"max_health": base_health,
+		"max_sanity": base_sanity, 
+		"max_energy": base_energy,
+		"starting_gold": starting_gold
 	}
 
 func can_use_card(card_data: CardData) -> bool:
