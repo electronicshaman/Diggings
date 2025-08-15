@@ -2,24 +2,27 @@
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/CardData.gd" id="1"]
 [ext_resource type="Script" uid="uid://cjfng8cj5drp1" path="res://data/CardEffect.gd" id="1_oibm5"]
-[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/Damage.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/ConditionalDamage.gd" id="2"]
 
-[sub_resource type="Resource" id="Damage_1"]
+[sub_resource type="Resource" id="ConditionalDamage_1"]
 script = ExtResource("2")
-damage_amount = 3
-ignores_defense = false
+base_damage = 6
+bonus_damage = 3
+condition_type = "player_gold"
+condition_value = 20
+condition_operator = ">="
 
 [resource]
 script = ExtResource("1")
 card_name = "Pickaxe Strike"
 energy_cost = 1
 card_type = "Gold"
-flavor_text = ""
-effects = Array[ExtResource("1_oibm5")]([SubResource("Damage_1")])
+flavor_text = "Hard work pays off, but luck pays better."
+effects = Array[ExtResource("1_oibm5")]([SubResource("ConditionalDamage_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
 luck_modifier = 0.0
-class_affinity = Array[String]([])
-accessibility_tier = "Neutral"
+class_affinity = Array[String](["Prospector"])
+accessibility_tier = "Class"
 mechanical_category = "Attack"

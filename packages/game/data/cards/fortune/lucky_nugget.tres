@@ -6,16 +6,16 @@
 
 [sub_resource type="Resource" id="FortuneChoice_1"]
 script = ExtResource("3")
-success_chance = 0.6
-success_effects = [{"type": "gold", "value": 15}, {"type": "draw", "value": 1}]
-failure_effects = [{"type": "lose_health", "value": 5}]
+success_chance = 0.4
+success_effects = [{"type": "gold", "value": 25}, {"type": "heal", "value": 10}]
+failure_effects = [{"type": "corruption", "value": 2}]
 
 [resource]
 script = ExtResource("1")
-card_name = "Strike It Rich"
-energy_cost = 2
+card_name = "Lucky Nugget"
+energy_cost = 3
 card_type = "Gamble"
-flavor_text = "The mother lode is just one swing away!"
+flavor_text = "Some fortunes come with a curse."
 effects = Array[ExtResource("2")]([SubResource("FortuneChoice_1")])
 sanity_cost = 0
 card_handling = "Standard"

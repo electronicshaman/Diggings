@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/NextCardDiscount.gd" id="3"]
+
+[sub_resource type="Resource" id="NextCardDiscount_1"]
+script = ExtResource("3")
+discount_amount = 1
+enhanced_effects = true
+
+[resource]
+script = ExtResource("1")
+card_name = "Tool Maintenance"
+energy_cost = 1
+card_type = "Grit"
+flavor_text = "A sharp pick finds more gold."
+effects = Array[ExtResource("2")]([SubResource("NextCardDiscount_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Prospector"])
+accessibility_tier = "Class"
+mechanical_category = "Skill"

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/cards/effects/EnemyIntentReveal.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/cards/effects/ConditionalDefense.gd" id="4"]
+
+[sub_resource type="Resource" id="EnemyIntentReveal_1"]
+script = ExtResource("3")
+reveal_turns = 1
+
+[sub_resource type="Resource" id="ConditionalDefense_1"]
+script = ExtResource("4")
+base_defense = 0
+bonus_defense = 6
+enemy_intent_type = "attack"
+
+[resource]
+script = ExtResource("1")
+card_name = "Bush Telegraph"
+energy_cost = 1
+card_type = "Grit"
+flavor_text = "News travels fast in the outback."
+effects = Array[ExtResource("2")]([SubResource("EnemyIntentReveal_1"), SubResource("ConditionalDefense_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Prospector"])
+accessibility_tier = "Class"
+mechanical_category = "Skill"

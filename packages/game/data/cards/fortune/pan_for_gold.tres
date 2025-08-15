@@ -2,21 +2,22 @@
 
 [ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
 [ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/FortuneChoice.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/cards/effects/GoldGain.gd" id="3"]
 
-[sub_resource type="Resource" id="FortuneChoice_1"]
+[sub_resource type="Resource" id="GoldGain_1"]
 script = ExtResource("3")
-success_chance = 0.6
-success_effects = [{"type": "gold", "value": 15}, {"type": "draw", "value": 1}]
-failure_effects = [{"type": "lose_health", "value": 5}]
+min_gold = 1
+max_gold = 3
+success_chance = 0.5
+failure_gold = 1
 
 [resource]
 script = ExtResource("1")
-card_name = "Strike It Rich"
-energy_cost = 2
+card_name = "Pan for Gold"
+energy_cost = 0
 card_type = "Gamble"
-flavor_text = "The mother lode is just one swing away!"
-effects = Array[ExtResource("2")]([SubResource("FortuneChoice_1")])
+flavor_text = "Sometimes you find a nugget, sometimes just dust."
+effects = Array[ExtResource("2")]([SubResource("GoldGain_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
