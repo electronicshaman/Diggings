@@ -58,10 +58,12 @@ func initialize_game_data() -> void:
 		"corruption": 0,
 		"deck": [],
 		"curios": [],
+	"hexmap_state": {},
 		"maps": {},  # Multiple maps, one per region
 		"current_map": "",  # Current region being explored
-		"completed_maps": [],  # List of completed region IDs
-		"available_maps": []  # List of available region IDs
+	"completed_maps": [],  # List of completed region IDs
+	# Pre-populate with a few default regions used by MapSelection fallbacks
+	"available_maps": ["goldfields", "outback", "mountains", "coast"]  # List of available region IDs
 	}
 	
 	reset_run_statistics()
@@ -161,7 +163,8 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	# Load directly into the Hexmap scene (replacing legacy map flow)
 	change_state(GameState.PLAYING)
 	EventBus.game_started.emit()
-	SceneManager.load_scene_by_name("map")
+	# Route to region selection first
+	SceneManager.load_scene_by_name("map_selection")
 
 func end_current_run(victory: bool = false) -> void:
 	GLog.debug("Ending run - Victory: " + str(victory))
@@ -328,7 +331,7 @@ func get_session_time() -> float:
 
 func generate_all_maps() -> void:
 	# Legacy map generation removed. Hexmap scene manages its own world generation.
-	game_data.available_maps = []
+	# Keep available_maps as initialized for MapSelection
 	game_data.completed_maps = []
 	game_data.maps = {}
 	GLog.info("Legacy map generation disabled (Hexmap in use)")

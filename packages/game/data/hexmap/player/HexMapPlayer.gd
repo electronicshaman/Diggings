@@ -330,6 +330,9 @@ func _trigger_encounter(tile: HexTile):
 	# Mark tile so we don't immediately re-trigger on return
 	tile.has_encounter = false
 
+	# Persist map and player state before leaving the scene
+	_save_map_and_player_state()
+
 	# Decide encounter type from tile data; fallback to duel
 	var enc_data: Dictionary = tile.encounter_data if tile and tile.encounter_data else {}
 	var enc_type := ""
@@ -350,7 +353,7 @@ func _maybe_trigger_random_event() -> bool:
 		return false
 	if random_event_chance_per_step <= 0.0:
 		return false
-	var roll := randf()
+	var roll := SeedManager.get_event_random_float() if is_instance_valid(SeedManager) else randf()
 	if roll <= clampf(random_event_chance_per_step, 0.0, 1.0):
 		encounter_in_progress = true
 		print("Random event triggered (roll=", roll, ") at ", current_hex._to_string())
@@ -376,6 +379,23 @@ func _start_event(_encounter_context: Dictionary = {}):
 		SceneManager.load_scene_by_name("event")
 	else:
 		push_warning("HexMapPlayer: SceneManager unavailable; cannot start event")
+
+func _save_map_and_player_state():
+	if not is_instance_valid(GameManager) or not is_instance_valid(hex_grid):
+		return
+	var state: Dictionary = {}
+	state["tiles"] = hex_grid.save_grid()
+	state["player_q"] = current_hex.q if current_hex else 0
+	state["player_r"] = current_hex.r if current_hex else 0
+	state["movement_points"] = current_movement_points
+	state["hour"] = current_hour
+	# Also persist RNG state for perfect determinism on return
+	if is_instance_valid(SeedManager) and SeedManager.has_method("get_rng_state"):
+		state["rng_state"] = SeedManager.get_rng_state()
+	GameManager.game_data["hexmap_state"] = state
+	# Optional: autosave on encounter
+	if is_instance_valid(SaveSystem) and SaveSystem.autosave_enabled:
+		SaveSystem.save_game(SaveSystem.AUTOSAVE_PATH, true)
 
 # ==== Time-of-day and recovery mechanics ====
 

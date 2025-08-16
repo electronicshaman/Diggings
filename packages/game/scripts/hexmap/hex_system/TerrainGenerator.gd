@@ -228,7 +228,13 @@ func _generate_civilization(hex_grid: HexGrid):
 	civilization_generator.civilization_settings = civ_settings
 	
 	var rng = RandomNumberGenerator.new()
-	rng.randomize()
+	if is_instance_valid(SeedManager) and SeedManager.is_run_active():
+		# Use a deterministic subseed derived from map RNG
+		# Advance the RNG state slightly to avoid correlation with elevation/moisture derivation
+		var subseed = SeedManager.get_map_random_int(1, 0x7FFFFFFF)
+		rng.seed = subseed
+	else:
+		rng.randomize()
 	
 	var _civilization_data = civilization_generator.generate_civilization_for_grid(hex_grid, rng)
 	# The returned data is not used directly here; generators have already applied changes to the grid
