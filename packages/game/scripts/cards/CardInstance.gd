@@ -140,7 +140,7 @@ func _generate_dynamic_description(hold_bonus: HoldBonus) -> String:
 	
 	# If we haven't reached the threshold, show the hold requirement
 	if turns_held < hold_bonus.turns_required:
-		var turns_remaining = hold_bonus.turns_required - turns_held
+		var _turns_remaining = hold_bonus.turns_required - turns_held
 		var bonus_text = hold_bonus.get_formatted_description()
 		return "%s %s" % [base_desc, bonus_text]
 	else:
@@ -181,8 +181,8 @@ func _update_dynamic_properties() -> void:
 	clear_dynamic_properties()
 	
 	# This will trigger recalculation of description and handling
-	var _ = get_description()  # Force calculation
-	var __ = get_card_handling()  # Force calculation
+	get_description()  # Force calculation
+	get_card_handling()  # Force calculation
 
 # Serialization support
 func get_save_data() -> Dictionary:
@@ -215,5 +215,5 @@ func equals(other: CardInstance) -> bool:
 		return false
 	return instance_id == other.instance_id
 
-func to_string() -> String:
+func _to_string() -> String:
 	return "CardInstance[%s, held:%d, id:%s]" % [get_card_name(), turns_held, instance_id]
