@@ -1,7 +1,6 @@
 extends Node
 
-# Ensure MapNodeConfig class is loaded and registered
-const MapNodeConfig = preload("res://scripts/map/MapNodeConfig.gd")
+# Old map system removed; Hexmap is now the primary exploration scene
 
 const DEBUG_ENABLED: bool = true
 
@@ -159,14 +158,10 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	if selected_character:
 		apply_character_data()
 	
-	# Generate all maps for this run
-	generate_all_maps()
-	
+	# Load directly into the Hexmap scene (replacing legacy map flow)
 	change_state(GameState.PLAYING)
 	EventBus.game_started.emit()
-	
-	# Go to map selection screen instead of directly to map
-	SceneManager.load_scene_by_name("map_selection")
+	SceneManager.load_scene_by_name("map")
 
 func end_current_run(victory: bool = false) -> void:
 	GLog.debug("Ending run - Victory: " + str(victory))
@@ -332,49 +327,11 @@ func get_session_time() -> float:
 	return (Time.get_ticks_msec() / 1000.0) - session_start_time
 
 func generate_all_maps() -> void:
-	GLog.debug("Generating all maps for new run")
-	
-	var regions = ["goldfields", "outback", "mountains", "coast"]
-	game_data.available_maps = regions.duplicate()
+	# Legacy map generation removed. Hexmap scene manages its own world generation.
+	game_data.available_maps = []
 	game_data.completed_maps = []
-	
-	# Create a map generator instance
-	var map_generator = preload("res://scripts/map/MapGenerator.gd").new()
-	
-	for region_id in regions:
-		var config_path = "res://data/maps/" + region_id + "_config.tres"
-		if not ResourceLoader.exists(config_path):
-			GLog.error("Map config not found: " + config_path)
-			continue
-			
-		var config = load(config_path) as MapRegionConfig
-		if not config:
-			GLog.error("Failed to load map config: " + config_path)
-			continue
-		
-		# Generate map for this region with a unique seed offset
-		var region_seed = current_run_seed + region_id.hash()
-		var map_data = map_generator.generate_map_for_region(config, region_seed)
-		
-		if not map_data or map_data.is_empty():
-			GLog.error("Failed to generate map for region: " + region_id)
-			continue
-		
-		# Store the generated map
-		game_data.maps[region_id] = {
-			"generator_data": map_data,
-			"config": config,
-			"completed": false,
-			"current_player_node": map_data.start_node if map_data.has("start_node") else "",
-			"visited_nodes": [map_data.start_node] if map_data.has("start_node") else []
-		}
-		
-		GLog.debug("Generated map for region: " + region_id + " with " + str(map_data.get("nodes", {}).size()) + " nodes")
-	
-	# Clean up the temporary generator
-	map_generator.queue_free()
-	
-	GLog.info("All maps generated successfully")
+	game_data.maps = {}
+	GLog.info("Legacy map generation disabled (Hexmap in use)")
 
 func select_map(region_id: String) -> void:
 	if not game_data.maps.has(region_id):

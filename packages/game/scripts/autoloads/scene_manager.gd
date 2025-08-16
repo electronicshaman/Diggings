@@ -16,7 +16,7 @@ const SCENE_PATHS: Dictionary = {
 	"main_menu": "res://scenes/ui/main_menu.tscn",
 	"class_selection": "res://scenes/ui/class_selection.tscn",
 	"duel": "res://scenes/game/duel.tscn",
-	"map": "res://scenes/game/map.tscn",
+	"map": "res://scenes/hexmap/Hexmap.tscn",
 	"map_selection": "res://scenes/game/map_selection.tscn",
 	"city_hub": "res://scenes/game/city_hub.tscn",
 	"shop": "res://scenes/game/shop.tscn",

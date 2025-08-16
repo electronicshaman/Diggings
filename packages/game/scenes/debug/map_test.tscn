@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://3ucei5iw3doh"]
-
-[ext_resource type="Script" uid="uid://4g65kc41kgcx" path="res://scripts/debug/MapTest.gd" id="1_qe373"]
-
-[node name="MapTest" type="Control"]
-layout_mode = 3
-anchors_preset = 0
-script = ExtResource("1_qe373")
