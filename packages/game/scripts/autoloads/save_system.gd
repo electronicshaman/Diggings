@@ -106,13 +106,19 @@ func create_save_data() -> Dictionary:
 	return save_data
 
 func gather_run_data() -> Dictionary:
+	var diff_val := 1
+	var gs = get_tree().root.get_node_or_null("GameSettings")
+	if gs:
+		var maybe = gs.get("difficulty")
+		if typeof(maybe) == TYPE_INT:
+			diff_val = maybe
 	return {
 		"seed": 0,
 		"floor": 0,
 		"act": 1,
 		"gold": 0,
 		"corruption": 0,
-		"difficulty": GameSettings.difficulty if is_instance_valid(GameSettings) else 1,
+		"difficulty": diff_val,
 		"character_class": "",
 		"time_played": 0.0
 	}
