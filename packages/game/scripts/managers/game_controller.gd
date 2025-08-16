@@ -461,9 +461,9 @@ func get_hand_cards() -> Array:
 		return duel_manager.get_hand_cards()
 	return []
 
-func play_card(card_data: CardData) -> Error:
-	if not is_instance_valid(card_data):
-		push_error("GameController: Cannot play invalid card")
+func play_card(card_instance: CardInstance) -> Error:
+	if not is_instance_valid(card_instance):
+		push_error("GameController: Cannot play invalid card instance")
 		return ERR_INVALID_PARAMETER
 	
 	if not is_instance_valid(duel_manager):
@@ -474,7 +474,7 @@ func play_card(card_data: CardData) -> Error:
 		push_error("GameController: DuelManager missing play_card method")
 		return ERR_METHOD_NOT_FOUND
 	
-	duel_manager.play_card(card_data)
+	duel_manager.play_card(card_instance)
 	return OK
 
 func end_player_turn() -> Error:
@@ -514,12 +514,18 @@ func add_random_card_to_hand() -> Error:
 		return ERR_INVALID_DATA
 	
 	var random_card := test_cards[randi() % test_cards.size()]
-	if current_duel_state.hand.has_method("add_card"):
-		current_duel_state.hand.add_card(random_card)
+	# Prefer compatibility helper if available
+	if current_duel_state.hand.has_method("add_card_data"):
+		current_duel_state.hand.add_card_data(random_card)
+		game_state_updated.emit()
+		return OK
+	elif current_duel_state.hand.has_method("add_card"):
+		var ci := CardInstance.new(random_card)
+		current_duel_state.hand.add_card(ci)
 		game_state_updated.emit()
 		return OK
 	else:
-		push_error("GameController: Hand missing add_card method")
+		push_error("GameController: Hand missing add_card/add_card_data method")
 		return ERR_METHOD_NOT_FOUND
 
 func modify_player_health(amount: int) -> Error:
@@ -619,10 +625,14 @@ func _on_turn_started(is_player_turn: bool) -> void:
 	
 	game_state_updated.emit()
 
-func _on_card_played(card_data: CardData) -> void:
+func _on_card_played(card) -> void:
 	var card_name = "Unknown Card"
-	if is_instance_valid(card_data) and _has_prop(card_data, "card_name"):
-		card_name = card_data.card_name
+	if card and typeof(card) == TYPE_OBJECT:
+		# Support both CardInstance and CardData
+		if _has_prop(card, "get_card_name"):
+			card_name = card.get_card_name()
+		elif _has_prop(card, "card_name"):
+			card_name = card.card_name
 	
 	GLog.debug("Card played: " + card_name)
 	

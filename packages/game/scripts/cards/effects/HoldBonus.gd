@@ -21,7 +21,7 @@ func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary)
 	# Legacy method - call with basic data
 	_apply_hold_bonus_logic(card_data.card_name, 0, results)
 
-func apply_effect_with_instance(_duel_manager: Node, card_instance: CardInstance, results: Dictionary) -> void:
+func apply_effect_with_instance(_duel_manager: Node, card_instance, results: Dictionary) -> void:
 	# New method that uses actual turns held from CardInstance
 	_apply_hold_bonus_logic(card_instance.get_card_name(), card_instance.turns_held, results)
 

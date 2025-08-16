@@ -17,7 +17,7 @@ const ENEMY_TURN_START_DELAY: float = 1.0  # Delay before enemy starts
 signal duel_started
 signal turn_started(is_player_turn: bool)
 signal turn_ended(is_player_turn: bool)
-signal card_played(card: CardData)
+signal card_played(card)
 signal duel_ended(winner: String)
 signal enemy_card_played(card: CardData)
 
@@ -187,13 +187,14 @@ func execute_enemy_ai_turn(enemy: EnemyState):
 		GLog.info("Enemy played %d cards this turn" % cards_played)
 
 func get_enemy_playable_cards(enemy: EnemyState) -> Array[CardData]:
-	"""Get cards the enemy can afford to play"""
+	"""Get cards the enemy can afford to play (map from CardInstance to CardData)"""
 	var playable: Array[CardData] = []
 	var current_energy = enemy.stats.current_energy if enemy.stats else 0
 	
-	for card in enemy.enemy_hand.cards:
-		if card.energy_cost <= current_energy:
-			playable.append(card)
+	for inst in enemy.enemy_hand.cards:
+		var cd: CardData = inst.card_data if inst else null
+		if cd and cd.energy_cost <= current_energy:
+			playable.append(cd)
 	
 	return playable
 
@@ -278,8 +279,8 @@ func play_enemy_card(enemy: EnemyState, card: CardData):
 		enemy.stats.current_energy -= card.energy_cost
 	
 	# Move card from enemy hand to battlefield temporarily
-	if enemy.enemy_hand.remove_card(card):
-		duel_state.battlefield.add_card(card)
+	if enemy.enemy_hand.remove_card_data(card):
+		duel_state.battlefield.add_card_data(card)
 		GLog.debug("Enemy card '%s' staged on battlefield" % card.card_name)
 	
 	# Emit event for UI to show card
@@ -289,7 +290,9 @@ func play_enemy_card(enemy: EnemyState, card: CardData):
 	await get_tree().create_timer(ENEMY_CARD_PLAY_DELAY).timeout
 	
 	# Immediately resolve the card
-	resolve_single_card(card, false)
+	# Convert CardData to a temporary instance for resolution
+	var temp_instance := CardInstance.new(card)
+	resolve_single_card(temp_instance, false)
 	
 	# Check if duel is over after each card
 	if duel_state.is_duel_over():
@@ -347,7 +350,7 @@ func play_card(card_instance: CardInstance):
 	await get_tree().create_timer(CARD_STAGE_DELAY).timeout
 	
 	# Immediately resolve the card
-	resolve_single_card(card_data, true)
+	resolve_single_card(card_instance, true)
 	
 	# Check if duel is over after each card
 	if duel_state.is_duel_over():

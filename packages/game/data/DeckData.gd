@@ -19,38 +19,46 @@ const DEBUG_ENABLED: bool = true
 @export var priority_card_types: Array[String] = []  # Types this deck prioritizes playing
 
 func _init(name: String = "", theme: String = "balanced") -> void:
-	GLog.debug("Initializing DeckData: name='%s', theme='%s'" % [name, theme]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Initializing DeckData: name='%s', theme='%s'" % [name, theme])
 	deck_name = name
 	deck_theme = theme
-	GLog.debug("DeckData initialized") if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("DeckData initialized")
 
 # Convert this deck to a CardPile resource
 func to_card_pile() -> CardPile:
-	GLog.debug("Converting DeckData '%s' to CardPile" % deck_name) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Converting DeckData '%s' to CardPile" % deck_name)
 	var pile = CardPile.new("deck")
 	
 	var loaded_count = 0
 	for path in card_paths:
 		var card_data: CardData = load(path) as CardData
 		if card_data:
-			pile.add_card(card_data)
+			# Create CardInstance via compatibility helper
+			pile.add_card_data(card_data)
 			loaded_count += 1
-			GLog.trace("Loaded card %d/%d: '%s'" % [loaded_count, card_paths.size(), card_data.card_name]) if DEBUG_ENABLED else null
+			if DEBUG_ENABLED:
+				GLog.trace("Loaded card %d/%d: '%s'" % [loaded_count, card_paths.size(), card_data.card_name])
 		else:
 			GLog.error("Failed to load card from path: %s" % path)
 	
-	GLog.debug("DeckData converted: %d/%d cards loaded successfully" % [loaded_count, card_paths.size()]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("DeckData converted: %d/%d cards loaded successfully" % [loaded_count, card_paths.size()])
 	return pile
 
 # Get total card count in this deck
 func get_card_count() -> int:
 	var count = card_paths.size()
-	GLog.trace("get_card_count() for '%s': %d cards" % [deck_name, count]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.trace("get_card_count() for '%s': %d cards" % [deck_name, count])
 	return count
 
 # Validate that all card paths exist and are valid
 func validate_deck() -> Dictionary:
-	GLog.debug("Validating deck '%s'" % deck_name) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Validating deck '%s'" % deck_name)
 	var result = {
 		"valid": true,
 		"card_count": card_paths.size(),
@@ -77,22 +85,26 @@ func validate_deck() -> Dictionary:
 		if not ResourceLoader.exists(path):
 			result.valid = false
 			result.missing_cards.append({"index": i, "path": path})
-			GLog.warn("Missing card resource: %s" % path) if DEBUG_ENABLED else null
+			if DEBUG_ENABLED:
+				GLog.warn("Missing card resource: %s" % path)
 		else:
 			var card_data = load(path) as CardData
 			if not card_data:
 				result.valid = false
 				result.invalid_cards.append({"index": i, "path": path})
-				GLog.warn("Invalid card resource: %s" % path) if DEBUG_ENABLED else null
+				if DEBUG_ENABLED:
+					GLog.warn("Invalid card resource: %s" % path)
 			else:
 				valid_cards += 1
 	
-	GLog.debug("Deck validation complete: %s (%d/%d cards valid)" % ["VALID" if result.valid else "INVALID", valid_cards, card_paths.size()]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Deck validation complete: %s (%d/%d cards valid)" % ["VALID" if result.valid else "INVALID", valid_cards, card_paths.size()])
 	return result
 
 # Add a card to this deck by path
 func add_card_by_path(card_path: String) -> bool:
-	GLog.debug("Adding card by path to '%s': %s" % [deck_name, card_path]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Adding card by path to '%s': %s" % [deck_name, card_path])
 	
 	if not ResourceLoader.exists(card_path):
 		GLog.error("Card resource does not exist: %s" % card_path)
@@ -103,25 +115,30 @@ func add_card_by_path(card_path: String) -> bool:
 		return false
 	
 	card_paths.append(card_path)
-	GLog.debug("Card added successfully. New deck size: %d" % card_paths.size()) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Card added successfully. New deck size: %d" % card_paths.size())
 	return true
 
 # Remove a card from this deck by path
 func remove_card_by_path(card_path: String) -> bool:
-	GLog.debug("Removing card by path from '%s': %s" % [deck_name, card_path]) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Removing card by path from '%s': %s" % [deck_name, card_path])
 	
 	var index = card_paths.find(card_path)
 	if index >= 0:
 		card_paths.remove_at(index)
-		GLog.debug("Card removed successfully. New deck size: %d" % card_paths.size()) if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Card removed successfully. New deck size: %d" % card_paths.size())
 		return true
 	else:
-		GLog.debug("Card not found in deck") if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Card not found in deck")
 		return false
 
 # Get card type distribution for analysis
 func get_type_distribution() -> Dictionary:
-	GLog.debug("Analyzing type distribution for '%s'" % deck_name) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Analyzing type distribution for '%s'" % deck_name)
 	var distribution = {}
 	
 	for path in card_paths:
@@ -130,12 +147,14 @@ func get_type_distribution() -> Dictionary:
 			var card_type = card_data.card_type
 			distribution[card_type] = distribution.get(card_type, 0) + 1
 	
-	GLog.debug("Type distribution: %s" % str(distribution)) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Type distribution: %s" % str(distribution))
 	return distribution
 
 # Get energy cost distribution for analysis
 func get_cost_distribution() -> Dictionary:
-	GLog.debug("Analyzing cost distribution for '%s'" % deck_name) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Analyzing cost distribution for '%s'" % deck_name)
 	var distribution = {}
 	
 	for path in card_paths:
@@ -144,12 +163,14 @@ func get_cost_distribution() -> Dictionary:
 			var cost = card_data.energy_cost
 			distribution[cost] = distribution.get(cost, 0) + 1
 	
-	GLog.debug("Cost distribution: %s" % str(distribution)) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Cost distribution: %s" % str(distribution))
 	return distribution
 
 # Create a copy of this deck with shuffled card order
 func create_shuffled_copy() -> DeckData:
-	GLog.debug("Creating shuffled copy of '%s'" % deck_name) if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Creating shuffled copy of '%s'" % deck_name)
 	var copy = DeckData.new(deck_name + " (Shuffled)", deck_theme)
 	copy.description = description
 	copy.difficulty_level = difficulty_level
@@ -162,7 +183,8 @@ func create_shuffled_copy() -> DeckData:
 	copy.card_paths = card_paths.duplicate()
 	copy.card_paths.shuffle()
 	
-	GLog.debug("Shuffled copy created") if DEBUG_ENABLED else null
+	if DEBUG_ENABLED:
+		GLog.debug("Shuffled copy created")
 	return copy
 
 # Debug method to print deck contents

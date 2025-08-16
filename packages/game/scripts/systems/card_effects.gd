@@ -17,12 +17,6 @@ func _has_prop(obj, prop_name: String) -> bool:
 				return true
 	return false
 
-## Apply card effects with comprehensive error handling and validation
-func apply_card_effects(duel_manager: DuelManager, card_data: CardData) -> Dictionary:
-	# Legacy method for compatibility - convert to minimal CardInstance
-	var temp_instance = CardInstance.new(card_data)
-	return apply_card_instance_effects(duel_manager, temp_instance)
-
 func apply_card_instance_effects(duel_manager: DuelManager, card_instance: CardInstance) -> Dictionary:
 	# Create default results dictionary
 	var results = _create_default_results()
@@ -56,7 +50,11 @@ func apply_card_instance_effects(duel_manager: DuelManager, card_instance: CardI
 	
 	# Log final results
 	if failed_effects > 0:
-		push_warning("CardEffects: %d/%d effects failed for card: %s" % [failed_effects, card_data.effects.size(), card_data.card_name])
+		push_warning("CardEffects: %d/%d effects failed for card: %s" % [
+			failed_effects,
+			card_instance.card_data.effects.size(),
+			card_instance.get_card_name()
+		])
 	
 	if DEBUG_ENABLED:
 		GLog.debug("Card effects complete: %d processed, %d failed" % [processed_effects, failed_effects])
@@ -133,27 +131,24 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_inst
 		result.error_message = "Effect %d is invalid" % effect_index
 		return result
 	
-	# Check if effect can be applied
-	if not effect.has_method("can_apply"):
+	# Check if effect can be applied (require instance-aware API)
+	if not effect.has_method("can_apply_with_instance"):
 		result.error_message = "Effect %d missing can_apply method" % effect_index
 		return result
 	
-	if not effect.has_method("apply_effect"):
+	if not effect.has_method("apply_effect_with_instance"):
 		result.error_message = "Effect %d missing apply_effect method" % effect_index
 		return result
 	
 	# Check if effect can be applied in current context
-	var can_apply: bool = effect.can_apply(duel_manager, card_instance.card_data)
+	var can_apply: bool = effect.can_apply_with_instance(duel_manager, card_instance)
 	
 	if not can_apply:
 		result.error_message = "Effect %d cannot be applied in current context" % effect_index
 		return result
 	
-	# Apply the effect - pass CardInstance if effect supports it, otherwise CardData
-	if effect.has_method("apply_effect_with_instance"):
-		effect.apply_effect_with_instance(duel_manager, card_instance, results)
-	else:
-		effect.apply_effect(duel_manager, card_instance.card_data, results)
+	# Apply the effect via instance-aware API
+	effect.apply_effect_with_instance(duel_manager, card_instance, results)
 	result.success = true
 	
 	var effect_name = "Unknown"

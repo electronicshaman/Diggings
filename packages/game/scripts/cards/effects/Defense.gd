@@ -8,10 +8,11 @@ const EFFECT_NAME := "Defense"
 func _init() -> void:
 	pass
 
-func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
+func apply_effect_with_instance(_duel_manager: Node, card_instance, results: Dictionary) -> void:
 	# Add defense to results
 	results.defense += defense_amount
-	print("Applied %s effect from %s (+%d defense, total: %d)" % [get_effect_name(), card_data.card_name, defense_amount, results.defense])
+	var name = card_instance.get_card_name() if card_instance and "get_card_name" in card_instance else "Unknown"
+	print("Applied %s effect from %s (+%d defense, total: %d)" % [get_effect_name(), name, defense_amount, results.defense])
 
 func get_formatted_description() -> String:
 	return "Gain %d defense" % defense_amount
