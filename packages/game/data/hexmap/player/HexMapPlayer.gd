@@ -34,10 +34,14 @@ var encounter_in_progress: bool = false
 # Chance for a random non-tile event to occur on each movement step (0.0 - 1.0)
 @export var random_event_chance_per_step: float = 0.08
 
+var initialized: bool = false
+
 func _ready():
 	_load_settings()
-	current_hex = HexCoordinates.new(0, 0)
-	current_movement_points = max_movement_points
+	# Only set defaults if not initialized via initialize()
+	if not initialized:
+		current_hex = HexCoordinates.new(0, 0)
+		current_movement_points = max_movement_points
 	# Initialize game_time if not provided
 	if not game_time:
 		game_time = GameTime.new()
@@ -52,8 +56,12 @@ func _ready():
 	)
 	if get_parent() is HexGrid:
 		hex_grid = get_parent()
-		position = hex_grid.hex_to_pixel(current_hex)
-		hex_grid.update_visibility(current_hex, sight_range)
+		# Only apply default placement if not already initialized
+		if not initialized:
+			position = hex_grid.hex_to_pixel(current_hex)
+			hex_grid.update_visibility(current_hex, sight_range)
+	# If we are reloaded into a restored map, clear encounter gate for fresh triggers
+	encounter_in_progress = false
 
 func initialize(grid: HexGrid, start_position: HexCoordinates):
 	_load_settings()
@@ -71,6 +79,7 @@ func initialize(grid: HexGrid, start_position: HexCoordinates):
 	hex_grid.update_visibility(current_hex, sight_range)
 	time_changed.emit(current_hour)
 	movement_points_changed.emit(current_movement_points, max_movement_points)
+	initialized = true
 
 func _load_settings():
 	if not game_settings:

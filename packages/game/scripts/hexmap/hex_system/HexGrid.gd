@@ -60,6 +60,19 @@ func _generate_world():
 		terrain_generator = load("res://scripts/hexmap/hex_system/TerrainGenerator.gd").new()
 		print("Created default TerrainGenerator")
 	
+	# Apply deterministic seeds from SeedManager before generation
+	if terrain_generator:
+		var s: MapGenerationSettings = terrain_generator.map_generation_settings
+		if s and is_instance_valid(SeedManager) and SeedManager.is_run_active():
+			var base_seed := SeedManager.map_rng.seed
+			if s.elevation_seed == 12345:
+				s.elevation_seed = int((base_seed ^ 0x135724) & 0x7FFFFFFF)
+			if s.moisture_seed == 67890:
+				var _tmp = SeedManager.get_map_random_int(0, 0x7FFFFFFF)
+				s.moisture_seed = int((base_seed ^ 0x246813 ^ _tmp) & 0x7FFFFFFF)
+			if terrain_generator.has_method("_setup_noise_generators"):
+				terrain_generator._setup_noise_generators()
+
 	# Use natural terrain generation instead of random
 	if terrain_generator.has_method("generate_terrain_for_grid"):
 		terrain_generator.generate_terrain_for_grid(self)

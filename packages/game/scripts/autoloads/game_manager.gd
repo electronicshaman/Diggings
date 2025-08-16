@@ -338,8 +338,8 @@ func generate_all_maps() -> void:
 
 func select_map(region_id: String) -> void:
 	if not game_data.maps.has(region_id):
-		GLog.error("Trying to select non-existent map: " + region_id)
-		return
+		# Create a minimal entry so selection can proceed
+		game_data.maps[region_id] = {"id": region_id, "completed": false}
 		
 	if region_id in game_data.completed_maps:
 		GLog.warn("Trying to select already completed map: " + region_id)

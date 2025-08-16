@@ -300,9 +300,10 @@ func _setup_player():
 		if saved2.has("movement_points"):
 			player.current_movement_points = int(saved2["movement_points"])
 		if saved2.has("hour") and player.game_time:
-			# Restore hour into game_time; keep date simple for now
 			player.game_time.hour = int(saved2["hour"]) % 24
 			player.current_hour = player.game_time.hour
+		# Ensure the player's world position matches the restored hex
+		player.position = hex_grid.hex_to_pixel(player.current_hex)
 		hex_grid.update_visibility(player.current_hex, player.sight_range)
 		if hex_renderer:
 			hex_renderer.update_display()
