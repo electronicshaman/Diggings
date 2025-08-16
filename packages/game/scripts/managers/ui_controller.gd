@@ -233,20 +233,27 @@ func refresh_hand_display() -> void:
 	var hand_data = game_controller.get_hand_cards()
 	
 	for i in range(hand_data.size()):
-		var card_data = hand_data[i]
-		var card_instance = card_scene.instantiate()
-		hand_area.add_child(card_instance)
-		hand_cards.append(card_instance)
+		var ci = hand_data[i]
+		var card_node = card_scene.instantiate()
+		hand_area.add_child(card_node)
+		hand_cards.append(card_node)
 		
 		var card_spacing = 160
 		var total_width = (hand_data.size() - 1) * card_spacing
 		var start_x = -total_width / 2
-		card_instance.position.x = start_x + i * card_spacing
-		card_instance.position.y = 0
+		card_node.position.x = start_x + i * card_spacing
+		card_node.position.y = 0
 		
-		card_instance.card_data = card_data
-		card_instance.setup_card_visuals()
-		card_instance.card_played.connect(_on_hand_card_played)
+		if card_node.has_method("set_card"):
+			card_node.set_card(ci)
+		elif "card_instance" in card_node:
+			card_node.card_instance = ci
+			card_node.card_data = ci.card_data
+		else:
+			card_node.card_data = ci.card_data
+		if card_node.has_method("setup_card_visuals"):
+			card_node.setup_card_visuals()
+		card_node.card_played.connect(_on_hand_card_played)
 	
 	hand_refresh_requested.emit()
 
@@ -257,9 +264,19 @@ func clear_hand_display() -> void:
 	hand_cards.clear()
 
 func _on_hand_card_played(card_node: Node) -> void:
-	var card_data = card_node.get("card_data")
-	if card_data and game_controller:
-		game_controller.play_card(card_data)
+	if not game_controller:
+		return
+	var ci = null
+	if card_node.has_method("get_card_instance_or_null"):
+		ci = card_node.get_card_instance_or_null()
+	elif "card_instance" in card_node:
+		ci = card_node.card_instance
+	else:
+		var cd = card_node.get("card_data")
+		if cd:
+			ci = CardInstance.new(cd)
+	if ci:
+		game_controller.play_card(ci)
 
 func refresh_enemy_hand_display() -> void:
 	clear_enemy_hand_display()
@@ -299,20 +316,27 @@ func refresh_battlefield_display() -> void:
 	var battlefield_data = duel_state.battlefield.cards
 	
 	for i in range(battlefield_data.size()):
-		var card_data = battlefield_data[i]
-		var card_instance = card_scene.instantiate()
-		battlefield_area.add_child(card_instance)
-		battlefield_cards.append(card_instance)
+		var ci = battlefield_data[i]
+		var card_node = card_scene.instantiate()
+		battlefield_area.add_child(card_node)
+		battlefield_cards.append(card_node)
 		
 		var card_spacing = 140
 		var total_width = (battlefield_data.size() - 1) * card_spacing
 		var start_x = -total_width / 2
-		card_instance.position.x = start_x + i * card_spacing
-		card_instance.position.y = 0
-		card_instance.scale = Vector2(0.9, 0.9)  # Slightly smaller battlefield cards
-		
-		card_instance.card_data = card_data
-		card_instance.setup_card_visuals()
+		card_node.position.x = start_x + i * card_spacing
+		card_node.position.y = 0
+		card_node.scale = Vector2(0.9, 0.9)  # Slightly smaller battlefield cards
+        
+		if card_node.has_method("set_card"):
+			card_node.set_card(ci)
+		elif "card_instance" in card_node:
+			card_node.card_instance = ci
+			card_node.card_data = ci.card_data
+		else:
+			card_node.card_data = ci.card_data
+		if card_node.has_method("setup_card_visuals"):
+			card_node.setup_card_visuals()
 		
 		# TODO: Differentiate between player and enemy cards visually
 		
@@ -435,10 +459,10 @@ func _on_curio_acquired(curio: Resource) -> void:
 	var curio_name = curio.curio_name if curio and curio.curio_name else "Unknown Curio"
 	EventBus.emit_ui_notification("Acquired: " + curio_name, "success")
 
-func _on_curio_removed(curio: Resource) -> void:
+func _on_curio_removed(_curio: Resource) -> void:
 	"""Handle when a curio is removed"""
 	update_curios_display()
 
-func _on_curio_stack_changed(curio: Resource, new_count: int) -> void:
+func _on_curio_stack_changed(_curio: Resource, _new_count: int) -> void:
 	"""Handle when a curio's stack count changes"""
 	update_curios_display()

@@ -12,11 +12,12 @@ const EFFECT_NAME := "Stun"
 func _init() -> void:
 	pass
 
-func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
+func apply_effect_with_instance(_duel_manager: Node, card_instance, results: Dictionary) -> void:
 	# Add stun to results
 	if stun_turns > 0:
 		results.stun = stun_turns
-		print("Applied %s effect from %s (enemy skips %d turn(s))" % [get_effect_name(), card_data.card_name, stun_turns])
+		var name = card_instance.get_card_name() if card_instance and "get_card_name" in card_instance else "Unknown"
+		print("Applied %s effect from %s (enemy skips %d turn(s))" % [get_effect_name(), name, stun_turns])
 
 func get_formatted_description() -> String:
 	if stun_turns == 1:

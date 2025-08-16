@@ -2,6 +2,7 @@ extends Area2D
 class_name Card
 
 @export var card_data: CardData
+@export var card_instance: CardInstance
 
 # Selection state
 var is_selected: bool = false
@@ -22,6 +23,19 @@ func _ready():
 	
 	setup_card_visuals()
 	setup_hover_effects()
+
+# Accept either CardInstance or CardData and configure this node
+func set_card(card) -> void:
+	if card is CardInstance:
+		card_instance = card
+		card_data = card.card_data
+	elif card is CardData:
+		card_data = card
+		card_instance = null
+	setup_card_visuals()
+
+func get_card_instance_or_null():
+	return card_instance if card_instance else null
 
 func setup_card_visuals():
 	if not card_data:

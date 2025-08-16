@@ -17,7 +17,7 @@ const ENEMY_TURN_START_DELAY: float = 1.0  # Delay before enemy starts
 signal duel_started
 signal turn_started(is_player_turn: bool)
 signal turn_ended(is_player_turn: bool)
-signal card_played(card: CardData)
+signal card_played(card)
 signal duel_ended(winner: String)
 signal enemy_card_played(card: CardData)
 
@@ -187,13 +187,14 @@ func execute_enemy_ai_turn(enemy: EnemyState):
 		GLog.info("Enemy played %d cards this turn" % cards_played)
 
 func get_enemy_playable_cards(enemy: EnemyState) -> Array[CardData]:
-	"""Get cards the enemy can afford to play"""
+	"""Get cards the enemy can afford to play (map from CardInstance to CardData)"""
 	var playable: Array[CardData] = []
 	var current_energy = enemy.stats.current_energy if enemy.stats else 0
 	
-	for card in enemy.enemy_hand.cards:
-		if card.energy_cost <= current_energy:
-			playable.append(card)
+	for inst in enemy.enemy_hand.cards:
+		var cd: CardData = inst.card_data if inst else null
+		if cd and cd.energy_cost <= current_energy:
+			playable.append(cd)
 	
 	return playable
 

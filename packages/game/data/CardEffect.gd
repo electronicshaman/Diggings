@@ -8,16 +8,13 @@ const DEBUG_ENABLED: bool = true
 
 @export var description: String = "Base effect description"
 
-# Virtual method to be overridden by specific effects
-# duel_manager: Reference to the duel system for state changes
-# card_data: The card that triggered this effect
-# results: Dictionary containing effect results to modify
-func apply_effect(_duel_manager: Node, _card_data: Resource, _results: Dictionary) -> void:
-	GLog.warn("CardEffect.apply_effect() called but not overridden!")
+# Required API: instance-aware effect application
+func apply_effect_with_instance(_duel_manager: Node, _card_instance, _results: Dictionary) -> void:
+	GLog.warn("CardEffect.apply_effect_with_instance() called but not overridden!")
 	GLog.warn("Effect: %s" % get_effect_name())
 
 # Helper method for effects that need to check conditions
-func can_apply(_duel_manager: Node, _card_data: Resource) -> bool:
+func can_apply_with_instance(_duel_manager: Node, _card_instance) -> bool:
 	return true
 
 # Helper method for getting effect description for UI

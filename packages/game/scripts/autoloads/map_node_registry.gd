@@ -48,4 +48,3 @@ func has_config(_config_path: String) -> bool:
 
 func reload_configs():
 	load_all_configs()
-
