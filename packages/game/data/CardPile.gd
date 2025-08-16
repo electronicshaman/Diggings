@@ -197,7 +197,7 @@ func shuffle() -> void:
 	# Fisher-Yates shuffle
 	for i in range(cards.size() - 1, 0, -1):
 		var j: int = randi() % (i + 1)
-		var temp: CardData = cards[i]
+		var temp: CardInstance = cards[i]
 		cards[i] = cards[j]
 		cards[j] = temp
 	
@@ -248,7 +248,7 @@ func move_all_to(target_pile: CardPile) -> int:
 	var moved_count: int = 0
 	var initial_size = cards.size()
 	while not cards.is_empty():
-		var card: CardData = draw_top()
+		var card: CardInstance = draw_top()
 		if card and target_pile.add_card(card):
 			moved_count += 1
 			GLog.trace("Moved card %d/%d: '%s'" % [moved_count, initial_size, card.card_name])
@@ -270,7 +270,7 @@ func move_cards_to(target_pile: CardPile, count: int) -> int:
 			GLog.debug("Source pile empty, stopping at %d cards moved" % moved_count)
 			break
 		
-		var card: CardData = draw_top()
+		var card: CardInstance = draw_top()
 		if card and target_pile.add_card(card):
 			moved_count += 1
 			GLog.trace("Moved card %d/%d: '%s'" % [moved_count, count, card.card_name])
@@ -445,3 +445,22 @@ func get_card_data_array() -> Array[CardData]:
 	for card_instance in cards:
 		result.append(card_instance.card_data)
 	return result
+
+# Find a CardInstance by its underlying CardData (compatibility helper)
+func find_instance_by_card_data(card_data: CardData) -> CardInstance:
+	if not card_data:
+		return null
+	for inst in cards:
+		if inst and inst.card_data == card_data:
+			return inst
+		# Fallback: match by resource path if references differ
+		if inst and inst.card_data and card_data and inst.card_data.resource_path == card_data.resource_path and card_data.resource_path != "":
+			return inst
+	return null
+
+# Remove by CardData for legacy call sites
+func remove_card_data(card_data: CardData) -> bool:
+	var inst := find_instance_by_card_data(card_data)
+	if inst:
+		return remove_card(inst)
+	return false

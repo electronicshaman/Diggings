@@ -278,8 +278,8 @@ func play_enemy_card(enemy: EnemyState, card: CardData):
 		enemy.stats.current_energy -= card.energy_cost
 	
 	# Move card from enemy hand to battlefield temporarily
-	if enemy.enemy_hand.remove_card(card):
-		duel_state.battlefield.add_card(card)
+	if enemy.enemy_hand.remove_card_data(card):
+		duel_state.battlefield.add_card_data(card)
 		GLog.debug("Enemy card '%s' staged on battlefield" % card.card_name)
 	
 	# Emit event for UI to show card
@@ -289,7 +289,9 @@ func play_enemy_card(enemy: EnemyState, card: CardData):
 	await get_tree().create_timer(ENEMY_CARD_PLAY_DELAY).timeout
 	
 	# Immediately resolve the card
-	resolve_single_card(card, false)
+	# Convert CardData to a temporary instance for resolution
+	var temp_instance := CardInstance.new(card)
+	resolve_single_card(temp_instance, false)
 	
 	# Check if duel is over after each card
 	if duel_state.is_duel_over():
@@ -347,7 +349,7 @@ func play_card(card_instance: CardInstance):
 	await get_tree().create_timer(CARD_STAGE_DELAY).timeout
 	
 	# Immediately resolve the card
-	resolve_single_card(card_data, true)
+	resolve_single_card(card_instance, true)
 	
 	# Check if duel is over after each card
 	if duel_state.is_duel_over():

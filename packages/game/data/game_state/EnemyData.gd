@@ -304,13 +304,13 @@ func draw_cards(count: int) -> Array[CardData]:
 
 func play_card(card_data: CardData):
 	"""Move card from hand to discard"""
-	if enemy_hand.remove_card(card_data):
-		enemy_discard.add_card(card_data)
+	if enemy_hand.remove_card_data(card_data):
+		enemy_discard.add_card_data(card_data)
 
 func discard_card(card_data: CardData):
 	"""Discard a card from hand"""
-	if enemy_hand.remove_card(card_data):
-		enemy_discard.add_card(card_data)
+	if enemy_hand.remove_card_data(card_data):
+		enemy_discard.add_card_data(card_data)
 
 func add_to_player_memory(card_name: String):
 	"""Track cards played by the player"""
@@ -400,24 +400,28 @@ func initialize_deck_from_data():
 	
 	# Try to load from DeckData resource first
 	if enemy_deck_data:
-		GLog.debug("Loading enemy deck from DeckData resource: %s" % enemy_deck_data.deck_name) if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Loading enemy deck from DeckData resource: %s" % enemy_deck_data.deck_name)
 		var deck_pile = enemy_deck_data.to_card_pile()
 		deck_pile.move_all_to(enemy_deck)
-		GLog.debug("Loaded %d cards from DeckData" % enemy_deck.size()) if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Loaded %d cards from DeckData" % enemy_deck.size())
 		return
 	
 	# Fallback to legacy enemy_deck_paths
 	if not enemy_deck_paths.is_empty():
-		GLog.debug("Loading enemy deck from legacy paths (%d cards)" % enemy_deck_paths.size()) if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Loading enemy deck from legacy paths (%d cards)" % enemy_deck_paths.size())
 		var loaded_count = 0
 		for path in enemy_deck_paths:
 			var card_data: CardData = load(path) as CardData
 			if card_data:
-				enemy_deck.add_card(card_data)
+				enemy_deck.add_card_data(card_data)
 				loaded_count += 1
 			else:
 				GLog.error("Failed to load card from legacy path: %s" % path)
-		GLog.debug("Loaded %d/%d cards from legacy paths" % [loaded_count, enemy_deck_paths.size()]) if DEBUG_ENABLED else null
+		if DEBUG_ENABLED:
+			GLog.debug("Loaded %d/%d cards from legacy paths" % [loaded_count, enemy_deck_paths.size()])
 	else:
 		GLog.warn("No deck data or legacy paths found for enemy: %s" % enemy_name)
 
