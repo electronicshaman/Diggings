@@ -121,6 +121,12 @@ func setup_connections() -> void:
 	else:
 		push_warning("MainGameController: Cannot connect lose_duel_button - button is invalid")
 
+	# When an actual duel ends, transition appropriately
+	if is_instance_valid(duel_manager) and duel_manager.has_signal("duel_ended"):
+		duel_manager.duel_ended.connect(_on_duel_ended_signal)
+	else:
+		push_warning("MainGameController: Cannot connect to duel_ended signal")
+
 func start_initial_duel() -> void:
 	if not is_instance_valid(game_controller):
 		push_error("MainGameController: Cannot start duel - GameController is invalid")
@@ -184,6 +190,20 @@ func _on_lose_duel_pressed() -> void:
 		SceneManager.load_scene("res://scenes/ui/game_over.tscn")
 	else:
 		push_error("MainGameController: Cannot load game over scene - SceneManager unavailable")
+
+func _on_duel_ended_signal(winner: String) -> void:
+	GLog.debug("Duel ended (signal) - Winner: " + winner)
+	await get_tree().create_timer(0.6).timeout
+	if winner == "player":
+		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
+			SceneManager.load_scene_by_name("map")
+		else:
+			push_error("MainGameController: Cannot load map scene on duel end - SceneManager unavailable")
+	else:
+		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
+			SceneManager.load_scene_by_name("game_over")
+		else:
+			push_error("MainGameController: Cannot load game over scene on duel end - SceneManager unavailable")
 
 func get_game_controller() -> Node:
 	if is_instance_valid(game_controller):

@@ -29,6 +29,10 @@ var current_hex: HexCoordinates
 var hex_grid: HexGrid
 var is_moving: bool = false
 var move_path: Array[HexCoordinates] = []
+var encounter_in_progress: bool = false
+
+# Chance for a random non-tile event to occur on each movement step (0.0 - 1.0)
+@export var random_event_chance_per_step: float = 0.08
 
 func _ready():
 	_load_settings()
@@ -218,6 +222,9 @@ func _on_move_complete(target: HexCoordinates):
 	var tile = hex_grid.get_tile(current_hex)
 	if tile and tile.has_encounter:
 		_trigger_encounter(tile)
+	else:
+		# Consider a lightweight random event on arrival if no fixed encounter
+		_maybe_trigger_random_event()
 
 	# If movement points are fully spent, notify
 	if current_movement_points <= 0:
@@ -290,6 +297,12 @@ func _move_step(step_index: int):
 		var arrived_tile = hex_grid.get_tile(current_hex)
 		if arrived_tile and arrived_tile.has_encounter:
 			_trigger_encounter(arrived_tile)
+			# Stop path progression if an encounter has begun
+			return
+		# If no fixed encounter, maybe roll for a random event this step
+		if _maybe_trigger_random_event():
+			# Random event triggered; stop path progression
+			return
 		# If we've spent all movement points, and no further steps, notify; otherwise continue
 		if current_movement_points <= 0 and step_index + 1 >= move_path.size():
 			movement_points_depleted.emit()
@@ -309,7 +322,60 @@ func _move_step(step_index: int):
 	)
 
 func _trigger_encounter(tile: HexTile):
+	if encounter_in_progress:
+		return
+	encounter_in_progress = true
+
 	print("Encounter triggered at ", tile.coordinates._to_string())
+	# Mark tile so we don't immediately re-trigger on return
+	tile.has_encounter = false
+
+	# Decide encounter type from tile data; fallback to duel
+	var enc_data: Dictionary = tile.encounter_data if tile and tile.encounter_data else {}
+	var enc_type := ""
+	if enc_data.has("type"):
+		enc_type = str(enc_data["type"]).to_lower()
+	elif enc_data.has("resource"):
+		# Heuristic: resource placements default to non-combat events
+		enc_type = "event"
+
+	if enc_type == "event":
+		_start_event(enc_data)
+	else:
+		_start_duel(enc_data)
+
+func _maybe_trigger_random_event() -> bool:
+	# Only consider random events if not in an encounter and chance passes
+	if encounter_in_progress:
+		return false
+	if random_event_chance_per_step <= 0.0:
+		return false
+	var roll := randf()
+	if roll <= clampf(random_event_chance_per_step, 0.0, 1.0):
+		encounter_in_progress = true
+		print("Random event triggered (roll=", roll, ") at ", current_hex._to_string())
+		_start_event({"random": true})
+		return true
+	return false
+
+func _start_duel(_encounter_context: Dictionary = {}):
+	is_moving = false
+	# Transition to duel scene; the duel scene will bootstrap a test duel
+	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
+		SceneManager.load_scene_by_name("duel")
+	else:
+		push_warning("HexMapPlayer: SceneManager unavailable; cannot start duel")
+
+func _start_event(_encounter_context: Dictionary = {}):
+	is_moving = false
+	# Increment event statistic if available
+	if is_instance_valid(GameManager) and GameManager.has_method("increment_statistic"):
+		GameManager.increment_statistic("events_encountered", 1)
+	# Transition to a simple event scene
+	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
+		SceneManager.load_scene_by_name("event")
+	else:
+		push_warning("HexMapPlayer: SceneManager unavailable; cannot start event")
 
 # ==== Time-of-day and recovery mechanics ====
 
