@@ -32,7 +32,7 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 	print("Applied %s effect from %s (+%d defense, total: %d)" % [get_effect_name(), card_data.card_name, total_defense, results.defense])
 
 func get_formatted_description() -> String:
-	return "Gain %d Block. If health below %d%%, gain +%d Block." % [base_defense, int(health_threshold * 100), bonus_defense]
+	return "Gain %d Defense. If health below %d%%, gain +%d Defense." % [base_defense, int(health_threshold * 100), bonus_defense]
 
 func get_effect_name() -> String:
 	return EFFECT_NAME

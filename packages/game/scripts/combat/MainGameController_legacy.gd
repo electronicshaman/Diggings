@@ -4,7 +4,7 @@ extends Node2D
 const DEBUG_ENABLED: bool = true
 
 @onready var duel_manager = $DuelManager
-@onready var hand_area = $UI/Control/PlayAreasContainer/HandArea
+@onready var hand_area = $UI/Control/HandArea
 @onready var player_health_label = $UI/Control/PlayerArea/PlayerStats/HealthLabel
 @onready var player_energy_label = $UI/Control/PlayerArea/PlayerStats/EnergyLabel
 @onready var player_defense_label = $UI/Control/PlayerArea/PlayerStats/DefenseLabel
