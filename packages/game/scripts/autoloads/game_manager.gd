@@ -155,6 +155,11 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	
 	initialize_game_data()
 	reset_run_statistics()
+
+	# Clear any previous hexmap state for a fresh run
+	var _hexmap_state := get_node_or_null("/root/HexmapState")
+	if _hexmap_state:
+		_hexmap_state.call("clear")
 	
 	# Apply character data if available
 	if selected_character:
@@ -347,6 +352,11 @@ func select_map(region_id: String) -> void:
 	
 	game_data.current_map = region_id
 	GLog.info("Selected map: " + region_id)
+
+	# Initialize HexmapState for this region so the map scene can generate once and persist
+	var _hexmap_state := get_node_or_null("/root/HexmapState")
+	if _hexmap_state:
+		_hexmap_state.call("begin_new_map", region_id)
 	
 	# Load the map scene
 	SceneManager.load_scene_by_name("map")

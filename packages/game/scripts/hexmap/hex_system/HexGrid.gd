@@ -4,6 +4,8 @@ extends Node2D
 signal tile_clicked(tile: HexTile)
 signal tile_hovered(tile: HexTile)
 
+@export var autogenerate_on_ready: bool = true
+
 @export var grid_width: int = 80
 @export var grid_height: int = 60
 @export var hex_size: float = 32.0
@@ -19,7 +21,8 @@ var player_position: HexCoordinates
 func _ready():
 	_initialize_grid()
 	_setup_tilemap()
-	_generate_world()
+	if autogenerate_on_ready:
+		_generate_world()
 
 func _initialize_grid():
 	# Load default terrain database if not set

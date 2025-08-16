@@ -194,6 +194,10 @@ func _setup_generation_ui():
 				hex_renderer.update_display()
 			if player:
 				hex_grid.update_visibility(player.current_hex, player.sight_range)
+			# Persist new map state after regeneration
+			var _hexmap_state := get_node_or_null("/root/HexmapState")
+			if _hexmap_state:
+				_hexmap_state.call("save_from_scene", hex_grid, player)
 	)
 
 	generation_ui_panel.randomize_pressed.connect(func():
@@ -215,6 +219,10 @@ func _setup_generation_ui():
 			hex_renderer.update_display()
 		if player:
 			hex_grid.update_visibility(player.current_hex, player.sight_range)
+		# Persist new map state after randomize
+		var _hexmap_state := get_node_or_null("/root/HexmapState")
+		if _hexmap_state:
+			_hexmap_state.call("save_from_scene", hex_grid, player)
 	)
 
 	generation_ui_panel.sight_range_changed.connect(func(v):
@@ -242,6 +250,8 @@ func _setup_camera():
 func _setup_hex_grid():
 	hex_grid = HexGrid.new()
 	hex_grid.name = "HexGrid"
+	# Always prevent internal autogeneration; we'll control it explicitly
+	hex_grid.autogenerate_on_ready = false
 	add_child(hex_grid)
 	
 	hex_renderer = HexRenderer.new(hex_grid)
@@ -251,62 +261,54 @@ func _setup_hex_grid():
 	print("HexGrid created with ", hex_grid.tiles.size(), " tiles")
 	print("HexRenderer created with size: ", hex_renderer.hex_size)
 
-	# Apply deterministic seeds from SeedManager on first creation
-	if hex_grid.terrain_generator and hex_grid.terrain_generator.map_generation_settings:
-		var s: MapGenerationSettings = hex_grid.terrain_generator.map_generation_settings
-		# Derive seeds deterministically from SeedManager map RNG
-		# Keep separate seeds for elevation/moisture by advancing RNG
-		if is_instance_valid(SeedManager) and SeedManager.is_run_active():
-			var base_seed := SeedManager.map_rng.seed
-			# If user already configured specific seeds in settings panel, keep them
-			if s.elevation_seed == 12345:
-				s.elevation_seed = int((base_seed ^ 0xA5A5A5) & 0x7FFFFFFF)
-			if s.moisture_seed == 67890:
-				# Step RNG to ensure different seed stream
-				var _tmp = SeedManager.get_map_random_int(0, 0x7FFFFFFF)
-				s.moisture_seed = int((base_seed ^ 0x5A5A5A ^ _tmp) & 0x7FFFFFFF)
-			# Rebuild noise with new seeds before any generation
-			if hex_grid.terrain_generator.has_method("_setup_noise_generators"):
-				hex_grid.terrain_generator._setup_noise_generators()
-
-	# Attempt to restore saved map state if available
-	if is_instance_valid(GameManager) and GameManager.game_data.has("hexmap_state"):
-		var saved: Dictionary = GameManager.game_data.hexmap_state
-		if saved and saved.has("tiles") and saved.has("player_q") and saved.has("player_r"):
-			print("Restoring hexmap from saved state")
-			hex_grid.load_grid(saved["tiles"])
-			# After loading tiles, force a redraw
-			if hex_renderer:
-				hex_renderer.update_display()
-			# Restore RNG state if present
-			if saved.has("rng_state") and is_instance_valid(SeedManager) and SeedManager.has_method("set_rng_state"):
-				SeedManager.set_rng_state(saved["rng_state"])
+	# Restore or generate via HexmapState
+	var _hexmap_state := get_node_or_null("/root/HexmapState")
+	if _hexmap_state and _hexmap_state.call("has_saved_map"):
+		print("HexmapState: restoring saved map")
+		_hexmap_state.call("apply_to_scene", hex_grid, null)
+		if hex_renderer:
+			hex_renderer.update_display()
+	else:
+		print("HexmapState: no saved map, generating new")
+		# Apply deterministic seeds before first generation
+		if hex_grid.terrain_generator and hex_grid.terrain_generator.map_generation_settings:
+			var s: MapGenerationSettings = hex_grid.terrain_generator.map_generation_settings
+			if is_instance_valid(SeedManager) and SeedManager.is_run_active():
+				var base_seed := SeedManager.map_rng.seed
+				if s.elevation_seed == 12345:
+					s.elevation_seed = int((base_seed ^ 0xA5A5A5) & 0x7FFFFFFF)
+				if s.moisture_seed == 67890:
+					var _tmp = SeedManager.get_map_random_int(0, 0x7FFFFFFF)
+					s.moisture_seed = int((base_seed ^ 0x5A5A5A ^ _tmp) & 0x7FFFFFFF)
+				if hex_grid.terrain_generator.has_method("_setup_noise_generators"):
+					hex_grid.terrain_generator._setup_noise_generators()
+		# Manually generate world once
+		hex_grid._generate_world()
+		if hex_renderer:
+			hex_renderer.update_display()
 
 func _setup_player():
 	player = HexMapPlayer.new()
 	player.name = "Player"
 	hex_grid.add_child(player)
 	
+	var _hexmap_state := get_node_or_null("/root/HexmapState")
 	var start_pos = HexCoordinates.new(0, 0)
 	var restored := false
-	if is_instance_valid(GameManager) and GameManager.game_data.has("hexmap_state"):
-		var saved: Dictionary = GameManager.game_data.hexmap_state
-		if saved and saved.has("player_q") and saved.has("player_r"):
-			start_pos = HexCoordinates.new(int(saved["player_q"]), int(saved["player_r"]))
-			restored = true
+	if _hexmap_state and _hexmap_state.call("has_saved_map"):
+		# We'll let HexmapState set player state after initialization
+		start_pos = HexCoordinates.new(0, 0)
+		restored = true
 	player.initialize(hex_grid, start_pos)
 	if restored:
-		var saved2: Dictionary = GameManager.game_data.hexmap_state
-		if saved2.has("movement_points"):
-			player.current_movement_points = int(saved2["movement_points"])
-		if saved2.has("hour") and player.game_time:
-			player.game_time.hour = int(saved2["hour"]) % 24
-			player.current_hour = player.game_time.hour
-		# Ensure the player's world position matches the restored hex
-		player.position = hex_grid.hex_to_pixel(player.current_hex)
-		hex_grid.update_visibility(player.current_hex, player.sight_range)
+		_hexmap_state.call("apply_to_scene", hex_grid, player)
 		if hex_renderer:
 			hex_renderer.update_display()
+	else:
+		# First-time map entry: save initial state
+		var _hexmap_state2 := get_node_or_null("/root/HexmapState")
+		if _hexmap_state2:
+			_hexmap_state2.call("save_from_scene", hex_grid, player)
 	
 	camera.position = player.position
 	print("Player created at: ", player.position)

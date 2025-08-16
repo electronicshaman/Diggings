@@ -366,6 +366,7 @@ func _maybe_trigger_random_event() -> bool:
 	if roll <= clampf(random_event_chance_per_step, 0.0, 1.0):
 		encounter_in_progress = true
 		print("Random event triggered (roll=", roll, ") at ", current_hex._to_string())
+		_save_map_and_player_state()
 		_start_event({"random": true})
 		return true
 	return false
@@ -390,18 +391,11 @@ func _start_event(_encounter_context: Dictionary = {}):
 		push_warning("HexMapPlayer: SceneManager unavailable; cannot start event")
 
 func _save_map_and_player_state():
-	if not is_instance_valid(GameManager) or not is_instance_valid(hex_grid):
+	if not is_instance_valid(hex_grid):
 		return
-	var state: Dictionary = {}
-	state["tiles"] = hex_grid.save_grid()
-	state["player_q"] = current_hex.q if current_hex else 0
-	state["player_r"] = current_hex.r if current_hex else 0
-	state["movement_points"] = current_movement_points
-	state["hour"] = current_hour
-	# Also persist RNG state for perfect determinism on return
-	if is_instance_valid(SeedManager) and SeedManager.has_method("get_rng_state"):
-		state["rng_state"] = SeedManager.get_rng_state()
-	GameManager.game_data["hexmap_state"] = state
+	var _hexmap_state := get_node_or_null("/root/HexmapState")
+	if _hexmap_state:
+		_hexmap_state.call("save_from_scene", hex_grid, self)
 	# Optional: autosave on encounter
 	if is_instance_valid(SaveSystem) and SaveSystem.autosave_enabled:
 		SaveSystem.save_game(SaveSystem.AUTOSAVE_PATH, true)
