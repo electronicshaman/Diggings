@@ -360,12 +360,16 @@ func play_card(card_instance: CardInstance):
 func apply_card_results(results: Dictionary):
 	var player = duel_state.player_data
 	var enemy = duel_state.enemy_data
-	
+
 	if results.has("damage") and results.damage > 0:
 		var ignore_defense = results.get("ignores_defense", false)
-		var actual_damage = enemy.take_damage(results.damage, ignore_defense)
-		player.damage_dealt_this_turn += actual_damage
-		GLog.info("Dealt %d damage to enemy" % actual_damage)
+		var hits: int = int(results.get("damage_hits", 1))
+		var total_actual = 0
+		for _i in range(max(1, hits)):
+			var actual_damage = enemy.take_damage(results.damage, ignore_defense)
+			total_actual += actual_damage
+		player.damage_dealt_this_turn += total_actual
+		GLog.info("Dealt %d damage to enemy" % total_actual)
 	
 	if results.has("defense") and results.defense > 0:
 		player.gain_defense(results.defense)
@@ -394,10 +398,14 @@ func apply_card_results(results: Dictionary):
 func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
 	"""Apply card results when enemy plays a card (reversed targets)"""
 	var player = duel_state.player_data
-	
+
 	if results.has("damage") and results.damage > 0:
-		var actual_damage = player.take_damage(results.damage)
-		GLog.info("Enemy dealt %d damage to player" % actual_damage)
+		var hits: int = int(results.get("damage_hits", 1))
+		var total_actual = 0
+		for _i in range(max(1, hits)):
+			var actual_damage = player.take_damage(results.damage)
+			total_actual += actual_damage
+		GLog.info("Enemy dealt %d damage to player" % total_actual)
 	
 	if results.has("defense") and results.defense > 0:
 		enemy.gain_defense(results.defense)
@@ -592,11 +600,13 @@ func _is_player_card(card_data: CardData) -> bool:
 	"""Determine if a card belongs to the player (simple heuristic for now)"""
 	# Check if card is in player's original deck (this is a temporary solution)
 	for player_card in duel_state.deck.cards:
-		if player_card.card_name == card_data.card_name:
+		# player_card is a CardInstance
+		if is_instance_valid(player_card) and player_card.get_card_name() == card_data.card_name:
 			return true
-	
+
 	for player_card in duel_state.discard_pile.cards:
-		if player_card.card_name == card_data.card_name:
+		# player_card is a CardInstance
+		if is_instance_valid(player_card) and player_card.get_card_name() == card_data.card_name:
 			return true
 	
 	# If not found in player piles, assume it's an enemy card
