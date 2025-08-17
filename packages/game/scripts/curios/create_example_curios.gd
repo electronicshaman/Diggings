@@ -30,7 +30,7 @@ func create_lucky_nugget():
 	curio.gold_cost = 100
 	
 	# Create the effect
-	var effect = preload("res://scripts/curios/effects/ResourceGain.gd").new()
+	var effect = preload("res://scripts/curios/effects/resource_gain.gd").new()
 	effect.trigger_event = "combat_start"
 	effect.resource_type = "gold"
 	effect.amount = 3
@@ -57,7 +57,7 @@ func create_thick_leather():
 	curio.gold_cost = 120
 	
 	# Create the effect
-	var effect = preload("res://scripts/curios/effects/ResourceGain.gd").new()
+	var effect = preload("res://scripts/curios/effects/resource_gain.gd").new()
 	effect.trigger_event = "turn_start"
 	effect.resource_type = "defense"
 	effect.amount = 1
@@ -84,7 +84,7 @@ func create_old_compass():
 	curio.gold_cost = 150
 	
 	# Create the effect
-	var effect = preload("res://scripts/curios/effects/ResourceGain.gd").new()
+	var effect = preload("res://scripts/curios/effects/resource_gain.gd").new()
 	effect.trigger_event = "combat_start"
 	effect.resource_type = "cards"
 	effect.amount = 1
@@ -111,7 +111,7 @@ func create_sharpened_blade():
 	curio.gold_cost = 140
 	
 	# Create the effect
-	var effect = preload("res://scripts/curios/effects/CardModifier.gd").new()
+	var effect = preload("res://scripts/curios/effects/card_modifier.gd").new()
 	effect.trigger_event = "card_played"
 	effect.target_card_type = "attack"
 	effect.modification_type = "damage"

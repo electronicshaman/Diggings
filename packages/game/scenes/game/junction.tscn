@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c7qkyam2bn8pw"]
 
-[ext_resource type="Script" uid="uid://5m37x04wqnht" path="res://scripts/ui/Junction.gd" id="1_junction"]
+[ext_resource type="Script" uid="uid://5m37x04wqnht" path="res://scripts/ui/junction.gd" id="1_junction"]
 
 [node name="Junction" type="Control"]
 layout_mode = 3

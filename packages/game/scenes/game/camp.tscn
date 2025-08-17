@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b8qvx2jc4nk5m"]
 
-[ext_resource type="Script" uid="uid://bsbjkeexjmsmg" path="res://scripts/ui/Camp.gd" id="1_camp"]
+[ext_resource type="Script" uid="uid://bsbjkeexjmsmg" path="res://scripts/ui/camp.gd" id="1_camp"]
 
 [node name="Camp" type="Control"]
 layout_mode = 3
