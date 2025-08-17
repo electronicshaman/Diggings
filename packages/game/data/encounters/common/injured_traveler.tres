@@ -1,0 +1,160 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/corruption_gain.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/karma_outcome.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/curio_reward.gd" id="6"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("5")
+description = "Your compassion for the injured is deeply remembered"
+delayed = false
+delay_turns = 0
+karma_category = "strangers"
+karma_amount = 3
+reason = "provided medical aid to injured traveler"
+narrative_description = "Your mercy in another's darkest hour becomes legend"
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("6")
+description = "The grateful traveler gives you his most precious possession"
+delayed = false
+delay_turns = 0
+curio_name = "Lucky Coin"
+rarity = "common"
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("2")
+choice_text = "Provide medical aid"
+choice_description = "Use your supplies to tend his wounds"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 3
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("1"), SubResource("2")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("5")
+description = "Your callousness toward suffering is noted"
+delayed = false
+delay_turns = 0
+karma_category = "strangers"
+karma_amount = -2
+reason = "ignored injured traveler"
+narrative_description = "Word spreads of your cold heart"
+
+[sub_resource type="Resource" id="5"]
+script = ExtResource("2")
+choice_text = "Keep walking"
+choice_description = "This isn't your problem"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("4")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="6"]
+script = ExtResource("3")
+description = "You take what you can from the helpless"
+delayed = false
+delay_turns = 0
+gold_amount = 20
+random_range = false
+min_gold = 15
+max_gold = 25
+
+[sub_resource type="Resource" id="7"]
+script = ExtResource("4")
+description = "Robbing the helpless blackens your soul"
+delayed = false
+delay_turns = 0
+corruption_amount = 5
+
+[sub_resource type="Resource" id="8"]
+script = ExtResource("5")
+description = "Preying on the helpless marks you as a predator"
+delayed = false
+delay_turns = 0
+karma_category = "strangers"
+karma_amount = -4
+reason = "robbed injured traveler"
+narrative_description = "Your cruelty will follow you across the colonies"
+
+[sub_resource type="Resource" id="9"]
+script = ExtResource("2")
+choice_text = "Take his belongings"
+choice_description = "He won't need them if he doesn't make it"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("6"), SubResource("7"), SubResource("8")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+encounter_name = "Injured Traveler"
+description = "Along the track, you find a man lying beside his overturned cart, blood seeping from a gash on his leg. He's conscious but weak. 'Help me, please,' he whispers. 'My horse spooked at a snake. I think my leg's broken.' His supplies are scattered nearby."
+flavor_text = "When civilization is distant, character is tested..."
+rarity = "Common"
+encounter_type = "Mixed"
+repeatable = true
+max_occurrences = -1
+weight = 1.0
+choices = [SubResource("3"), SubResource("5"), SubResource("9")]
+min_gold = -1
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = -1
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"plains": 1.5,
+"bush": 1.0,
+"scrubland": 0.8,
+"hills": 1.2,
+"breakaway": 1.3,
+"road": 2.5,
+"goldfields": 1.0,
+"outback": 1.8,
+"mountain": 0.5,
+"coast": 1.0
+}
+encounter_color = Color(0.6, 0.3, 0.2, 1)

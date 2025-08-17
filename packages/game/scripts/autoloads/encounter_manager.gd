@@ -22,6 +22,8 @@ var all_events: Array[EncounterData] = []
 var events_by_region: Dictionary = {}
 var events_by_rarity: Dictionary = {}
 
+# Note: Karma system moved to PlayerData for proper run-specific storage
+
 func _ready() -> void:
 	GLog.debug("EventManager initialized - The fates conspire...")
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
@@ -146,6 +148,8 @@ func trigger_random_event(region: String = "", rarity: String = "") -> Encounter
 		var weight = event.weight
 		if region != "":
 			weight *= event.get_weight_for_region(region)
+		# Apply karma-based weight modifier from PlayerData
+		weight *= _get_karma_modifier_for_encounter(event)
 		total_weight += weight
 		weighted_events.append({"event": event, "weight": weight})
 	
@@ -295,6 +299,7 @@ func get_save_data() -> Dictionary:
 		"event_history": [],
 		"delayed_outcomes": [],
 		"active_event": null
+		# Note: Karma data now saved in PlayerData
 	}
 	
 	for instance in event_history:
@@ -314,6 +319,7 @@ func get_save_data() -> Dictionary:
 
 func load_from_data(data: Dictionary) -> void:
 	events_encountered = data.get("events_encountered", {}).duplicate()
+	# Note: Karma data now loaded from PlayerData
 	
 	event_history.clear()
 	var history_data = data.get("event_history", [])
@@ -359,3 +365,25 @@ func debug_list_events() -> void:
 	for event in all_events:
 		print("- %s [%s] (%s)" % [event.encounter_name, event.rarity, event.encounter_type])
 	print("Total: %d events\n" % all_events.size())
+
+# ============================================================================
+# KARMA HELPER FUNCTIONS (Karma data stored in PlayerData)
+# ============================================================================
+
+func _get_player_data():
+	"""Get current PlayerData instance via GameManager"""
+	if game_manager and game_manager.has_method("get_player_data"):
+		return game_manager.get_player_data()
+	return null
+
+func _get_karma_modifier_for_encounter(encounter_data: EncounterData) -> float:
+	"""Get karma-based weight modifier for encounter selection from PlayerData"""
+	var player_data = _get_player_data()
+	if not player_data:
+		return 1.0
+	
+	# Use PlayerData's karma modifier method
+	if player_data.has_method("get_karma_modifier_for_encounter_type"):
+		return player_data.get_karma_modifier_for_encounter_type(encounter_data.encounter_type)
+	
+	return 1.0

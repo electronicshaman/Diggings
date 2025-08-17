@@ -47,6 +47,18 @@ const DEBUG_ENABLED: bool = true
 @export var curios: Array = []  # Array of CurioData resources
 @export var curio_stacks: Dictionary = {}  # curio_name -> stack count
 
+# Karma system for moral choices and reputation
+@export var moral_karma: int = 0  # Overall moral character (-10 to +10)
+@export var karma_categories: Dictionary = {
+	"wildlife": 0,      # Animal interactions
+	"strangers": 0,     # Helping travelers, sharing resources
+	"community": 0,     # Town/settlement interactions
+	"business": 0,      # Fair dealing vs exploitation
+	"survival": 0       # Desperate situations, life-or-death choices
+}
+@export var reputation_tier: String = "neutral_wanderer"
+@export var reputation_events: Array[String] = []  # Significant moral choices made
+
 # Change tracking system
 var _change_listeners: Array[Callable] = []
 
@@ -424,7 +436,11 @@ func get_save_data() -> Dictionary:
 		"cards_played_this_turn": cards_played_this_turn,
 		"damage_dealt_this_turn": damage_dealt_this_turn,
 		"damage_taken_this_turn": damage_taken_this_turn,
-		"curio_stacks": curio_stacks.duplicate()
+		"curio_stacks": curio_stacks.duplicate(),
+		"moral_karma": moral_karma,
+		"karma_categories": karma_categories.duplicate(),
+		"reputation_tier": reputation_tier,
+		"reputation_events": reputation_events.duplicate()
 	}
 	
 	# Save HOLD cards
@@ -485,6 +501,120 @@ func load_from_data(data: Dictionary):
 	
 	# Load curio stacks
 	curio_stacks = data.get("curio_stacks", {}).duplicate()
+	
+	# Load karma system data
+	moral_karma = data.get("moral_karma", 0)
+	karma_categories = data.get("karma_categories", {
+		"wildlife": 0, "strangers": 0, "community": 0, "business": 0, "survival": 0
+	}).duplicate()
+	reputation_tier = data.get("reputation_tier", "neutral_wanderer")
+	reputation_events = data.get("reputation_events", []).duplicate()
+
+# ============================================================================
+# KARMA SYSTEM METHODS
+# ============================================================================
+
+func add_karma(category: String, amount: int, reason: String = "") -> void:
+	"""Add karma in a specific category and update overall moral karma"""
+	if category in karma_categories:
+		karma_categories[category] += amount
+		karma_categories[category] = clamp(karma_categories[category], -10, 10)
+		GLog.debug("Karma gained: %s %+d (%s)" % [category, amount, reason])
+	
+	# Update overall moral karma (weighted average of categories)
+	var total_karma = 0
+	for cat_karma in karma_categories.values():
+		total_karma += cat_karma
+	moral_karma = clamp(total_karma / karma_categories.size(), -10, 10)
+	
+	# Update reputation tier based on moral karma
+	_update_reputation_tier()
+	
+	# Record significant moral choices
+	if abs(amount) >= 2 and reason != "":
+		reputation_events.append("%s: %s (%+d)" % [category, reason, amount])
+		# Keep only the last 10 significant events
+		if reputation_events.size() > 10:
+			reputation_events.pop_front()
+	
+	# Emit karma change event
+	_emit_change("karma_changed", null, {"category": category, "amount": amount, "total": moral_karma})
+
+func get_karma(category: String) -> int:
+	"""Get karma for a specific category"""
+	return karma_categories.get(category, 0)
+
+func get_moral_karma() -> int:
+	"""Get overall moral karma"""
+	return moral_karma
+
+func get_reputation_tier() -> String:
+	"""Get current reputation tier"""
+	return reputation_tier
+
+func _update_reputation_tier() -> void:
+	"""Update reputation tier based on current moral karma"""
+	var old_tier = reputation_tier
+	
+	if moral_karma >= 8:
+		reputation_tier = "saint_of_goldfields"
+	elif moral_karma >= 4:
+		reputation_tier = "decent_folk"
+	elif moral_karma >= -3:
+		reputation_tier = "neutral_wanderer"
+	elif moral_karma >= -7:
+		reputation_tier = "selfish_bastard"
+	else:
+		reputation_tier = "bush_devil"
+	
+	if old_tier != reputation_tier:
+		GLog.debug("Reputation changed: %s -> %s (karma: %d)" % [old_tier, reputation_tier, moral_karma])
+		_emit_change("reputation_changed", old_tier, reputation_tier)
+
+func get_reputation_description() -> String:
+	"""Get a narrative description of current reputation"""
+	match reputation_tier:
+		"saint_of_goldfields":
+			return "Saint of the Goldfields - Your kindness is legendary across the colonies"
+		"decent_folk":
+			return "Decent Folk - You're known as someone who can be trusted"
+		"neutral_wanderer":
+			return "Neutral Wanderer - You're just another face in the crowd"
+		"selfish_bastard":
+			return "Selfish Bastard - People keep their distance from you"
+		"bush_devil":
+			return "Bush Devil - Your cruelty is whispered about in fearful tones"
+		_:
+			return "Unknown reputation"
+
+func get_karma_modifier_for_encounter_type(encounter_type: String) -> float:
+	"""Get karma-based weight modifier for encounter selection"""
+	var base_weight = 1.0
+	var type_lower = encounter_type.to_lower()
+	
+	# High karma characters get more positive encounters
+	if moral_karma >= 5:
+		if type_lower in ["positive", "mixed"]:
+			base_weight *= 1.5
+		elif type_lower == "negative":
+			base_weight *= 0.6
+	# Low karma characters get more negative encounters
+	elif moral_karma <= -5:
+		if type_lower == "negative":
+			base_weight *= 1.5
+		elif type_lower in ["positive", "mixed"]:
+			base_weight *= 0.6
+	
+	return base_weight
+
+func reset_karma():
+	"""Reset karma system for new character (called on character creation)"""
+	moral_karma = 0
+	karma_categories = {
+		"wildlife": 0, "strangers": 0, "community": 0, "business": 0, "survival": 0
+	}
+	reputation_tier = "neutral_wanderer"
+	reputation_events.clear()
 
 # Debug methods
 func print_status():
@@ -494,3 +624,5 @@ func print_status():
 	GLog.debug("Class: %s" % get_display_name())
 	GLog.debug("Cards played this turn: %d" % cards_played_this_turn)
 	GLog.debug("HOLD cards: %d" % hold_cards.size())
+	GLog.debug("Moral karma: %d (%s)" % [moral_karma, reputation_tier])
+	GLog.debug("Karma categories: %s" % str(karma_categories))

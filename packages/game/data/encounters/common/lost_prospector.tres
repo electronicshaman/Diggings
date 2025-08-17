@@ -1,0 +1,151 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/karma_outcome.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/sanity_restore.gd" id="6"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("5")
+description = "Your generosity to a fellow prospector is remembered"
+delayed = false
+delay_turns = 0
+karma_category = "strangers"
+karma_amount = 2
+reason = "shared water with lost prospector"
+narrative_description = "Word spreads of your kindness to those in need"
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("6")
+description = "Helping others lifts your spirits"
+delayed = false
+delay_turns = 0
+sanity_amount = 5
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("2")
+choice_text = "Share your water"
+choice_description = "Give him some of your precious water supply"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 2
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("1"), SubResource("2")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("5")
+description = "Your selfishness toward fellow travelers is noted"
+delayed = false
+delay_turns = 0
+karma_category = "strangers"
+karma_amount = -1
+reason = "refused water to lost prospector"
+narrative_description = "The goldfields remember those who turn away from mercy"
+
+[sub_resource type="Resource" id="5"]
+script = ExtResource("2")
+choice_text = "Point toward town"
+choice_description = "Give directions but keep your supplies"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("4")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="6"]
+script = ExtResource("3")
+description = "The grateful prospector shares his find"
+delayed = false
+delay_turns = 0
+gold_amount = 40
+random_range = true
+min_gold = 25
+max_gold = 60
+
+[sub_resource type="Resource" id="7"]
+script = ExtResource("5")
+description = "Extreme kindness in the harsh bush is legendary"
+delayed = false
+delay_turns = 0
+karma_category = "strangers"
+karma_amount = 3
+reason = "guided lost prospector to safety"
+narrative_description = "Tales of your mercy will reach every campfire"
+
+[sub_resource type="Resource" id="8"]
+script = ExtResource("2")
+choice_text = "Guide him to safety"
+choice_description = "Abandon your plans to personally escort him to town"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 5
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("6"), SubResource("7")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+encounter_name = "Lost Prospector"
+description = "You encounter a weathered prospector stumbling through the terrain, clearly disoriented and parched. His water bottle is empty and he's been walking in circles for hours. 'Please mate,' he croaks, 'I've lost my way back to town. Can you spare some water?'"
+flavor_text = "In the goldfields, today's helper might be tomorrow's lifesaver..."
+rarity = "Common"
+encounter_type = "Mixed"
+repeatable = true
+max_occurrences = -1
+weight = 1.0
+choices = [SubResource("3"), SubResource("5"), SubResource("8")]
+min_gold = -1
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = -1
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"plains": 1.5,
+"bush": 1.2,
+"scrubland": 1.0,
+"hills": 1.3,
+"breakaway": 1.8,
+"goldfields": 2.0,
+"outback": 2.5,
+"mountain": 0.3,
+"coast": 0.8
+}
+encounter_color = Color(0.7, 0.5, 0.3, 1)

@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/encounters/outcomes/sanity_restore.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/karma_outcome.gd" id="5"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("4")
@@ -11,6 +12,16 @@ description = "You remain calm and avoid the snake"
 delayed = false
 delay_turns = 0
 sanity_amount = 5
+
+[sub_resource type="Resource" id="7"]
+script = ExtResource("5")
+description = "Your respect for dangerous wildlife is noted"
+delayed = false
+delay_turns = 0
+karma_category = "wildlife"
+karma_amount = 1
+reason = "showed respect to brown snake"
+narrative_description = "The bush recognizes your wisdom in coexistence"
 
 [sub_resource type="Resource" id="2"]
 script = ExtResource("3")
@@ -33,7 +44,7 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = [SubResource("1")]
+outcomes = [SubResource("1"), SubResource("7")]
 success_chance = 0.75
 failure_outcomes = [SubResource("2")]
 is_hidden = false
@@ -72,6 +83,16 @@ damage_type = "poison"
 percentage_based = false
 percentage = 0.1
 
+[sub_resource type="Resource" id="8"]
+script = ExtResource("5")
+description = "Your aggression toward wildlife is remembered"
+delayed = false
+delay_turns = 0
+karma_category = "wildlife"
+karma_amount = -2
+reason = "attacked brown snake unnecessarily"
+narrative_description = "The bush spirits frown upon needless violence"
+
 [sub_resource type="Resource" id="6"]
 script = ExtResource("2")
 choice_text = "Strike with tool"
@@ -85,7 +106,7 @@ required_class = ""
 min_stat_requirement = {}
 outcomes = []
 success_chance = 0.4
-failure_outcomes = [SubResource("5")]
+failure_outcomes = [SubResource("5"), SubResource("8")]
 is_hidden = false
 show_requirements = true
 one_time_only = false
