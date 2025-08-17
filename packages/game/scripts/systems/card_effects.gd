@@ -148,7 +148,28 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_inst
 
 	# Apply using the best available API
 	if effect.has_method("apply_effect_with_instance"):
+		# Snapshot key fields to detect no-op base implementation
+		var snapshot := {
+			"damage": results.get("damage", 0),
+			"defense": results.get("defense", 0),
+			"heal": results.get("heal", 0),
+			"draw": results.get("draw", 0),
+			"energy_restore": results.get("energy_restore", 0),
+			"stun_enemy": results.get("stun_enemy", 0),
+			"ignores_defense": results.get("ignores_defense", false),
+			"discard_random": results.get("discard_random", 0),
+			"add_curse": results.get("add_curse", 0),
+			"sanity_restore": results.get("sanity_restore", 0)
+		}
 		effect.apply_effect_with_instance(duel_manager, card_instance, results)
+		# Detect if nothing changed; if so, fallback to legacy apply_effect
+		var changed := false
+		for k in snapshot.keys():
+			if results.has(k) and results[k] != snapshot[k]:
+				changed = true
+				break
+		if not changed and effect.has_method("apply_effect"):
+			effect.apply_effect(duel_manager, card_instance.card_data, results)
 		result.success = true
 	elif effect.has_method("apply_effect"):
 		# Legacy path expects CardData

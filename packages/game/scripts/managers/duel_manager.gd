@@ -279,9 +279,12 @@ func play_enemy_card(enemy: EnemyState, card: CardData):
 		enemy.stats.current_energy -= card.energy_cost
 	
 	# Move card from enemy hand to battlefield temporarily
+	var staged_instance: CardInstance = null
 	if enemy.enemy_hand.remove_card_data(card):
 		duel_state.battlefield.add_card_data(card)
-		GLog.debug("Enemy card '%s' staged on battlefield" % card.card_name)
+		# Retrieve the actual instance we just added so we can resolve/remove the same one
+		staged_instance = duel_state.battlefield.find_instance_by_card_data(card)
+		GLog.debug("Enemy card '%s' staged on battlefield (instance acquired: %s)" % [card.card_name, str(staged_instance)])
 	
 	# Emit event for UI to show card
 	enemy_card_played.emit(card)
@@ -289,10 +292,14 @@ func play_enemy_card(enemy: EnemyState, card: CardData):
 	# Wait for player to see the card
 	await get_tree().create_timer(ENEMY_CARD_PLAY_DELAY).timeout
 	
-	# Immediately resolve the card
-	# Convert CardData to a temporary instance for resolution
-	var temp_instance := CardInstance.new(card)
-	resolve_single_card(temp_instance, false)
+	# Immediately resolve the card using the staged instance so battlefield removal works
+	if staged_instance:
+		resolve_single_card(staged_instance, false)
+	else:
+		# Fallback: if for some reason we couldn't acquire the staged instance, resolve with a temp
+		var temp_instance := CardInstance.new(card)
+		GLog.warn("Could not find staged instance for enemy card '%s'; resolving with temp instance" % card.card_name)
+		resolve_single_card(temp_instance, false)
 	
 	# Check if duel is over after each card
 	if duel_state.is_duel_over():
@@ -365,11 +372,15 @@ func apply_card_results(results: Dictionary):
 		var ignore_defense = results.get("ignores_defense", false)
 		var hits: int = int(results.get("damage_hits", 1))
 		var total_actual = 0
-		for _i in range(max(1, hits)):
+		var pre_hp = enemy.current_health
+		var pre_def = enemy.defense
+		GLog.debug("Applying player damage -> amount=%d, hits=%d, ignores_defense=%s | enemy before: %d HP, %d DEF" % [results.damage, max(1, hits), str(ignore_defense), pre_hp, pre_def])
+		for i in range(max(1, hits)):
 			var actual_damage = enemy.take_damage(results.damage, ignore_defense)
+			GLog.debug("  hit %d: actual=%d" % [i + 1, actual_damage])
 			total_actual += actual_damage
 		player.damage_dealt_this_turn += total_actual
-		GLog.info("Dealt %d damage to enemy" % total_actual)
+		GLog.info("Dealt %d damage to enemy | after: %d HP, %d DEF" % [total_actual, enemy.current_health, enemy.defense])
 	
 	if results.has("defense") and results.defense > 0:
 		player.gain_defense(results.defense)
@@ -402,10 +413,14 @@ func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
 	if results.has("damage") and results.damage > 0:
 		var hits: int = int(results.get("damage_hits", 1))
 		var total_actual = 0
-		for _i in range(max(1, hits)):
+		var pre_hp = player.current_health
+		var pre_def = player.defense
+		GLog.debug("Applying enemy damage -> amount=%d, hits=%d | player before: %d HP, %d DEF" % [results.damage, max(1, hits), pre_hp, pre_def])
+		for i in range(max(1, hits)):
 			var actual_damage = player.take_damage(results.damage)
+			GLog.debug("  hit %d: actual=%d" % [i + 1, actual_damage])
 			total_actual += actual_damage
-		GLog.info("Enemy dealt %d damage to player" % total_actual)
+		GLog.info("Enemy dealt %d damage to player | after: %d HP, %d DEF" % [total_actual, player.current_health, player.defense])
 	
 	if results.has("defense") and results.defense > 0:
 		enemy.gain_defense(results.defense)

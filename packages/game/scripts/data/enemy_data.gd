@@ -293,7 +293,8 @@ func draw_cards(count: int) -> Array[CardData]:
 		
 		var card = enemy_deck.draw_top()
 		if card and enemy_hand.add_card(card):
-			drawn_cards.append(card)
+			# Return CardData elements for callers; piles hold CardInstance
+			drawn_cards.append(card.card_data)
 		else:
 			# Hand is full, put card back
 			if card:
