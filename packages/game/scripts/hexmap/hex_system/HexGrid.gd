@@ -17,6 +17,7 @@ var tiles: Dictionary = {}
 var tile_map: TileMap
 var highlight_layer: Node2D
 var player_position: HexCoordinates
+var reveal_all_debug: bool = false
 
 func _ready():
 	_initialize_grid()
@@ -318,6 +319,16 @@ func _get_hex_points(center: Vector2) -> PackedVector2Array:
 
 func update_visibility(center: HexCoordinates, sight_range: int):
 	# Robust visibility update with bounds checking
+	# If debug reveal is enabled, force all tiles explored and visible
+	if reveal_all_debug:
+		for key in tiles:
+			var t: HexTile = tiles[key]
+			if not t.is_explored:
+				t.explore()
+			if not t.is_visible:
+				t.set_visibility(true)
+		return
+
 	var visible_coords = {}
 	
 	# Only update visibility if center is within bounds
@@ -339,6 +350,17 @@ func update_visibility(center: HexCoordinates, sight_range: int):
 		var tile = tiles[key]
 		if tile.is_visible and key not in visible_coords:
 			tile.set_visibility(false)
+
+func set_reveal_all_debug(enabled: bool):
+	reveal_all_debug = enabled
+	if enabled:
+		# Force reveal immediately
+		for key in tiles:
+			var t: HexTile = tiles[key]
+			if not t.is_explored:
+				t.explore()
+			if not t.is_visible:
+				t.set_visibility(true)
 
 func save_grid() -> Dictionary:
 	var save_data = {}

@@ -108,6 +108,15 @@ func _handle_keyboard_input(event: InputEventKey):
 	elif event.keycode == KEY_SPACE:  # Space to reset movement points
 		if player:
 			player.reset_movement_points()
+	elif event.keycode == KEY_V and event.shift_pressed:  # Shift+V to toggle reveal-all debug
+		if hex_grid:
+			hex_grid.set_reveal_all_debug(!hex_grid.reveal_all_debug)
+			print("Reveal-all debug: ", "ON" if hex_grid.reveal_all_debug else "OFF")
+			# Refresh visibility/rendering
+			if player and not hex_grid.reveal_all_debug:
+				hex_grid.update_visibility(player.current_hex, player.sight_range)
+			if hex_renderer:
+				hex_renderer.update_display()
 
 var show_reachable_area: bool = false
 var reachable_tiles_cache: Array[HexCoordinates] = []

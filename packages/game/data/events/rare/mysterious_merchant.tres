@@ -1,0 +1,138 @@
+[gd_resource type="Resource" script_class="EventData" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://data/EventData.gd" id="1"]
+[ext_resource type="Script" path="res://data/EventChoice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/events/outcomes/CurioReward.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/events/outcomes/GoldReward.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/events/outcomes/CorruptionGain.gd" id="5"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("3")
+description = "Receive a rare curio"
+delayed = false
+delay_turns = 0
+curio_paths = []
+random_curio = true
+curio_rarity = "Rare"
+remove_curio = false
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("5")
+description = "The price of forbidden knowledge"
+delayed = false
+delay_turns = 0
+corruption_amount = 2
+random_range = false
+min_corruption = 1
+max_corruption = 3
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("4")
+description = "A fair trade"
+delayed = false
+delay_turns = 0
+gold_amount = -50
+random_range = false
+min_gold = 5
+max_gold = 15
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("3")
+description = "Receive a common curio"
+delayed = false
+delay_turns = 0
+curio_paths = []
+random_curio = true
+curio_rarity = "Common"
+remove_curio = false
+
+[sub_resource type="Resource" id="5"]
+script = ExtResource("2")
+choice_text = "Accept the dark bargain"
+choice_description = "Trade your sanity for power"
+gold_cost = 0
+sanity_cost = 20
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("1"), SubResource("2")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(0.8, 0.2, 0.8, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="6"]
+script = ExtResource("2")
+choice_text = "Purchase the artifact"
+choice_description = "Pay gold for a mysterious item"
+gold_cost = 50
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("4")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 0.84, 0, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="7"]
+script = ExtResource("2")
+choice_text = "Decline politely"
+choice_description = "Some deals are too good to be true"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = []
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+event_name = "The Mysterious Merchant"
+description = "A hooded figure emerges from the shadows, offering you strange artifacts from beyond the veil. Their prices are... unusual."
+flavor_text = "\"Everything has a price, friend. The question is, what are you willing to pay?\""
+rarity = "Rare"
+event_type = "Mixed"
+repeatable = false
+max_occurrences = 1
+weight = 0.5
+choices = [SubResource("5"), SubResource("6"), SubResource("7")]
+min_gold = -1
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = 20
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"goldfields": 0.8,
+"outback": 1.2,
+"mountains": 1.0,
+"coast": 0.6
+}
+event_color = Color(0.5, 0, 0.5, 1)
