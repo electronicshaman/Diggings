@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://c51atoeluj18"]
+[gd_scene load_steps=2 format=3 uid="uid://bsukm1fecp1q7"]
 
-[ext_resource type="Script" uid="uid://cik1thid0n5lq" path="res://scripts/hexmap/map_controller.gd" id="1_ckcsi"]
+[ext_resource type="Script" uid="uid://d1kxuo6uviuv0" path="res://scripts/hexmap/map_controller.gd" id="1_ckcsi"]
 
 [node name="Hexmap" type="Node2D"]
 script = ExtResource("1_ckcsi")

@@ -11,7 +11,6 @@ var hex_renderer: HexRenderer
 var player: HexMapPlayer
 var camera: Camera2D
 var ui_layer: CanvasLayer
-var generation_ui_panel
 var last_preview_target: HexCoordinates = null
 var hud_ui_panel
 
@@ -24,7 +23,6 @@ func _ready():
 	_setup_player()
 	_setup_input()
 	_connect_signals()
-	_setup_generation_ui()
 	_setup_hud()
 	_update_hud()
 	
@@ -170,72 +168,6 @@ func _show_path_preview(target: HexCoordinates):
 	hex_grid.clear_highlights()
 	hex_grid.highlight_movement_path(movement_path, player.get_movement_points_remaining(), affordable_color, unaffordable_color)
 
-func _setup_generation_ui():
-	# Create a lightweight panel to tweak terrain gen and regenerate
-	ui_layer = CanvasLayer.new()
-	ui_layer.layer = 50
-	add_child(ui_layer)
-
-	var GenerationPanelClass = load("res://scripts/hexmap/ui/generation_panel.gd")
-	generation_ui_panel = GenerationPanelClass.new()
-	ui_layer.add_child(generation_ui_panel)
-	generation_ui_panel.build()
-
-	# Initialize values
-	var tg: TerrainGenerator = hex_grid.terrain_generator if hex_grid else null
-	if tg and tg.map_generation_settings:
-		generation_ui_panel.set_from_settings(tg.map_generation_settings, player.sight_range if player else 6, camera.zoom.x if camera else 1.0)
-
-	# Wire events
-	generation_ui_panel.regenerate_pressed.connect(func():
-		_apply_generation_settings()
-		if hex_grid and hex_grid.terrain_generator:
-			hex_grid.terrain_generator.regenerate_with_new_settings(hex_grid)
-			if hex_renderer:
-				hex_renderer.update_display()
-			if player:
-				hex_grid.update_visibility(player.current_hex, player.sight_range)
-			# Persist new map state after regeneration
-			var _hexmap_state := get_node_or_null("/root/HexmapState")
-			if _hexmap_state:
-				_hexmap_state.call("save_from_scene", hex_grid, player)
-	)
-
-	generation_ui_panel.randomize_pressed.connect(func():
-		if not hex_grid or not hex_grid.terrain_generator:
-			return
-		if hex_grid.terrain_generator.map_generation_settings:
-			var s: MapGenerationSettings = hex_grid.terrain_generator.map_generation_settings
-			if is_instance_valid(SeedManager) and SeedManager.is_run_active():
-				s.elevation_seed = SeedManager.get_map_random_int(1, 0x7FFFFFFF)
-				s.moisture_seed = SeedManager.get_map_random_int(1, 0x7FFFFFFF)
-			else:
-				var rng = RandomNumberGenerator.new()
-				rng.randomize()
-				s.elevation_seed = rng.randi()
-				s.moisture_seed = rng.randi()
-		_apply_generation_settings()
-		hex_grid.terrain_generator.regenerate_with_new_settings(hex_grid)
-		if hex_renderer:
-			hex_renderer.update_display()
-		if player:
-			hex_grid.update_visibility(player.current_hex, player.sight_range)
-		# Persist new map state after randomize
-		var _hexmap_state := get_node_or_null("/root/HexmapState")
-		if _hexmap_state:
-			_hexmap_state.call("save_from_scene", hex_grid, player)
-	)
-
-	generation_ui_panel.sight_range_changed.connect(func(v):
-		if player and hex_grid:
-			player.sight_range = int(v)
-			hex_grid.update_visibility(player.current_hex, player.sight_range)
-	)
-
-	generation_ui_panel.camera_zoom_changed.connect(func(v):
-		if camera:
-			camera.zoom = Vector2(v, v)
-	)
 
 func _setup_camera():
 	camera = Camera2D.new()
@@ -320,8 +252,10 @@ func _setup_input():
 	pass
 
 func _setup_hud():
-	if not ui_layer:
-		return
+	# Create UI layer for HUD panel
+	ui_layer = CanvasLayer.new()
+	ui_layer.layer = 50
+	add_child(ui_layer)
 	# Create HUD panel showing time of day and MP
 	var HudPanelClass = load("res://scripts/hexmap/ui/hud_panel.gd")
 	hud_ui_panel = HudPanelClass.new()
@@ -379,25 +313,8 @@ func _update_hud():
 		time_text += " (" + phase + ")"
 	hud_ui_panel.set_time_and_mp(time_text, "MP: %d/%d" % [player.get_movement_points_remaining(), player.max_movement_points])
 
-# UI helper methods moved into GenerationPanel and HudPanel
+# UI helper methods moved into HudPanel
 
-func _apply_generation_settings():
-	if not hex_grid or not hex_grid.terrain_generator:
-		return
-	var tg: TerrainGenerator = hex_grid.terrain_generator
-	var s := tg.map_generation_settings
-	if not s:
-		# Fallback to default settings if missing
-		s = load("res://data/hexmap/default_map_generation_settings.tres")
-		tg.map_generation_settings = s
-	# Pull values from GenerationPanel and apply
-	if generation_ui_panel:
-		var extras = generation_ui_panel.apply_to_settings(s)
-		if player and "sight_range" in extras:
-			player.sight_range = int(extras["sight_range"])
-		if camera and "camera_zoom" in extras:
-			var z = float(extras["camera_zoom"])
-			camera.zoom = Vector2(z, z)
 
 func _connect_signals():
 	if player:
