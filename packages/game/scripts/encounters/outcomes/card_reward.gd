@@ -12,11 +12,11 @@ const OUTCOME_NAME := "CardReward"
 
 func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	if remove_card:
-		_handle_card_removal(event_manager, game_state)
+		_handle_card_removal(encounter_manager, game_state)
 	else:
-		_handle_card_addition(event_manager, game_state)
+		_handle_card_addition(encounter_manager, game_state)
 
-func _handle_card_addition(event_manager: Node, game_state: Dictionary) -> void:
+func _handle_card_addition(encounter_manager: Node, game_state: Dictionary) -> void:
 	var cards_to_add = []
 	
 	if random_cards:
@@ -37,7 +37,7 @@ func _handle_card_addition(event_manager: Node, game_state: Dictionary) -> void:
 		
 		GLog.debug("Added card to deck: %s" % card.card_name)
 
-func _handle_card_removal(event_manager: Node, _game_state: Dictionary) -> void:
+func _handle_card_removal(encounter_manager: Node, _game_state: Dictionary) -> void:
 	if encounter_manager.event_bus:
 		encounter_manager.event_bus.ui_popup_opened.emit("card_removal")
 	

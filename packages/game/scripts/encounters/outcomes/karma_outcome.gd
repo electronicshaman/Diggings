@@ -9,17 +9,15 @@ const OUTCOME_NAME := "KarmaOutcome"
 @export var narrative_description: String = ""
 
 func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
-	# Get player data via GameManager (should be accessible through game_state or direct reference)
 	var player_data = null
 	
-	# Try to get player data from game_state first
+	# Get player data from game_state or via encounter_manager
 	if game_state.has("player_data") and game_state.player_data != null:
 		player_data = game_state.player_data
-	else:
-		# Fallback to GameManager if available
-		var game_manager = get_node_or_null("/root/GameManager")
-		if game_manager and game_manager.has_method("get_player_data"):
-			player_data = game_manager.get_player_data()
+	elif encounter_manager and encounter_manager.game_manager:
+		var gm = encounter_manager.game_manager
+		if gm and gm.has_method("get_player_data"):
+			player_data = gm.get_player_data()
 	
 	if not player_data or not player_data.has_method("add_karma"):
 		GLog.error("PlayerData not available or doesn't support karma system")
@@ -27,11 +25,11 @@ func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Di
 	
 	player_data.add_karma(karma_category, karma_amount, reason)
 	
-	# Emit karma change notification via EventBus if available
+	# Emit karma change notification via EventBus
 	if encounter_manager and encounter_manager.event_bus:
-		var category_karma = player_data.get_karma(karma_category)
+		var cat_karma = player_data.get_karma(karma_category)
 		var moral_karma = player_data.get_moral_karma()
-		encounter_manager.event_bus.emit_signal("karma_changed", karma_category, category_karma, moral_karma)
+		encounter_manager.event_bus.emit_signal("karma_changed", karma_category, cat_karma, moral_karma)
 	
 	GLog.debug("Applied %s: %s karma %+d (%s)" % [
 		get_outcome_name(),
@@ -80,8 +78,8 @@ func get_formatted_description() -> String:
 			return karma_text
 
 func get_preview_text() -> String:
-	var sign = "+" if karma_amount > 0 else ""
-	return "%s%d %s karma" % [sign, karma_amount, karma_category.capitalize()]
+	var sign_prefix = "+" if karma_amount > 0 else ""
+	return "%s%d %s karma" % [sign_prefix, karma_amount, karma_category.capitalize()]
 
 func get_outcome_name() -> String:
 	return OUTCOME_NAME

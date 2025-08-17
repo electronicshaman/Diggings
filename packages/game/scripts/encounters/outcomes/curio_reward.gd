@@ -10,11 +10,11 @@ const OUTCOME_NAME := "CurioReward"
 
 func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	if remove_curio:
-		_handle_curio_removal(event_manager, game_state)
+		_handle_curio_removal(encounter_manager, game_state)
 	else:
-		_handle_curio_addition(event_manager, game_state)
+		_handle_curio_addition(encounter_manager, game_state)
 
-func _handle_curio_addition(event_manager: Node, game_state: Dictionary) -> void:
+func _handle_curio_addition(encounter_manager: Node, game_state: Dictionary) -> void:
 	var curio_to_add = null
 	
 	if random_curio:
@@ -28,7 +28,7 @@ func _handle_curio_addition(event_manager: Node, game_state: Dictionary) -> void
 		encounter_manager.curio_manager.add_curio(curio_to_add)
 		GLog.debug("Added curio: %s" % curio_to_add.curio_name)
 
-func _handle_curio_removal(event_manager: Node, _game_state: Dictionary) -> void:
+func _handle_curio_removal(encounter_manager: Node, _game_state: Dictionary) -> void:
 	if encounter_manager.event_bus:
 		encounter_manager.event_bus.ui_popup_opened.emit("curio_removal")
 	

@@ -91,7 +91,7 @@ func can_trigger(game_state: Dictionary) -> bool:
 	return true
 
 func get_available_choices(game_state: Dictionary) -> Array[EncounterChoice]:
-	var available = []
+	var available: Array[EncounterChoice] = []
 	for choice in choices:
 		if choice and choice.can_select(game_state):
 			available.append(choice)

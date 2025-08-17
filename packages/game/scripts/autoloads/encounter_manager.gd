@@ -232,18 +232,18 @@ func _get_current_game_state() -> Dictionary:
 	var state = {}
 	
 	if game_manager:
-		state["gold"] = game_manager.gold
-		state["corruption"] = game_manager.corruption
-		state["sanity"] = game_manager.sanity
-		state["health"] = game_manager.current_health
-		state["max_health"] = game_manager.max_health
-		state["max_sanity"] = game_manager.max_sanity
-		state["max_corruption"] = game_manager.max_corruption
-		state["character_class"] = game_manager.character_class
-		state["act"] = game_manager.current_act
-		state["region"] = game_manager.current_region
-		state["player_name"] = game_manager.player_name
-		state["deck"] = game_manager.player_deck if game_manager.has("player_deck") else []
+		# Access values from game_manager.game_data dictionary
+		state["gold"] = game_manager.game_data.get("gold", 0)
+		state["corruption"] = game_manager.game_data.get("corruption", 0)
+		state["current_act"] = game_manager.game_data.get("current_act", 1)
+		state["current_floor"] = game_manager.game_data.get("current_floor", 0)
+		state["character_class"] = game_manager.current_character_class
+		state["deck"] = game_manager.game_data.get("deck", [])
+		
+		# Add player data if available
+		if game_manager.game_data.has("player") and game_manager.game_data.player:
+			var player_data = game_manager.game_data.player
+			state["player_data"] = player_data
 	
 	if curio_manager:
 		state["curios"] = []
