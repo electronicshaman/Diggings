@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/game/duel.tscn" id="1_duel_scene"]
+[ext_resource type="Script" path="res://scripts/debug/test_duel_bootstrap.gd" id="2_bootstrap"]
+
+[node name="TestDuelRoot" type="Node2D"]
+
+[node name="Duel" parent="." instance=ExtResource("1_duel_scene")] 
+
+[node name="Bootstrap" type="Node" parent="."]
+script = ExtResource("2_bootstrap")

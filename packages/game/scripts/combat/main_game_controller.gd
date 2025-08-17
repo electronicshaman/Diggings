@@ -81,9 +81,6 @@ func initialize_controllers() -> void:
 	is_initialized = true
 	GLog.debug("All controllers initialized and connected")
 
-	# Bootstrap a default duel on scene load so the player has a hand
-	if is_instance_valid(game_controller) and game_controller.has_method("start_test_duel"):
-		game_controller.start_test_duel()
 
 func get_ui_references() -> Dictionary:
 	if not ui_manager:
