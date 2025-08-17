@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="TerrainTypeResource" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="TerrainTypeResource" load_steps=2 format=3 uid="uid://c5j0q6v0v24t"]
 
-[ext_resource type="Script" path="res://scripts/hexmap/resources/TerrainTypeResource.gd" id="1"]
+[ext_resource type="Script" uid="uid://bqwv5631dnn0f" path="res://scripts/hexmap/resources/terrain_type_resource.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
@@ -8,7 +8,7 @@ terrain_name = "Creek"
 movement_cost = 999
 passable = false
 buildable = false
-base_color = Color(0, 1, 1, 1)
+base_color = Color(0.54902, 0.745098, 0.698039, 1)
 dimmed_color = Color(0, 0.5, 0.5, 1)
 outline_color = Color(0, 0, 0.5, 1)
 visibility_modifier = 1.0

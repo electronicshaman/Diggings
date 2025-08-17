@@ -79,6 +79,12 @@ signal music_change_requested(track_name: String)
 signal debug_command_executed(command: String, args: Array)
 signal error_occurred(error_message: String)
 
+signal encounter_triggered(encounter_instance: Resource)
+signal encounter_choice_made(encounter_instance: Resource, choice_index: int)
+signal encounter_completed(encounter_instance: Resource)
+signal encounter_outcome_applied(outcome: Resource)
+signal encounter_queued(encounter_data: Resource)
+
 func _ready() -> void:
 	GLog.debug("EventBus initialized - The void awaits your signals")
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)

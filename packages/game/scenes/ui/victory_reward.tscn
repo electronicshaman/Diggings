@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b4v7n8m5xk3qj"]
 
-[ext_resource type="Script" path="res://scripts/ui/VictoryReward.gd" id="1_victory_reward"]
+[ext_resource type="Script" path="res://scripts/ui/victory_reward.gd" id="1_victory_reward"]
 
 [node name="VictoryReward" type="Control"]
 layout_mode = 3

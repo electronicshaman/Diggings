@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="MapRegionConfig" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="MapRegionConfig" load_steps=2 format=3 uid="uid://ci4ejtbw7kc83"]
 
-[ext_resource type="Script" path="res://scripts/map/MapRegionConfig.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/map/map_region_config.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
@@ -9,6 +9,7 @@ region_name = "The Haunted Coast"
 city_name = "Port Fairy"
 city_position = Vector2(450, 300)
 theme_color = Color(0.2, 0.4, 0.6, 1)
+ambient_music_path = ""
 region_bounds = Vector2(850, 600)
 min_nodes = 22
 max_nodes = 32
@@ -23,12 +24,12 @@ node_type_weights = {
 "poi": 2.0,
 "settlement": 1.2
 }
-special_encounters = ["ghost_ship", "sea_monster"]
-unique_items = []
-environmental_hazards = ["fog", "storm", "shipwreck"]
+special_encounters = Array[String](["ghost_ship", "sea_monster"])
+unique_items = Array[String]([])
+environmental_hazards = Array[String](["fog", "storm", "shipwreck"])
 boss_name = "The Drowned Captain"
 boss_enemy_id = "boss_coast"
-boss_rewards = ["neptune_trident", "pearl_of_madness"]
+boss_rewards = Array[String](["neptune_trident", "pearl_of_madness"])
 region_description = "Where the land meets the restless sea, strange ships sail through the fog and things from the deep wash ashore. The coast holds the memories of countless wrecks and the souls they carried."
 city_description = "Port Fairy watches over the turbulent waters, its lighthouse a beacon against the darkness that rises from the depths. Sailors speak in hushed tones of what they've seen beyond the breakers."
-completion_unlocks = []
+completion_unlocks = Array[String]([])

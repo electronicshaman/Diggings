@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dkejnvd7wl47w"]
 
-[ext_resource type="Script" uid="uid://duakyltvf8eu6" path="res://scripts/combat/MainGameController.gd" id="2_main_controller"]
+[ext_resource type="Script" uid="uid://duakyltvf8eu6" path="res://scripts/combat/main_game_controller.gd" id="2_main_controller"]
 [ext_resource type="Script" uid="uid://c6j7ia2480bri" path="res://scripts/managers/duel_manager.gd" id="2_qgbr3"]
 [ext_resource type="Script" uid="uid://btuf86ovfqnev" path="res://scripts/managers/game_controller.gd" id="3_7qhhq"]
 [ext_resource type="Script" uid="uid://be3e1kesnfgey" path="res://scripts/managers/ui_controller.gd" id="4_noi7s"]

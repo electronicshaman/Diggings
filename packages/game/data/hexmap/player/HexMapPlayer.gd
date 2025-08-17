@@ -120,7 +120,7 @@ func can_move_to(target: HexCoordinates) -> bool:
 	return true
 
 func calculate_movement_path_to(target: HexCoordinates) -> Resource:
-	var movement_path_class = load("res://scripts/hexmap/hex_system/MovementPath.gd")
+	var movement_path_class = load("res://scripts/hexmap/hex_system/movement_path.gd")
 	if not hex_grid:
 		return movement_path_class.new()
 

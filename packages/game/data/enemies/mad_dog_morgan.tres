@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyState" load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://data/game_state/EnemyData.gd" id="1"]
-[ext_resource type="Script" path="res://data/Stats.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/stats.gd" id="2"]
 [ext_resource type="Resource" uid="uid://c4v2lj8qg5n3m" path="res://data/decks/enemy/mad_dog_deck.tres" id="3_mad_dog_deck"]
 
 [sub_resource type="Resource" id="Stats_1"]

@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="MapGenerationSettings" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="MapGenerationSettings" load_steps=2 format=3 uid="uid://d1c6g0he66nis"]
 
-[ext_resource type="Script" path="res://scripts/hexmap/resources/MapGenerationSettings.gd" id="1"]
+[ext_resource type="Script" uid="uid://cc6loias147hl" path="res://scripts/hexmap/resources/map_generation_settings.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
@@ -35,10 +35,10 @@ goldfield_elevation_min = 0.5
 goldfield_moisture_min = 0.3
 goldfield_moisture_max = 0.7
 goldfield_noise_threshold = 0.4
-goldfield_mine_count_min = 5
-goldfield_mine_count_max = 10
-goldfield_deposit_count_min = 5
-goldfield_deposit_count_max = 10
+goldfield_mine_count_min = 10
+goldfield_mine_count_max = 25
+goldfield_deposit_count_min = 10
+goldfield_deposit_count_max = 25
 town_count = 5
 town_spacing = 8.0
 river_count = 8

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="HexmapGameSettings" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/hexmap/resources/GameSettings.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/hexmap/resources/game_settings.gd" id="1"]
 
 [resource]
 script = ExtResource("1")

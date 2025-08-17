@@ -88,17 +88,14 @@ mcp__godot-mcp__get_running_scene_screenshot()
 
 ### Map generation
 
-Planar graph pipeline using Delaunay triangulation with Poisson disk placement:
+Hexmap-based exploration system:
 
-- MapGenerator (`scripts/map/MapGenerator.gd`) – main generation
-- PoissonDiskLayout (`scripts/map/PoissonDiskLayout.gd`) – even node distribution
-- DelaunayTriangulator (`scripts/map/DelaunayTriangulator.gd`) – planar connectivity
-- EdgePruner (`scripts/map/EdgePruner.gd`) – prunes edges to design targets
-- PlanarGraphValidator (`scripts/map/PlanarGraphValidator.gd`) – planarity checks/fixes
-- GraphRule (`scripts/map/GraphRule.gd`) – rule-driven layout shaping
-- MapLayoutConfig script (`scripts/map/MapLayoutConfig.gd`) + resource (`data/map_layout_config.tres`)
+- HexmapMapController (`scripts/hexmap/MapController.gd`) – hexmap scene controller
+- HexGrid (`scripts/hexmap/hex_system/HexGrid.gd`) – hex grid logic and pathfinding
+- HexRenderer (`scripts/hexmap/hex_system/HexRenderer.gd`) – hex rendering
+- TerrainGenerator (`scripts/hexmap/terrain_generation/TerrainGenerator.gd`) – procedural terrain
 - MapNodeRegistry autoload – node creation/config selection
-- Debug scene: `scenes/debug/map_test.tscn`
+- HexmapState autoload – persistent map state across scenes
 
 ### Character classes
 
@@ -124,7 +121,7 @@ scripts/
   autoloads/       # Singletons (EventBus, GLog, SceneManager, etc.)
   cards/           # Card system, CardData, effects
   combat/          # Controllers for duel scenes (e.g., MainGameController)
-  map/             # Map generation system (triangulation, rules, validator)
+  hexmap/          # Hexmap system (grid, rendering, terrain generation)
   managers/        # MVC controllers (game/ui/input/duel)
   systems/         # Cross-cutting systems (e.g., card_effects.gd)
   ui/              # UI helpers/components
@@ -138,17 +135,16 @@ scenes/
 
 ## Current Development Focus
 
-### Current development focus (branch: `layout-baseline-31361ec`)
+### Current development focus
 
-- Planar map pipeline: Poisson placement → Delaunay → pruning → planarity validation
-- Region generation support via `MapRegionConfig.gd` and `generate_map_for_region`
-- Persistent visibility states (AVAILABLE/KNOWN/COMPLETED/CURRENT)
-- Debug map scene at `scenes/debug/map_test.tscn`
-- Tunable parameters in `data/map_layout_config.tres`
+- Hexmap exploration system with procedural terrain generation
+- Movement points and turn-based exploration mechanics
+- Resource discovery and encounter system
+- Persistent map state via HexmapState autoload
+- Terrain types with movement costs and special properties
 
 ### Known issues
 
-- UIReferenceManager class is referenced by `MainGameController.gd` but not found in repo; add it or refactor to direct node paths
 - Some UI node paths in `MainGameController.gd` may need verification
 - EventBus declares extra signals by design; unused ones are for upcoming features
 

@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="TerrainTypeResource" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="TerrainTypeResource" load_steps=2 format=3 uid="uid://cw2k0nv2m78nl"]
 
-[ext_resource type="Script" path="res://scripts/hexmap/resources/TerrainTypeResource.gd" id="1"]
+[ext_resource type="Script" uid="uid://bqwv5631dnn0f" path="res://scripts/hexmap/resources/terrain_type_resource.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
@@ -8,7 +8,7 @@ terrain_name = "Plains"
 movement_cost = 2
 passable = true
 buildable = true
-base_color = Color(0.933333, 0.937255, 0.215686, 1)
+base_color = Color(0.94902, 0.921569, 0.74902, 1)
 dimmed_color = Color(0.466667, 0.468627, 0.107843, 1)
 outline_color = Color(0, 0, 0, 1)
 visibility_modifier = 1.0

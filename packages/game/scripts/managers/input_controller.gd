@@ -7,6 +7,7 @@ signal input_action_triggered(action: String)
 var game_controller: Node
 var ui_controller: Node
 var end_turn_button: Button
+var debug_controller: DebugController
 
 var input_enabled: bool = true
 var is_processing_input: bool = false
@@ -14,6 +15,10 @@ var is_processing_input: bool = false
 func _ready() -> void:
 	GLog.debug("InputController initialized - Interpreting mortal intentions")
 	set_process_unhandled_input(true)
+	
+	# Try to find debug controller if in debug build
+	if OS.is_debug_build():
+		debug_controller = get_node_or_null("/root/DebugController")
 
 func initialize(game_controller_ref: Node, ui_controller_ref: Node, button_ref: Button) -> void:
 	game_controller = game_controller_ref
@@ -22,6 +27,10 @@ func initialize(game_controller_ref: Node, ui_controller_ref: Node, button_ref: 
 	
 	if end_turn_button:
 		end_turn_button.pressed.connect(_on_end_turn_pressed)
+	
+	# Initialize debug controller if available
+	if is_instance_valid(debug_controller):
+		debug_controller.initialize(game_controller, ui_controller, get_node_or_null("/root/DuelManager"))
 	
 	setup_event_connections()
 
@@ -36,6 +45,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	is_processing_input = true
 	
+	# Handle standard input
 	if event.is_action_pressed("ui_page_up"):
 		_handle_debug_toggle()
 	elif event.is_action_pressed("ui_cancel"):
@@ -43,29 +53,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_accept"):
 		_handle_end_turn()
 	
-	if OS.is_debug_build():
-		_handle_debug_shortcuts(event)
+	# Let DebugController handle debug shortcuts if available
+	# (It will process its own input events)
 	
 	is_processing_input = false
 
-func _handle_debug_shortcuts(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed:
-		match event.keycode:
-			KEY_F1:
-				_trigger_debug_action("add_card")
-			KEY_F2:
-				_trigger_debug_action("add_health")
-			KEY_F3:
-				_trigger_debug_action("add_energy")
-			KEY_F5:
-				_trigger_debug_action("restart_duel")
-			KEY_F9:
-				_trigger_debug_action("instant_win")
-			KEY_F10:
-				_trigger_debug_action("instant_lose")
-
 func _handle_debug_toggle() -> void:
-	if ui_controller:
+	if ui_controller and ui_controller.has_method("toggle_debug_panel"):
 		ui_controller.toggle_debug_panel()
 		GLog.debug("Debug panel toggled")
 		input_action_triggered.emit("debug_toggle")
@@ -94,47 +88,6 @@ func can_end_turn() -> bool:
 	
 	var duel_state = game_controller.current_duel_state
 	return duel_state and duel_state.is_player_turn and not duel_state.get("duel_ended", false)
-
-func _trigger_debug_action(action: String) -> void:
-	if not OS.is_debug_build():
-		return
-	
-	GLog.debug("Debug action triggered: " + action)
-	
-	match action:
-		"add_card":
-			if game_controller:
-				game_controller.add_random_card_to_hand()
-		"add_health":
-			if game_controller:
-				game_controller.modify_player_health(10)
-		"add_energy":
-			if game_controller:
-				game_controller.modify_player_energy(3)
-		"restart_duel":
-			if game_controller:
-				game_controller.start_test_duel()
-		"instant_win":
-			_force_duel_end("player")
-		"instant_lose":
-			_force_duel_end("enemy")
-	
-	input_action_triggered.emit("debug_" + action)
-
-func _force_duel_end(winner: String) -> void:
-	if not game_controller or not ("current_duel_state" in game_controller):
-		return
-	
-	var duel_state = game_controller.current_duel_state
-	if duel_state:
-		if winner == "player" and duel_state.enemy_data:
-			duel_state.enemy_data.current_health = 0
-		elif winner == "enemy" and duel_state.player_data:
-			duel_state.player_data.current_health = 0
-		
-		EventBus.duel_ended.emit(winner == "player")
-		if ui_controller:
-			ui_controller.show_duel_result(winner)
 
 func set_input_enabled(enabled: bool) -> void:
 	input_enabled = enabled
