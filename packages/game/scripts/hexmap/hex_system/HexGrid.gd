@@ -231,35 +231,78 @@ func _insert_sorted(array: Array, item: HexCoordinates, priority: float, priorit
 func _coord_key(coords: HexCoordinates) -> String:
 	return "%d,%d" % [coords.q, coords.r]
 
-func highlight_tiles(tiles_to_highlight: Array[HexTile], color: Color, border_color: Color = Color.TRANSPARENT):
-	for child in highlight_layer.get_children():
-		child.queue_free()
-	
+func highlight_tiles(tiles_to_highlight: Array[HexTile], color: Color, border_color: Color = Color.TRANSPARENT, append: bool = false):
+	if not append:
+		for child in highlight_layer.get_children():
+			child.queue_free()
+
 	for tile in tiles_to_highlight:
-		var poly := Polygon2D.new()
-		poly.color = Color(color, 0.3)
 		var center := hex_to_pixel(tile.coordinates)
-		poly.polygon = _get_hex_points(center)
-		poly.z_index = 100
-		poly.z_as_relative = false
-		highlight_layer.add_child(poly)
-		
-		# Add border if border_color is specified
-		if border_color != Color.TRANSPARENT:
-			var border := Line2D.new()
-			border.width = 3.0
-			border.default_color = border_color
-			border.closed = true
-			border.z_index = 101
-			border.z_as_relative = false
-			var points = _get_hex_points(center)
-			for point in points:
-				border.add_point(point)
-			highlight_layer.add_child(border)
+		var points = _get_hex_points(center)
+		# Area highlight: when no explicit border color is given, add a subtle semi-transparent fill
+		if border_color == Color.TRANSPARENT:
+			var poly := Polygon2D.new()
+			poly.color = Color(color, 0.22)
+			poly.polygon = points
+			poly.z_index = 100
+			poly.z_as_relative = false
+			highlight_layer.add_child(poly)
+		# Underlay line for visibility on any background
+		var border_under := Line2D.new()
+		border_under.width = 6.0
+		border_under.default_color = Color(0, 0, 0, 0.45)  # soft shadow
+		border_under.closed = true
+		border_under.z_index = 101
+		border_under.z_as_relative = false
+		for p in points:
+			border_under.add_point(p)
+		highlight_layer.add_child(border_under)
+
+		# Main colored border
+		var border := Line2D.new()
+		border.width = 3.0
+		border.default_color = border_color if border_color != Color.TRANSPARENT else color
+		border.closed = true
+		border.z_index = 102
+		border.z_as_relative = false
+		for p in points:
+			border.add_point(p)
+		highlight_layer.add_child(border)
 
 func clear_highlights():
 	for child in highlight_layer.get_children():
 		child.queue_free()
+
+# Helper: draw a segmented path where affordable steps use one color and the rest use another
+func highlight_movement_path(path: MovementPath, available_points: int, affordable_color: Color, unaffordable_color: Color):
+	if not path or not path.is_valid:
+		return
+	# Build two batches: up to first unaffordable step (inclusive of reachable end), and the rest
+	var affordable_tiles: Array[HexTile] = []
+	var unaffordable_tiles: Array[HexTile] = []
+
+	# Step index i corresponds to coordinates[i]; first move cost is at step 1
+	var cutoff_found := false
+	for i in range(path.coordinates.size()):
+		var coord := path.coordinates[i]
+		var tile := get_tile(coord)
+		if not tile:
+			continue
+		if i == 0:
+			affordable_tiles.append(tile) # start tile always included
+			continue
+		var cumulative := path.get_cumulative_cost_at_step(i)
+		if not cutoff_found and cumulative <= available_points:
+			affordable_tiles.append(tile)
+		else:
+			cutoff_found = true
+			unaffordable_tiles.append(tile)
+
+	# Draw both batches with subtle fill overlays so path segments are clearly differentiated
+	if not affordable_tiles.is_empty():
+		highlight_tiles(affordable_tiles, affordable_color, Color.TRANSPARENT, false)
+	if not unaffordable_tiles.is_empty():
+		highlight_tiles(unaffordable_tiles, unaffordable_color, Color.TRANSPARENT, true)
 
 func _get_hex_points(center: Vector2) -> PackedVector2Array:
 	var points := PackedVector2Array()

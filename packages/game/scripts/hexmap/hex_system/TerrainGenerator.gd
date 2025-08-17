@@ -259,7 +259,8 @@ func _smooth_isolated_tiles(hex_grid: HexGrid):
 		var tile: HexTile = hex_grid.tiles[key]
 		# Preserve special features
 		var terrain_name = tile.get_terrain_name()
-		if terrain_name in ["Creek", "Road", "Town"]:
+		# Do not smooth over key features including resource tiles like Goldfield
+		if terrain_name in ["Creek", "Road", "Town", "Goldfield"]:
 			continue
 		var neighbors = hex_grid.get_neighbors(tile.coordinates)
 		
@@ -343,13 +344,13 @@ func _majority_smooth(hex_grid: HexGrid, passes: int = 1):
 			var tile: HexTile = hex_grid.tiles[key]
 			# Don't alter special features; preserve creeks (rivers)
 			var terrain_name = tile.get_terrain_name()
-			if terrain_name in ["Town", "Road", "Creek"]:
+			if terrain_name in ["Town", "Road", "Creek", "Goldfield"]:
 				continue
 			var neighbors = hex_grid.get_neighbors(tile.coordinates)
 			var counts := {}
 			for n in neighbors:
 				var n_terrain_name = n.get_terrain_name()
-				if n_terrain_name in ["Town", "Road", "Creek"]:
+				if n_terrain_name in ["Town", "Road", "Creek", "Goldfield"]:
 					continue
 				counts[n_terrain_name] = counts.get(n_terrain_name, 0) + 1
 			var best_terrain_name = terrain_name

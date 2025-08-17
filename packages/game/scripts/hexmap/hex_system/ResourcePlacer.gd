@@ -20,6 +20,7 @@ func place_resources(hex_grid: HexGrid, rng: RandomNumberGenerator, settlements:
 		civilization_settings.goldfield_mine_count_min,
 		civilization_settings.goldfield_mine_count_max
 	)
+	print("ResourcePlacer: attempting to place ", mine_count, " gold mines")
 	
 	for i in range(mine_count):
 		var attempts = 0
@@ -35,8 +36,14 @@ func place_resources(hex_grid: HexGrid, rng: RandomNumberGenerator, settlements:
 				var resource = _create_resource(hex_grid, coord, "mine")
 				resources.append(resource)
 				forbidden[key] = true
+				# Debug logging for visibility
+				print("ResourcePlacer: placed mine at ", coord._to_string())
 				break
+			# Optional: after many failed attempts, give up early to avoid long loops
+			if attempts % 500 == 0:
+				print("ResourcePlacer: still searching for valid spot (attempt ", attempts, ")")
 	
+	print("ResourcePlacer: placed ", resources.size(), " mines")
 	return resources
 
 func _create_resource(hex_grid: HexGrid, coord: HexCoordinates, resource_type: String) -> ResourceData:
@@ -60,6 +67,7 @@ func _can_place_resource(hex_grid: HexGrid, coord: HexCoordinates) -> bool:
 		return false
 	
 	var terrain_name = tile.get_terrain_name()
+	# Prefer non-hostile, non-infrastructure tiles; allow placement on Goldfield or Plains/Bush
 	return terrain_name not in ["Mountain", "Creek", "Town", "Road"]
 
 func _random_coord(hex_grid: HexGrid, rng: RandomNumberGenerator) -> HexCoordinates:

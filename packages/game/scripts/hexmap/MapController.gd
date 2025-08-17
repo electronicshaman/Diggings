@@ -155,19 +155,11 @@ func _show_path_preview(target: HexCoordinates):
 	var movement_path = player.calculate_movement_path_to(target)
 	if not movement_path or not movement_path.is_valid:
 		return
-	# Determine color based on affordability
-	var path_color: Color
-	if movement_path.can_afford(player.get_movement_points_remaining()):
-		path_color = Color.YELLOW  # Bright yellow for affordable
-	else:
-		path_color = Color.ORANGE_RED  # Bright orange-red for too expensive
-	# Highlight the path
-	var tiles_to_highlight: Array[HexTile] = []
-	for coord in movement_path.coordinates:
-		var tile = hex_grid.get_tile(coord)
-		if tile:
-			tiles_to_highlight.append(tile)
-	hex_grid.highlight_tiles(tiles_to_highlight, path_color, Color.RED)
+	# Visualize affordable vs unaffordable segments with distinct colors
+	var affordable_color := Color.YELLOW
+	var unaffordable_color := Color.ORANGE_RED
+	hex_grid.clear_highlights()
+	hex_grid.highlight_movement_path(movement_path, player.get_movement_points_remaining(), affordable_color, unaffordable_color)
 
 func _setup_generation_ui():
 	# Create a lightweight panel to tweak terrain gen and regenerate
