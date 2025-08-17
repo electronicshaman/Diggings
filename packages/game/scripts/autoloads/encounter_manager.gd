@@ -2,14 +2,14 @@ extends Node
 
 const DEBUG_ENABLED: bool = true
 
-signal event_triggered(event_instance: EventInstance)
-signal event_choice_made(event_instance: EventInstance, choice_index: int)
-signal event_completed(event_instance: EventInstance)
-signal event_outcome_applied(outcome: EventOutcome)
+signal event_triggered(event_instance: EncounterInstance)
+signal event_choice_made(event_instance: EncounterInstance, choice_index: int)
+signal event_completed(event_instance: EncounterInstance)
+signal event_outcome_applied(outcome: EncounterOutcome)
 
-var active_event: EventInstance = null
-var event_queue: Array[EventInstance] = []
-var event_history: Array[EventInstance] = []
+var active_event: EncounterInstance = null
+var event_queue: Array[EncounterInstance] = []
+var event_history: Array[EncounterInstance] = []
 var events_encountered: Dictionary = {}
 var delayed_outcomes: Array[Dictionary] = []
 
@@ -18,7 +18,7 @@ var game_manager: Node = null
 var curio_manager: Node = null
 var scene_manager: Node = null
 
-var all_events: Array[EventData] = []
+var all_events: Array[EncounterData] = []
 var events_by_region: Dictionary = {}
 var events_by_rarity: Dictionary = {}
 
@@ -67,10 +67,10 @@ func _load_events_from_directory(dir_path: String) -> void:
 	while file_name != "":
 		if file_name.ends_with(".tres"):
 			var event_path = dir_path + file_name
-			var event = load(event_path) as EventData
+			var event = load(event_path) as EncounterData
 			if event:
 				all_events.append(event)
-				GLog.debug("Loaded event: %s" % event.event_name)
+				GLog.debug("Loaded event: %s" % event.encounter_name)
 		file_name = dir.get_next()
 
 func _categorize_events() -> void:
@@ -88,20 +88,20 @@ func _categorize_events() -> void:
 			if event.regional_weights[region] > 0:
 				events_by_region[region].append(event)
 
-func trigger_event(event_data: EventData, force: bool = false) -> EventInstance:
+func trigger_encounter(encounter_data: EncounterData, force: bool = false) -> EncounterInstance:
 	var game_state = _get_current_game_state()
 	
-	if not force and not event_data.can_trigger(game_state):
-		GLog.debug("Event '%s' cannot trigger - requirements not met" % event_data.event_name)
+	if not force and not encounter_data.can_trigger(game_state):
+		GLog.debug("Event '%s' cannot trigger - requirements not met" % encounter_data.encounter_name)
 		return null
 	
-	var instance = EventInstance.new(event_data)
+	var instance = EncounterInstance.new(encounter_data)
 	instance.increment_encounter_count()
 	
-	if events_encountered.has(event_data.event_name):
-		events_encountered[event_data.event_name] += 1
+	if events_encountered.has(encounter_data.encounter_name):
+		events_encountered[encounter_data.encounter_name] += 1
 	else:
-		events_encountered[event_data.event_name] = 1
+		events_encountered[encounter_data.encounter_name] = 1
 	
 	active_event = instance
 	event_triggered.emit(instance)
@@ -109,10 +109,10 @@ func trigger_event(event_data: EventData, force: bool = false) -> EventInstance:
 	if event_bus:
 		event_bus.emit_signal("ui_popup_opened", "event")
 	
-	GLog.debug("Triggered event: %s" % event_data.event_name)
+	GLog.debug("Triggered event: %s" % encounter_data.encounter_name)
 	return instance
 
-func trigger_random_event(region: String = "", rarity: String = "") -> EventInstance:
+func trigger_random_event(region: String = "", rarity: String = "") -> EncounterInstance:
 	var game_state = _get_current_game_state()
 	var eligible_events = []
 	
@@ -126,10 +126,10 @@ func trigger_random_event(region: String = "", rarity: String = "") -> EventInst
 	eligible_events = eligible_events.filter(func(e): return e.can_trigger(game_state))
 	
 	eligible_events = eligible_events.filter(func(e): 
-		if not e.repeatable and events_encountered.has(e.event_name):
+		if not e.repeatable and events_encountered.has(e.encounter_name):
 			return false
 		if e.max_occurrences > 0:
-			var count = events_encountered.get(e.event_name, 0)
+			var count = events_encountered.get(e.encounter_name, 0)
 			if count >= e.max_occurrences:
 				return false
 		return true
@@ -155,9 +155,9 @@ func trigger_random_event(region: String = "", rarity: String = "") -> EventInst
 	for entry in weighted_events:
 		cumulative_weight += entry.weight
 		if random_value <= cumulative_weight:
-			return trigger_event(entry.event)
+			return trigger_encounter(entry.event)
 	
-	return trigger_event(weighted_events[-1].event)
+	return trigger_encounter(weighted_events[-1].event)
 
 func make_choice(choice_index: int) -> void:
 	if not active_event:
@@ -175,7 +175,7 @@ func make_choice(choice_index: int) -> void:
 	
 	complete_current_event()
 
-func apply_outcome(outcome: EventOutcome, context: Dictionary = {}) -> void:
+func apply_outcome(outcome: EncounterOutcome, context: Dictionary = {}) -> void:
 	if not outcome:
 		return
 	
@@ -206,23 +206,23 @@ func complete_current_event() -> void:
 	if event_bus:
 		event_bus.emit_signal("ui_popup_closed", "event")
 	
-	GLog.debug("Completed event: %s" % active_event.get_event_name())
+	GLog.debug("Completed event: %s" % active_event.get_encounter_name())
 	active_event = null
 	
 	_process_event_queue()
 
-func queue_event(event_data: EventData) -> void:
-	var instance = EventInstance.new(event_data)
+func queue_event(encounter_data: EncounterData) -> void:
+	var instance = EncounterInstance.new(encounter_data)
 	event_queue.append(instance)
-	GLog.debug("Queued event: %s" % event_data.event_name)
+	GLog.debug("Queued event: %s" % encounter_data.encounter_name)
 
 func _process_event_queue() -> void:
 	if event_queue.is_empty() or active_event != null:
 		return
 	
 	var next_event = event_queue.pop_front()
-	if next_event and next_event.event_data:
-		trigger_event(next_event.event_data)
+	if next_event and next_event.encounter_data:
+		trigger_encounter(next_event.encounter_data)
 
 func _get_current_game_state() -> Dictionary:
 	var state = {}
@@ -277,16 +277,16 @@ func _on_act_completed(_act: int) -> void:
 		if event.min_act == _act:
 			queue_event(event)
 
-func get_event_by_name(event_name: String) -> EventData:
+func get_event_by_name(encounter_name: String) -> EncounterData:
 	for event in all_events:
-		if event.event_name == event_name:
+		if event.encounter_name == encounter_name:
 			return event
 	return null
 
-func get_events_for_region(region: String) -> Array[EventData]:
+func get_events_for_region(region: String) -> Array[EncounterData]:
 	return events_by_region.get(region, [])
 
-func get_events_by_rarity(rarity: String) -> Array[EventData]:
+func get_events_by_rarity(rarity: String) -> Array[EncounterData]:
 	return events_by_rarity.get(rarity, [])
 
 func get_save_data() -> Dictionary:
@@ -318,7 +318,7 @@ func load_from_data(data: Dictionary) -> void:
 	event_history.clear()
 	var history_data = data.get("event_history", [])
 	for instance_data in history_data:
-		var instance = EventInstance.new()
+		var instance = EncounterInstance.new()
 		instance.load_from_save_data(instance_data)
 		event_history.append(instance)
 	
@@ -336,7 +336,7 @@ func load_from_data(data: Dictionary) -> void:
 	
 	var active_data = data.get("active_event")
 	if active_data:
-		active_event = EventInstance.new()
+		active_event = EncounterInstance.new()
 		active_event.load_from_save_data(active_data)
 	else:
 		active_event = null
@@ -346,16 +346,16 @@ func load_from_data(data: Dictionary) -> void:
 		event_history.size()
 	])
 
-func debug_trigger_event(event_name: String) -> void:
-	var event = get_event_by_name(event_name)
+func debug_trigger_encounter(encounter_name: String) -> void:
+	var event = get_event_by_name(encounter_name)
 	if event:
-		trigger_event(event, true)
-		GLog.debug("Debug: Triggered event '%s'" % event_name)
+		trigger_encounter(event, true)
+		GLog.debug("Debug: Triggered event '%s'" % encounter_name)
 	else:
-		GLog.error("Debug: Event '%s' not found" % event_name)
+		GLog.error("Debug: Event '%s' not found" % encounter_name)
 
 func debug_list_events() -> void:
 	print("\n=== All Events ===")
 	for event in all_events:
-		print("- %s [%s] (%s)" % [event.event_name, event.rarity, event.event_type])
+		print("- %s [%s] (%s)" % [event.encounter_name, event.rarity, event.encounter_type])
 	print("Total: %d events\n" % all_events.size())

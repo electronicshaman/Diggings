@@ -1,4 +1,4 @@
-extends EventOutcome
+extends EncounterOutcome
 class_name GoldReward
 
 const OUTCOME_NAME := "GoldReward"
@@ -8,7 +8,7 @@ const OUTCOME_NAME := "GoldReward"
 @export var min_gold: int = 5
 @export var max_gold: int = 15
 
-func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
+func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	var amount = gold_amount
 	if random_range:
 		amount = randi_range(min_gold, max_gold)
@@ -16,11 +16,11 @@ func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictio
 	var current_gold = game_state.get("gold", 0)
 	game_state["gold"] = current_gold + amount
 	
-	if event_manager.event_bus:
-		event_manager.event_bus.gold_changed.emit(amount)
+	if encounter_manager.event_bus:
+		encounter_manager.event_bus.gold_changed.emit(amount)
 	
-	if event_manager.game_manager:
-		event_manager.game_manager.add_gold(amount)
+	if encounter_manager.game_manager:
+		encounter_manager.game_manager.add_gold(amount)
 	
 	GLog.debug("Applied %s: +%d gold (total: %d)" % [get_outcome_name(), amount, game_state["gold"]])
 

@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="EventData" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="EncounterData" load_steps=10 format=3]
 
-[ext_resource type="Script" path="res://data/EventData.gd" id="1"]
-[ext_resource type="Script" path="res://data/EventChoice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/events/outcomes/CurioReward.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/events/outcomes/GoldReward.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/events/outcomes/CorruptionGain.gd" id="5"]
+[ext_resource type="Script" path="res://data/EncounterData.gd" id="1"]
+[ext_resource type="Script" path="res://data/EncounterChoice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/CurioReward.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/GoldReward.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/CorruptionGain.gd" id="5"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("3")

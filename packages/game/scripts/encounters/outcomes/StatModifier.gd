@@ -1,4 +1,4 @@
-extends EventOutcome
+extends EncounterOutcome
 class_name StatModifier
 
 const OUTCOME_NAME := "StatModifier"
@@ -8,7 +8,7 @@ const OUTCOME_NAME := "StatModifier"
 @export var is_permanent: bool = true
 @export var is_percentage: bool = false
 
-func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
+func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	var current_value = game_state.get(stat_name, 0)
 	var new_value = current_value
 	
@@ -19,11 +19,11 @@ func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictio
 	
 	game_state[stat_name] = new_value
 	
-	if event_manager.game_manager and event_manager.game_manager.has_method("modify_stat"):
-		event_manager.game_manager.modify_stat(stat_name, modifier_amount, is_permanent)
+	if encounter_manager.game_manager and encounter_manager.game_manager.has_method("modify_stat"):
+		encounter_manager.game_manager.modify_stat(stat_name, modifier_amount, is_permanent)
 	
-	if event_manager.event_bus:
-		event_manager.event_bus.statistics_updated.emit(stat_name, new_value)
+	if encounter_manager.event_bus:
+		encounter_manager.event_bus.statistics_updated.emit(stat_name, new_value)
 	
 	GLog.debug("Applied %s: %s %s by %d (new value: %d)" % [
 		get_outcome_name(),

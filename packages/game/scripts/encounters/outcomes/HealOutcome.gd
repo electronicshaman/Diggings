@@ -1,4 +1,4 @@
-extends EventOutcome
+extends EncounterOutcome
 class_name HealOutcome
 
 const OUTCOME_NAME := "HealOutcome"
@@ -8,7 +8,7 @@ const OUTCOME_NAME := "HealOutcome"
 @export var percentage: float = 0.2
 @export var full_heal: bool = false
 
-func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
+func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	var amount = heal_amount
 	var max_health = game_state.get("max_health", 100)
 	
@@ -20,12 +20,12 @@ func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictio
 	var current_health = game_state.get("health", 50)
 	game_state["health"] = min(max_health, current_health + amount)
 	
-	if event_manager.event_bus:
-		event_manager.event_bus.health_changed.emit(game_state["health"], max_health)
-		event_manager.event_bus.healing_received.emit(null, amount)
+	if encounter_manager.event_bus:
+		encounter_manager.event_bus.health_changed.emit(game_state["health"], max_health)
+		encounter_manager.event_bus.healing_received.emit(null, amount)
 	
-	if event_manager.game_manager:
-		event_manager.game_manager.heal(amount)
+	if encounter_manager.game_manager:
+		encounter_manager.game_manager.heal(amount)
 	
 	GLog.debug("Applied %s: +%d health (health: %d/%d)" % [
 		get_outcome_name(),

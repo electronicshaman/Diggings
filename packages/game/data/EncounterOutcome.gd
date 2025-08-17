@@ -1,5 +1,5 @@
 extends Resource
-class_name EventOutcome
+class_name EncounterOutcome
 
 const DEBUG_ENABLED: bool = true
 
@@ -7,8 +7,8 @@ const DEBUG_ENABLED: bool = true
 @export var delayed: bool = false
 @export var delay_turns: int = 0
 
-func apply_outcome(_event_manager: Node, _game_state: Dictionary, _context: Dictionary = {}) -> void:
-	GLog.warn("EventOutcome.apply_outcome() called but not overridden!")
+func apply_outcome(_encounter_manager: Node, _game_state: Dictionary, _context: Dictionary = {}) -> void:
+	GLog.warn("EncounterOutcome.apply_outcome() called but not overridden!")
 	GLog.warn("Outcome: %s" % get_outcome_name())
 
 func can_apply(_game_state: Dictionary) -> bool:

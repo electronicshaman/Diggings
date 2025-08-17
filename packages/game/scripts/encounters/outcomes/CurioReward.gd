@@ -1,4 +1,4 @@
-extends EventOutcome
+extends EncounterOutcome
 class_name CurioReward
 
 const OUTCOME_NAME := "CurioReward"
@@ -8,7 +8,7 @@ const OUTCOME_NAME := "CurioReward"
 @export var curio_rarity: String = "Common"
 @export var remove_curio: bool = false
 
-func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
+func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	if remove_curio:
 		_handle_curio_removal(event_manager, game_state)
 	else:
@@ -18,19 +18,19 @@ func _handle_curio_addition(event_manager: Node, game_state: Dictionary) -> void
 	var curio_to_add = null
 	
 	if random_curio:
-		curio_to_add = _get_random_curio(game_state, event_manager.curio_manager)
+		curio_to_add = _get_random_curio(game_state, encounter_manager.curio_manager)
 	elif not curio_paths.is_empty():
 		var path = curio_paths[0]
 		if ResourceLoader.exists(path):
 			curio_to_add = load(path)
 	
-	if curio_to_add and event_manager.curio_manager:
-		event_manager.curio_manager.add_curio(curio_to_add)
+	if curio_to_add and encounter_manager.curio_manager:
+		encounter_manager.curio_manager.add_curio(curio_to_add)
 		GLog.debug("Added curio: %s" % curio_to_add.curio_name)
 
 func _handle_curio_removal(event_manager: Node, _game_state: Dictionary) -> void:
-	if event_manager.event_bus:
-		event_manager.event_bus.ui_popup_opened.emit("curio_removal")
+	if encounter_manager.event_bus:
+		encounter_manager.event_bus.ui_popup_opened.emit("curio_removal")
 	
 	GLog.debug("Opened curio removal interface")
 

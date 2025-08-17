@@ -1,4 +1,4 @@
-extends EventOutcome
+extends EncounterOutcome
 class_name CorruptionGain
 
 const OUTCOME_NAME := "CorruptionGain"
@@ -8,7 +8,7 @@ const OUTCOME_NAME := "CorruptionGain"
 @export var min_corruption: int = 1
 @export var max_corruption: int = 3
 
-func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
+func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	var amount = corruption_amount
 	if random_range:
 		amount = randi_range(min_corruption, max_corruption)
@@ -17,11 +17,11 @@ func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictio
 	var max_corruption = game_state.get("max_corruption", 100)
 	game_state["corruption"] = min(max_corruption, current_corruption + amount)
 	
-	if event_manager.event_bus:
-		event_manager.event_bus.corruption_changed.emit(amount)
+	if encounter_manager.event_bus:
+		encounter_manager.event_bus.corruption_changed.emit(amount)
 	
-	if event_manager.game_manager:
-		event_manager.game_manager.add_corruption(amount)
+	if encounter_manager.game_manager:
+		encounter_manager.game_manager.add_corruption(amount)
 	
 	GLog.debug("Applied %s: +%d corruption (total: %d/%d)" % [
 		get_outcome_name(),

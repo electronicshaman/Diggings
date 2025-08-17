@@ -30,7 +30,7 @@ SceneManager="*res://scripts/autoloads/scene_manager.gd"
 GDAIMCPRuntime="*res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd"
 MapNodeRegistry="*res://scripts/autoloads/map_node_registry.gd"
 CurioManager="*res://scripts/autoloads/curio_manager.gd"
-EventManager="*res://scripts/autoloads/event_manager.gd"
+EncounterManager="*res://scripts/autoloads/encounter_manager.gd"
 CharacterGenerator="*res://scripts/autoloads/character_generator.gd"
 RunHistoryManager="*res://scripts/autoloads/run_history_manager.gd"
 

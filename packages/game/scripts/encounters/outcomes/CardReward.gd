@@ -1,4 +1,4 @@
-extends EventOutcome
+extends EncounterOutcome
 class_name CardReward
 
 const OUTCOME_NAME := "CardReward"
@@ -10,7 +10,7 @@ const OUTCOME_NAME := "CardReward"
 @export var card_type: String = ""
 @export var remove_card: bool = false
 
-func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
+func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	if remove_card:
 		_handle_card_removal(event_manager, game_state)
 	else:
@@ -29,17 +29,17 @@ func _handle_card_addition(event_manager: Node, game_state: Dictionary) -> void:
 					cards_to_add.append(card_data)
 	
 	for card in cards_to_add:
-		if event_manager.game_manager:
-			event_manager.game_manager.add_card_to_deck(card)
+		if encounter_manager.game_manager:
+			encounter_manager.game_manager.add_card_to_deck(card)
 		
-		if event_manager.event_bus:
-			event_manager.event_bus.card_created.emit(card)
+		if encounter_manager.event_bus:
+			encounter_manager.event_bus.card_created.emit(card)
 		
 		GLog.debug("Added card to deck: %s" % card.card_name)
 
 func _handle_card_removal(event_manager: Node, _game_state: Dictionary) -> void:
-	if event_manager.event_bus:
-		event_manager.event_bus.ui_popup_opened.emit("card_removal")
+	if encounter_manager.event_bus:
+		encounter_manager.event_bus.ui_popup_opened.emit("card_removal")
 	
 	GLog.debug("Opened card removal interface")
 

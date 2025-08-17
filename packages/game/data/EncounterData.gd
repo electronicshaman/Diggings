@@ -1,22 +1,22 @@
 extends Resource
-class_name EventData
+class_name EncounterData
 
 const DEBUG_ENABLED: bool = true
 
-@export var event_name: String = "Event"
+@export var encounter_name: String = "Encounter"
 @export_multiline var description: String = ""
-@export var event_icon: Texture2D
+@export var encounter_icon: Texture2D
 @export_multiline var flavor_text: String = ""
 
 @export_group("Event Properties")
 @export_enum("Common", "Rare", "Legendary", "Story") var rarity: String = "Common"
-@export_enum("Neutral", "Positive", "Negative", "Mixed") var event_type: String = "Neutral"
+@export_enum("Neutral", "Positive", "Negative", "Mixed") var encounter_type: String = "Neutral"
 @export var repeatable: bool = true
 @export var max_occurrences: int = -1
 @export var weight: float = 1.0
 
 @export_group("Choices")
-@export var choices: Array[EventChoice] = []
+@export var choices: Array[EncounterChoice] = []
 
 @export_group("Requirements")
 @export var min_gold: int = -1
@@ -43,7 +43,7 @@ const DEBUG_ENABLED: bool = true
 @export_group("Visual")
 @export var background_image: Texture2D
 @export var ambient_sound: AudioStream
-@export var event_color: Color = Color.WHITE
+@export var encounter_color: Color = Color.WHITE
 
 func can_trigger(game_state: Dictionary) -> bool:
 	if min_gold >= 0 and game_state.get("gold", 0) < min_gold:
@@ -90,7 +90,7 @@ func can_trigger(game_state: Dictionary) -> bool:
 	
 	return true
 
-func get_available_choices(game_state: Dictionary) -> Array[EventChoice]:
+func get_available_choices(game_state: Dictionary) -> Array[EncounterChoice]:
 	var available = []
 	for choice in choices:
 		if choice and choice.can_select(game_state):
@@ -127,7 +127,7 @@ func get_rarity_color() -> Color:
 			return Color.WHITE
 
 func get_type_icon() -> String:
-	match event_type:
+	match encounter_type:
 		"Positive":
 			return "✨"
 		"Negative":
@@ -137,7 +137,7 @@ func get_type_icon() -> String:
 		_:
 			return "❓"
 
-func is_story_event() -> bool:
+func is_story_encounter() -> bool:
 	return rarity == "Story"
 
 func is_repeatable() -> bool:

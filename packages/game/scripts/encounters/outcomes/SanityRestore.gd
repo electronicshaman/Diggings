@@ -1,4 +1,4 @@
-extends EventOutcome
+extends EncounterOutcome
 class_name SanityRestore
 
 const OUTCOME_NAME := "SanityRestore"
@@ -8,7 +8,7 @@ const OUTCOME_NAME := "SanityRestore"
 @export var percentage: float = 0.2
 @export var full_restore: bool = false
 
-func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
+func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Dictionary = {}) -> void:
 	var amount = sanity_amount
 	var max_sanity = game_state.get("max_sanity", 100)
 	
@@ -20,11 +20,11 @@ func apply_outcome(event_manager: Node, game_state: Dictionary, _context: Dictio
 	var current_sanity = game_state.get("sanity", 100)
 	game_state["sanity"] = min(max_sanity, current_sanity + amount)
 	
-	if event_manager.event_bus:
-		event_manager.event_bus.sanity_changed.emit(amount)
+	if encounter_manager.event_bus:
+		encounter_manager.event_bus.sanity_changed.emit(amount)
 	
-	if event_manager.game_manager:
-		event_manager.game_manager.restore_sanity(amount)
+	if encounter_manager.game_manager:
+		encounter_manager.game_manager.restore_sanity(amount)
 	
 	GLog.debug("Applied %s: +%d sanity (sanity: %d/%d)" % [
 		get_outcome_name(),
