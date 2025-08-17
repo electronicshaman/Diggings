@@ -342,15 +342,27 @@ func _trigger_encounter(tile: HexTile):
 	# Persist map and player state before leaving the scene
 	_save_map_and_player_state()
 
-	# Decide encounter type from tile data; fallback to duel
-	var enc_data: Dictionary = tile.encounter_data if tile and tile.encounter_data else {}
-	var enc_type := ""
-	if enc_data.has("type"):
-		enc_type = str(enc_data["type"]).to_lower()
-	elif enc_data.has("resource"):
-		# Heuristic: resource placements default to non-combat events
-		enc_type = "event"
+	# Route ALL encounters through EncounterManager for unified flow
+	var encounter_manager = get_node_or_null("/root/EncounterManager")
+	if encounter_manager:
+		# Use EncounterManager to create EncounterInstance from tile
+		var encounter_instance = encounter_manager.trigger_from_context({"tile": tile})
+		if encounter_instance:
+			print("EncounterManager created instance: ", encounter_instance.get_encounter_name())
+			_start_event({"encounter_instance": encounter_instance, "tile": tile})
+		else:
+			print("EncounterManager could not create encounter from tile")
+			_start_fallback_encounter()
+	else:
+		print("EncounterManager not found, using fallback")
+		_start_fallback_encounter()
 
+func _start_fallback_encounter():
+	"""Fallback when EncounterManager is unavailable"""
+	# Decide encounter type from tile data; fallback to duel
+	var enc_data: Dictionary = {}
+	var enc_type := "duel"  # Default fallback
+	
 	if enc_type == "event":
 		_start_event(enc_data)
 	else:
@@ -402,11 +414,66 @@ func _start_event(_encounter_context: Dictionary = {}):
 	# Increment event statistic if available
 	if is_instance_valid(GameManager) and GameManager.has_method("increment_statistic"):
 		GameManager.increment_statistic("events_encountered", 1)
-	# Transition to a simple event scene
+	
+	# Check if we have an encounter instance to preview
+	if _encounter_context.has("encounter_instance") and _encounter_context.encounter_instance:
+		var encounter_instance = _encounter_context.encounter_instance
+		print("Showing encounter preview for: ", encounter_instance.get_encounter_name())
+		
+		# Store encounter context for after modal
+		var stored_context = _encounter_context.duplicate()
+		
+		# Show encounter preview modal
+		var modal_manager = get_node_or_null("/root/ModalManager")
+		if modal_manager:
+			# Connect to modal result before showing
+			if not EventBus.is_connected("modal_closed", Callable(self, "_on_encounter_modal_closed")):
+				EventBus.connect_safe("modal_closed", Callable(self, "_on_encounter_modal_closed"))
+			
+			# Store context for later use
+			set_meta("pending_encounter_context", stored_context)
+			
+			# Show the modal
+			modal_manager.show_encounter_preview(encounter_instance)
+		else:
+			print("ModalManager not found, proceeding directly to event")
+			_proceed_to_event_scene()
+	else:
+		# No encounter instance - this should not happen with unified flow
+		print("Warning: _start_event called without encounter_instance in unified flow")
+		_proceed_to_event_scene()
+
+func _proceed_to_event_scene():
+	"""Proceed directly to the event scene"""
 	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
 		SceneManager.load_scene_by_name("event")
 	else:
 		push_warning("HexMapPlayer: SceneManager unavailable; cannot start event")
+
+func _on_encounter_modal_closed(modal_type: String, result: Variant):
+	"""Handle encounter preview modal result"""
+	if modal_type != "encounter_preview":
+		return
+	
+	# Disconnect the signal to avoid duplicate calls
+	if EventBus.is_connected("modal_closed", Callable(self, "_on_encounter_modal_closed")):
+		EventBus.disconnect("modal_closed", Callable(self, "_on_encounter_modal_closed"))
+	
+	print("Encounter modal closed with result: ", str(result))
+	
+	if result == "enter":
+		# Player chose to enter the encounter
+		print("Player entered encounter, proceeding to event scene")
+		_proceed_to_event_scene()
+	elif result == "retreat":
+		# Player chose to retreat
+		print("Player retreated from encounter")
+		encounter_in_progress = false
+		# Player stays on current tile, encounter is avoided
+	else:
+		# Unknown result, default to retreat for safety
+		print("Unknown modal result, treating as retreat")
+		encounter_in_progress = false
 
 func _save_map_and_player_state():
 	if not is_instance_valid(hex_grid):
