@@ -1,0 +1,74 @@
+[gd_scene load_steps=3 format=3 uid="uid://b8vxxadjkqayk"]
+
+[ext_resource type="Script" uid="uid://d2g6y32nf0lmv" path="res://scripts/ui/modals/encounter_preview_modal.gd" id="1_jvsu7"]
+
+[sub_resource type="StyleBoxFlat" id="1_dim_overlay"]
+bg_color = Color(0, 0, 0, 0.6)
+
+[node name="EncounterPreviewModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jvsu7")
+
+[node name="BackgroundPanel" type="Panel" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("1_dim_overlay")
+
+[node name="ModalContainer" type="VBoxContainer" parent="BackgroundPanel"]
+custom_minimum_size = Vector2(600, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="BackgroundPanel/ModalContainer"]
+layout_mode = 2
+text = "Encounter Preview"
+horizontal_alignment = 1
+
+[node name="DescriptionLabel" type="RichTextLabel" parent="BackgroundPanel/ModalContainer"]
+custom_minimum_size = Vector2(580, 150)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+
+[node name="FlavorLabel" type="Label" parent="BackgroundPanel/ModalContainer"]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="PreviewContainer" type="VBoxContainer" parent="BackgroundPanel/ModalContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="ButtonContainer" type="HBoxContainer" parent="BackgroundPanel/ModalContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="EnterButton" type="Button" parent="BackgroundPanel/ModalContainer/ButtonContainer"]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "Enter Encounter"
+
+[node name="Spacer" type="Control" parent="BackgroundPanel/ModalContainer/ButtonContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="RetreatButton" type="Button" parent="BackgroundPanel/ModalContainer/ButtonContainer"]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "Retreat"

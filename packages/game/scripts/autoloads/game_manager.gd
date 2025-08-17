@@ -334,6 +334,36 @@ func get_run_time() -> float:
 func get_session_time() -> float:
 	return (Time.get_ticks_msec() / 1000.0) - session_start_time
 
+func get_player_data():
+	# PlayerData is stored in game_data["player"] when available
+	return game_data.get("player", null)
+
+func take_damage(amount: int) -> int:
+	var player = get_player_data()
+	if player and player.has_method("take_damage"):
+		var actual: int = int(player.take_damage(amount))
+		# Notify UI via EventBus if available
+		if has_node("/root/EventBus") and player.stats:
+			EventBus.health_changed.emit(player.stats.current_health, player.stats.max_health)
+		# Track run stats
+		run_statistics.damage_taken += actual
+		return actual
+	return 0
+
+func heal(amount: int) -> void:
+	var player = get_player_data()
+	if player and player.has_method("heal"):
+		player.heal(amount)
+		if has_node("/root/EventBus") and player.stats:
+			EventBus.health_changed.emit(player.stats.current_health, player.stats.max_health)
+
+func add_corruption(amount: int) -> void:
+	# Update run-level corruption
+	var current := int(game_data.get("corruption", 0))
+	game_data["corruption"] = max(0, current + amount)
+	if has_node("/root/EventBus"):
+		EventBus.corruption_changed.emit(amount)
+
 func generate_all_maps() -> void:
 	# Legacy map generation removed. Hexmap scene manages its own world generation.
 	# Keep available_maps as initialized for MapSelection

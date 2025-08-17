@@ -96,6 +96,70 @@ func start_duel(player_deck: Array[CardData], enemy: Resource) -> Error:
 	
 	return OK
 
+## Convenience: Start a default/test duel (used on scene load or via debug UI)
+func start_test_duel() -> void:
+	# Build a reasonable default player deck from the selected character class
+	var deck: Array[CardData] = _build_default_player_deck()
+	# Pick a default enemy
+	var enemy: Resource = _get_default_enemy()
+	
+	if deck.is_empty() or not is_instance_valid(enemy):
+		push_warning("GameController: Could not build default duel inputs (deck or enemy missing)")
+		return
+	
+	var err = start_duel(deck, enemy)
+	if err != OK:
+		push_warning("GameController: start_test_duel failed with error code: " + str(err))
+
+## Convenience: Draw a single card into hand (debug helper for UI)
+func add_random_card_to_hand() -> void:
+	if not is_instance_valid(duel_manager) or not ("duel_state" in duel_manager):
+		push_warning("GameController: DuelManager or duel_state not available for draw")
+		return
+	var ds = duel_manager.duel_state
+	if ds and ds.has_method("draw_cards"):
+		var drawn = ds.draw_cards(1)
+		if drawn.size() == 0:
+			EventBus.emit_ui_notification("Deck empty", "debug")
+		else:
+			EventBus.emit_ui_notification("Drew a card", "debug")
+
+# --- Internal helpers ------------------------------------------------------
+func _build_default_player_deck() -> Array[CardData]:
+	var result: Array[CardData] = []
+	var char_class = "bushranger"
+	if is_instance_valid(GameManager) and GameManager.current_character_class and GameManager.current_character_class != "":
+		char_class = GameManager.current_character_class
+	
+	var character_path = "res://data/characters/%s.tres" % [char_class.to_lower()]
+	if ResourceLoader.exists(character_path):
+		var character_res = load(character_path)
+		if character_res and character_res.has_method("load_starting_deck"):
+			result = character_res.load_starting_deck()
+	else:
+		push_warning("GameController: Character resource not found at " + character_path)
+
+	return result
+
+func _get_default_enemy() -> Resource:
+	# Prefer a known basic enemy; fallback to first .tres in data/enemies
+	var default_enemy_path = "res://data/enemies/claim_jumper.tres"
+	if ResourceLoader.exists(default_enemy_path):
+		return load(default_enemy_path)
+	# Fallback scan (lightweight)
+	var dir = DirAccess.open("res://data/enemies/")
+	if dir:
+		dir.list_dir_begin()
+		var fname = dir.get_next()
+		while fname != "":
+			if not dir.current_is_dir() and fname.ends_with(".tres"):
+				var p = "res://data/enemies/%s" % fname
+				if ResourceLoader.exists(p):
+					return load(p)
+			fname = dir.get_next()
+	# As a last resort, return null
+	return null
+
 ## Validate deck contents
 func _validate_deck_contents(deck: Array[CardData]) -> bool:
 	if deck.is_empty():
