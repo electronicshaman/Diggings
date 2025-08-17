@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="MapGenerationSettings" load_steps=2 format=3 uid="uid://d1c6g0he66nis"]
 
-[ext_resource type="Script" uid="uid://cc6loias147hl" path="res://scripts/hexmap/resources/MapGenerationSettings.gd" id="1"]
+[ext_resource type="Script" uid="uid://cc6loias147hl" path="res://scripts/hexmap/resources/map_generation_settings.gd" id="1"]
 
 [resource]
 script = ExtResource("1")

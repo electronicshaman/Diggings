@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="TerrainDatabase" load_steps=11 format=3 uid="uid://dmqghcv058la0"]
 
-[ext_resource type="Script" uid="uid://b4bxn2ncsc26q" path="res://scripts/hexmap/resources/TerrainDatabase.gd" id="1"]
+[ext_resource type="Script" uid="uid://b4bxn2ncsc26q" path="res://scripts/hexmap/resources/terrain_database.gd" id="1"]
 [ext_resource type="Resource" uid="uid://cw2k0nv2m78nl" path="res://data/hexmap/terrain_types/plains.tres" id="2"]
-[ext_resource type="Script" uid="uid://bqwv5631dnn0f" path="res://scripts/hexmap/resources/TerrainTypeResource.gd" id="2_24g26"]
+[ext_resource type="Script" uid="uid://bqwv5631dnn0f" path="res://scripts/hexmap/resources/terrain_type_resource.gd" id="2_24g26"]
 [ext_resource type="Resource" uid="uid://b3j8qmuvm84qd" path="res://data/hexmap/terrain_types/bush.tres" id="3"]
 [ext_resource type="Resource" uid="uid://c5j0q6v0v24t" path="res://data/hexmap/terrain_types/creek.tres" id="4"]
 [ext_resource type="Resource" uid="uid://xs6pmbo6aw4" path="res://data/hexmap/terrain_types/town.tres" id="5"]

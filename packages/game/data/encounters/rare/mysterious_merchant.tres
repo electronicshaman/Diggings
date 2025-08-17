@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/CurioReward.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/GoldReward.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/CorruptionGain.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/curio_reward.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/corruption_gain.gd" id="5"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("3")

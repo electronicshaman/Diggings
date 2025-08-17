@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://xq1kjxp00w5w"]
 
-[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://cjfng8cj5drp1" path="res://scripts/data/card_effect.gd" id="1_bhtlf"]
-[ext_resource type="Script" uid="uid://ncqd3d8d0lnh" path="res://scripts/cards/effects/MultipleDamage.gd" id="2"]
+[ext_resource type="Script" uid="uid://ncqd3d8d0lnh" path="res://scripts/cards/effects/multiple_damage.gd" id="2"]
 
 [sub_resource type="Resource" id="MultipleDamage_1"]
 script = ExtResource("2")

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/curios/effects/CardModifier.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/curios/effects/card_modifier.gd" id="2"]
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")

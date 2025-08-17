@@ -145,7 +145,7 @@ func _on_win_duel_pressed() -> void:
 	# Return to map after a brief delay
 	await get_tree().create_timer(1.0).timeout
 	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene"):
-		SceneManager.load_scene("res://scenes/hexmap/Hexmap.tscn")
+		SceneManager.load_scene("res://scenes/hexmap/hexmap.tscn")
 	else:
 		push_error("MainGameController: Cannot load map scene - SceneManager unavailable")
 

@@ -61,7 +61,7 @@ func _setup_tilemap():
 func _generate_world():
 	# Create terrain generator if not set
 	if not terrain_generator:
-		terrain_generator = load("res://scripts/hexmap/hex_system/TerrainGenerator.gd").new()
+		terrain_generator = load("res://scripts/hexmap/hex_system/terrain_generator.gd").new()
 		print("Created default TerrainGenerator")
 	
 	# Apply deterministic seeds from SeedManager before generation

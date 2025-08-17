@@ -176,7 +176,7 @@ func _setup_generation_ui():
 	ui_layer.layer = 50
 	add_child(ui_layer)
 
-	var GenerationPanelClass = load("res://scripts/hexmap/ui/GenerationPanel.gd")
+	var GenerationPanelClass = load("res://scripts/hexmap/ui/generation_panel.gd")
 	generation_ui_panel = GenerationPanelClass.new()
 	ui_layer.add_child(generation_ui_panel)
 	generation_ui_panel.build()
@@ -323,7 +323,7 @@ func _setup_hud():
 	if not ui_layer:
 		return
 	# Create HUD panel showing time of day and MP
-	var HudPanelClass = load("res://scripts/hexmap/ui/HudPanel.gd")
+	var HudPanelClass = load("res://scripts/hexmap/ui/hud_panel.gd")
 	hud_ui_panel = HudPanelClass.new()
 	ui_layer.add_child(hud_ui_panel)
 	hud_ui_panel.build()

@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/card_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/CardPeek.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/cards/effects/card_peek.gd" id="3"]
 
 [sub_resource type="Resource" id="CardPeek_1"]
 script = ExtResource("3")
