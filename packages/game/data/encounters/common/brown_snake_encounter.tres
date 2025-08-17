@@ -1,0 +1,129 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/sanity_restore.gd" id="4"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("4")
+description = "You remain calm and avoid the snake"
+delayed = false
+delay_turns = 0
+sanity_amount = 5
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("3")
+description = "The snake strikes in your haste!"
+delayed = false
+delay_turns = 0
+damage_amount = 8
+damage_type = "poison"
+percentage_based = false
+percentage = 0.1
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("2")
+choice_text = "Stand perfectly still"
+choice_description = "Don't move a muscle and hope it passes"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("1")]
+success_chance = 0.75
+failure_outcomes = [SubResource("2")]
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("2")
+choice_text = "Back away slowly"
+choice_description = "Retreat carefully and lose time"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 2
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = []
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="5"]
+script = ExtResource("3")
+description = "You strike at the snake but it bites back!"
+delayed = false
+delay_turns = 0
+damage_amount = 12
+damage_type = "poison"
+percentage_based = false
+percentage = 0.1
+
+[sub_resource type="Resource" id="6"]
+script = ExtResource("2")
+choice_text = "Strike with tool"
+choice_description = "Attack the snake with your mining tools"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = []
+success_chance = 0.4
+failure_outcomes = [SubResource("5")]
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+encounter_name = "Brown Snake Encounter"
+description = "You freeze as you spot the unmistakable brown coils of an Eastern Brown Snake among the scrub. One of Australia's deadliest, it hasn't noticed you yet. Your heart pounds as you consider your options."
+flavor_text = "The serpent's dark eyes glint with ancient menace..."
+rarity = "Common"
+encounter_type = "Negative"
+repeatable = true
+max_occurrences = -1
+weight = 1.0
+choices = [SubResource("3"), SubResource("4"), SubResource("6")]
+min_gold = -1
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = -1
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"bush": 2.0,
+"scrubland": 1.5,
+"plains": 0.5,
+"hills": 0.8,
+"breakaway": 0.3,
+"goldfields": 0.2,
+"outback": 1.0,
+"mountains": 0.1,
+"coast": 0.8
+}
+encounter_color = Color(0.8, 0.4, 0.2, 1)

@@ -1,0 +1,119 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/corruption_gain.gd" id="4"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("2")
+choice_text = "Carefully shake out bedroll"
+choice_description = "Take your time to safely remove the spider"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = []
+success_chance = 0.8
+failure_outcomes = [SubResource("3")]
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("2")
+choice_text = "Sleep elsewhere"
+choice_description = "Find another spot to rest for the night"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 3
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = []
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("3")
+description = "The redback bites as you shake the bedroll!"
+delayed = false
+delay_turns = 0
+damage_amount = 6
+damage_type = "poison"
+percentage_based = false
+percentage = 0.1
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("4")
+description = "Killing the spider brings bad omens"
+delayed = false
+delay_turns = 0
+corruption_amount = 2
+
+[sub_resource type="Resource" id="5"]
+script = ExtResource("2")
+choice_text = "Crush the spider"
+choice_description = "Kill it quickly and be done with it"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("4")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+encounter_name = "Redback in the Swag"
+description = "As you prepare to rest for the night, you spot a distinctive red marking on a black spider nestled in your bedroll. A female redback - small but deadly. She seems content in her new web, but you need to sleep somewhere."
+flavor_text = "Even the smallest creatures in Australia can kill you..."
+rarity = "Common"
+encounter_type = "Negative"
+repeatable = true
+max_occurrences = -1
+weight = 1.0
+choices = [SubResource("1"), SubResource("2"), SubResource("5")]
+min_gold = -1
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = -1
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"scrubland": 2.5,
+"bush": 1.8,
+"breakaway": 1.5,
+"plains": 1.0,
+"hills": 0.8,
+"goldfields": 1.2,
+"outback": 2.0,
+"mountain": 0.3,
+"coast": 0.6
+}
+encounter_color = Color(0.8, 0.2, 0.2, 1)

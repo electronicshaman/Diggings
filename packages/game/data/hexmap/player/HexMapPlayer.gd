@@ -367,7 +367,25 @@ func _maybe_trigger_random_event() -> bool:
 		encounter_in_progress = true
 		print("Random event triggered (roll=", roll, ") at ", current_hex._to_string())
 		_save_map_and_player_state()
-		_start_event({"random": true})
+		
+		# Use EncounterManager to trigger terrain-appropriate encounter
+		var terrain_name = ""
+		var tile = hex_grid.get_tile(current_hex) if hex_grid else null
+		if tile and tile.terrain_resource:
+			terrain_name = tile.terrain_resource.terrain_name.to_lower()
+		
+		var encounter_manager = get_node_or_null("/root/EncounterManager")
+		if encounter_manager and encounter_manager.has_method("trigger_random_event"):
+			var encounter_instance = encounter_manager.trigger_random_event(terrain_name)
+			if encounter_instance:
+				print("EncounterManager triggered: ", encounter_instance.get_encounter_name())
+				_start_event({"terrain": terrain_name, "encounter_instance": encounter_instance})
+			else:
+				print("EncounterManager found no suitable encounters for terrain: ", terrain_name)
+				_start_event({"random": true, "terrain": terrain_name})
+		else:
+			# Fallback to basic event if EncounterManager unavailable
+			_start_event({"random": true, "terrain": terrain_name})
 		return true
 	return false
 

@@ -1,0 +1,140 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/curio_reward.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/sanity_restore.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/corruption_gain.gd" id="5"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("3")
+description = "The eagle grants you its keen sight"
+delayed = false
+delay_turns = 0
+curio_name = "Eagle's Blessing"
+rarity = "common"
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("4")
+description = "Your compassion restores your spirit"
+delayed = false
+delay_turns = 0
+sanity_amount = 8
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("2")
+choice_text = "Tend the wound"
+choice_description = "Use your supplies to help the magnificent bird"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("1"), SubResource("2")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("3")
+description = "You gain a protective feather"
+delayed = false
+delay_turns = 0
+curio_name = "Eagle Feather"
+rarity = "common"
+
+[sub_resource type="Resource" id="5"]
+script = ExtResource("5")
+description = "Taking a life weighs on your soul"
+delayed = false
+delay_turns = 0
+corruption_amount = 3
+
+[sub_resource type="Resource" id="6"]
+script = ExtResource("2")
+choice_text = "End its suffering"
+choice_description = "A merciful death for the proud bird"
+gold_cost = 0
+sanity_cost = 5
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("4"), SubResource("5")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="7"]
+script = ExtResource("5")
+description = "Ignoring suffering corrupts the spirit"
+delayed = false
+delay_turns = 0
+corruption_amount = 1
+
+[sub_resource type="Resource" id="8"]
+script = ExtResource("2")
+choice_text = "Leave it be"
+choice_description = "This is nature's way"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("7")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+encounter_name = "Wounded Eagle"
+description = "High on the rocky outcrop, you spot a magnificent Wedge-tailed Eagle with its wing caught in an old prospector's trap. The majestic bird looks at you with intelligent eyes, as if understanding you might be its salvation. What do you do?"
+flavor_text = "Australia's apex predator, brought low by human folly..."
+rarity = "Common"
+encounter_type = "Mixed"
+repeatable = true
+max_occurrences = -1
+weight = 1.0
+choices = [SubResource("3"), SubResource("6"), SubResource("8")]
+min_gold = -1
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = -1
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"hills": 2.5,
+"mountain": 1.8,
+"breakaway": 1.2,
+"plains": 0.3,
+"bush": 0.5,
+"scrubland": 0.4,
+"goldfields": 0.2,
+"outback": 0.8,
+"coast": 0.6
+}
+encounter_color = Color(0.6, 0.4, 0.1, 1)

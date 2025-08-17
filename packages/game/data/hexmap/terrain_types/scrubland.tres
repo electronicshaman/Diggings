@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="TerrainTypeResource" load_steps=2 format=3 uid="uid://cm5k8rnuvoa6f"]
+
+[ext_resource type="Script" uid="uid://bqwv5631dnn0f" path="res://scripts/hexmap/resources/terrain_type_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+terrain_name = "Scrubland"
+movement_cost = 4
+passable = true
+buildable = false
+base_color = Color(0.443137, 0.403922, 0.254902, 1)
+dimmed_color = Color(0.184314, 0.164706, 0.105882, 1)
+outline_color = Color(0, 0, 0, 1)
+visibility_modifier = 0.7
+defense_bonus = 1
+resource_yield = 0.6
+blocks_line_of_sight = false
+provides_water = false
+is_road = false
+is_settlement = false
+dawn_movement_modifier = 0
+day_movement_modifier = 1
+dusk_movement_modifier = 1
+night_movement_modifier = 2
+prohibit_night_movement = false

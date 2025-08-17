@@ -1,0 +1,132 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="4"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("3")
+description = "Find gold overlooked by previous miners"
+delayed = false
+delay_turns = 0
+gold_amount = 35
+random_range = true
+min_gold = 20
+max_gold = 50
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("2")
+choice_text = "Carefully inspect the shaft"
+choice_description = "Take time to assess safety before entering"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("1")]
+success_chance = 0.8
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("3")
+description = "Quick grab of surface gold"
+delayed = false
+delay_turns = 0
+gold_amount = 15
+random_range = false
+min_gold = 10
+max_gold = 20
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("4")
+description = "The shaft collapses around you!"
+delayed = false
+delay_turns = 0
+damage_amount = 15
+damage_type = "physical"
+percentage_based = false
+percentage = 0.1
+
+[sub_resource type="Resource" id="5"]
+script = ExtResource("2")
+choice_text = "Rush in quickly"
+choice_description = "Grab what you can before the shaft collapses"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("3")]
+success_chance = 0.6
+failure_outcomes = [SubResource("4")]
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="6"]
+script = ExtResource("2")
+choice_text = "Mark location and move on"
+choice_description = "Note the shaft for later with proper equipment"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = []
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(1, 1, 1, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+encounter_name = "Old Mine Shaft"
+description = "You discover an abandoned mine shaft cut into the breakaway country. The timber supports look questionable, but you can see the glint of gold still embedded in the walls. Previous miners clearly left in a hurry."
+flavor_text = "Fortune favors the bold... but survival favors the careful."
+rarity = "Common"
+encounter_type = "Mixed"
+repeatable = true
+max_occurrences = -1
+weight = 1.0
+choices = [SubResource("2"), SubResource("5"), SubResource("6")]
+min_gold = -1
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = -1
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"breakaway": 3.0,
+"hills": 1.5,
+"goldfields": 2.0,
+"mountain": 0.8,
+"plains": 0.2,
+"bush": 0.3,
+"scrubland": 0.5,
+"outback": 0.4,
+"coast": 0.1
+}
+encounter_color = Color(0.7, 0.6, 0.3, 1)

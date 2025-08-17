@@ -44,11 +44,11 @@ func setup_event_connections() -> void:
 
 func _load_all_events() -> void:
 	var event_paths = [
-		"res://data/events/common/",
-		"res://data/events/rare/",
-		"res://data/events/legendary/",
-		"res://data/events/story/",
-		"res://data/events/region_specific/"
+		"res://data/encounters/common/",
+		"res://data/encounters/rare/",
+		"res://data/encounters/legendary/",
+		"res://data/encounters/story/",
+		"res://data/encounters/region_specific/"
 	]
 	
 	for base_path in event_paths:

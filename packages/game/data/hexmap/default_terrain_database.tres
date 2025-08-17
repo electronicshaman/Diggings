@@ -10,7 +10,10 @@
 [ext_resource type="Resource" uid="uid://j6n3yepnl0p5" path="res://data/hexmap/terrain_types/road.tres" id="7"]
 [ext_resource type="Resource" uid="uid://culy7let7lt00" path="res://data/hexmap/terrain_types/goldfield.tres" id="8"]
 [ext_resource type="Resource" uid="uid://y6xdd7gvg5l6" path="res://data/hexmap/terrain_types/rock_formation.tres" id="10_mjo1c"]
+[ext_resource type="Resource" uid="uid://bm4j7qmuvm85e" path="res://data/hexmap/terrain_types/hills.tres" id="11_hills"]
+[ext_resource type="Resource" uid="uid://cm5k8rnuvn96f" path="res://data/hexmap/terrain_types/scrubland.tres" id="12_scrubland"]
+[ext_resource type="Resource" uid="uid://dn6l9souvp07g" path="res://data/hexmap/terrain_types/breakaway.tres" id="13_breakaway"]
 
 [resource]
 script = ExtResource("1")
-terrain_types = Array[ExtResource("2_24g26")]([ExtResource("8"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("2"), ExtResource("10_mjo1c")])
+terrain_types = Array[ExtResource("2_24g26")]([ExtResource("8"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("2"), ExtResource("10_mjo1c"), ExtResource("11_hills"), ExtResource("12_scrubland"), ExtResource("13_breakaway")])
