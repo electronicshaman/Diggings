@@ -25,9 +25,6 @@ func _ready() -> void:
 		return
 	
 	initialize_controllers()
-	
-	await get_tree().create_timer(0.5).timeout
-	start_initial_duel()
 
 func _initialize_ui_manager() -> Error:
 	ui_manager = UIReferenceManager.new()
@@ -93,10 +90,10 @@ func get_ui_references() -> Dictionary:
 
 func setup_connections() -> void:
 	if is_instance_valid(game_controller):
-		if game_controller.has_signal("test_content_loaded"):
-			game_controller.test_content_loaded.connect(_on_test_content_loaded)
-		else:
-			push_warning("MainGameController: test_content_loaded signal not found on GameController")
+		if game_controller.has_signal("duel_started"):
+			game_controller.duel_started.connect(_on_duel_started_signal)
+		if game_controller.has_signal("duel_ended"):
+			game_controller.duel_ended.connect(_on_duel_ended_signal)
 	
 	if is_instance_valid(ui_controller):
 		if ui_controller.has_signal("ui_refresh_requested"):
@@ -123,38 +120,13 @@ func setup_connections() -> void:
 
 	# When an actual duel ends, transition appropriately
 	if is_instance_valid(duel_manager) and duel_manager.has_signal("duel_ended"):
-		duel_manager.duel_ended.connect(_on_duel_ended_signal)
+		duel_manager.duel_ended.connect(_on_duel_ended_from_manager)
 	else:
 		push_warning("MainGameController: Cannot connect to duel_ended signal")
 
-func start_initial_duel() -> void:
-	if not is_instance_valid(game_controller):
-		push_error("MainGameController: Cannot start duel - GameController is invalid")
-		return
-	
-	if not game_controller.has_method("start_test_duel"):
-		push_error("MainGameController: GameController missing start_test_duel method")
-		return
-	
-	# Check if test cards are available (avoid has_property; use safe get)
-	var tc = game_controller.get("test_cards")
-	if tc is Array and tc.size() > 0:
-		game_controller.start_test_duel()
-	else:
-		GLog.warn("Cannot start duel - waiting for test content to load")
-		
-		# Wait for test content to load if signal exists
-		if game_controller.has_signal("test_content_loaded"):
-			await game_controller.test_content_loaded
-			if is_instance_valid(game_controller):
-				game_controller.start_test_duel()
-		else:
-			push_warning("MainGameController: test_content_loaded signal not available - starting duel anyway")
-			game_controller.start_test_duel()
-
-func _on_test_content_loaded() -> void:
-	GLog.debug("Test content loaded, ready for dueling")
-	EventBus.emit_ui_notification("Game Ready", "success")
+func _on_duel_started_signal() -> void:
+	GLog.debug("Duel started - game ready")
+	EventBus.emit_ui_notification("Duel Started", "success")
 
 func _on_ui_refresh_requested() -> void:
 	pass
@@ -191,7 +163,21 @@ func _on_lose_duel_pressed() -> void:
 	else:
 		push_error("MainGameController: Cannot load game over scene - SceneManager unavailable")
 
-func _on_duel_ended_signal(winner: String) -> void:
+func _on_duel_ended_signal(victory: bool) -> void:
+	GLog.debug("Duel ended (from GameController) - Victory: " + str(victory))
+	await get_tree().create_timer(0.6).timeout
+	if victory:
+		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
+			SceneManager.load_scene_by_name("map")
+		else:
+			push_error("MainGameController: Cannot load map scene on duel end - SceneManager unavailable")
+	else:
+		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
+			SceneManager.load_scene_by_name("game_over")
+		else:
+			push_error("MainGameController: Cannot load game over scene on duel end - SceneManager unavailable")
+
+func _on_duel_ended_from_manager(winner: String) -> void:
 	GLog.debug("Duel ended (signal) - Winner: " + winner)
 	await get_tree().create_timer(0.6).timeout
 	if winner == "player":

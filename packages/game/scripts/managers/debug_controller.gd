@@ -13,7 +13,6 @@ signal debug_action_triggered(action: String)
 var game_controller: Node
 var ui_controller: Node
 var duel_manager: Node
-var test_data_manager: TestDataManager
 
 # Debug key mappings
 var debug_shortcuts: Dictionary = {
@@ -23,7 +22,6 @@ var debug_shortcuts: Dictionary = {
 	KEY_F5: "restart_duel",
 	KEY_F9: "instant_win",
 	KEY_F10: "instant_lose",
-	KEY_F11: "reload_test_data",
 	KEY_F12: "toggle_god_mode"
 }
 
@@ -38,9 +36,6 @@ func _ready() -> void:
 	
 	set_process_unhandled_input(true)
 	GLog.debug("DebugController initialized - Debug commands enabled")
-	
-	# Try to find test data manager
-	test_data_manager = get_node_or_null("/root/TestDataManager")
 
 func initialize(game_controller_ref: Node, ui_controller_ref: Node, duel_manager_ref: Node) -> void:
 	game_controller = game_controller_ref
@@ -77,8 +72,6 @@ func execute_debug_action(action: String) -> void:
 			_force_duel_end("player")
 		"instant_lose":
 			_force_duel_end("enemy")
-		"reload_test_data":
-			_reload_test_data()
 		"toggle_god_mode":
 			_toggle_god_mode()
 		_:
@@ -88,19 +81,17 @@ func execute_debug_action(action: String) -> void:
 
 ## Add a random card to the player's hand
 func _add_random_card() -> void:
-	if not is_instance_valid(game_controller):
-		GLog.warn("Cannot add card - GameController not available")
+	if not is_instance_valid(duel_manager):
+		GLog.warn("Cannot add card - DuelManager not available")
 		return
 	
-	if game_controller.has_method("add_random_card_to_hand"):
-		game_controller.add_random_card_to_hand()
-		EventBus.emit_ui_notification("Added random card", "debug")
-	elif is_instance_valid(test_data_manager):
-		# Alternative: use test data manager
-		var card = test_data_manager.get_random_test_card()
-		if card and duel_manager and duel_manager.has_method("add_card_to_hand"):
-			duel_manager.add_card_to_hand(card)
-			EventBus.emit_ui_notification("Added: " + card.card_name, "debug")
+	# Add a random card from the deck to hand
+	if duel_manager.has_method("draw_cards"):
+		var drawn = duel_manager.get("duel_state").draw_cards(1)
+		if drawn.size() > 0:
+			EventBus.emit_ui_notification("Drew a card", "debug")
+		else:
+			EventBus.emit_ui_notification("Deck empty", "debug")
 
 ## Modify player health
 func _modify_player_health(amount: int) -> void:
@@ -124,13 +115,12 @@ func _modify_player_energy(amount: int) -> void:
 
 ## Restart the current duel
 func _restart_duel() -> void:
-	if not is_instance_valid(game_controller):
-		GLog.warn("Cannot restart duel - GameController not available")
-		return
-	
-	if game_controller.has_method("start_test_duel"):
-		game_controller.start_test_duel()
+	# Reload the current scene to restart
+	if is_instance_valid(SceneManager):
+		SceneManager.reload_current_scene()
 		EventBus.emit_ui_notification("Duel restarted", "debug")
+	else:
+		GLog.warn("Cannot restart duel - SceneManager not available")
 
 ## Force end the duel with a specific winner
 func _force_duel_end(winner: String) -> void:
@@ -151,15 +141,6 @@ func _force_duel_end(winner: String) -> void:
 			duel_manager.check_duel_end_conditions()
 		
 		EventBus.emit_ui_notification("Forced " + winner + " victory", "debug")
-
-## Reload test data
-func _reload_test_data() -> void:
-	if not is_instance_valid(test_data_manager):
-		GLog.warn("Cannot reload test data - TestDataManager not available")
-		return
-	
-	test_data_manager.reload_test_content()
-	EventBus.emit_ui_notification("Test data reloaded", "debug")
 
 ## Toggle god mode
 func _toggle_god_mode() -> void:
