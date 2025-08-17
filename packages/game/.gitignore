@@ -22,3 +22,4 @@ mono_crash.*.json
 #VSCode specific ignores
 .vscode/
 .history
+*.uid
