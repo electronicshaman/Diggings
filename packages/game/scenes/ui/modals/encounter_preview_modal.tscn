@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://b8vxxadjkqayk"]
+[gd_scene load_steps=3 format=3 uid="uid://b8vxxadjkqayk"]
 
 [ext_resource type="Script" uid="uid://d2g6y32nf0lmv" path="res://scripts/ui/modals/encounter_preview_modal.gd" id="1_jvsu7"]
+
+[sub_resource type="StyleBoxFlat" id="1_dim_overlay"]
+bg_color = Color(0, 0, 0, 0.6)
 
 [node name="EncounterPreviewModal" type="Control"]
 layout_mode = 3
@@ -12,11 +15,11 @@ grow_vertical = 2
 script = ExtResource("1_jvsu7")
 
 [node name="BackgroundPanel" type="Panel" parent="."]
-modulate = Color(0.2, 0.2, 0.2, 0.9)
-self_modulate = Color(0.1, 0.1, 0.1, 1)
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("1_dim_overlay")
 
 [node name="ModalContainer" type="VBoxContainer" parent="BackgroundPanel"]
 custom_minimum_size = Vector2(600, 400)

@@ -265,6 +265,10 @@ func _get_current_game_state() -> Dictionary:
 		if game_manager.game_data.has("player") and game_manager.game_data.player:
 			var player_data = game_manager.game_data.player
 			state["player_data"] = player_data
+			# Provide health fields for outcomes that reference raw values
+			if player_data and player_data.stats:
+				state["health"] = player_data.stats.current_health
+				state["max_health"] = player_data.stats.max_health
 	
 	if curio_manager:
 		state["curios"] = []
