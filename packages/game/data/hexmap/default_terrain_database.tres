@@ -5,10 +5,10 @@
 [ext_resource type="Script" uid="uid://bqwv5631dnn0f" path="res://scripts/hexmap/resources/TerrainTypeResource.gd" id="2_24g26"]
 [ext_resource type="Resource" uid="uid://b3j8qmuvm84qd" path="res://data/hexmap/terrain_types/bush.tres" id="3"]
 [ext_resource type="Resource" uid="uid://c5j0q6v0v24t" path="res://data/hexmap/terrain_types/creek.tres" id="4"]
-[ext_resource type="Resource" path="res://data/hexmap/terrain_types/town.tres" id="5"]
+[ext_resource type="Resource" uid="uid://xs6pmbo6aw4" path="res://data/hexmap/terrain_types/town.tres" id="5"]
 [ext_resource type="Resource" uid="uid://qapfowb527mp" path="res://data/hexmap/terrain_types/mountain.tres" id="6"]
 [ext_resource type="Resource" uid="uid://j6n3yepnl0p5" path="res://data/hexmap/terrain_types/road.tres" id="7"]
-[ext_resource type="Resource" path="res://data/hexmap/terrain_types/goldfield.tres" id="8"]
+[ext_resource type="Resource" uid="uid://culy7let7lt00" path="res://data/hexmap/terrain_types/goldfield.tres" id="8"]
 [ext_resource type="Resource" uid="uid://y6xdd7gvg5l6" path="res://data/hexmap/terrain_types/rock_formation.tres" id="10_mjo1c"]
 
 [resource]

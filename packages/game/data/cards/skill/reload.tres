@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
-[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/data/card_effect.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/cards/effects/Draw.gd" id="3"]
 
 [sub_resource type="Resource" id="Draw_1"]
@@ -15,7 +15,7 @@ energy_cost = 0
 card_type = "Grit"
 card_icon = null
 flavor_text = "A quick reload can turn the tide of battle."
-effects = Array[ExtResource("2")]([SubResource("Draw_1")])
+effects = Array[CardEffect]([SubResource("Draw_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

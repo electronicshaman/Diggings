@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/CardData.gd" id="1"]
-[ext_resource type="Script" path="res://data/CardEffect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/data/card_effect.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/cards/effects/CardPeek.gd" id="3"]
 
 [sub_resource type="Resource" id="CardPeek_1"]
@@ -17,7 +17,7 @@ card_name = "Prospector's Instinct"
 energy_cost = 1
 card_type = "Gamble"
 flavor_text = "Trust your gut, the gold's down there somewhere."
-effects = Array[ExtResource("2")]([SubResource("CardPeek_1")])
+effects = Array[CardEffect]([SubResource("CardPeek_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
