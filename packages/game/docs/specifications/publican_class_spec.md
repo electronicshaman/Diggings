@@ -1,5 +1,7 @@
 # Publican Class Specification
 
+Last verified: 2025-08-18
+
 ## Implementation Status:  Resource Created
 
 The Publican character resource has been implemented at `data/characters/publican.tres` with full class mechanics, abilities, and card accessibility rules defined.
@@ -27,13 +29,27 @@ The **Publican** represents the community cornerstone of frontier settlements - 
 
 ### Starting Statistics
 
-```txt
+```text
 Health: 50/50        # Standard (sturdy but not a frontline fighter)
 Sanity: 95/95        # High (social stability, community leadership)
 Energy: 4/4          # Above average (providing sustenance and energy)
 Gold: 20             # High starting (successful business owner)
 Corruption: 0        # Starts clean, focused on community service
 ```
+
+## Implementation Snapshot (data/characters/publican.tres)
+
+- mechanical_specialization: Power
+- base_health: 50, base_sanity: 95, base_energy: 4, starting_gold: 20
+- starting_deck_paths: 15 entries; starting_deck_size: 15
+- passive_abilities: ["Social Hub", "House Advantage", "Community Leader"]
+- active_abilities: []
+- unique_resources: []
+- preferred_card_types: ["Grog"], forbidden_card_types: []
+
+## Deltas vs Spec
+
+- None significant; spec matches resource fields.
 
 ## Class Mechanics
 

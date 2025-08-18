@@ -1,9 +1,11 @@
 # High-Level Summary: Gold Rush Lovecraft Game Design
 
+Last verified: 2025-08-18
+
 ## Core Game Identity
 
-**Genre**: Roguelite card battler   
-**Setting**: Australian gold rush meets Lovecraftian horror  
+**Genre**: Roguelite card battler
+**Setting**: Australian gold rush meets Lovecraftian horror
 **Core Loop**: Explore map → Find encounters → 1v1 card duels → Manage resources → Die or complete objectives
 
 ## Key Differentiators from Slay the Spire
@@ -13,12 +15,11 @@
 - **Player-driven exploration** - choose your own path across the outback
 - **Multiple objectives per run** (claim gold veins, seal breaches, hunt bounties) rather than just "reach the top"
 
-### 2. Day/Night Cycle System
+### 2. Seeded Runs and Debuggable Systems (Current)
 
-- **Action-based time progression** (not real-time)
-- **Fog of war changes with time** - visibility shrinks at night
-- **Night combat costs sanity** - risk/reward for pushing forward
-- **Time as a resource** - deciding when to camp vs when to push
+- **SeedManager autoload** drives deterministic runs
+- **Seed visible in UI** when enabled via `GameSettings.show_seed_in_ui`
+- **Debug HUD** and **DebugController** support fast iteration (HUD toggled via "HUD" input action)
 
 ### 3. 1v1 Duels Only
 
@@ -27,15 +28,11 @@
 - **Enemy uses cards too** - visible patterns you can learn and counter
 - **Simpler state management** - always just player vs enemy
 
-### 4. Card Modification System
+### 4. Card Modification System (Planned)
 
-- **Digital-only effects** that physical cards can't do:
-  - **Evolving**: Cards permanently gain +1 damage each play
-  - **Viral**: Cards duplicate themselves in your deck
-  - **Phasing**: 50% chance to not exist each combat
-  - **Unstable**: Randomly becomes different card each combat
-- **Multiple mods per card** - create unique combinations
-- **Location-based modifications** - different sites give different mods
+- Digital-first effects such as Evolving, Viral, Phasing, Unstable
+- Multiple mods per card and site-based modification opportunities
+- Status: Design documented; implementation tracked in future milestones
 
 ### 5. Core Card Types - Mechanical Categories
 
@@ -53,7 +50,7 @@
 
 *Note: These are theme-agnostic mechanical categories. Themes layer flavor and visual design on top of these core functions.*
 
-## Resource System
+## Resource System (Current)
 
 - **Health & Sanity** - two ways to lose (physical death or madness)
 - **Gold** - Currency and some card costs
@@ -76,7 +73,7 @@ Persistent run modifiers (like relics) with Australian gold rush + cosmic horror
 - **Common**: Minor benefits with quirks ("Prospector's Spectacles" - see further but one tile is always hidden)
 - **Rare**: Powerful but corrupting ("The Antipodean Star" - walk on void tiles at night but reality inverts)
 
-## Technical Architecture Insights
+## Technical Architecture Insights (Current)
 
 ### Start Simple, Then Iterate
 
@@ -110,7 +107,7 @@ Persistent run modifiers (like relics) with Australian gold rush + cosmic horror
 
 5. **Digital-first design** - Effects impossible in physical games make each run feel different
 
-## MVP Priority Order
+## MVP Priority Order (Roadmap)
 
 1. **Combat engine** - Get 1v1 duels working perfectly
 2. **Basic cards & effects** - Just damage, block, heal to start
@@ -127,8 +124,16 @@ Persistent run modifiers (like relics) with Australian gold rush + cosmic horror
 - **Show, don't hide** - Enemy intents visible, time effects clear
 - **Respect the player's time** - 30-45 minute runs, quick combat resolution
 - **Embrace the digital medium** - Do things only possible in video games
-- **Fail fast** - If something isn't fun in the prototype, change it immediately
-- **Data-driven** - Everything should be tweakable without code changes
-- **Show, don't hide** - Enemy intents visible, time effects clear
-- **Respect the player's time** - 30-45 minute runs, quick combat resolution
-- **Embrace the digital medium** - Do things only possible in video games
+
+## Planned Systems
+
+- Day/Night cycle impacting visibility and sanity costs
+- Location-based card modification sites
+- Additional exploration objectives (bounties, sealing breaches)
+
+## Current Feature Snapshot
+
+- 1v1 duels with player/enemy turns and visible intents
+- Core card categories: Attack, Skill, Power, Fortune; Status and Curse as deck pollutants
+- Seeded runs via SeedManager; seed display toggle in UI settings
+- Autoload managers: GameSettings, EventBus, SaveSystem, ResourceManager, ThemeManager, SeedManager, HexmapState, GLog, GameManager, ModalManager, SceneManager, MapNodeRegistry, CurioManager, EncounterManager, CharacterGenerator, RunHistoryManager, DebugHUD (scene)

@@ -1,5 +1,7 @@
 # Character Generation System
 
+Last verified: 2025-08-18
+
 ## Implementation Status
 
 ### ✅ Character Resources Created
@@ -7,6 +9,7 @@
 The character class system has been implemented with comprehensive resource files for all 4 primary classes:
 
 #### Character Class Structure (CharacterClass.gd)
+
 ```gdscript
 extends Resource
 class_name CharacterClass
@@ -53,6 +56,17 @@ class_name CharacterClass
 | **Publican** | `data/characters/publican.tres` | Power | 50 | 95 | 20 | Brew Tokens, Social Hub |
 
 ---
+
+### Data Sources (Current)
+
+- Backstory elements: `data/character_generation/backstory_resources/` — subfolders: `origins/`, `tragedies/`, `motivations/`, `quirks/`
+- Name pools and rules: `data/character_generation/data_pools/` — files: `names.json`, `nicknames.json`, `generation_rules.json`
+- Starting curios: `data/character_generation/starting_curios/` (empty as of this verification)
+
+Notes:
+
+- Character `.tres` resources exist for all four classes and can be extended with generated backstory hooks.
+- As assets land in the backstory folders, wire them into the generation rules JSON for coherent outputs.
 
 ## Advanced: Character Generation Through Graph Grammar
 
@@ -119,7 +133,7 @@ Each element connects to others, creating a story graph that generates both char
 
 ### Example Generated Prospector
 
-**"Chen 'Snake-Eyes' Wei"**
+#### Example: Chen 'Snake-Eyes' Wei
 
 - _Origin_: Failed Banker from Guangdong
 - _Tragedy_: Lost family fortune in opium deal, needs gold to buy their freedom
@@ -131,7 +145,7 @@ Each element connects to others, creating a story graph that generates both char
 
 ## BUSHRANGER - The Hunted & The Hunters
 
-### Name Generator
+### Name Generator — Bushranger
 
 **First Names**: English, Irish, Australian-born
 
@@ -141,11 +155,11 @@ Each element connects to others, creating a story graph that generates both char
 
 - "The Gentleman", "Bloodshot", "Three-Day", "Gallows", "Mercy"
 
-### Backstory Graph
+### Backstory Graph — Bushranger
 
 **Origin Node**:
 
-```
+```txt
 [Wrongly Accused] → Settlements neutral, can clear name with 3 boss kills
 [Irish Rebel] → +damage vs authority figures, settlements hostile
 [Ex-Trooper] → Knows patrol patterns (sees enemy intents earlier)
@@ -155,7 +169,7 @@ Each element connects to others, creating a story graph that generates both char
 
 **Crime That Started It All**:
 
-```
+```txt
 [Killed Corrupt Magistrate] → Law nodes spawn extra enemies but give gold
 [Robbed Bank for Poor] → Poor nodes give free healing, rich nodes hostile
 [Horse Theft] → Move extra node per day, horses fear you
@@ -164,7 +178,7 @@ Each element connects to others, creating a story graph that generates both char
 
 ### Example Generated Bushranger
 
-**"Mary 'Mercy' O'Sullivan"**
+#### Example: Mary 'Mercy' O'Sullivan
 
 - _Origin_: Ex-Trooper turned outlaw after refusing to massacre innocents
 - _Crime_: Killed her commanding officer to save Aboriginal family
@@ -176,7 +190,7 @@ Each element connects to others, creating a story graph that generates both char
 
 ## TRACKER - The Seekers & The Lost
 
-### Name Generator
+### Name Generator — Tracker
 
 **First Names**: Often Aboriginal-influenced or frontier names
 
@@ -186,11 +200,11 @@ Each element connects to others, creating a story graph that generates both char
 
 - "Never-Lost", "Ghost", "Bloodhound", "The Finder", "Shadow"
 
-### Backstory Graph
+### Backstory Graph — Tracker
 
 **Origin Node**:
 
-```
+```txt
 [Aboriginal Guide] → Knows true names of places (bonus at sacred sites)
 [Lost Surveyor] → Has incomplete map showing treasure, but it's cursed
 [Bounty Hunter] → Can see criminal nodes, they give extra rewards
@@ -200,7 +214,7 @@ Each element connects to others, creating a story graph that generates both char
 
 **What They're Tracking**:
 
-```
+```txt
 [Missing Sister] → Sister appears as special node that moves
 [The Thing That Killed Everyone] → Boss is hunting you too
 [Map to El Dorado] → Nodes sometimes shimmer with false gold
@@ -209,7 +223,7 @@ Each element connects to others, creating a story graph that generates both char
 
 ### Example Generated Tracker
 
-**"Jacky 'Ghost' Nameless"**
+#### Example: Jacky 'Ghost' Nameless
 
 - _Origin_: Woke up in the goldfields with no memory, only tracking skills
 - _Tracking_: Their own past - special nodes reveal memory fragments
@@ -221,7 +235,7 @@ Each element connects to others, creating a story graph that generates both char
 
 ## PUBLICAN - The Social & The Spirited
 
-### Name Generator
+### Name Generator — Publican
 
 **First Names**: Working class British/Irish/Australian
 
@@ -231,11 +245,11 @@ Each element connects to others, creating a story graph that generates both char
 
 - "Last Round", "The Landlord", "Honest", "Watered-Down", "Credit"
 
-### Backstory Graph
+### Backstory Graph — Publican
 
 **Origin Node**:
 
-```
+```txt
 [Inherited Cursed Pub] → Pub nodes have special events, ghosts help sometimes
 [Traveling Merchant] → Caravan gives mobile shop, but attracts bandits
 [Ex-Priest/Nun] → Blessed alcohol has healing properties, demons hate you
@@ -245,7 +259,7 @@ Each element connects to others, creating a story graph that generates both char
 
 **Their Establishment's Story**:
 
-```
+```txt
 [Built on Aboriginal Sacred Ground] → Powerful but cursed location effects
 [Last Pub Before Hell] → Demons are regular customers, pay well but corrupting
 [Traveling Wagon] → Pub moves around map, following you
@@ -254,7 +268,7 @@ Each element connects to others, creating a story graph that generates both char
 
 ### Example Generated Publican
 
-**"Mother Francis 'Last Round' O'Brien"**
+#### Example: Mother Francis 'Last Round' O'Brien
 
 - _Origin_: Ex-nun who inherited brother's cursed pub
 - _Establishment_: "The Pearly Gates" - last pub before the breach zones
@@ -268,13 +282,13 @@ Each element connects to others, creating a story graph that generates both char
 
 The character's generated story creates unique events:
 
-### Prospector Chen 'Snake-Eyes' Wei might encounter:
+### Prospector Chen 'Snake-Eyes' Wei might encounter
 
 - **"Old Creditor"** node: Pay 50 gold or fight upgraded enemy
 - **"Letter from Home"** event: Lose sanity but gain powerful motivation card
 - **"Another Banker"** shop: Recognizes you, offers credit but at terrible terms
 
-### Bushranger Mary 'Mercy' O'Sullivan might encounter:
+### Bushranger Mary 'Mercy' O'Sullivan might encounter
 
 - **"Trooper Patrol"** node: Your old unit - harder fight but know their patterns
 - **"Aboriginal Family"** event: The ones you saved offer blessing
@@ -283,8 +297,6 @@ The character's generated story creates unique events:
 ## Procedural Dialogue
 
 Based on backstory elements, generate barks and commentary:
-
-gdscript
 
 ```gdscript
 func generate_battle_start_dialogue(character, enemy):

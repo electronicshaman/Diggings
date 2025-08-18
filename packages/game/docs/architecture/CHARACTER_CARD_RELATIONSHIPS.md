@@ -1,5 +1,7 @@
 # Character-Card Relationship Architecture
 
+Last verified: 2025-08-18
+
 ## Overview
 
 This document describes the implemented system for managing relationships between character classes and cards in the card battler prototype.
@@ -8,7 +10,7 @@ This document describes the implemented system for managing relationships betwee
 
 ### Core Components
 
-#### 1. CharacterClass Resource (scripts/characters/CharacterClass.gd)
+#### 1. CharacterClass Resource (`scripts/characters/character_class.gd`)
 
 The `CharacterClass` resource defines everything about a playable character:
 
@@ -89,6 +91,7 @@ Cards now include class affinity information:
    - `forbidden_card_types`: Theme types they cannot use
 
 3. **Compatibility Check**:
+ 
 ```gdscript
 # In CharacterClass
 func can_use_card(card_data: CardData) -> bool:
@@ -115,6 +118,8 @@ All four character classes have been created as resource files in `data/characte
 | **Prospector** | `prospector.tres` | Fortune | 45 HP, 110 San, 25 Gold | Gold Rush, Risk Tolerance, Fortune Streak |
 | **Tracker** | `tracker.tres` | Skill | 50 HP, 105 San, 15 Gold | Setup Counter, Pathfinding, Sacred Knowledge |
 | **Publican** | `publican.tres` | Power | 50 HP, 95 San, 20 Gold | Brew Tokens, Social Hub, House Advantage |
+
+Note: `data/decks/character/` currently has no deck resource files. Starting decks are resolved via `starting_deck_paths` on `CharacterClass` until deck resources are added.
 
 ### Card Weight System
 
@@ -143,27 +148,35 @@ func get_card_preference_weight(card_data: CardData) -> float:
 ## Integration Points
 
 ### 1. Character Selection
+
 When a player selects a character:
+
 - Load the CharacterClass resource
 - Build starting deck from `starting_deck` array
 - Apply starting stat modifiers
 - Initialize unique resources (Ammo, Brew Tokens, etc.)
 
 ### 2. Card Rewards
+
 When generating card rewards:
+
 - Filter cards by `can_use_card()`
 - Weight selection by `get_card_preference_weight()`
 - Respect accessibility tiers
 - Consider current deck composition
 
 ### 3. Shop Systems
+
 Shops should:
+
 - Only offer cards the character can use
 - Price cards based on character preferences
 - Potentially offer class-specific discounts
 
 ### 4. Card Display
+
 UI should indicate:
+
 - Class-exclusive cards with special borders/icons
 - Neutral vs class cards
 - Cards that synergize with character abilities
@@ -171,12 +184,14 @@ UI should indicate:
 ## Future Enhancements
 
 ### Planned Features
+
 1. **Character Progression**: Unlock new class cards through play
 2. **Cross-Class Synergies**: Cards that work specially with multiple classes
 3. **Dynamic Affinities**: Cards that change affinity based on conditions
 4. **Class Mastery**: Improve card weights through repeated play
 
 ### Potential Expansions
+
 1. **Hybrid Classes**: Characters that blend two specializations
 2. **Corrupted Variants**: Dark versions of class cards
 3. **Legendary Class Cards**: Ultra-rare class-specific cards
@@ -185,12 +200,14 @@ UI should indicate:
 ## Best Practices
 
 ### When Adding New Cards
+
 1. Decide accessibility tier (Starting/Class/Neutral/Rare)
 2. Set appropriate class_affinity array
 3. Assign mechanical_category for theme-agnostic systems
 4. Test with all character classes for balance
 
 ### When Creating New Characters
+
 1. Define clear mechanical identity
 2. Set balanced starting statistics
 3. Create unique ability combinations
@@ -198,6 +215,7 @@ UI should indicate:
 5. Write flavorful descriptions and quotes
 
 ### Balancing Considerations
+
 - Class cards should be ~20% stronger than neutral equivalents
 - Starting decks should enable basic strategy immediately
 - Each class needs viable paths to victory

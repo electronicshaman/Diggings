@@ -26,13 +26,29 @@ The **Bushranger** represents the archetypal Australian outlaw - a hardened figh
 
 ### Starting Statistics
 
-```txt
+```text
 Health: 55/55        # Above average (tough, hardened fighter)
 Sanity: 90/90        # Below average (outlaw stress, trauma)
 Energy: 3/3          # Standard energy per turn
 Gold: 10             # Below average (living rough, no legitimate income)
 Corruption: 0        # Starts clean but violence corrupts
 ```
+
+Last verified: 2025-08-18
+
+## Implementation Snapshot (data/characters/bushranger.tres)
+
+- mechanical_specialization: Attack
+- base_health: 55, base_sanity: 90, base_energy: 3, starting_gold: 10
+- starting_deck_paths: 15 entries; starting_deck_size: 15
+- passive_abilities: ["Outlaw's Edge", "Wanted Status"]
+- active_abilities: ["Quick Draw"]
+- unique_resources: ["Ammo"]
+- preferred_card_types: ["Gold"], forbidden_card_types: []
+
+## Deltas vs Spec
+
+- None significant. Uses starting_deck_paths (consistent with other classes).
 
 ## Class Mechanics
 

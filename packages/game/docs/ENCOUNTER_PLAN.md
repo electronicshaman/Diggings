@@ -1,10 +1,55 @@
 # Australian Environmental Events & Wildlife System
 
+Last verified: 2025-08-18
+
+Related docs:
+
+- Architecture: `docs/architecture/ENCOUNTER_FLOW.md` (how encounters load, trigger, and complete)
+- Event Bus: `docs/architecture/EVENT_BUS_REFERENCE.md` (signals used for UI popups and notifications)
+
+## Current Implementation Snapshot
+
+Detected encounter resources in `data/encounters/`:
+
+### Common
+
+- `abandoned_camp.tres`
+- `brown_snake_encounter.tres`
+- `found_supplies.tres`
+- `injured_traveler.tres`
+- `lost_prospector.tres`
+- `old_mine_shaft.tres`
+- `redback_in_swag.tres`
+- `wounded_eagle.tres`
+
+### Rare
+
+- `mysterious_merchant.tres`
+
+### Legendary
+
+- (none yet)
+
+### Region-specific
+
+- (none yet)
+
+### Story
+
+- (none yet)
+
+Notes:
+
+- Use these as anchors to prioritize wiring the planned events below.
+- As new `.tres` are added, expand this snapshot to stay accurate.
+- The EncounterManager handles loading, selection, triggering, and completion. See `scripts/autoloads/encounter_manager.gd`.
+
 ## Native Fauna Encounters
 
 ### Dangerous Creatures (Combat or Event)
 
-**Eastern Brown Snake**
+#### Eastern Brown Snake
+
 ```gdscript
 "Brown Snake Strike" - Event
 Options:
@@ -16,7 +61,8 @@ If bitten: Poison effect - lose 2 HP per hex traveled until treated
 Treatment: Antivenom (town), Bush medicine (rare), or Tourniquet (stops poison, reduces movement)
 ```
 
-**Redback Spider**
+#### Redback Spider
+
 ```gdscript
 "Redback in the Swag" - Camp Event
 Wake to find redback in bedroll
@@ -27,7 +73,8 @@ Wake to find redback in bedroll
 Bite effect: Slow poison - lose 1 sanity per day phase
 ```
 
-**Sydney Funnel-Web Spider**
+#### Sydney Funnel-Web Spider
+
 ```gdscript
 "Funnel-Web Territory" - Hex modifier
 This hex has aggressive spiders
@@ -36,7 +83,8 @@ This hex has aggressive spiders
 - Clear with fire (Remove modifier, attract attention)
 ```
 
-**Dropbear** (Mythical/Corrupted Koala)
+#### Dropbear (Mythical/Corrupted Koala)
+
 ```gdscript
 "From Above!" - Forest hex event
 A corrupted koala drops from trees
@@ -47,7 +95,8 @@ A corrupted koala drops from trees
 
 ### Wildlife Rescue Events (Moral Choices)
 
-**Injured Kangaroo**
+#### Injured Kangaroo
+
 ```gdscript
 "Joey in Trouble" - Event
 Find joey with leg caught in abandoned mining equipment
@@ -59,7 +108,8 @@ Options:
 Consequence: "Bush Friend" - Animals warn of danger, +1 hex vision in bush
 ```
 
-**Wombat in Collapsed Burrow**
+#### Wombat in Collapsed Burrow
+
 ```gdscript
 "Cave-in Survivor" - Mining hex event
 Wombat trapped in collapsed mine entrance
@@ -71,7 +121,8 @@ Options:
 Later benefit: Wombat appears to warn before cave-ins
 ```
 
-**Wounded Wedge-tailed Eagle**
+#### Wounded Wedge-tailed Eagle
+
 ```gdscript
 "Eagle's Plight" - Mountain hex event
 Majestic eagle with prospector's shot in wing
@@ -81,7 +132,8 @@ Options:
 - Leave (Eagle dies, scavengers drawn to your path)
 ```
 
-**Echidna Crossing**
+#### Echidna Crossing
+
 ```gdscript
 "Spiny Wanderer" - Path event
 Echidna family crossing your path (Aboriginal cultural significance)
@@ -93,7 +145,8 @@ Options:
 
 ### Corrupted Australian Fauna
 
-**Thylacine Ghost** (Tasmanian Tiger - extinct but haunting)
+#### Thylacine Ghost (Tasmanian Tiger - extinct but haunting)
+
 ```gdscript
 "Impossible Stripes" - Night event only
 See extinct thylacine in the shadows
@@ -105,7 +158,8 @@ Options:
 Note: Seeing extinct animal damages sanity but might reveal hidden truths
 ```
 
-**Possessed Dingo Pack**
+#### Possessed Dingo Pack
+
 ```gdscript
 "Howls in the Dark" - Combat encounter
 Pack leader has eldritch corruption
@@ -114,7 +168,8 @@ Pack leader has eldritch corruption
 - Fire scares them (Use torch/matches, attracts other attention)
 ```
 
-**Giant Goanna** (Monitor lizard grown huge)
+#### Giant Goanna (Monitor lizard grown huge)
+
 ```gdscript
 "Ancient Monitor" - Boss-type encounter
 Corrupted by eating tainted gold
@@ -127,7 +182,8 @@ Corrupted by eating tainted gold
 
 ### Weather Events
 
-**Dust Storm**
+#### Dust Storm
+
 ```gdscript
 "Dust Devil Rising" - Regional event
 Affects multiple hexes for full day
@@ -137,7 +193,8 @@ Affects multiple hexes for full day
 - Finding shelter negates effects
 ```
 
-**Flash Flooding**
+#### Flash Flooding
+
 ```gdscript
 "Creek Becomes Torrent" - After rain
 Low areas become dangerous
@@ -147,7 +204,8 @@ Low areas become dangerous
 - Reveals gold in aftermath
 ```
 
-**Bushfire**
+#### Bushfire
+
 ```gdscript
 "Smoke on the Horizon" - Multi-turn event
 Fire spreading across hexes
@@ -157,7 +215,8 @@ Fire spreading across hexes
 - Smoke causes visibility and breathing issues
 ```
 
-**Cold Snap** (Winter)
+#### Cold Snap (Winter)
+
 ```gdscript
 "Bitter Victorian Winter" - Night modifier
 Unexpected freeze
@@ -169,7 +228,8 @@ Unexpected freeze
 
 ### Mining Hazards
 
-**Mine Shaft Collapse**
+#### Mine Shaft Collapse
+
 ```gdscript
 "Timber Groaning" - Mine hex event
 Old supports failing
@@ -179,7 +239,8 @@ Old supports failing
 - If trapped: mini-game to dig out, sanity loss
 ```
 
-**Bad Air** (Carbon monoxide)
+#### Bad Air (Carbon monoxide)
+
 ```gdscript
 "Stale Air" - Deep mine event
 Canary stops singing / You feel dizzy
@@ -188,7 +249,8 @@ Canary stops singing / You feel dizzy
 - Aired tunnels might have been sealed for reasons...
 ```
 
-**Fool's Gold**
+#### Fool's Gold
+
 ```gdscript
 "Pyrite Discovery" - Mining event
 Glittering vein that's not real gold
@@ -201,21 +263,25 @@ Glittering vein that's not real gold
 ## Character Class Interactions
 
 ### Prospector
+
 - Better at identifying real gold vs fool's gold
 - Can read geological signs for mine safety
 - Animals are more aggressive (they know what prospectors do)
 
 ### Bushranger
+
 - Intimidates some wildlife (snakes flee)
 - Can hunt animals for resources
 - Bushfire experience (knows escape routes)
 
 ### Tracker
+
 - Animal empathy (can calm/befriend easier)
 - Reads weather signs (advance warning)
 - Knows which creatures are corrupted vs natural
 
 ### Publican
+
 - Can make antivenoms from alcohol + herbs
 - Animals drawn to food smells
 - Knows folk remedies for bites/stings
@@ -223,6 +289,7 @@ Glittering vein that's not real gold
 ## Persistent Consequences System
 
 ### Karma Tracking
+
 ```gdscript
 var wildlife_karma = 0  # -10 to +10
 # Helping animals: +karma
@@ -238,6 +305,7 @@ func get_random_event():
 ```
 
 ### Reputation Effects
+
 ```gdscript
 "Known to the Bush" - Achievement/Status
 - Helped 3+ animals
@@ -247,6 +315,7 @@ func get_random_event():
 ```
 
 ### Environmental Storytelling
+
 ```gdscript
 "The Prospector Who Saved the Joey"
 - NPCs remember your actions
@@ -258,21 +327,25 @@ func get_random_event():
 ## Implementation Priority
 
 ### Phase 1: Basic Dangerous Fauna
+
 - Brown snake events (common, realistic danger)
 - Spider in equipment (camp events)
 - Simple choice events (help/ignore/harm)
 
 ### Phase 2: Weather & Environment
+
 - Dust storms (visibility mechanic test)
 - Mine collapses (hex danger zones)
 - Flash floods (forced movement)
 
 ### Phase 3: Karma & Consequences
+
 - Track animal interactions
 - Persistent reputation effects
 - Corrupted creature variants
 
 ### Phase 4: Complex Narratives
+
 - Multi-event chains (saved joey returns to help)
 - Environmental changes (bushfire clearing corruption)
 - Mythical creatures (thylacine ghosts, dropbears)
@@ -280,6 +353,7 @@ func get_random_event():
 ## Design Philosophy
 
 The Australian environment should feel:
+
 - **Dangerous but fair** - Nature gives warnings if you know how to read them
 - **Alive and reactive** - Your actions have consequences
 - **Uniquely Australian** - These events couldn't happen anywhere else
