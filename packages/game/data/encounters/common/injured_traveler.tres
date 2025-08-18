@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/corruption_gain.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/karma_outcome.gd" id="5"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/curio_reward.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/karma_effect.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/effects/types/curio_reward_effect.gd" id="6"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("5")
@@ -13,7 +13,7 @@ description = "Your compassion for the injured is deeply remembered"
 delayed = false
 delay_turns = 0
 karma_category = "strangers"
-karma_amount = 3
+amount = 3
 reason = "provided medical aid to injured traveler"
 narrative_description = "Your mercy in another's darkest hour becomes legend"
 
@@ -22,8 +22,9 @@ script = ExtResource("6")
 description = "The grateful traveler gives you his most precious possession"
 delayed = false
 delay_turns = 0
-curio_name = "Lucky Coin"
-rarity = "common"
+curio_paths = []
+random_curio = true
+curio_rarity = "Common"
 
 [sub_resource type="Resource" id="3"]
 script = ExtResource("2")
@@ -51,7 +52,7 @@ description = "Your callousness toward suffering is noted"
 delayed = false
 delay_turns = 0
 karma_category = "strangers"
-karma_amount = -2
+amount = -2
 reason = "ignored injured traveler"
 narrative_description = "Word spreads of your cold heart"
 
@@ -80,17 +81,19 @@ script = ExtResource("3")
 description = "You take what you can from the helpless"
 delayed = false
 delay_turns = 0
-gold_amount = 20
+resource_type = "gold"
+amount = 20
 random_range = false
-min_gold = 15
-max_gold = 25
+min_amount = 15
+max_amount = 25
 
 [sub_resource type="Resource" id="7"]
 script = ExtResource("4")
 description = "Robbing the helpless blackens your soul"
 delayed = false
 delay_turns = 0
-corruption_amount = 5
+resource_type = "corruption"
+amount = 5
 
 [sub_resource type="Resource" id="8"]
 script = ExtResource("5")
@@ -98,7 +101,7 @@ description = "Preying on the helpless marks you as a predator"
 delayed = false
 delay_turns = 0
 karma_category = "strangers"
-karma_amount = -4
+amount = -4
 reason = "robbed injured traveler"
 narrative_description = "Your cruelty will follow you across the colonies"
 

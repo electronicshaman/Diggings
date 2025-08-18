@@ -2,16 +2,16 @@
 
 [ext_resource type="Script" uid="uid://b1siq5ncsurb6" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://dxoc3qrjfduah" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" uid="uid://twnwgs8w4v61" path="res://scripts/data/encounter_outcome.gd" id="2_53mar"]
-[ext_resource type="Script" uid="uid://ds62lkhgm2bh8" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
-[ext_resource type="Script" uid="uid://dkuyu2gufcbo0" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="4"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("3")
-gold_amount = 25
+resource_type = "gold"
+amount = 25
 random_range = false
-min_gold = 5
-max_gold = 15
+min_amount = 5
+max_amount = 15
 description = "Find a small pouch of gold"
 delayed = false
 delay_turns = 0
@@ -27,9 +27,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_53mar")]([SubResource("1")])
+outcomes = [SubResource("1")]
 success_chance = 1.0
-failure_outcomes = Array[ExtResource("2_53mar")]([])
+failure_outcomes = []
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -38,20 +38,21 @@ disabled_color = Color(0.5, 0.5, 0.5, 0.7)
 
 [sub_resource type="Resource" id="3"]
 script = ExtResource("4")
-damage_amount = 5
-damage_type = "physical"
-percentage_based = false
-percentage = 0.1
+amount = 5
+ignores_defense = false
+multi_hit = false
+hits = 1
 description = "Trigger a trap in your haste"
 delayed = false
 delay_turns = 0
 
 [sub_resource type="Resource" id="2"]
 script = ExtResource("3")
-gold_amount = 15
+resource_type = "gold"
+amount = 15
 random_range = false
-min_gold = 5
-max_gold = 15
+min_amount = 5
+max_amount = 15
 description = "Grab some gold"
 delayed = false
 delay_turns = 0
@@ -67,9 +68,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_53mar")]([SubResource("2")])
+outcomes = [SubResource("2")]
 success_chance = 0.7
-failure_outcomes = Array[ExtResource("2_53mar")]([SubResource("3")])
+failure_outcomes = [SubResource("3")]
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -87,9 +88,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_53mar")]([])
+outcomes = []
 success_chance = 1.0
-failure_outcomes = Array[ExtResource("2_53mar")]([])
+failure_outcomes = []
 is_hidden = false
 show_requirements = true
 one_time_only = false

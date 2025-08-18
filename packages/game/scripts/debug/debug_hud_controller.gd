@@ -134,11 +134,17 @@ func cache_ui_references() -> void:
 	eventbus_signals_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EventBusSignals/Value")
 	active_modals_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/ActiveModals/Value")
 
-	# Ensure Encounter IDs UI exists under SystemDebug and cache references
-	_ensure_encounter_ids_ui()
+	# Cache Encounter IDs UI references from scene
+	encountered_ids_title = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EncounterIDs/Title")
+	encountered_ids_list = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EncounterIDs/EncounterIDsScroll/Value")
 	
-	# Ensure Deck UI exists and cache references
-	_ensure_deck_ui()
+	# Cache Deck UI references from scene
+	deck_total_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/TotalCount/Value")
+	deck_composition_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/Composition/Value")
+	hand_count_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/HandCount/Value")
+	discard_count_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/DiscardCount/Value")
+	removed_count_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/RemovedCount/Value")
+	deck_list = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/DeckScroll/DeckList")
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Use the named input action instead of hardcoded keycode
@@ -496,164 +502,12 @@ func update_deck_info() -> void:
 		if removed_count_value:
 			removed_count_value.text = "---"
 
-func _ensure_deck_ui() -> void:
-	# Create a deck section in the second HBoxContainer alongside Curios, RunStatistics, SystemDebug
-	var hbox2 := get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2")
-	if hbox2 == null:
-		return
 
-	# If already present, cache and exit
-	var container := hbox2.get_node_or_null("Deck")
-	if container:
-		deck_total_value = container.get_node_or_null("TotalCount/Value") as Label
-		deck_composition_value = container.get_node_or_null("Composition/Value") as Label
-		hand_count_value = container.get_node_or_null("HandCount/Value") as Label
-		discard_count_value = container.get_node_or_null("DiscardCount/Value") as Label
-		removed_count_value = container.get_node_or_null("RemovedCount/Value") as Label
-		var existing_scroll := container.get_node_or_null("DeckScroll")
-		if existing_scroll:
-			deck_list = existing_scroll.get_node_or_null("DeckList") as VBoxContainer
-		return
 
-	# Build UI dynamically
-	container = VBoxContainer.new()
-	container.name = "Deck"
 
-	var title := Label.new()
-	title.name = "Title"
-	title.text = "Deck Info"
-	# Apply default label styling
-	container.add_child(title)
-
-	# Deck size
-	var size_container := HBoxContainer.new()
-	size_container.name = "TotalCount"
-	var size_label := Label.new()
-	size_label.name = "Label"
-	size_label.text = "Total Cards:"
-	size_label.custom_minimum_size.x = 80
-	deck_total_value = Label.new()
-	deck_total_value.name = "Value"
-	deck_total_value.text = "0"
-	size_container.add_child(size_label)
-	size_container.add_child(deck_total_value)
-	container.add_child(size_container)
-
-	# Deck composition
-	var comp_container := HBoxContainer.new()
-	comp_container.name = "Composition"
-	var comp_label := Label.new()
-	comp_label.name = "Label"
-	comp_label.text = "Composition:"
-	comp_label.custom_minimum_size.x = 80
-	deck_composition_value = Label.new()
-	deck_composition_value.name = "Value"
-	deck_composition_value.text = "Empty"
-	deck_composition_value.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	comp_container.add_child(comp_label)
-	comp_container.add_child(deck_composition_value)
-	container.add_child(comp_container)
-
-	# Duel-specific counts
-	var hand_container := HBoxContainer.new()
-	hand_container.name = "HandCount"
-	var hand_label := Label.new()
-	hand_label.name = "Label"
-	hand_label.text = "In Hand:"
-	hand_label.custom_minimum_size.x = 80
-	hand_count_value = Label.new()
-	hand_count_value.name = "Value"
-	hand_count_value.text = "---"
-	hand_container.add_child(hand_label)
-	hand_container.add_child(hand_count_value)
-	container.add_child(hand_container)
-
-	var discard_container := HBoxContainer.new()
-	discard_container.name = "DiscardCount"
-	var discard_label := Label.new()
-	discard_label.name = "Label"
-	discard_label.text = "Discarded:"
-	discard_label.custom_minimum_size.x = 80
-	discard_count_value = Label.new()
-	discard_count_value.name = "Value"
-	discard_count_value.text = "---"
-	discard_container.add_child(discard_label)
-	discard_container.add_child(discard_count_value)
-	container.add_child(discard_container)
-
-	var removed_container := HBoxContainer.new()
-	removed_container.name = "RemovedCount"
-	var removed_label := Label.new()
-	removed_label.name = "Label"
-	removed_label.text = "Removed:"
-	removed_label.custom_minimum_size.x = 80
-	removed_count_value = Label.new()
-	removed_count_value.name = "Value"
-	removed_count_value.text = "---"
-	removed_container.add_child(removed_label)
-	removed_container.add_child(removed_count_value)
-	container.add_child(removed_container)
-
-	# Scrollable deck list
-	var scroll := ScrollContainer.new()
-	scroll.name = "DeckScroll"
-	scroll.custom_minimum_size = Vector2(200, 150)
-
-	deck_list = VBoxContainer.new()
-	deck_list.name = "DeckList"
-
-	scroll.add_child(deck_list)
-	container.add_child(scroll)
-
-	# Add to the second HBoxContainer
-	hbox2.add_child(container)
-
-func _ensure_encounter_ids_ui() -> void:
-	# Create a simple titled, scrollable list under SystemDebug to show encountered IDs
-	var system_debug := get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug")
-	if system_debug == null:
-		return
-
-	# If already present, cache and exit
-	var container := system_debug.get_node_or_null("EncounterIDs")
-	if container:
-		encountered_ids_title = container.get_node_or_null("Title") as Label
-		var existing_scroll := container.get_node_or_null("EncounterIDsScroll")
-		if existing_scroll:
-			encountered_ids_list = existing_scroll.get_node_or_null("Value") as RichTextLabel
-		return
-
-	# Build UI dynamically
-	container = VBoxContainer.new()
-	container.name = "EncounterIDs"
-
-	var title := Label.new()
-	title.name = "Title"
-	title.text = "Encounter IDs Seen (0)"
-	container.add_child(title)
-
-	var scroll := ScrollContainer.new()
-	scroll.name = "EncounterIDsScroll"
-	scroll.custom_minimum_size = Vector2(320, 120)
-
-	var list := RichTextLabel.new()
-	list.name = "Value"
-	list.bbcode_enabled = false
-	list.scroll_active = true
-	list.fit_content = true
-
-	scroll.add_child(list)
-	container.add_child(scroll)
-	system_debug.add_child(container)
-
-	# Cache references
-	encountered_ids_title = title
-	encountered_ids_list = list
 
 func _update_encounter_ids() -> void:
 	# Update encounter IDs list and title count from EncounterManager
-	if encountered_ids_list == null:
-		_ensure_encounter_ids_ui()
 	if encountered_ids_list == null:
 		return
 

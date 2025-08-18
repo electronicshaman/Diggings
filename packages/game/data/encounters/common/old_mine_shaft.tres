@@ -2,18 +2,19 @@
 
 [ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="4"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("3")
 description = "Find gold overlooked by previous miners"
 delayed = false
 delay_turns = 0
-gold_amount = 35
+resource_type = "gold"
+amount = 35
 random_range = true
-min_gold = 20
-max_gold = 50
+min_amount = 20
+max_amount = 50
 
 [sub_resource type="Resource" id="2"]
 script = ExtResource("2")
@@ -40,20 +41,21 @@ script = ExtResource("3")
 description = "Quick grab of surface gold"
 delayed = false
 delay_turns = 0
-gold_amount = 15
+resource_type = "gold"
+amount = 15
 random_range = false
-min_gold = 10
-max_gold = 20
+min_amount = 10
+max_amount = 20
 
 [sub_resource type="Resource" id="4"]
 script = ExtResource("4")
 description = "The shaft collapses around you!"
 delayed = false
 delay_turns = 0
-damage_amount = 15
-damage_type = "physical"
-percentage_based = false
-percentage = 0.1
+amount = 15
+ignores_defense = false
+multi_hit = false
+hits = 1
 
 [sub_resource type="Resource" id="5"]
 script = ExtResource("2")

@@ -9,7 +9,6 @@ script = ExtResource("1_tkffo")
 layer = 100
 
 [node name="PanelContainer" type="PanelContainer" parent="CanvasLayer"]
-visible = false
 modulate = Color(1, 1, 1, 0.9)
 anchors_preset = 15
 anchor_right = 1.0
@@ -276,6 +275,7 @@ layout_mode = 2
 
 [node name="Curios" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Curios"]
 layout_mode = 2
@@ -301,6 +301,7 @@ text = "0"
 
 [node name="RunStatistics" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
 layout_mode = 2
@@ -380,6 +381,7 @@ text = "0"
 
 [node name="SystemDebug" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
 layout_mode = 2
@@ -456,3 +458,94 @@ text = "Active Modals: "
 [node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/ActiveModals"]
 layout_mode = 2
 text = "---"
+
+[node name="EncounterIDs" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EncounterIDs"]
+layout_mode = 2
+text = "Encounter IDs Seen (0)"
+
+[node name="EncounterIDsScroll" type="ScrollContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EncounterIDs"]
+custom_minimum_size = Vector2(320, 120)
+layout_mode = 2
+
+[node name="Value" type="RichTextLabel" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EncounterIDs/EncounterIDsScroll"]
+layout_mode = 2
+fit_content = true
+
+[node name="Deck" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck"]
+layout_mode = 2
+text = "=== DECK ==="
+
+[node name="TotalCount" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/TotalCount"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Total Cards:"
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/TotalCount"]
+layout_mode = 2
+text = "0"
+
+[node name="Composition" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/Composition"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Composition:"
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/Composition"]
+layout_mode = 2
+text = "Empty"
+autowrap_mode = 2
+
+[node name="HandCount" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/HandCount"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "In Hand:"
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/HandCount"]
+layout_mode = 2
+text = "---"
+
+[node name="DiscardCount" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/DiscardCount"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Discarded:"
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/DiscardCount"]
+layout_mode = 2
+text = "---"
+
+[node name="RemovedCount" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/RemovedCount"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Removed:"
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/RemovedCount"]
+layout_mode = 2
+text = "---"
+
+[node name="DeckScroll" type="ScrollContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 2
+
+[node name="DeckList" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Deck/DeckScroll"]
+layout_mode = 2

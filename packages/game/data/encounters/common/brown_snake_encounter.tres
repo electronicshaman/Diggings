@@ -2,24 +2,23 @@
 
 [ext_resource type="Script" uid="uid://b1siq5ncsurb6" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://dxoc3qrjfduah" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" uid="uid://twnwgs8w4v61" path="res://scripts/data/encounter_outcome.gd" id="2_nwl2n"]
-[ext_resource type="Script" uid="uid://dkuyu2gufcbo0" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="3"]
-[ext_resource type="Script" uid="uid://e0l0hiq0cdxl" path="res://scripts/encounters/outcomes/sanity_restore.gd" id="4"]
-[ext_resource type="Script" uid="uid://bvq8tom7jvmvm" path="res://scripts/encounters/outcomes/karma_outcome.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/sanity_effect.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/karma_effect.gd" id="5"]
 
 [sub_resource type="Resource" id="2"]
 script = ExtResource("3")
-damage_amount = 8
-damage_type = "poison"
-percentage_based = false
-percentage = 0.1
+amount = 8
+ignores_defense = false
+multi_hit = false
+hits = 1
 description = "The snake strikes in your haste!"
 delayed = false
 delay_turns = 0
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("4")
-sanity_amount = 5
+amount = 5
 percentage_based = false
 percentage = 0.2
 full_restore = false
@@ -30,7 +29,7 @@ delay_turns = 0
 [sub_resource type="Resource" id="7"]
 script = ExtResource("5")
 karma_category = "wildlife"
-karma_amount = 1
+amount = 1
 reason = "showed respect to brown snake"
 narrative_description = "The bush recognizes your wisdom in coexistence"
 description = "Your respect for dangerous wildlife is noted"
@@ -48,9 +47,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_nwl2n")]([SubResource("1"), SubResource("7")])
+outcomes = [SubResource("1"), SubResource("7")]
 success_chance = 0.75
-failure_outcomes = Array[ExtResource("2_nwl2n")]([SubResource("2")])
+failure_outcomes = [SubResource("2")]
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -68,9 +67,9 @@ health_cost = 2
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_nwl2n")]([])
+outcomes = []
 success_chance = 1.0
-failure_outcomes = Array[ExtResource("2_nwl2n")]([])
+failure_outcomes = []
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -79,10 +78,10 @@ disabled_color = Color(0.5, 0.5, 0.5, 0.7)
 
 [sub_resource type="Resource" id="5"]
 script = ExtResource("3")
-damage_amount = 12
-damage_type = "poison"
-percentage_based = false
-percentage = 0.1
+amount = 12
+ignores_defense = false
+multi_hit = false
+hits = 1
 description = "You strike at the snake but it bites back!"
 delayed = false
 delay_turns = 0
@@ -90,7 +89,7 @@ delay_turns = 0
 [sub_resource type="Resource" id="8"]
 script = ExtResource("5")
 karma_category = "wildlife"
-karma_amount = -2
+amount = -2
 reason = "attacked brown snake unnecessarily"
 narrative_description = "The bush spirits frown upon needless violence"
 description = "Your aggression toward wildlife is remembered"
@@ -108,9 +107,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_nwl2n")]([])
+outcomes = []
 success_chance = 0.4
-failure_outcomes = Array[ExtResource("2_nwl2n")]([SubResource("5"), SubResource("8")])
+failure_outcomes = [SubResource("5"), SubResource("8")]
 is_hidden = false
 show_requirements = true
 one_time_only = false

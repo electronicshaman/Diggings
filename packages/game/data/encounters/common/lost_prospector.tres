@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/karma_outcome.gd" id="5"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/sanity_restore.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/karma_effect.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/effects/types/sanity_effect.gd" id="6"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("5")
@@ -13,7 +13,7 @@ description = "Your generosity to a fellow prospector is remembered"
 delayed = false
 delay_turns = 0
 karma_category = "strangers"
-karma_amount = 2
+amount = 2
 reason = "shared water with lost prospector"
 narrative_description = "Word spreads of your kindness to those in need"
 
@@ -22,7 +22,7 @@ script = ExtResource("6")
 description = "Helping others lifts your spirits"
 delayed = false
 delay_turns = 0
-sanity_amount = 5
+amount = 5
 
 [sub_resource type="Resource" id="3"]
 script = ExtResource("2")
@@ -79,10 +79,11 @@ script = ExtResource("3")
 description = "The grateful prospector shares his find"
 delayed = false
 delay_turns = 0
-gold_amount = 40
+resource_type = "gold"
+amount = 40
 random_range = true
-min_gold = 25
-max_gold = 60
+min_amount = 25
+max_amount = 60
 
 [sub_resource type="Resource" id="7"]
 script = ExtResource("5")
