@@ -1,5 +1,5 @@
 extends EncounterOutcome
-class_name SanityRestore
+class_name SanityRestoreOutcome
 
 const OUTCOME_NAME := "SanityRestore"
 
