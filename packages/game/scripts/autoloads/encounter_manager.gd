@@ -1,11 +1,13 @@
 extends Node
 
 const DEBUG_ENABLED: bool = true
+const EffectContext = preload("res://scripts/effects/core/effect_context.gd")
+const EncounterOutcomeScript = preload("res://scripts/data/encounter_outcome.gd")
 
 signal event_triggered(event_instance: EncounterInstance)
 signal event_choice_made(event_instance: EncounterInstance, choice_index: int)
 signal event_completed(event_instance: EncounterInstance)
-signal event_outcome_applied(outcome: EncounterOutcome)
+signal event_outcome_applied(effect)
 
 var active_event: EncounterInstance = null
 var event_queue: Array[EncounterInstance] = []
@@ -195,32 +197,53 @@ func make_choice(choice_index: int) -> void:
 		"custom_rewards": []
 	}
 	
-	for outcome in outcomes:
-		if outcome:
-			_track_outcome_rewards(outcome, reward_data)
-			apply_outcome(outcome)
+	for effect in outcomes:
+		if effect:
+			_track_effect_rewards(effect, reward_data)
+			apply_effect(effect)
 	
 	complete_current_event(reward_data)
 
-func apply_outcome(outcome: EncounterOutcome, context: Dictionary = {}) -> void:
-	if not outcome:
+func apply_effect(effect: Resource, extra_context: Dictionary = {}) -> void:
+	if not effect:
 		return
-	
-	if outcome.delayed and outcome.delay_turns > 0:
+	# Basic delayed support if present on the effect
+	var _delayed_val = effect.get("delayed")
+	var is_delayed = (_delayed_val if _delayed_val != null else false)
+	var _delay_val = effect.get("delay_turns")
+	var delay_turns = int(_delay_val if _delay_val != null else 0)
+	if is_delayed and delay_turns > 0:
 		delayed_outcomes.append({
-			"outcome": outcome,
-			"turns_remaining": outcome.delay_turns,
-			"context": context
+			"effect": effect,
+			"turns_remaining": delay_turns,
+			"context": extra_context
 		})
-		GLog.debug("Delayed outcome '%s' for %d turns" % [outcome.get_outcome_name(), outcome.delay_turns])
+		GLog.debug("Delayed effect for %d turns" % delay_turns)
 		return
-	
-	var game_state = _get_current_game_state()
-	outcome.apply_outcome(self, game_state, context)
-	event_outcome_applied.emit(outcome)
-	
-	if event_bus and outcome.has_method("get_notification_text"):
-		event_bus.ui_notification.emit(outcome.get_notification_text(), "info")
+
+	# Legacy compatibility: support EncounterOutcome during migration
+	if effect is EncounterOutcomeScript:
+		var game_state = _get_current_game_state()
+		effect.apply_outcome(self, game_state, extra_context)
+		event_outcome_applied.emit(effect)
+		if event_bus and effect.has_method("get_notification_text"):
+			event_bus.ui_notification.emit(effect.get_notification_text(), "info")
+		return
+
+	# Build EffectContext for GameEffect
+	var ctx = EffectContext.new()
+	ctx.source_type = "encounter"
+	ctx.source_object = active_event.encounter_data if active_event and active_event.encounter_data else null
+	ctx.game_manager = game_manager
+	ctx.player_data = _get_player_data()
+	ctx.trigger_event = "encounter_choice"
+	ctx.trigger_data = extra_context
+
+	if effect.has_method("apply_effect"):
+		var result = effect.apply_effect(ctx)
+		event_outcome_applied.emit(effect)
+		if event_bus and result and result.ui_feedback and result.ui_feedback.has("message"):
+			event_bus.ui_notification.emit(str(result.ui_feedback.message), "info")
 
 func complete_current_event(reward_data: Dictionary = {}) -> void:
 	if not active_event:
@@ -305,7 +328,7 @@ func _on_turn_started(_turn_number: int) -> void:
 		i -= 1
 	
 	for delayed in outcomes_to_apply:
-		apply_outcome(delayed.outcome, delayed.context)
+		apply_effect(delayed.effect, delayed.context)
 
 func _on_node_selected(node: Node) -> void:
 	if not node:
@@ -348,8 +371,11 @@ func get_save_data() -> Dictionary:
 		save_data["event_history"].append(instance.get_save_data())
 	
 	for delayed in delayed_outcomes:
+		var effect_path := ""
+		if delayed.has("effect") and delayed.effect and typeof(delayed.effect) == TYPE_OBJECT and delayed.effect is Resource:
+			effect_path = delayed.effect.resource_path if delayed.effect.resource_path else ""
 		save_data["delayed_outcomes"].append({
-			"outcome_path": delayed.outcome.resource_path if delayed.outcome.resource_path else "",
+			"effect_path": effect_path,
 			"turns_remaining": delayed.turns_remaining,
 			"context": delayed.context
 		})
@@ -374,11 +400,13 @@ func load_from_data(data: Dictionary) -> void:
 	delayed_outcomes.clear()
 	var delayed_data = data.get("delayed_outcomes", [])
 	for delayed in delayed_data:
-		var outcome_path = delayed.get("outcome_path", "")
-		if outcome_path != "" and ResourceLoader.exists(outcome_path):
-			var outcome = load(outcome_path)
+		var effect_path = delayed.get("effect_path", "")
+		var effect_res = null
+		if effect_path != "" and ResourceLoader.exists(effect_path):
+			effect_res = load(effect_path)
+		if effect_res:
 			delayed_outcomes.append({
-				"outcome": outcome,
+				"effect": effect_res,
 				"turns_remaining": delayed.get("turns_remaining", 0),
 				"context": delayed.get("context", {})
 			})
@@ -508,48 +536,9 @@ func trigger_from_context(encounter_context: Dictionary) -> EncounterInstance:
 # REWARD TRACKING FUNCTIONS
 # ============================================================================
 
-func _track_outcome_rewards(outcome: EncounterOutcome, reward_data: Dictionary) -> void:
-	"""Track rewards from an outcome for summary display"""
-	if not outcome:
-		return
-	
-	var outcome_name = outcome.get_outcome_name()
-	
-	# Track gold rewards
-	if outcome_name == "GoldReward" and outcome.has_method("get_gold_amount"):
-		reward_data.gold += outcome.get_gold_amount()
-	
-	# Track karma changes
-	elif outcome_name == "KarmaOutcome" and outcome.has_method("get_karma_changes"):
-		var karma_changes = outcome.get_karma_changes()
-		for category in karma_changes:
-			var change = karma_changes[category]
-			if reward_data.karma_changes.has(category):
-				reward_data.karma_changes[category] += change
-			else:
-				reward_data.karma_changes[category] = change
-			reward_data.total_karma += change
-	
-	# Track corruption changes
-	elif outcome_name == "CorruptionOutcome" and outcome.has_method("get_corruption_amount"):
-		reward_data.corruption += outcome.get_corruption_amount()
-	
-	# Track card rewards
-	elif outcome_name == "CardReward" and outcome.has_method("get_card_name"):
-		reward_data.cards.append(outcome.get_card_name())
-	
-	# Track curio rewards
-	elif outcome_name == "CurioReward" and outcome.has_method("get_curio_name"):
-		reward_data.curios.append(outcome.get_curio_name())
-	
-	# Track custom rewards (for future extension)
-	else:
-		if outcome.has_method("get_reward_description"):
-			reward_data.custom_rewards.append({
-				"name": outcome_name,
-				"description": outcome.get_reward_description(),
-				"color": Color.WHITE
-			})
+func _track_effect_rewards(_effect, _reward_data: Dictionary) -> void:
+	# Placeholder: reward aggregation can be handled via EffectResult in apply_effect if desired
+	pass
 
 func _has_meaningful_rewards(reward_data: Dictionary) -> bool:
 	"""Check if the reward data contains any meaningful rewards to display"""

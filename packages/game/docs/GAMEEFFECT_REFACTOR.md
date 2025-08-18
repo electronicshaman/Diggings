@@ -1,29 +1,38 @@
 # GameEffect System Refactor Plan
 
-## Problem Statement
+This iteration turns the proposal into an actionable plan with concrete Godot wiring, decisions on stacking/ordering/conditions, a directory layout, adapters, tests, and a migration path.
 
-The current codebase has three separate effect systems that implement overlapping functionality:
-
-1. **CardEffect** - Used by cards during combat
-2. **EncounterOutcome** - Used by encounter choices
-3. **CurioEffect** - Used by curios/relics
-
-This separation has led to:
-- **Naming conflicts**: Multiple classes with the same name (e.g., `SanityRestore`, `StatModifier`)
-- **Code duplication**: Same mechanics implemented 3+ times
-- **Inconsistency**: Different APIs and behaviors for the same game mechanics
-- **Maintenance burden**: Changes must be made in multiple places
-- **Future scaling issues**: More overlaps will emerge as content grows
-
-### Current Overlaps Identified
-
-| Effect Type | Card System | Encounter System | Curio System |
-|------------|-------------|------------------|--------------|
-| Sanity Restore | `sanity_restore.gd` | `sanity_restore.gd` | - |
-| Stat Modifier | - | `stat_modifier.gd` | `stat_modifier.gd` |
-| Healing | `heal.gd` | `heal_outcome.gd` | - |
-| Damage | `damage.gd` | `damage_outcome.gd` | - |
 | Gold Changes | `gold_gain.gd` | `gold_reward.gd` | - |
+```text
+scripts/
+   effects/
+      core/
+         game_effect.gd            # base
+         effect_context.gd
+         effect_result.gd
+      registry/
+         effect_registry.gd        # autoload
+      types/                      # unified implementations
+         health_effect.gd
+         damage_effect.gd
+         stat_effect.gd
+         sanity_effect.gd
+         resource_effect.gd
+         defense_effect.gd
+         card_manipulation_effect.gd
+      adapters/                   # temporary, for migration
+         legacy_card_effect_adapter.gd
+         legacy_encounter_adapter.gd
+         legacy_curio_adapter.gd
+      wrappers/
+         card_effect_wrapper.gd
+         encounter_effect_wrapper.gd
+         curio_effect_wrapper.gd
+data/
+   effects/                      # .tres instances for content
+tests/
+   effects/                      # unit tests
+```
 | Corruption | `add_corruption.gd` | `corruption_gain.gd` | - |
 
 ## Proposed Solution: Unified GameEffect System
@@ -36,31 +45,23 @@ class_name GameEffect
 extends Resource
 
 @export var effect_id: String = ""  # Unique identifier
-@export var effect_type: String = ""  # "damage", "heal", "stat_modify", etc.
+@export var effect_type: String = ""  # "damage", "heal", "stat_modify", etc. (tag-like; class type is authoritative)
 @export var target_type: String = "player"  # "player", "enemy", "all", "random"
 @export var timing: String = "immediate"  # "immediate", "delayed", "persistent"
 @export var description: String = ""
 
-# Core method that all effects implement
-func apply_effect(context: EffectContext) -> EffectResult:
+# Execution and ordering
+@export var priority: int = 0  # Higher runs earlier within a phase
+@export var phase: String = "default"  # E.g., "on_play", "turn_start", "turn_end"
+
+# Stacking semantics
+@export var stack_key: String = ""  # Effects with same key are considered the same for stacking
+@export var stack_behavior: String = "independent"  # "independent" | "stack_values" | "refresh_duration" | "cap_value"
+@export var stack_cap: int = 0  # 0 = no cap; used when stack_behavior == "cap_value" or for max stacks
+
     pass
-
-func can_apply(context: EffectContext) -> bool:
-    return true
-
 func get_preview_text(context: EffectContext) -> String:
-    return description
-```
-
 ### Effect Context System
-
-```gdscript
-class_name EffectContext
-extends Resource
-
-# Source information
-@export var source_type: String = ""  # "card", "encounter", "curio", "status", etc.
-@export var source_object: Resource = null  # The card/encounter/curio that triggered this
 
 # State references
 @export var game_manager: Node = null
@@ -75,6 +76,9 @@ extends Resource
 # Targeting
 @export var primary_target: Resource = null
 @export var secondary_targets: Array[Resource] = []
+
+# Utility/context cache to reduce allocations
+var _cache: Dictionary = {}
 ```
 
 ### Effect Result System
@@ -90,6 +94,9 @@ extends Resource
 @export var overkill: int = 0
 @export var triggers: Array[String] = []  # Other effects to trigger
 @export var ui_feedback: Dictionary = {}  # Info for UI display
+
+# Diagnostics
+@export var logs: Array[String] = []
 ```
 
 ## Specific Effect Implementations
@@ -127,6 +134,7 @@ extends Resource
 ## Source-Specific Wrappers
 
 ### For Cards
+
 ```gdscript
 class_name CardEffectWrapper
 extends Resource
@@ -138,6 +146,7 @@ extends Resource
 ```
 
 ### For Encounters
+
 ```gdscript
 class_name EncounterEffectWrapper
 extends Resource
@@ -149,6 +158,7 @@ extends Resource
 ```
 
 ### For Curios
+
 ```gdscript
 class_name CurioEffectWrapper
 extends Resource
@@ -157,42 +167,110 @@ extends Resource
 @export var trigger_event: String = "passive"
 @export var stacks_with_duplicates: bool = false
 @export var chance_to_trigger: float = 1.0
+@export var max_stacks: int = 0
+```
+
+## Godot Project Wiring and Directory Layout
+
+Recommended directory structure to keep effects cohesive and discoverable:
+
+   - game_effect.gd            (base)
+   - effect_context.gd
+   - effect_result.gd
+   - effect_registry.gd        (autoload)
+   - health_effect.gd
+   - damage_effect.gd
+   - stat_effect.gd
+   - sanity_effect.gd
+   - resource_effect.gd
+   - defense_effect.gd
+   - card_manipulation_effect.gd
+   - legacy_card_effect_adapter.gd
+   - legacy_encounter_adapter.gd
+   - legacy_curio_adapter.gd
+   - card_effect_wrapper.gd
+   - encounter_effect_wrapper.gd
+   - curio_effect_wrapper.gd
+
+Autoload wiring (Godot 4): add to project.godot
+
+```ini
+Autoload wiring (Godot 4): add to project.godot
+
+```ini
+[autoload]
+EffectRegistry="*res://scripts/effects/registry/effect_registry.gd"
+```
+
+Minimal EffectRegistry API:
+
+```gdscript
+extends Node
+class_name EffectRegistry
+
+var _by_id: Dictionary = {}
+var _class_by_type: Dictionary = {
+      "health": preload("res://scripts/effects/types/health_effect.gd"),
+      "damage": preload("res://scripts/effects/types/damage_effect.gd"),
+      # ... add more
+}
+
+func register_effect(effect: GameEffect) -> void:
+      if effect.effect_id != "":
+            _by_id[effect.effect_id] = effect
+
+func get_by_id(id: String) -> GameEffect:
+      return _by_id.get(id, null)
+
+func new_by_type(type_key: String) -> GameEffect:
+      var C = _class_by_type.get(type_key, null)
+      return C.new() if C else null
 ```
 
 ## Migration Strategy
 
 ### Phase 1: Foundation (Week 1)
+
 1. Create `GameEffect` base class
 2. Create `EffectContext` and `EffectResult` classes
 3. Create `EffectRegistry` singleton for effect lookup
 4. Set up effect testing framework
+5. Add `EffectRegistry` as autoload in `project.godot`
+6. Create directory structure outlined above
 
 ### Phase 2: Core Effects (Week 1-2)
+
 1. Implement `HealthEffect`
 2. Implement `DamageEffect`
 3. Implement `StatEffect`
 4. Implement `SanityEffect`
-5. Create unit tests for each
+5. Implement `ResourceEffect`, `DefenseEffect`, `CardManipulationEffect`
+6. Create unit tests for each
 
 ### Phase 3: Adapter Layer (Week 2)
+
 1. Create `LegacyCardEffectAdapter`
 2. Create `LegacyEncounterAdapter`
 3. Create `LegacyCurioAdapter`
 4. These allow old content to work with new system
+5. Add feature flags/env toggles to swap systems per-subsystem for safe rollout
 
 ### Phase 4: Encounter Migration (Week 3)
+
 1. Update EncounterManager to use GameEffect
 2. Migrate encounter .tres files
 3. Test all encounters
 4. Remove old EncounterOutcome classes
 
 ### Phase 5: Curio Migration (Week 3-4)
+
 1. Update CurioManager to use GameEffect
 2. Migrate curio .tres files
 3. Test all curios
 4. Remove old CurioEffect classes
 
 ### Phase 6: Card Migration (Week 4-5)
+
 1. Update CardEffects system to use GameEffect
 2. Create migration script for card .tres files
 3. Migrate cards in batches (by type)
@@ -200,10 +278,18 @@ extends Resource
 5. Remove old CardEffect classes
 
 ### Phase 7: Cleanup (Week 5-6)
+
 1. Remove adapter layers
 2. Remove old effect systems
 3. Update documentation
 4. Performance optimization
+
+### Migration Tools and Guidance
+
+- Create `scripts/tools/migrate_effects.gd` to scan `.tres` content and rewrite effect resources to unified types.
+- Maintain a mapping table from legacy class names to new types and field transforms.
+- Add `version` to effect resources and bump on structural changes; write an in-place upgrader.
+- Keep legacy aliases in `EffectRegistry` during migration to resolve old IDs.
 
 ## Benefits
 
@@ -267,6 +353,16 @@ func apply_effect(context: EffectContext) -> EffectResult:
         context.game_manager.emit_signal("healing_applied", heal_amount)
     
     return result
+
+func _get_target(context: EffectContext) -> Object:
+   return context.primary_target if context.primary_target else context.player_data
+
+func _calculate_amount(target: Object) -> int:
+   if full_heal and hasattr(target, "max_hp"):
+      return int(target.max_hp)
+   if percentage_based and hasattr(target, "max_hp"):
+      return int(round(target.max_hp * clamp(percentage, 0.0, 1.0)))
+   return max(0, amount)
 ```
 
 ## Implementation Checklist
@@ -276,11 +372,14 @@ func apply_effect(context: EffectContext) -> EffectResult:
 - [ ] Get team buy-in on approach
 - [ ] Create refactor/gameeffect branch
 - [ ] Set up test environment
+- [ ] Add EffectRegistry autoload entry
+- [ ] Scaffold directory structure under scripts/effects/
 
 ### Quick Fixes (Can do now)
 - [ ] Rename `SanityRestore` in encounters to `SanityRestoreOutcome`
 - [ ] Rename `StatModifier` in encounters to `StatModifierOutcome`
 - [ ] Fix any other naming conflicts
+- [ ] Add unique `effect_id` to existing effect resources where ambiguous
 
 ### Foundation Work
 - [ ] Create effects/ directory structure
@@ -289,6 +388,7 @@ func apply_effect(context: EffectContext) -> EffectResult:
 - [ ] Implement EffectResult
 - [ ] Create EffectRegistry singleton
 - [ ] Set up effect unit tests
+- [ ] Decide on `phase` values and default `priority` ranges
 
 ### Migration Work
 - [ ] Create adapter classes
@@ -297,6 +397,8 @@ func apply_effect(context: EffectContext) -> EffectResult:
 - [ ] Migrate cards (largest scope)
 - [ ] Update all .tres files
 - [ ] Remove legacy systems
+- [ ] Implement `scripts/tools/migrate_effects.gd` with mapping table
+- [ ] Add `version` field and upgrader for resources
 
 ## Risks and Mitigation
 
@@ -349,13 +451,13 @@ func apply_effect(context: EffectContext) -> EffectResult:
 
 **Chosen: Unified System** because it best balances simplicity, flexibility, and maintainability.
 
-## Questions to Resolve
+## Decisions (resolving open questions)
 
-1. Should effects be able to trigger other effects recursively?
-2. How do we handle effect stacking (multiple of same effect)?
-3. Should effects have priority/ordering?
-4. How do we handle conditional effects?
-5. Should effects support custom scripting?
+1. Recursive triggers: Allowed via `EffectResult.triggers` and/or event emissions. Depth is capped (default 8) with cycle detection using a per-context trigger set. If a cycle is detected, set `prevented_by = "cycle"` and stop.
+2. Stacking: Governed by `stack_key`, `stack_behavior`, `stack_cap`. Default is `independent`. Status-like persistent effects should use `refresh_duration` or `stack_values`. Duplicate curios may set `curio_effect_wrapper.max_stacks` and `stacks_with_duplicates`.
+3. Priority/ordering: Effects run by `phase` buckets with ascending lexicographic phase order configurable in the manager, then by `priority` (higher first). Ties resolve by insertion order.
+4. Conditional effects: Use `can_apply()` plus optional `conditions: Array[Condition]` on wrappers. Provide a simple `Condition` Resource with `passes(context) -> bool`. For complex logic, compose multiple conditions.
+5. Custom scripting: Supported by authoring new `GameEffect` subclasses. For data-only customization, expose parameters; avoid arbitrary code injection in content files to keep determinism and security.
 
 ## Next Steps
 
@@ -364,3 +466,9 @@ func apply_effect(context: EffectContext) -> EffectResult:
 3. Begin Phase 1 implementation
 4. Create prototype with 2-3 effects
 5. Test in encounter system first
+
+---
+
+Notes
+- Prefer class types over stringly-typed `effect_type` for logic; keep `effect_type` only for tagging/queries and analytics.
+- Keep public APIs stable during migration; mark adapters with `@warning_ignore("deprecated")` comments where needed.

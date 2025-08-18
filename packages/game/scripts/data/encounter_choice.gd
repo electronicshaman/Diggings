@@ -17,9 +17,9 @@ const DEBUG_ENABLED: bool = true
 @export var min_stat_requirement: Dictionary = {}
 
 @export_group("Outcomes")
-@export var outcomes: Array[EncounterOutcome] = []
+@export var outcomes: Array[Resource] = [] # GameEffect resources
 @export var success_chance: float = 1.0
-@export var failure_outcomes: Array[EncounterOutcome] = []
+@export var failure_outcomes: Array[Resource] = [] # GameEffect resources
 
 @export_group("Conditions")
 @export var is_hidden: bool = false
@@ -100,7 +100,7 @@ func apply_costs(game_state: Dictionary) -> void:
 	if health_cost > 0:
 		game_state["health"] = max(0, game_state.get("health", 0) - health_cost)
 
-func get_outcomes_to_apply(rng_result: float = randf()) -> Array[EncounterOutcome]:
+func get_outcomes_to_apply(rng_result: float = randf()) -> Array[Resource]:
 	if rng_result <= success_chance:
 		return outcomes
 	else:

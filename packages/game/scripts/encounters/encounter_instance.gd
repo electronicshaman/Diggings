@@ -52,7 +52,7 @@ func get_available_choices(game_state: Dictionary) -> Array[EncounterChoice]:
 	
 	return available
 
-func make_choice(choice_index: int, game_state: Dictionary) -> Array[EncounterOutcome]:
+func make_choice(choice_index: int, game_state: Dictionary) -> Array[Resource]:
 	if not encounter_data or choice_index < 0 or choice_index >= encounter_data.choices.size():
 		GLog.error("Invalid choice index: %d" % choice_index)
 		return []
@@ -73,13 +73,18 @@ func make_choice(choice_index: int, game_state: Dictionary) -> Array[EncounterOu
 	
 	var rng_result = randf()
 	var outcomes = choice.get_outcomes_to_apply(rng_result)
-	
-	for outcome in outcomes:
-		if outcome:
-			var outcome_name = outcome.get_outcome_name()
-			outcomes_applied.append(outcome_name)
-			GLog.debug("Applied outcome: %s" % outcome_name)
-	
+    
+	for effect in outcomes:
+		if effect:
+			var effect_name := ""
+			var type_val = effect.get("effect_type")
+			if type_val != null and str(type_val) != "":
+				effect_name = str(type_val)
+			else:
+				effect_name = effect.get_class()
+			outcomes_applied.append(effect_name)
+			GLog.debug("Applied effect: %s" % effect_name)
+    
 	return outcomes
 
 func increment_encounter_count() -> void:
