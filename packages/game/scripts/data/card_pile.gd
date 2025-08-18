@@ -251,7 +251,7 @@ func move_all_to(target_pile: CardPile) -> int:
 		var card: CardInstance = draw_top()
 		if card and target_pile.add_card(card):
 			moved_count += 1
-			GLog.trace("Moved card %d/%d: '%s'" % [moved_count, initial_size, card.card_name])
+			GLog.trace("Moved card %d/%d: '%s'" % [moved_count, initial_size, card.get_card_name()])
 		else:
 			# If target pile is full, put card back and stop
 			if card:
@@ -273,7 +273,7 @@ func move_cards_to(target_pile: CardPile, count: int) -> int:
 		var card: CardInstance = draw_top()
 		if card and target_pile.add_card(card):
 			moved_count += 1
-			GLog.trace("Moved card %d/%d: '%s'" % [moved_count, count, card.card_name])
+			GLog.trace("Moved card %d/%d: '%s'" % [moved_count, count, card.get_card_name()])
 		else:
 			# If target pile is full, put card back and stop
 			if card:
@@ -291,7 +291,7 @@ func copy_to(target_pile: CardPile) -> int:
 		var card = cards[i]
 		if target_pile.add_card(card):
 			copied_count += 1
-			GLog.trace("Copied card %d/%d: '%s'" % [copied_count, cards.size(), card.card_name])
+			GLog.trace("Copied card %d/%d: '%s'" % [copied_count, cards.size(), card.get_card_name()])
 		else:
 			GLog.warn("Target pile full, stopping copy operation")
 			break  # Stop if target pile is full

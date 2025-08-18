@@ -173,11 +173,23 @@ func make_choice(choice_index: int) -> void:
 	
 	event_choice_made.emit(active_event, choice_index)
 	
+	# Track rewards from outcomes for summary
+	var reward_data = {
+		"gold": 0,
+		"karma_changes": {},
+		"total_karma": 0,
+		"corruption": 0,
+		"cards": [],
+		"curios": [],
+		"custom_rewards": []
+	}
+	
 	for outcome in outcomes:
 		if outcome:
+			_track_outcome_rewards(outcome, reward_data)
 			apply_outcome(outcome)
 	
-	complete_current_event()
+	complete_current_event(reward_data)
 
 func apply_outcome(outcome: EncounterOutcome, context: Dictionary = {}) -> void:
 	if not outcome:
@@ -199,7 +211,7 @@ func apply_outcome(outcome: EncounterOutcome, context: Dictionary = {}) -> void:
 	if event_bus and outcome.has_method("get_notification_text"):
 		event_bus.ui_notification.emit(outcome.get_notification_text(), "info")
 
-func complete_current_event() -> void:
+func complete_current_event(reward_data: Dictionary = {}) -> void:
 	if not active_event:
 		return
 	
@@ -211,8 +223,17 @@ func complete_current_event() -> void:
 		event_bus.emit_signal("ui_popup_closed", "event")
 	
 	GLog.debug("Completed event: %s" % active_event.get_encounter_name())
-	active_event = null
 	
+	# Show reward summary if there are meaningful rewards
+	if _has_meaningful_rewards(reward_data):
+		var modal_manager = get_node_or_null("/root/ModalManager")
+		if modal_manager:
+			GLog.debug("Showing reward summary modal")
+			modal_manager.show_reward_summary(reward_data)
+		else:
+			GLog.warn("ModalManager not found, skipping reward summary")
+	
+	active_event = null
 	_process_event_queue()
 
 func queue_event(encounter_data: EncounterData) -> void:
@@ -244,6 +265,10 @@ func _get_current_game_state() -> Dictionary:
 		if game_manager.game_data.has("player") and game_manager.game_data.player:
 			var player_data = game_manager.game_data.player
 			state["player_data"] = player_data
+			# Provide health fields for outcomes that reference raw values
+			if player_data and player_data.stats:
+				state["health"] = player_data.stats.current_health
+				state["max_health"] = player_data.stats.max_health
 	
 	if curio_manager:
 		state["curios"] = []
@@ -387,3 +412,119 @@ func _get_karma_modifier_for_encounter(encounter_data: EncounterData) -> float:
 		return player_data.get_karma_modifier_for_encounter_type(encounter_data.encounter_type)
 	
 	return 1.0
+
+# TILE ENCOUNTER SUPPORT
+# ============================================================================
+
+func trigger_tile_encounter(tile: Object) -> EncounterInstance:
+	"""Trigger an encounter from tile data, creating EncounterInstance"""
+	if not tile or not tile.has_method("get") or not tile.get("encounter_data"):
+		GLog.error("Invalid tile or missing encounter data")
+		return null
+	
+	var encounter_dict = tile.encounter_data
+	var encounter_data: EncounterData = null
+	
+	# If tile has a direct EncounterData resource reference
+	if encounter_dict.has("resource") and encounter_dict.resource is EncounterData:
+		encounter_data = encounter_dict.resource
+	# If tile has encounter data by name, look it up
+	elif encounter_dict.has("encounter_name"):
+		encounter_data = get_event_by_name(encounter_dict.encounter_name)
+	else:
+		GLog.error("Tile encounter data has no resource or encounter_name")
+		return null
+	
+	if not encounter_data:
+		GLog.error("Could not resolve encounter data from tile")
+		return null
+	
+	# Create and trigger the encounter using existing system
+	return trigger_encounter(encounter_data)
+
+func trigger_from_context(encounter_context: Dictionary) -> EncounterInstance:
+	"""Trigger encounter from any context (tile or EncounterManager)"""
+	# If context already has an encounter instance (from EncounterManager)
+	if encounter_context.has("encounter_instance") and encounter_context.encounter_instance:
+		return encounter_context.encounter_instance
+	
+	# If context has tile data, process as tile encounter
+	if encounter_context.has("tile") and encounter_context.tile:
+		return trigger_tile_encounter(encounter_context.tile)
+	
+	# If context has raw encounter data, try to resolve it
+	if encounter_context.has("encounter_data"):
+		var encounter_dict = encounter_context.encounter_data
+		
+		if encounter_dict.has("resource") and encounter_dict.resource is EncounterData:
+			return trigger_encounter(encounter_dict.resource)
+		elif encounter_dict.has("encounter_name"):
+			var encounter_data = get_event_by_name(encounter_dict.encounter_name)
+			if encounter_data:
+				return trigger_encounter(encounter_data)
+	
+	GLog.error("Could not resolve encounter from context: %s" % str(encounter_context.keys()))
+	return null
+
+# REWARD TRACKING FUNCTIONS
+# ============================================================================
+
+func _track_outcome_rewards(outcome: EncounterOutcome, reward_data: Dictionary) -> void:
+	"""Track rewards from an outcome for summary display"""
+	if not outcome:
+		return
+	
+	var outcome_name = outcome.get_outcome_name()
+	
+	# Track gold rewards
+	if outcome_name == "GoldReward" and outcome.has_method("get_gold_amount"):
+		reward_data.gold += outcome.get_gold_amount()
+	
+	# Track karma changes
+	elif outcome_name == "KarmaOutcome" and outcome.has_method("get_karma_changes"):
+		var karma_changes = outcome.get_karma_changes()
+		for category in karma_changes:
+			var change = karma_changes[category]
+			if reward_data.karma_changes.has(category):
+				reward_data.karma_changes[category] += change
+			else:
+				reward_data.karma_changes[category] = change
+			reward_data.total_karma += change
+	
+	# Track corruption changes
+	elif outcome_name == "CorruptionOutcome" and outcome.has_method("get_corruption_amount"):
+		reward_data.corruption += outcome.get_corruption_amount()
+	
+	# Track card rewards
+	elif outcome_name == "CardReward" and outcome.has_method("get_card_name"):
+		reward_data.cards.append(outcome.get_card_name())
+	
+	# Track curio rewards
+	elif outcome_name == "CurioReward" and outcome.has_method("get_curio_name"):
+		reward_data.curios.append(outcome.get_curio_name())
+	
+	# Track custom rewards (for future extension)
+	else:
+		if outcome.has_method("get_reward_description"):
+			reward_data.custom_rewards.append({
+				"name": outcome_name,
+				"description": outcome.get_reward_description(),
+				"color": Color.WHITE
+			})
+
+func _has_meaningful_rewards(reward_data: Dictionary) -> bool:
+	"""Check if the reward data contains any meaningful rewards to display"""
+	if reward_data.gold != 0:
+		return true
+	if reward_data.total_karma != 0:
+		return true
+	if reward_data.corruption != 0:
+		return true
+	if not reward_data.cards.is_empty():
+		return true
+	if not reward_data.curios.is_empty():
+		return true
+	if not reward_data.custom_rewards.is_empty():
+		return true
+	
+	return false

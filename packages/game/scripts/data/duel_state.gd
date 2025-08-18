@@ -209,7 +209,8 @@ func draw_cards(count: int) -> Array[CardData]:
 		
 		var card = deck.draw_top()
 		if card and hand.add_card(card):
-			drawn_cards.append(card)
+			# Return CardData for compatibility, while piles store CardInstance
+			drawn_cards.append(card.card_data)
 		else:
 			# Hand is full, put card back
 			if card:

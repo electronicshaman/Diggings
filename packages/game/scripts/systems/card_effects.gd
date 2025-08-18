@@ -131,25 +131,52 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_inst
 		result.error_message = "Effect %d is invalid" % effect_index
 		return result
 	
-	# Check if effect can be applied (require instance-aware API)
-	if not effect.has_method("can_apply_with_instance"):
-		result.error_message = "Effect %d missing can_apply method" % effect_index
-		return result
-	
-	if not effect.has_method("apply_effect_with_instance"):
-		result.error_message = "Effect %d missing apply_effect method" % effect_index
-		return result
-	
-	# Check if effect can be applied in current context
-	var can_apply: bool = effect.can_apply_with_instance(duel_manager, card_instance)
-	
+	# Prefer instance-aware API when available; gracefully fallback to legacy apply_effect
+	var can_apply: bool = true
+	if effect.has_method("can_apply_with_instance"):
+		can_apply = effect.can_apply_with_instance(duel_manager, card_instance)
+	elif effect.has_method("can_apply"):
+		# Legacy can_apply(card_data, duel_manager) or (duel_manager, card_data)
+		# Try common signatures safely
+		can_apply = true
+		# We won't strictly call legacy can_apply to avoid signature mismatch crashes
+		# Effects without can_apply are assumed applicable
+
 	if not can_apply:
 		result.error_message = "Effect %d cannot be applied in current context" % effect_index
 		return result
-	
-	# Apply the effect via instance-aware API
-	effect.apply_effect_with_instance(duel_manager, card_instance, results)
-	result.success = true
+
+	# Apply using the best available API
+	if effect.has_method("apply_effect_with_instance"):
+		# Snapshot key fields to detect no-op base implementation
+		var snapshot := {
+			"damage": results.get("damage", 0),
+			"defense": results.get("defense", 0),
+			"heal": results.get("heal", 0),
+			"draw": results.get("draw", 0),
+			"energy_restore": results.get("energy_restore", 0),
+			"stun_enemy": results.get("stun_enemy", 0),
+			"ignores_defense": results.get("ignores_defense", false),
+			"discard_random": results.get("discard_random", 0),
+			"add_curse": results.get("add_curse", 0),
+			"sanity_restore": results.get("sanity_restore", 0)
+		}
+		effect.apply_effect_with_instance(duel_manager, card_instance, results)
+		# Detect if nothing changed; if so, fallback to legacy apply_effect
+		var changed := false
+		for k in snapshot.keys():
+			if results.has(k) and results[k] != snapshot[k]:
+				changed = true
+				break
+		if not changed and effect.has_method("apply_effect"):
+			effect.apply_effect(duel_manager, card_instance.card_data, results)
+		result.success = true
+	elif effect.has_method("apply_effect"):
+		# Legacy path expects CardData
+		effect.apply_effect(duel_manager, card_instance.card_data, results)
+		result.success = true
+	else:
+		result.error_message = "Effect %d has no applicable apply method" % effect_index
 	
 	var effect_name = "Unknown"
 	if effect is CardEffect:

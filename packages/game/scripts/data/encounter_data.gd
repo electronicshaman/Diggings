@@ -3,6 +3,7 @@ class_name EncounterData
 
 const DEBUG_ENABLED: bool = true
 
+@export var encounter_id: String
 @export var encounter_name: String = "Encounter"
 @export_multiline var description: String = ""
 @export var encounter_icon: Texture2D
@@ -44,6 +45,14 @@ const DEBUG_ENABLED: bool = true
 @export var background_image: Texture2D
 @export var ambient_sound: AudioStream
 @export var encounter_color: Color = Color.WHITE
+
+func _init():
+	if not encounter_id:
+		encounter_id = str(hash(self))
+	encounter_id = encounter_id.strip_edges()
+
+func get_encounter_id() -> String:
+	return encounter_id
 
 func can_trigger(game_state: Dictionary) -> bool:
 	if min_gold >= 0 and game_state.get("gold", 0) < min_gold:

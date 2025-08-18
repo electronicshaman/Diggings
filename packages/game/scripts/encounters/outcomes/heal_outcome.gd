@@ -24,8 +24,16 @@ func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Di
 		encounter_manager.event_bus.health_changed.emit(game_state["health"], max_health)
 		encounter_manager.event_bus.healing_received.emit(null, amount)
 	
-	if encounter_manager.game_manager:
-		encounter_manager.game_manager.heal(amount)
+	# Apply to actual PlayerData when available
+	if encounter_manager and encounter_manager.game_manager:
+		var gm = encounter_manager.game_manager
+		var player_data = null
+		if game_state.has("player_data") and game_state.player_data:
+			player_data = game_state.player_data
+		elif gm.has_method("get_player_data"):
+			player_data = gm.get_player_data()
+		if player_data and player_data.has_method("heal"):
+			player_data.heal(amount)
 	
 	GLog.debug("Applied %s: +%d health (health: %d/%d)" % [
 		get_outcome_name(),

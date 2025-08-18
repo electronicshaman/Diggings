@@ -327,7 +327,7 @@ func refresh_battlefield_display() -> void:
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
 		card_node.scale = Vector2(0.9, 0.9)  # Slightly smaller battlefield cards
-        
+		
 		if card_node.has_method("set_card"):
 			card_node.set_card(ci)
 		elif "card_instance" in card_node:

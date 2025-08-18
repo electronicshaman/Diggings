@@ -85,6 +85,10 @@ signal encounter_completed(encounter_instance: Resource)
 signal encounter_outcome_applied(outcome: Resource)
 signal encounter_queued(encounter_data: Resource)
 
+signal modal_requested(modal_type: String, data: Dictionary)
+signal modal_opened(modal_type: String)
+signal modal_closed(modal_type: String, result: Variant)
+
 func _ready() -> void:
 	GLog.debug("EventBus initialized - The void awaits your signals")
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)

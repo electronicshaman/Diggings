@@ -81,6 +81,7 @@ func initialize_controllers() -> void:
 	is_initialized = true
 	GLog.debug("All controllers initialized and connected")
 
+
 func get_ui_references() -> Dictionary:
 	if not ui_manager:
 		push_error("MainGameController: UI manager not initialized")

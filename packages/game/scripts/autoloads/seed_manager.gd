@@ -461,6 +461,18 @@ func get_hash_seed_string() -> String:
 	"""Get the master hash seed for display/sharing."""
 	return master_hash_seed
 
+func get_master_seed() -> int:
+	"""Get the master seed value."""
+	return master_seed
+
+func get_current_generator_name() -> String:
+	"""Get the name of the currently active RNG generator."""
+	# This is a simplified version - you could track which generator was last used
+	if current_run_active:
+		return "Run Active"
+	else:
+		return "Idle"
+
 func validate_seed_input(input: String) -> bool:
 	"""Validate that a seed input is acceptable."""
 	# Empty string is valid (auto-generate)
