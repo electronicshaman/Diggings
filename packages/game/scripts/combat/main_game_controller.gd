@@ -14,6 +14,9 @@ signal game_state_updated()
 var ui_manager: UIReferenceManager
 var is_initialized: bool = false
 
+# Expose current duel state so UI can bind to it
+var current_duel_state: Resource = null
+
 # Quick access nodes that need direct references for critical functionality
 var win_duel_button: Button
 var lose_duel_button: Button
@@ -77,6 +80,13 @@ func initialize_controllers() -> void:
 	is_initialized = true
 	GLog.debug("All controllers initialized and connected")
 	
+	# If a DuelState already exists on DuelManager (e.g., hot reload), attach and pass to UI
+	if is_instance_valid(duel_manager) and "duel_state" in duel_manager and is_instance_valid(duel_manager.duel_state):
+		current_duel_state = duel_manager.duel_state
+		_attach_duel_state_change_listener()
+		if is_instance_valid(ui_controller) and ui_controller.has_method("update_duel_state"):
+			ui_controller.update_duel_state(current_duel_state)
+
 	# Check for pending duel and start it
 	await get_tree().process_frame
 	_initialize_duel()
@@ -100,6 +110,9 @@ func setup_connections() -> void:
 			duel_manager.turn_started.connect(_on_turn_started)
 		if duel_manager.has_signal("card_played"):
 			duel_manager.card_played.connect(_on_card_played)
+		# Ensure enemy plays also trigger UI refresh (for battlefield + enemy hand updates)
+		if duel_manager.has_signal("enemy_card_played"):
+			duel_manager.enemy_card_played.connect(_on_enemy_card_played)
 	
 	if is_instance_valid(ui_controller):
 		if ui_controller.has_signal("ui_refresh_requested"):
@@ -305,6 +318,13 @@ func get_discard_count() -> int:
 func _on_duel_started_signal() -> void:
 	GLog.debug("Duel started - game ready")
 	EventBus.emit_ui_notification("Duel Started", "success")
+
+	# Capture DuelState reference and pass to UI
+	if is_instance_valid(duel_manager) and "duel_state" in duel_manager and is_instance_valid(duel_manager.duel_state):
+		current_duel_state = duel_manager.duel_state
+		_attach_duel_state_change_listener()
+		if is_instance_valid(ui_controller) and ui_controller.has_method("update_duel_state"):
+			ui_controller.update_duel_state(current_duel_state)
 	game_state_updated.emit()
 
 func _on_ui_refresh_requested() -> void:
@@ -338,6 +358,21 @@ func _on_card_played(card) -> void:
 	if is_instance_valid(GameManager) and GameManager.has_method("increment_statistic"):
 		GameManager.increment_statistic("cards_played")
 	
+	game_state_updated.emit()
+
+func _on_enemy_card_played(_card_data) -> void:
+	# Enemy staged a card or completed a play; refresh UI so battlefield/enemy hand update
+	game_state_updated.emit()
+
+func _attach_duel_state_change_listener() -> void:
+	if not is_instance_valid(current_duel_state):
+		return
+	if current_duel_state.has_method("add_change_listener"):
+		# Attach a lightweight listener to refresh UI on any DuelState change
+		current_duel_state.add_change_listener(_on_duel_state_changed)
+
+func _on_duel_state_changed(_change_type: String, _data: Dictionary) -> void:
+	# Propagate a UI refresh whenever DuelState mutates (hand draws, battlefield staging, etc.)
 	game_state_updated.emit()
 
 func _on_win_duel_pressed() -> void:

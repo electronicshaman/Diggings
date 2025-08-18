@@ -1,5 +1,4 @@
 extends Node
-class_name EffectRegistry
 
 var _by_id: Dictionary = {}
 var _class_by_type: Dictionary = {
