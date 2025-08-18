@@ -1,8 +1,64 @@
 # Card Database
 
+Last verified: 2025-08-18
+
 ## Current Implementation Status
 
-### Existing Cards (5 total)
+### Existing Cards (snapshot)
+
+Implemented resources detected under `data/cards/`:
+
+#### Attack Cards
+
+- pickaxe_strike.tres
+- dynamite.tres
+- ambush.tres
+- quick_shot.tres
+- wild_shot.tres
+- six_shooter.tres
+- fan_the_hammer.tres
+- bounty_shot.tres
+- desperados_gambit.tres
+- aged_whiskey.tres
+
+#### Skill Cards
+
+- bush_cover.tres
+- claim_stake.tres
+- steady_hands.tres
+- bush_telegraph.tres
+- campfire_rest.tres
+- tool_maintenance.tres
+- swagmans_wisdom.tres
+- bush_survival.tres
+- outlaws_intuition.tres
+- take_cover.tres
+- reload.tres
+- wanted_poster.tres
+- smooth_talk.tres
+- free_drinks.tres
+- happy_hour.tres
+- homebrew.tres
+- last_call.tres
+- last_stand.tres
+- nightcap.tres
+- vintage_wine.tres
+
+#### Power Cards
+
+- pub_brawl.tres
+- house_rules.tres
+- bouncers_presence.tres
+
+#### Fortune Cards
+
+- strike_it_rich.tres
+- double_or_nothing.tres
+- lucky_nugget.tres
+- prospectors_instinct.tres
+- claim_jumping.tres
+- miners_luck.tres
+- pan_for_gold.tres
 
 #### Attack Cards (Gold Category)
 1. **Pickaxe Strike** (1 Energy)
@@ -37,13 +93,15 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 
 #### Core Prospector Cards (20 total planned)
 
-**Basic Cards (Always Available)**
+##### Basic Cards (Always Available)
+
 - **Pan for Gold** (0 Energy) - Basic fortune card, small gold gain
 - **Claim Stake** (1 Energy) - Mark territory, defensive positioning  
 - **Pickaxe Strike** (1 Energy) - Basic attack using mining tools
 - **Steady Hands** (1 Energy) - Basic skill, accuracy bonus
 
-**Fortune/Gamble Specialization (8 cards)**
+##### Fortune/Gamble Specialization (8 cards)
+
 - **Strike It Rich** (2 Energy) - High reward, high risk gold gain
 - **Double or Nothing** (1 Energy) - Risk current gold for potential double
 - **Lucky Nugget** (3 Energy) - Massive gold gain with corruption risk
@@ -53,14 +111,16 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 - **Fool's Gold** (0 Energy) - Appears valuable, actually causes problems
 - **Miner's Luck** (1 Energy) - Flip coin for bonus effects
 
-**Support Cards (5 cards)**
+##### Support Cards (5 cards)
+
 - **Bush Telegraph** (1 Energy) - Information gathering
 - **Campfire Rest** (2 Energy) - Heal health and sanity
 - **Tool Maintenance** (1 Energy) - Improve next card played
 - **Swagman's Wisdom** (2 Energy) - Draw cards, gain insight
 - **Outback Survival** (1 Energy) - Defensive positioning
 
-**Advanced Cards (Unlockable, 3 cards)**
+##### Advanced Cards (Unlockable, 3 cards)
+
 - **Golden Touch** (3 Energy) - Transform cards to gold variants
 - **Eureka Moment** (2 Energy) - Massive effect if conditions met
 - **Mother Lode** (4 Energy) - Ultimate prospector power
@@ -68,12 +128,14 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ### Card Categories by Mechanical Function
 
 #### Attack Cards (Direct Damage)
+
 - Primary damage dealers
 - May have secondary utility effects
 - Energy costs: 0-3 typically
 - Examples: Pickaxe Strike, Dynamite, Tool Strike
 
 #### Skill Cards (Utility & Defense)  
+
 - Defensive abilities (block, dodge)
 - Card manipulation (draw, discard)
 - Buff/debuff effects
@@ -81,6 +143,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 - Examples: Bush Cover, Steady Aim, Quick Reflexes
 
 #### Power Cards (Persistent Effects)
+
 - Last entire combat encounter
 - Only one copy playable per fight
 - Ongoing passive effects
@@ -88,6 +151,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 - Examples: Pub Brawl, Mining Expertise, Gold Rush
 
 #### Fortune Cards (RNG/Risk-Reward)
+
 - Variable or chance-based outcomes
 - Risk/reward mechanics
 - Gambling and speculation themes
@@ -97,24 +161,28 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ### Card Rarity System (Planned)
 
 #### Common Cards
+
 - Found frequently during runs
 - Form the backbone of decks
 - Simple, reliable effects
 - Examples: Basic attacks, simple defenses
 
 #### Uncommon Cards  
+
 - Moderate power level
 - Interesting but not overwhelming
 - Available through normal progression
 - Examples: Specialized tools, tactical skills
 
 #### Rare Cards
+
 - Powerful effects with drawbacks
 - Build-defining potential
 - Found through special events
 - Examples: Dangerous gambles, corrupting powers
 
 #### Legendary Cards
+
 - Extremely powerful and unique
 - Major risk/reward or complexity
 - Single copy per run
@@ -123,12 +191,14 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ### Card Modification System (Digital-Only)
 
 #### Standard Modifiers
+
 - **+Damage**: Increase damage by 1-3
 - **-Cost**: Reduce energy cost by 1  
 - **+Effect**: Additional minor effect
 - **Evolving**: Gains +1 damage per play
 
 #### Advanced Modifiers  
+
 - **Viral**: Creates copy in deck when played
 - **Phasing**: 50% chance to not exist each combat
 - **Unstable**: Randomly becomes different card
@@ -137,17 +207,20 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ### Implementation Priority
 
 #### Phase 1: Complete Prospector (Current Focus)
+ 
 1. Implement all 20 Prospector cards
 2. Ensure all Fortune mechanics work properly
 3. Balance testing and iteration
 4. Complete card art and flavor text
 
 #### Phase 2: Expand Other Classes
+ 
 1. **Bushranger** (Attack specialist) - 20 cards
 2. **Tracker** (Skill specialist) - 20 cards  
 3. **Publican** (Power specialist) - 20 cards
 
 #### Phase 3: Neutral & Advanced Cards
+ 
 1. Neutral cards usable by all classes
 2. Cross-class combination cards
 3. Advanced/corrupted variants
@@ -156,6 +229,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ### Technical Implementation
 
 #### Card Data Structure (Updated)
+ 
 ```gdscript
 # CardData.gd
 extends Resource
@@ -179,18 +253,21 @@ class_name CardData
 ```
 
 #### Card Accessibility System
+ 
 - **Starting Cards**: Appear in character starting decks only
 - **Class Cards**: Character-specific cards found during runs
 - **Neutral Cards**: Available to all characters
 - **Rare Cards**: Special cards with limited availability
 
 #### Class Affinity System
+ 
 - Cards can be restricted to specific character classes
 - Empty `class_affinity` array means all classes can use the card
 - Populated array restricts card to listed classes only
 - Characters have `preferred_card_types` and `forbidden_card_types`
 
 #### Card Effect System
+ 
 - Each card has array of CardEffect resources
 - Effects resolved through CardEffects system  
 - Stackable and modifiable effects
@@ -199,18 +276,21 @@ class_name CardData
 ### Balance Guidelines
 
 #### Energy Costs
+ 
 - **0 Energy**: Weak effects, often with drawbacks
 - **1 Energy**: Standard effects, deck backbone  
 - **2 Energy**: Strong effects, tactical choices
 - **3+ Energy**: Powerful effects, build-around cards
 
 #### Fortune Card Risk/Reward
+ 
 - Higher potential rewards require higher risks
 - Failed gambles should have meaningful consequences  
 - Success should feel rewarding but not overwhelming
 - Corruption as balancing factor for powerful effects
 
 #### Card Synergies
+ 
 - Cards within same class should have synergies
 - Cross-class combinations should be viable
 - Support multiple playstyles per class
