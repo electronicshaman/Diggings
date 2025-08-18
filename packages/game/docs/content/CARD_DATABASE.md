@@ -6,84 +6,86 @@ Last verified: 2025-08-18
 
 ### Existing Cards (snapshot)
 
-Implemented resources detected under `data/cards/`:
+Implemented resources detected under `data/cards/` (as of 2025-08-18):
 
 #### Attack Cards
 
-- pickaxe_strike.tres
-- dynamite.tres
+- aged_whiskey.tres
 - ambush.tres
-- quick_shot.tres
-- wild_shot.tres
-- six_shooter.tres
-- fan_the_hammer.tres
 - bounty_shot.tres
 - desperados_gambit.tres
-- aged_whiskey.tres
+- dynamite.tres
+- fan_the_hammer.tres
+- pickaxe_strike.tres
+- quick_shot.tres
+- six_shooter.tres
+- wild_shot.tres
 
 #### Skill Cards
 
+- bandits_code.tres
+- bar_fortification.tres
 - bush_cover.tres
-- claim_stake.tres
-- steady_hands.tres
+- bush_survival.tres
 - bush_telegraph.tres
 - campfire_rest.tres
-- tool_maintenance.tres
-- swagmans_wisdom.tres
-- bush_survival.tres
-- outlaws_intuition.tres
-- take_cover.tres
-- reload.tres
-- wanted_poster.tres
-- smooth_talk.tres
+- claim_stake.tres
 - free_drinks.tres
 - happy_hour.tres
 - homebrew.tres
 - last_call.tres
 - last_stand.tres
 - nightcap.tres
+- outlaws_intuition.tres
+- reload.tres
+- smooth_talk.tres
+- steady_hands.tres
+- swagmans_wisdom.tres
+- take_cover.tres
+- tool_maintenance.tres
 - vintage_wine.tres
+- wanted_poster.tres
 
 #### Power Cards
 
-- pub_brawl.tres
-- house_rules.tres
 - bouncers_presence.tres
+- house_rules.tres
+- pub_brawl.tres
 
 #### Fortune Cards
 
-- strike_it_rich.tres
+- claim_jumping.tres
 - double_or_nothing.tres
 - lucky_nugget.tres
-- prospectors_instinct.tres
-- claim_jumping.tres
 - miners_luck.tres
 - pan_for_gold.tres
+- prospectors_instinct.tres
+- strike_it_rich.tres
 
 #### Attack Cards (Gold Category)
 1. **Pickaxe Strike** (1 Energy)
    - Effect: Deal 3 damage
-   - File: `data/cards/attack/pickaxe-strike.tres`
-   - Status:  Implemented
+   - File: `data/cards/attack/pickaxe_strike.tres`
+   - Status: Implemented
 
-2. **Dynamite** 
-   - File: `data/cards/attack/dynamite.tres`  
-   - Status:  Implemented
+2. **Dynamite**
+   - File: `data/cards/attack/dynamite.tres`
+   - Status: Implemented
 
-#### Skill Cards (Grit Category)  
+#### Skill Cards (Grit Category)
 3. **Bush Cover**
-   - File: `data/cards/skill/bush-cover.tres`
-   - Status:  Implemented
+   - File: `data/cards/skill/bush_cover.tres`
+   - Status: Implemented
 
 #### Power Cards (Grog Category)
 4. **Pub Brawl**
-   - File: `data/cards/power/pub-brawl.tres` 
-   - Status:  Implemented
+   - File: `data/cards/power/pub_brawl.tres`
+   - Status: Implemented
 
 #### Fortune Cards (Gamble Category)
 5. **Strike It Rich**
-   - File: `data/cards/fortune/strike-it-rich.tres`
-   - Status:  Implemented
+   - File: `data/cards/fortune/strike_it_rich.tres`
+   - Status: Implemented
 
 ## Planned Card Database Structure
 
@@ -96,7 +98,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ##### Basic Cards (Always Available)
 
 - **Pan for Gold** (0 Energy) - Basic fortune card, small gold gain
-- **Claim Stake** (1 Energy) - Mark territory, defensive positioning  
+- **Claim Stake** (1 Energy) - Mark territory, defensive positioning
 - **Pickaxe Strike** (1 Energy) - Basic attack using mining tools
 - **Steady Hands** (1 Energy) - Basic skill, accuracy bonus
 
@@ -106,7 +108,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 - **Double or Nothing** (1 Energy) - Risk current gold for potential double
 - **Lucky Nugget** (3 Energy) - Massive gold gain with corruption risk
 - **Prospector's Instinct** (1 Energy) - Reveal next card, gamble on type
-- **Gold Rush Fever** (2 Energy) - Multiple small gambles in sequence  
+- **Gold Rush Fever** (2 Energy) - Multiple small gambles in sequence
 - **Claim Jumping** (2 Energy) - Steal enemy resources, but risk retaliation
 - **Fool's Gold** (0 Energy) - Appears valuable, actually causes problems
 - **Miner's Luck** (1 Energy) - Flip coin for bonus effects
@@ -134,7 +136,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 - Energy costs: 0-3 typically
 - Examples: Pickaxe Strike, Dynamite, Tool Strike
 
-#### Skill Cards (Utility & Defense)  
+#### Skill Cards (Utility & Defense)
 
 - Defensive abilities (block, dodge)
 - Card manipulation (draw, discard)
@@ -147,7 +149,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 - Last entire combat encounter
 - Only one copy playable per fight
 - Ongoing passive effects
-- Energy costs: 1-3 typically  
+- Energy costs: 1-3 typically
 - Examples: Pub Brawl, Mining Expertise, Gold Rush
 
 #### Fortune Cards (RNG/Risk-Reward)
@@ -167,7 +169,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 - Simple, reliable effects
 - Examples: Basic attacks, simple defenses
 
-#### Uncommon Cards  
+#### Uncommon Cards
 
 - Moderate power level
 - Interesting but not overwhelming
@@ -193,11 +195,11 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 #### Standard Modifiers
 
 - **+Damage**: Increase damage by 1-3
-- **-Cost**: Reduce energy cost by 1  
+- **-Cost**: Reduce energy cost by 1
 - **+Effect**: Additional minor effect
 - **Evolving**: Gains +1 damage per play
 
-#### Advanced Modifiers  
+#### Advanced Modifiers
 
 - **Viral**: Creates copy in deck when played
 - **Phasing**: 50% chance to not exist each combat
@@ -207,20 +209,20 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ### Implementation Priority
 
 #### Phase 1: Complete Prospector (Current Focus)
- 
+
 1. Implement all 20 Prospector cards
 2. Ensure all Fortune mechanics work properly
 3. Balance testing and iteration
 4. Complete card art and flavor text
 
 #### Phase 2: Expand Other Classes
- 
+
 1. **Bushranger** (Attack specialist) - 20 cards
-2. **Tracker** (Skill specialist) - 20 cards  
+2. **Tracker** (Skill specialist) - 20 cards
 3. **Publican** (Power specialist) - 20 cards
 
 #### Phase 3: Neutral & Advanced Cards
- 
+
 1. Neutral cards usable by all classes
 2. Cross-class combination cards
 3. Advanced/corrupted variants
@@ -229,7 +231,7 @@ The Prospector specializes in **Fortune (Gamble)** cards with risk/reward mechan
 ### Technical Implementation
 
 #### Card Data Structure (Updated)
- 
+
 ```gdscript
 # CardData.gd
 extends Resource
@@ -238,7 +240,7 @@ class_name CardData
 @export var card_name: String
 @export var energy_cost: int
 @export var sanity_cost: int = 0
-@export var description: String  
+@export var description: String
 @export var flavor_text: String
 @export var card_type: String          # Theme-specific (Gold/Grit/Grog/Gamble)
 @export var card_handling: String      # Behavioral rules
@@ -253,44 +255,44 @@ class_name CardData
 ```
 
 #### Card Accessibility System
- 
+
 - **Starting Cards**: Appear in character starting decks only
 - **Class Cards**: Character-specific cards found during runs
 - **Neutral Cards**: Available to all characters
 - **Rare Cards**: Special cards with limited availability
 
 #### Class Affinity System
- 
+
 - Cards can be restricted to specific character classes
 - Empty `class_affinity` array means all classes can use the card
 - Populated array restricts card to listed classes only
 - Characters have `preferred_card_types` and `forbidden_card_types`
 
 #### Card Effect System
- 
+
 - Each card has array of CardEffect resources
-- Effects resolved through CardEffects system  
+- Effects resolved through CardEffects system
 - Stackable and modifiable effects
 - Data-driven effect parameters
 
 ### Balance Guidelines
 
 #### Energy Costs
- 
+
 - **0 Energy**: Weak effects, often with drawbacks
-- **1 Energy**: Standard effects, deck backbone  
+- **1 Energy**: Standard effects, deck backbone
 - **2 Energy**: Strong effects, tactical choices
 - **3+ Energy**: Powerful effects, build-around cards
 
 #### Fortune Card Risk/Reward
- 
+
 - Higher potential rewards require higher risks
-- Failed gambles should have meaningful consequences  
+- Failed gambles should have meaningful consequences
 - Success should feel rewarding but not overwhelming
 - Corruption as balancing factor for powerful effects
 
 #### Card Synergies
- 
+
 - Cards within same class should have synergies
 - Cross-class combinations should be viable
 - Support multiple playstyles per class
