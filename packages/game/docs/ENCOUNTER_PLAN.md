@@ -2,6 +2,11 @@
 
 Last verified: 2025-08-18
 
+Related docs:
+
+- Architecture: `docs/architecture/ENCOUNTER_FLOW.md` (how encounters load, trigger, and complete)
+- Event Bus: `docs/architecture/EVENT_BUS_REFERENCE.md` (signals used for UI popups and notifications)
+
 ## Current Implementation Snapshot
 
 Detected encounter resources in `data/encounters/`:
@@ -37,6 +42,7 @@ Notes:
 
 - Use these as anchors to prioritize wiring the planned events below.
 - As new `.tres` are added, expand this snapshot to stay accurate.
+- The EncounterManager handles loading, selection, triggering, and completion. See `scripts/autoloads/encounter_manager.gd`.
 
 ## Native Fauna Encounters
 
