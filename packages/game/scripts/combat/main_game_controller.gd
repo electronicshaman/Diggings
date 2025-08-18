@@ -2,6 +2,9 @@ extends Node2D
 
 const DEBUG_ENABLED: bool = true
 
+# Signals for UI updates
+signal game_state_updated()
+
 # Core controllers - safely referenced
 @onready var duel_manager: Node = $DuelManager
 @onready var ui_controller: Node = $UIController
@@ -302,6 +305,7 @@ func get_discard_count() -> int:
 func _on_duel_started_signal() -> void:
 	GLog.debug("Duel started - game ready")
 	EventBus.emit_ui_notification("Duel Started", "success")
+	game_state_updated.emit()
 
 func _on_ui_refresh_requested() -> void:
 	pass
@@ -316,6 +320,8 @@ func _on_turn_started(is_player_turn: bool) -> void:
 	# Emit event safely
 	if is_instance_valid(EventBus) and EventBus.has_signal("turn_started"):
 		EventBus.turn_started.emit(is_player_turn)
+	
+	game_state_updated.emit()
 
 func _on_card_played(card) -> void:
 	var card_name = "Unknown Card"
@@ -331,6 +337,8 @@ func _on_card_played(card) -> void:
 	# Update statistics safely
 	if is_instance_valid(GameManager) and GameManager.has_method("increment_statistic"):
 		GameManager.increment_statistic("cards_played")
+	
+	game_state_updated.emit()
 
 func _on_win_duel_pressed() -> void:
 	GLog.debug("Test win button pressed - ending duel as player victory")
@@ -362,6 +370,7 @@ func _on_lose_duel_pressed() -> void:
 
 func _on_duel_ended_from_manager(winner: String) -> void:
 	GLog.debug("Duel ended (signal) - Winner: " + winner)
+	game_state_updated.emit()
 	await get_tree().create_timer(0.6).timeout
 	if winner == "player":
 		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
