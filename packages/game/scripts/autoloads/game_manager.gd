@@ -36,6 +36,9 @@ var run_statistics: Dictionary = {}
 var session_start_time: float = 0.0
 var run_start_time: float = 0.0
 
+# Duel system
+var pending_duel_config: DuelConfig = null
+
 func _ready() -> void:
 	GLog.debug("GameManager initialized - The cosmic game engine awakens")
 	session_start_time = Time.get_ticks_msec() / 1000.0
@@ -165,6 +168,10 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	if selected_character:
 		apply_character_data()
 	
+	# Initialize deck in DeckManager
+	if is_instance_valid(DeckManager):
+		DeckManager.start_new_run_deck(character_class)
+	
 	# Load directly into the Hexmap scene (replacing legacy map flow)
 	change_state(GameState.PLAYING)
 	EventBus.game_started.emit()
@@ -178,6 +185,11 @@ func end_current_run(victory: bool = false) -> void:
 	var run_duration := (Time.get_ticks_msec() / 1000.0) - run_start_time
 	
 	save_run_statistics(victory, run_duration)
+	
+	# Clean up deck and duel system
+	if is_instance_valid(DeckManager):
+		DeckManager.clear_current_deck()
+	pending_duel_config = null
 	
 	# Clean up seed system
 	SeedManager.end_run()
@@ -205,6 +217,70 @@ func save_run_statistics(victory: bool, duration: float) -> void:
 	
 	# Save to run history for persistent tracking
 	RunHistoryManager.add_run(run_statistics)
+
+## Prepare a duel with the given enemy (from encounters, events, etc.)
+func prepare_duel(enemy: Resource, context: String = "", modifiers: Dictionary = {}) -> bool:
+	GLog.info("Preparing duel against enemy: %s" % (enemy.enemy_name if enemy and "enemy_name" in enemy else "Unknown"))
+	
+	if not is_instance_valid(enemy):
+		GLog.error("GameManager: Cannot prepare duel - invalid enemy")
+		return false
+	
+	if not is_instance_valid(DeckManager) or not DeckManager.is_deck_available():
+		GLog.error("GameManager: Cannot prepare duel - no deck available")
+		return false
+	
+	# Get current deck from DeckManager
+	var player_deck = DeckManager.get_current_deck()
+	if player_deck.is_empty():
+		GLog.error("GameManager: Cannot prepare duel - player deck is empty")
+		return false
+	
+	# Create duel configuration
+	pending_duel_config = DuelConfig.new(player_deck, enemy, context, modifiers)
+	
+	if not pending_duel_config.is_valid():
+		var errors = pending_duel_config.get_validation_errors()
+		GLog.error("GameManager: Invalid duel config - " + str(errors))
+		pending_duel_config = null
+		return false
+	
+	GLog.debug("Duel prepared: %s" % str(pending_duel_config.get_summary()))
+	return true
+
+## Start the prepared duel (loads duel scene)
+func start_prepared_duel() -> bool:
+	if not is_instance_valid(pending_duel_config):
+		GLog.error("GameManager: No duel prepared")
+		return false
+	
+	if not pending_duel_config.is_valid():
+		GLog.error("GameManager: Prepared duel config is invalid")
+		return false
+	
+	GLog.info("Starting prepared duel")
+	change_state(GameState.PLAYING)
+	SceneManager.load_scene_by_name("duel")
+	return true
+
+## Convenience method: prepare and start duel immediately
+func start_duel_with_enemy(enemy: Resource, context: String = "", modifiers: Dictionary = {}) -> bool:
+	if prepare_duel(enemy, context, modifiers):
+		return start_prepared_duel()
+	return false
+
+## Get the pending duel config (used by MainGameController)
+func get_pending_duel_config() -> DuelConfig:
+	return pending_duel_config
+
+## Clear pending duel config (called after duel starts)
+func clear_pending_duel_config() -> void:
+	pending_duel_config = null
+	GLog.debug("Pending duel config cleared")
+
+## Check if a duel is prepared and ready to start
+func is_duel_prepared() -> bool:
+	return is_instance_valid(pending_duel_config) and pending_duel_config.is_valid()
 
 func apply_character_data() -> void:
 	"""Apply selected character data to game state"""
