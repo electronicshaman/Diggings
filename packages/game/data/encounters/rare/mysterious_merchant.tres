@@ -2,9 +2,8 @@
 
 [ext_resource type="Script" uid="uid://b1siq5ncsurb6" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://dxoc3qrjfduah" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" uid="uid://twnwgs8w4v61" path="res://scripts/data/encounter_outcome.gd" id="2_dcccw"]
-[ext_resource type="Script" uid="uid://dr8tevs1hfvcw" path="res://scripts/encounters/outcomes/curio_reward.gd" id="3"]
-[ext_resource type="Script" uid="uid://cesqwauvivbp3" path="res://scripts/encounters/outcomes/corruption_gain.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/effects/types/curio_reward_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="5"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("3")
@@ -18,10 +17,11 @@ delay_turns = 0
 
 [sub_resource type="Resource" id="2"]
 script = ExtResource("5")
-corruption_amount = 2
+resource_type = "corruption"
+amount = 2
 random_range = false
-min_corruption = 1
-max_corruption = 3
+min_amount = 1
+max_amount = 3
 description = "The price of forbidden knowledge"
 delayed = false
 delay_turns = 0
@@ -37,9 +37,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_dcccw")]([SubResource("1"), SubResource("2")])
+outcomes = [SubResource("1"), SubResource("2")]
 success_chance = 1.0
-failure_outcomes = Array[ExtResource("2_dcccw")]([])
+failure_outcomes = []
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -67,9 +67,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_dcccw")]([SubResource("4")])
+outcomes = [SubResource("4")]
 success_chance = 1.0
-failure_outcomes = Array[ExtResource("2_dcccw")]([])
+failure_outcomes = []
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -87,9 +87,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = Array[ExtResource("2_dcccw")]([])
+outcomes = []
 success_chance = 1.0
-failure_outcomes = Array[ExtResource("2_dcccw")]([])
+failure_outcomes = []
 is_hidden = false
 show_requirements = true
 one_time_only = false

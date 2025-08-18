@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/corruption_gain.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="4"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("2")
@@ -50,17 +50,18 @@ script = ExtResource("3")
 description = "The redback bites as you shake the bedroll!"
 delayed = false
 delay_turns = 0
-damage_amount = 6
-damage_type = "poison"
-percentage_based = false
-percentage = 0.1
+amount = 6
+ignores_defense = false
+multi_hit = false
+hits = 1
 
 [sub_resource type="Resource" id="4"]
 script = ExtResource("4")
 description = "Killing the spider brings bad omens"
 delayed = false
 delay_turns = 0
-corruption_amount = 2
+resource_type = "corruption"
+amount = 2
 
 [sub_resource type="Resource" id="5"]
 script = ExtResource("2")
