@@ -145,8 +145,8 @@ func add_click_button():
 	button.mouse_filter = Control.MOUSE_FILTER_PASS
 	
 	# Position button to cover the card area
-	button.position = Vector2(-75, -100)
-	button.size = Vector2(150, 200)
+	button.position = Vector2(-150, -210)
+	button.size = Vector2(300, 420)
 	
 	add_child(button)
 	button.pressed.connect(_on_button_clicked)

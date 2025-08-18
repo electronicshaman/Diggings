@@ -48,6 +48,10 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	
 	duel_state.enemy_data = enemy_data
 	
+	# Batch notifications during duel setup to avoid UI flicker/resets
+	if duel_state and duel_state.has_method("begin_batch_changes"):
+		duel_state.begin_batch_changes()
+
 	duel_state.deck.clear()
 	duel_state.discard_pile.clear()
 	duel_state.hand.clear()
@@ -71,6 +75,10 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	draw_initial_hand()
 	
 	duel_started.emit()
+    
+	# End batch and emit a consolidated update once everything is ready
+	if duel_state and duel_state.has_method("end_batch_changes"):
+		duel_state.end_batch_changes()
 	
 	start_player_turn()
 

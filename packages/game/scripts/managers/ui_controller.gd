@@ -38,12 +38,23 @@ var battlefield_cards: Array[Node] = []
 var curios_panel: Control
 var curios_list: HBoxContainer
 
+# Debounced visual refresh to avoid flicker/resets on rapid state changes
+var _ui_refresh_timer: Timer
+const UI_REFRESH_DEBOUNCE_SEC := 0.05
+
 func _ready() -> void:
 	GLog.debug("UIController initialized - Managing the mortal interface")
 	card_scene = preload("res://scenes/cards/card.tscn")
 	
 	# Connect to UI notification events
 	EventBus.ui_notification.connect(_on_ui_notification)
+
+	# Create a one-shot timer to batch visual refreshes (hand/battlefield)
+	_ui_refresh_timer = Timer.new()
+	_ui_refresh_timer.one_shot = true
+	_ui_refresh_timer.wait_time = UI_REFRESH_DEBOUNCE_SEC
+	add_child(_ui_refresh_timer)
+	_ui_refresh_timer.timeout.connect(_on_ui_refresh_timer_timeout)
 
 func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	game_controller = game_controller_ref
@@ -110,10 +121,7 @@ func update_all_ui() -> void:
 	update_turn_ui()
 	update_seed_ui()
 	update_curios_display()
-	refresh_hand_display()
-	refresh_enemy_hand_display()
-	refresh_battlefield_display()
-	ui_refresh_requested.emit()
+	_queue_visual_refresh()
 
 func update_player_ui() -> void:
 	if not duel_state or not duel_state.player_data:
@@ -255,6 +263,7 @@ func refresh_hand_display() -> void:
 		var start_x = -total_width / 2
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
+		card_node.scale = Vector2(0.625, 0.625)  # Scale down from 300x420 to 187x262 (25% larger)
 		
 		if card_node.has_method("set_card"):
 			card_node.set_card(ci)
@@ -268,6 +277,18 @@ func refresh_hand_display() -> void:
 		card_node.card_played.connect(_on_hand_card_played)
 	
 	hand_refresh_requested.emit()
+
+func _queue_visual_refresh() -> void:
+	# Restart the timer so bursts of updates coalesce into a single refresh
+	if _ui_refresh_timer:
+		_ui_refresh_timer.start(UI_REFRESH_DEBOUNCE_SEC)
+
+func _on_ui_refresh_timer_timeout() -> void:
+	# Perform the actual visual refreshes once after the burst of changes
+	refresh_hand_display()
+	refresh_enemy_hand_display()
+	refresh_battlefield_display()
+	ui_refresh_requested.emit()
 
 func clear_hand_display() -> void:
 	for card_node in hand_cards:
@@ -315,7 +336,7 @@ func refresh_enemy_hand_display() -> void:
 		var start_x = -total_width / 2
 		card_instance.position.x = start_x + i * card_spacing
 		card_instance.position.y = 0
-		card_instance.scale = Vector2(0.8, 0.8)  # Smaller enemy cards
+		card_instance.scale = Vector2(0.4, 0.4)  # Smaller enemy cards (120x168)
 		
 		# Show as card back (enemy cards are hidden)
 		card_instance.show_as_card_back()
@@ -345,7 +366,7 @@ func refresh_battlefield_display() -> void:
 		var start_x = -total_width / 2
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
-		card_node.scale = Vector2(0.9, 0.9)  # Slightly smaller battlefield cards
+		card_node.scale = Vector2(0.45, 0.45)  # Slightly smaller battlefield cards (135x189)
 		
 		if card_node.has_method("set_card"):
 			card_node.set_card(ci)

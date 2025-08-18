@@ -82,7 +82,7 @@ func initialize_controllers() -> void:
 	
 	var end_turn_btn = ui_manager.get_ui_node("end_turn_button")
 	if is_instance_valid(input_controller):
-		input_controller.initialize(self, ui_controller, end_turn_btn)
+		input_controller.initialize(duel_manager, ui_controller, end_turn_btn)
 	else:
 		push_error("DuelSceneController: InputController is invalid")
 		return
