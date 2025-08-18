@@ -508,6 +508,9 @@ func get_deck_count() -> int:
 func get_discard_count() -> int:
 	return duel_state.discard_pile.size() if duel_state.discard_pile else 0
 
+func get_removed_count() -> int:
+	return duel_state.removed_pile.size() if duel_state.removed_pile else 0
+
 func get_cards_played_this_turn() -> int:
 	if duel_state and duel_state.player_data:
 		return duel_state.player_data.cards_played_this_turn

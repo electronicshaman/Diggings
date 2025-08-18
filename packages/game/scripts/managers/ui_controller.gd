@@ -174,13 +174,19 @@ func update_pile_ui() -> void:
 	if not game_controller:
 		return
 	
+	# Get DuelStateManager from the scene controller
+	var duel_state_manager = game_controller.get_duel_state_manager()
+	if not duel_state_manager:
+		GLog.debug("duel_state_manager not available - cannot update pile UI")
+		return
+	
 	if deck_label:
-		deck_label.text = "Deck: %d" % game_controller.get_deck_count()
+		deck_label.text = "Deck: %d" % duel_state_manager.get_deck_count()
 	else:
 		GLog.debug("deck_label is null - UI element missing")
 		
 	if discard_label:
-		discard_label.text = "Discard: %d" % game_controller.get_discard_count()
+		discard_label.text = "Discard: %d" % duel_state_manager.get_discard_count()
 	else:
 		GLog.debug("discard_label is null - UI element missing")
 
@@ -230,7 +236,13 @@ func refresh_hand_display() -> void:
 	if not game_controller or not hand_area:
 		return
 	
-	var hand_data = game_controller.get_hand_cards()
+	# Get DuelStateManager from the scene controller
+	var duel_state_manager = game_controller.get_duel_state_manager()
+	if not duel_state_manager:
+		GLog.debug("duel_state_manager not available - cannot refresh hand")
+		return
+	
+	var hand_data = duel_state_manager.get_hand_cards()
 	
 	for i in range(hand_data.size()):
 		var ci = hand_data[i]
@@ -266,6 +278,13 @@ func clear_hand_display() -> void:
 func _on_hand_card_played(card_node: Node) -> void:
 	if not game_controller:
 		return
+	
+	# Get DuelStateManager from the scene controller
+	var duel_state_manager = game_controller.get_duel_state_manager()
+	if not duel_state_manager:
+		GLog.debug("duel_state_manager not available - cannot play card")
+		return
+	
 	var ci = null
 	if card_node.has_method("get_card_instance_or_null"):
 		ci = card_node.get_card_instance_or_null()
@@ -276,7 +295,7 @@ func _on_hand_card_played(card_node: Node) -> void:
 		if cd:
 			ci = CardInstance.new(cd)
 	if ci:
-		game_controller.play_card(ci)
+		duel_state_manager.play_card(ci)
 
 func refresh_enemy_hand_display() -> void:
 	clear_enemy_hand_display()
@@ -364,20 +383,32 @@ func toggle_debug_panel() -> void:
 		debug_panel.visible = not debug_panel.visible
 
 func _on_add_card_pressed() -> void:
-	if game_controller:
-		game_controller.add_random_card_to_hand()
+	if not game_controller:
+		return
+	var duel_state_manager = game_controller.get_duel_state_manager()
+	if duel_state_manager:
+		duel_state_manager.add_random_card_to_hand()
 
 func _on_set_health_pressed() -> void:
-	if game_controller:
-		game_controller.modify_player_health(10)
+	if not game_controller:
+		return
+	var duel_state_manager = game_controller.get_duel_state_manager()
+	if duel_state_manager:
+		duel_state_manager.modify_player_health(10)
 
 func _on_set_energy_pressed() -> void:
-	if game_controller:
-		game_controller.modify_player_energy(10)
+	if not game_controller:
+		return
+	var duel_state_manager = game_controller.get_duel_state_manager()
+	if duel_state_manager:
+		duel_state_manager.modify_player_energy(10)
 
 func _on_reset_duel_pressed() -> void:
-	if game_controller:
-		game_controller.start_test_duel()
+	if not game_controller:
+		return
+	var duel_state_manager = game_controller.get_duel_state_manager()
+	if duel_state_manager:
+		duel_state_manager.start_test_duel()
 
 func _on_ui_notification(message: String, type: String) -> void:
 	"""Handle UI notifications like curio rewards"""
