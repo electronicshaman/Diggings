@@ -6,6 +6,8 @@ class_name GameEffect
 @export var target_type: String = "player" # "player", "enemy", "all", "random"
 @export var timing: String = "immediate" # "immediate", "delayed", "persistent"
 @export var description: String = ""
+@export var delayed: bool = false
+@export var delay_turns: int = 0
 
 # Execution and ordering
 @export var priority: int = 0
