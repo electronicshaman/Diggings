@@ -312,7 +312,7 @@ class_name Heal
 @export var heal_amount: int = 1
 
 # encounters/outcomes/heal_outcome.gd  
-extends EncounterOutcome
+extends Resource # legacy EncounterOutcome removed; use GameEffect-based resources
 class_name HealOutcome
 @export var heal_amount: int = 10
 @export var percentage_based: bool = false

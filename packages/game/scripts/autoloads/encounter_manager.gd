@@ -2,7 +2,6 @@ extends Node
 
 const DEBUG_ENABLED: bool = true
 const EffectContext = preload("res://scripts/effects/core/effect_context.gd")
-const EncounterOutcomeScript = preload("res://scripts/data/encounter_outcome.gd")
 
 signal event_triggered(event_instance: EncounterInstance)
 signal event_choice_made(event_instance: EncounterInstance, choice_index: int)
@@ -219,15 +218,6 @@ func apply_effect(effect: Resource, extra_context: Dictionary = {}) -> void:
 			"context": extra_context
 		})
 		GLog.debug("Delayed effect for %d turns" % delay_turns)
-		return
-
-	# Legacy compatibility: support EncounterOutcome during migration
-	if effect is EncounterOutcomeScript:
-		var game_state = _get_current_game_state()
-		effect.apply_outcome(self, game_state, extra_context)
-		event_outcome_applied.emit(effect)
-		if event_bus and effect.has_method("get_notification_text"):
-			event_bus.ui_notification.emit(effect.get_notification_text(), "info")
 		return
 
 	# Build EffectContext for GameEffect
