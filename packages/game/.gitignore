@@ -23,3 +23,6 @@ mono_crash.*.json
 .vscode/
 .history
 *.uid
+
+# macOS Finder metadata
+.DS_Store
