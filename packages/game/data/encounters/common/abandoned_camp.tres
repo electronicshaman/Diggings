@@ -1,39 +1,20 @@
-[gd_resource type="Resource" script_class="EncounterData" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="EncounterData" load_steps=12 format=3 uid="uid://qg3ubftd7qbj"]
 
-[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="4"]
+[ext_resource type="Script" uid="uid://b1siq5ncsurb6" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://dxoc3qrjfduah" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" uid="uid://twnwgs8w4v61" path="res://scripts/data/encounter_outcome.gd" id="2_53mar"]
+[ext_resource type="Script" uid="uid://ds62lkhgm2bh8" path="res://scripts/encounters/outcomes/gold_reward.gd" id="3"]
+[ext_resource type="Script" uid="uid://dkuyu2gufcbo0" path="res://scripts/encounters/outcomes/damage_outcome.gd" id="4"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("3")
-description = "Find a small pouch of gold"
-delayed = false
-delay_turns = 0
 gold_amount = 25
 random_range = false
 min_gold = 5
 max_gold = 15
-
-[sub_resource type="Resource" id="2"]
-script = ExtResource("3")
-description = "Grab some gold"
+description = "Find a small pouch of gold"
 delayed = false
 delay_turns = 0
-gold_amount = 15
-random_range = false
-min_gold = 5
-max_gold = 15
-
-[sub_resource type="Resource" id="3"]
-script = ExtResource("4")
-description = "Trigger a trap in your haste"
-delayed = false
-delay_turns = 0
-damage_amount = 5
-damage_type = "physical"
-percentage_based = false
-percentage = 0.1
 
 [sub_resource type="Resource" id="4"]
 script = ExtResource("2")
@@ -46,14 +27,34 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = [SubResource("1")]
+outcomes = Array[ExtResource("2_53mar")]([SubResource("1")])
 success_chance = 1.0
-failure_outcomes = []
+failure_outcomes = Array[ExtResource("2_53mar")]([])
 is_hidden = false
 show_requirements = true
 one_time_only = false
 highlight_color = Color(1, 1, 1, 1)
 disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("4")
+damage_amount = 5
+damage_type = "physical"
+percentage_based = false
+percentage = 0.1
+description = "Trigger a trap in your haste"
+delayed = false
+delay_turns = 0
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("3")
+gold_amount = 15
+random_range = false
+min_gold = 5
+max_gold = 15
+description = "Grab some gold"
+delayed = false
+delay_turns = 0
 
 [sub_resource type="Resource" id="5"]
 script = ExtResource("2")
@@ -66,9 +67,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = [SubResource("2")]
+outcomes = Array[ExtResource("2_53mar")]([SubResource("2")])
 success_chance = 0.7
-failure_outcomes = [SubResource("3")]
+failure_outcomes = Array[ExtResource("2_53mar")]([SubResource("3")])
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -86,9 +87,9 @@ health_cost = 0
 required_item = ""
 required_class = ""
 min_stat_requirement = {}
-outcomes = []
+outcomes = Array[ExtResource("2_53mar")]([])
 success_chance = 1.0
-failure_outcomes = []
+failure_outcomes = Array[ExtResource("2_53mar")]([])
 is_hidden = false
 show_requirements = true
 one_time_only = false
@@ -97,31 +98,32 @@ disabled_color = Color(0.5, 0.5, 0.5, 0.7)
 
 [resource]
 script = ExtResource("1")
-event_name = "Abandoned Camp"
+encounter_id = "C01"
+encounter_name = "Encounter"
 description = "You stumble upon an abandoned prospector's camp. The fire pit is cold, but supplies are scattered about."
 flavor_text = "Someone left in a hurry..."
 rarity = "Common"
-event_type = "Mixed"
+encounter_type = "Neutral"
 repeatable = true
 max_occurrences = -1
 weight = 1.0
-choices = [SubResource("4"), SubResource("5"), SubResource("6")]
+choices = Array[ExtResource("2")]([SubResource("4"), SubResource("5"), SubResource("6")])
 min_gold = -1
 max_gold = -1
 min_corruption = -1
 max_corruption = -1
 min_sanity = -1
 max_sanity = -1
-required_classes = []
-excluded_classes = []
-required_curios = []
-required_cards = []
+required_classes = Array[String]([])
+excluded_classes = Array[String]([])
+required_curios = Array[String]([])
+required_cards = Array[String]([])
 min_act = 1
 max_act = -1
 regional_weights = {
+"coast": 1.0,
 "goldfields": 1.2,
-"outback": 1.0,
 "mountains": 0.8,
-"coast": 1.0
+"outback": 1.0
 }
-event_color = Color(1, 1, 1, 1)
+encounter_color = Color(1, 1, 1, 1)

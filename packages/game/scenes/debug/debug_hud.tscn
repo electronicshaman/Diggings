@@ -1,0 +1,458 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcs3q1xqcaqrc"]
+
+[ext_resource type="Script" uid="uid://cv202iupntqyr" path="res://scripts/debug/debug_hud_controller.gd" id="1_tkffo"]
+
+[node name="DebugHud" type="Node2D"]
+script = ExtResource("1_tkffo")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+modulate = Color(1, 1, 1, 0.9)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CoreGameState" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Core Game State" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState"]
+layout_mode = 2
+text = "=== CORE GAME STATE ==="
+horizontal_alignment = 1
+
+[node name="CurrentScene" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/CurrentScene"]
+layout_mode = 2
+text = "Current Scene: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/CurrentScene"]
+layout_mode = 2
+
+[node name="GameState" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/GameState"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Game State: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/GameState"]
+layout_mode = 2
+text = "---"
+
+[node name="GameMode" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/GameMode"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Game Mode: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/GameMode"]
+layout_mode = 2
+text = "---"
+
+[node name="RunActive" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/RunActive"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Run Active: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/RunActive"]
+layout_mode = 2
+text = "---"
+
+[node name="RunTime" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/RunTime"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Run Time: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/RunTime"]
+layout_mode = 2
+text = "---"
+
+[node name="SessionTime" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/SessionTime"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Session Time: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CoreGameState/SessionTime"]
+layout_mode = 2
+text = "---"
+
+[node name="SeedsRNG" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG"]
+layout_mode = 2
+text = "=== SEEDS & RNG ==="
+
+[node name="MasterSeed" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/MasterSeed"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Master Seed: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/MasterSeed"]
+layout_mode = 2
+text = "---"
+
+[node name="HashSeed" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/HashSeed"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Hash Seed: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/HashSeed"]
+layout_mode = 2
+text = "---"
+
+[node name="IsThematic" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/IsThematic"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Is Thematic: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/IsThematic"]
+layout_mode = 2
+text = "---"
+
+[node name="CurrentRNGStream" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/CurrentRNGStream"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "RNG Stream: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedsRNG/CurrentRNGStream"]
+layout_mode = 2
+text = "---"
+
+[node name="PlayerData" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+text = "=== PLAYER DATA ==="
+
+[node name="CharacterClass" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/CharacterClass"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Class: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/CharacterClass"]
+layout_mode = 2
+text = "---"
+
+[node name="CharacterName" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/CharacterName"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Name: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/CharacterName"]
+layout_mode = 2
+text = "---"
+
+[node name="Health" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Health"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Health: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Health"]
+layout_mode = 2
+text = "---"
+
+[node name="Energy" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Energy"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Energy: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Energy"]
+layout_mode = 2
+text = "---"
+
+[node name="Sanity" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Sanity"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Sanity: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Sanity"]
+layout_mode = 2
+text = "---"
+
+[node name="Defense" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Defense"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Defense: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Defense"]
+layout_mode = 2
+text = "---"
+
+[node name="Gold" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Gold"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Gold: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Gold"]
+layout_mode = 2
+text = "---"
+
+[node name="Corruption" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Corruption"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Corruption: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PlayerData/Corruption"]
+layout_mode = 2
+text = "---"
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Curios" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Curios"]
+layout_mode = 2
+text = "=== CURIOS ==="
+
+[node name="CuriosScroll" type="ScrollContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Curios"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+
+[node name="CuriosList" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Curios/CuriosScroll"]
+layout_mode = 2
+
+[node name="TotalCount" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Curios"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Curios/TotalCount"]
+layout_mode = 2
+text = "Total: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/Curios/TotalCount"]
+layout_mode = 2
+text = "0"
+
+[node name="RunStatistics" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
+layout_mode = 2
+text = "=== RUN STATISTICS ==="
+
+[node name="CardsPlayed" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/CardsPlayed"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Cards Played: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/CardsPlayed"]
+layout_mode = 2
+text = "0"
+
+[node name="DamageDealt" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/DamageDealt"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Damage Dealt: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/DamageDealt"]
+layout_mode = 2
+text = "0"
+
+[node name="DamageTaken" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/DamageTaken"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Damage Taken: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/DamageTaken"]
+layout_mode = 2
+text = "0"
+
+[node name="EnemiesDefeated" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/EnemiesDefeated"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Enemies Defeated: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/EnemiesDefeated"]
+layout_mode = 2
+text = "0"
+
+[node name="PerfectBattles" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/PerfectBattles"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Perfect Battles: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/PerfectBattles"]
+layout_mode = 2
+text = "0"
+
+[node name="TurnsTaken" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/TurnsTaken"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Turns Taken: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/RunStatistics/TurnsTaken"]
+layout_mode = 2
+text = "0"
+
+[node name="SystemDebug" type="VBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+text = "=== SYSTEM/DEBUG ==="
+
+[node name="FPS" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/FPS"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "FPS: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/FPS"]
+layout_mode = 2
+text = "---"
+
+[node name="MemoryUsage" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/MemoryUsage"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Memory (MB): "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/MemoryUsage"]
+layout_mode = 2
+text = "---"
+
+[node name="GodMode" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/GodMode"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "God Mode: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/GodMode"]
+layout_mode = 2
+text = "---"
+
+[node name="DebugMode" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/DebugMode"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Debug Mode: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/DebugMode"]
+layout_mode = 2
+text = "---"
+
+[node name="EventBusSignals" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EventBusSignals"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "EventBus Signals: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EventBusSignals"]
+layout_mode = 2
+text = "---"
+
+[node name="ActiveModals" type="HBoxContainer" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/ActiveModals"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Active Modals: "
+
+[node name="Value" type="Label" parent="CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/ActiveModals"]
+layout_mode = 2
+text = "---"
