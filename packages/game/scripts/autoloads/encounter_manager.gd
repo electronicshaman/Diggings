@@ -11,6 +11,7 @@ var active_event: EncounterInstance = null
 var event_queue: Array[EncounterInstance] = []
 var event_history: Array[EncounterInstance] = []
 var events_encountered: Dictionary = {}
+var encountered_ids: Dictionary = {}
 var delayed_outcomes: Array[Dictionary] = []
 
 var event_bus: Node = null
@@ -43,6 +44,7 @@ func setup_event_connections() -> void:
 	event_bus.connect_safe("turn_started", _on_turn_started)
 	event_bus.connect_safe("node_selected", _on_node_selected)
 	event_bus.connect_safe("act_completed", _on_act_completed)
+	event_bus.connect_safe("game_started", _on_game_started)
 
 func _load_all_events() -> void:
 	var event_paths = [
@@ -92,25 +94,36 @@ func _categorize_events() -> void:
 
 func trigger_encounter(encounter_data: EncounterData, force: bool = false) -> EncounterInstance:
 	var game_state = _get_current_game_state()
-	
+
+	# Prevent duplicates within a run based on encounter_id unless forced
+	var _eid: String = ""
+	if encounter_data:
+		_eid = str(encounter_data.get_encounter_id())
+	if not force and _eid != "" and encountered_ids.has(_eid):
+		GLog.debug("Event '%s' with id '%s' already encountered this run" % [encounter_data.encounter_name, _eid])
+		return null
+    
 	if not force and not encounter_data.can_trigger(game_state):
 		GLog.debug("Event '%s' cannot trigger - requirements not met" % encounter_data.encounter_name)
 		return null
-	
+    
 	var instance = EncounterInstance.new(encounter_data)
 	instance.increment_encounter_count()
-	
+    
 	if events_encountered.has(encounter_data.encounter_name):
 		events_encountered[encounter_data.encounter_name] += 1
 	else:
 		events_encountered[encounter_data.encounter_name] = 1
-	
+
+	if _eid != "":
+		encountered_ids[_eid] = encountered_ids.get(_eid, 0) + 1
+    
 	active_event = instance
 	event_triggered.emit(instance)
-	
+    
 	if event_bus:
 		event_bus.emit_signal("ui_popup_opened", "event")
-	
+    
 	GLog.debug("Triggered event: %s" % encounter_data.encounter_name)
 	return instance
 
@@ -126,15 +139,13 @@ func trigger_random_event(region: String = "", rarity: String = "") -> Encounter
 		eligible_events = all_events.duplicate()
 	
 	eligible_events = eligible_events.filter(func(e): return e.can_trigger(game_state))
-	
-	eligible_events = eligible_events.filter(func(e): 
-		if not e.repeatable and events_encountered.has(e.encounter_name):
-			return false
-		if e.max_occurrences > 0:
-			var count = events_encountered.get(e.encounter_name, 0)
-			if count >= e.max_occurrences:
-				return false
-		return true
+
+	# Filter by run-scoped encountered IDs to avoid repeats
+	eligible_events = eligible_events.filter(func(e):
+		var eid: String = str(e.get_encounter_id())
+		if eid == "":
+			return true
+		return not encountered_ids.has(eid)
 	)
 	
 	if eligible_events.is_empty():
@@ -237,6 +248,11 @@ func complete_current_event(reward_data: Dictionary = {}) -> void:
 	_process_event_queue()
 
 func queue_event(encounter_data: EncounterData) -> void:
+	# Skip if already seen in this run by ID
+	var eid: String = str(encounter_data.get_encounter_id()) if encounter_data else ""
+	if eid != "" and encountered_ids.has(eid):
+		GLog.debug("Skipping queue for already-seen encounter '%s' (id %s)" % [encounter_data.encounter_name, eid])
+		return
 	var instance = EncounterInstance.new(encounter_data)
 	event_queue.append(instance)
 	GLog.debug("Queued event: %s" % encounter_data.encounter_name)
@@ -321,6 +337,7 @@ func get_events_by_rarity(rarity: String) -> Array[EncounterData]:
 func get_save_data() -> Dictionary:
 	var save_data = {
 		"events_encountered": events_encountered.duplicate(),
+	"encountered_ids": encountered_ids.duplicate(),
 		"event_history": [],
 		"delayed_outcomes": [],
 		"active_event": null
@@ -344,6 +361,7 @@ func get_save_data() -> Dictionary:
 
 func load_from_data(data: Dictionary) -> void:
 	events_encountered = data.get("events_encountered", {}).duplicate()
+	encountered_ids = data.get("encountered_ids", {}).duplicate()
 	# Note: Karma data now loaded from PlayerData
 	
 	event_history.clear()
@@ -371,6 +389,14 @@ func load_from_data(data: Dictionary) -> void:
 		active_event.load_from_save_data(active_data)
 	else:
 		active_event = null
+
+	# Backwards compatibility: rebuild encountered_ids from history if not present
+	if encountered_ids.is_empty() and not event_history.is_empty():
+		for inst in event_history:
+			if inst and inst.encounter_data:
+				var rebuilt_id: String = str(inst.encounter_data.get_encounter_id())
+				if rebuilt_id != "":
+					encountered_ids[rebuilt_id] = encountered_ids.get(rebuilt_id, 0) + 1
 	
 	GLog.debug("Loaded event manager state: %d events encountered, %d in history" % [
 		events_encountered.size(),
@@ -390,6 +416,19 @@ func debug_list_events() -> void:
 	for event in all_events:
 		print("- %s [%s] (%s)" % [event.encounter_name, event.rarity, event.encounter_type])
 	print("Total: %d events\n" % all_events.size())
+
+func reset_for_new_run() -> void:
+	# Clear run-scoped encounter tracking and state
+	encountered_ids.clear()
+	events_encountered.clear()
+	event_queue.clear()
+	event_history.clear()
+	delayed_outcomes.clear()
+	active_event = null
+	GLog.debug("EncounterManager reset for new run")
+
+func _on_game_started() -> void:
+	reset_for_new_run()
 
 # ============================================================================
 # KARMA HELPER FUNCTIONS (Karma data stored in PlayerData)

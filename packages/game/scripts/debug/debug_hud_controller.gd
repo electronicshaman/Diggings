@@ -48,6 +48,8 @@ var god_mode_value: Label
 var debug_mode_value: Label
 var eventbus_signals_value: Label
 var active_modals_value: Label
+var encountered_ids_title: Label
+var encountered_ids_list: RichTextLabel
 
 func _ready() -> void:
 	GLog.debug("Debug HUD Controller initialized")
@@ -124,6 +126,9 @@ func cache_ui_references() -> void:
 	eventbus_signals_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EventBusSignals/Value")
 	active_modals_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/ActiveModals/Value")
 
+	# Ensure Encounter IDs UI exists under SystemDebug and cache references
+	_ensure_encounter_ids_ui()
+
 func _unhandled_input(event: InputEvent) -> void:
 	# Use the named input action instead of hardcoded keycode
 	if event.is_action_pressed("HUD"):
@@ -156,6 +161,7 @@ func _update_all_data() -> void:
 	update_curios()
 	update_run_statistics()
 	update_system_debug()
+	_update_encounter_ids()
 
 func update_core_game_state() -> void:
 	# Current Scene
@@ -371,6 +377,81 @@ func update_system_debug() -> void:
 			queued_count = ModalManager.get_queue_size()
 		# Show active modal count and queued for extra context
 		active_modals_value.text = "%d (queued: %d)" % [active_count, queued_count]
+
+func _ensure_encounter_ids_ui() -> void:
+	# Create a simple titled, scrollable list under SystemDebug to show encountered IDs
+	var system_debug := get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug")
+	if system_debug == null:
+		return
+
+	# If already present, cache and exit
+	var container := system_debug.get_node_or_null("EncounterIDs")
+	if container:
+		encountered_ids_title = container.get_node_or_null("Title") as Label
+		var existing_scroll := container.get_node_or_null("EncounterIDsScroll")
+		if existing_scroll:
+			encountered_ids_list = existing_scroll.get_node_or_null("Value") as RichTextLabel
+		return
+
+	# Build UI dynamically
+	container = VBoxContainer.new()
+	container.name = "EncounterIDs"
+
+	var title := Label.new()
+	title.name = "Title"
+	title.text = "Encounter IDs Seen (0)"
+	container.add_child(title)
+
+	var scroll := ScrollContainer.new()
+	scroll.name = "EncounterIDsScroll"
+	scroll.custom_minimum_size = Vector2(320, 120)
+
+	var list := RichTextLabel.new()
+	list.name = "Value"
+	list.bbcode_enabled = false
+	list.scroll_active = true
+	list.fit_content = true
+
+	scroll.add_child(list)
+	container.add_child(scroll)
+	system_debug.add_child(container)
+
+	# Cache references
+	encountered_ids_title = title
+	encountered_ids_list = list
+
+func _update_encounter_ids() -> void:
+	# Update encounter IDs list and title count from EncounterManager
+	if encountered_ids_list == null:
+		_ensure_encounter_ids_ui()
+	if encountered_ids_list == null:
+		return
+
+	var id_map: Dictionary = {}
+	# Prefer autoload singleton if available
+	if typeof(EncounterManager) != TYPE_NIL and EncounterManager:
+		id_map = EncounterManager.encountered_ids if EncounterManager.encountered_ids else {}
+	else:
+		var mgr := get_node_or_null("/root/EncounterManager")
+		if mgr:
+			id_map = mgr.encountered_ids if mgr.encountered_ids else {}
+
+	var keys := id_map.keys()
+	keys.sort()
+	var lines: Array[String] = []
+	for k in keys:
+		lines.append("%s: %s" % [str(k), str(id_map.get(k, 0))])
+
+	var text := "(none)"
+	if lines.size() > 0:
+		text = "\n".join(lines)
+
+	# RichTextLabel update
+	encountered_ids_list.clear()
+	encountered_ids_list.append_text(text)
+
+	if encountered_ids_title:
+		encountered_ids_title.text = "Encounter IDs Seen (%d)" % id_map.size()
 
 func format_time(seconds: float) -> String:
 	var minutes = int(seconds / 60.0)
