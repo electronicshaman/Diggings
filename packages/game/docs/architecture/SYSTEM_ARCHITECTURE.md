@@ -437,3 +437,8 @@ class GameController:
 ```
 
 This architecture provides a solid foundation for the card battler while maintaining flexibility for future expansion and theme creation.
+
+## Related documentation
+
+- Event Bus Reference: `docs/architecture/EVENT_BUS_REFERENCE.md`
+- Encounter Flow: `docs/architecture/ENCOUNTER_FLOW.md`
