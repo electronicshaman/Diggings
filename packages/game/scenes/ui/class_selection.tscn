@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ctr1vjgvr46rq"]
 
-[ext_resource type="Script" uid="uid://bj4shfhuseohy" path="res://scripts/ui/class_selection.gd" id="1_4y17g"]
+[ext_resource type="Script" uid="uid://c7iaqwjrtbwpr" path="res://scripts/ui/class_selection.gd" id="1_4y17g"]
 
 [node name="ClassSelection" type="Control"]
 layout_mode = 3
