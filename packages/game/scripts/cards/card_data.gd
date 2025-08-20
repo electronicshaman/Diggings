@@ -10,8 +10,8 @@ class_name CardData
 @export var card_icon: Texture2D
 @export var flavor_text: String = ""
 
-# Modular card effects system
-@export var effects: Array[CardEffect] = []
+# Modular card effects system - temporarily untyped during migration
+@export var effects: Array = []
 
 # Core card costs (not effects)
 @export var sanity_cost: int = 0  # Cost to sanity when played
@@ -111,7 +111,7 @@ func get_effect_descriptions(separator: String = " ") -> String:
 		var text := ""
 		if effect.has_method("get_formatted_description"):
 			text = str(effect.get_formatted_description())
-		elif effect is CardEffect and effect.has("description"):
+		elif "description" in effect:
 			text = str(effect.description)
 		text = text.strip_edges()
 		if text != "":

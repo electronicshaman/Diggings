@@ -1,17 +1,35 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/data/card_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/defense.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/cards/effects/first_card_draw.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/card_manipulation_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="5"]
 
-[sub_resource type="Resource" id="Defense_1"]
-script = ExtResource("3")
-defense_amount = 8
-
-[sub_resource type="Resource" id="FirstCardDraw_1"]
+[sub_resource type="Resource" id="FirstCardCondition_1"]
 script = ExtResource("4")
-cards_to_draw = 1
+condition_type = 0
+comparison_value = 0
+comparison_operator = "equal"
+invert = false
+
+[sub_resource type="Resource" id="FirstCardDrawConditional_1"]
+script = ExtResource("5")
+property_name = "amount"
+condition = SubResource("FirstCardCondition_1")
+value_if_true = 1
+value_if_false = 0
+applies_to_base_value = false
+
+[sub_resource type="Resource" id="DefenseEffect_1"]
+script = ExtResource("2")
+amount = 8
+
+[sub_resource type="Resource" id="CardManipulationEffect_1"]
+script = ExtResource("3")
+action = "draw"
+amount = 0
+conditional_values = [SubResource("FirstCardDrawConditional_1")]
 
 [resource]
 script = ExtResource("1")
@@ -20,7 +38,7 @@ energy_cost = 2
 card_type = "Grit"
 card_icon = null
 flavor_text = "Honor among thieves isn't just a saying - it's survival."
-effects = Array[CardEffect]([SubResource("Defense_1"), SubResource("FirstCardDraw_1")])
+effects = [SubResource("DefenseEffect_1"), SubResource("CardManipulationEffect_1")]
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

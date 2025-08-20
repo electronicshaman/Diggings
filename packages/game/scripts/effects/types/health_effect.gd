@@ -44,3 +44,13 @@ func _calculate_amount(target) -> int:
 	if percentage_based and max_hp != null:
 		return int(round(float(max_hp) * clamp(percentage, 0.0, 1.0)))
 	return max(0, amount)
+
+func get_preview_text(context: Resource) -> String:
+	if full_heal:
+		return "Heal to full health"
+	elif percentage_based:
+		var pct = int(percentage * 100)
+		return "Heal for %d%% of max health" % pct
+	else:
+		var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
+		return "Heal %d health" % final_amount

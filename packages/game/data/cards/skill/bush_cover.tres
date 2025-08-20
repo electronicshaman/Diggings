@@ -1,18 +1,18 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/cards/effects/defense.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="2"]
 
-[sub_resource type="Resource" id="Defense_1"]
+[sub_resource type="Resource" id="DefenseEffect_1"]
 script = ExtResource("2")
-defense_amount = 5
+amount = 5
 
 [resource]
 script = ExtResource("1")
 card_name = "Bush Defense"
 energy_cost = 1
 card_type = "Grit"
-effects = [SubResource("Defense_1")]
+effects = [SubResource("DefenseEffect_1")]
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

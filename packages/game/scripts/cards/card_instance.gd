@@ -47,7 +47,7 @@ func get_card_icon() -> Texture2D:
 func get_flavor_text() -> String:
 	return card_data.flavor_text if card_data else ""
 
-func get_effects() -> Array[CardEffect]:
+func get_effects() -> Array:
 	return card_data.effects if card_data else []
 
 func get_volatile_bonus() -> bool:
@@ -90,7 +90,8 @@ func get_card_handling() -> String:
 	# Auto-convert Hold cards to Standard when they reach their threshold
 	var hold_bonus_effect = _get_hold_bonus_effect()
 	if hold_bonus_effect and card_data.card_handling == "Hold":
-		if turns_held >= hold_bonus_effect.turns_required:
+		var turns_required = hold_bonus_effect.get("turns_required", 2)
+		if turns_held >= turns_required:
 			return "Standard"  # Card is "charged up" and should be discarded after use
 	
 	return card_data.card_handling
@@ -110,7 +111,8 @@ func reset_turns_held() -> void:
 func is_hold_threshold_reached() -> bool:
 	var hold_bonus_effect = _get_hold_bonus_effect()
 	if hold_bonus_effect:
-		return turns_held >= hold_bonus_effect.turns_required
+		var turns_required = hold_bonus_effect.get("turns_required", 2)
+		return turns_held >= turns_required
 	return false
 
 # Dynamic property management
@@ -125,34 +127,42 @@ func clear_dynamic_properties() -> void:
 	_dynamic_card_handling = ""
 
 # Internal helper methods
-func _get_hold_bonus_effect() -> HoldBonus:
+func _get_hold_bonus_effect():
 	if not card_data or not card_data.effects:
 		return null
 	
 	for effect in card_data.effects:
-		if effect is HoldBonus:
-			return effect as HoldBonus
+		# Check if this effect has hold bonus characteristics (duck typing)
+		if effect.has_method("get_effect_name") and "Hold" in effect.get_effect_name():
+			return effect
+		elif effect is HoldBonus:  # Legacy CardEffect support
+			return effect
 	
 	return null
 
-func _generate_dynamic_description(hold_bonus: HoldBonus) -> String:
+func _generate_dynamic_description(hold_bonus) -> String:
 	var base_desc = card_data.description
 	
-	# If we haven't reached the threshold, show the hold requirement
-	if turns_held < hold_bonus.turns_required:
-		var _turns_remaining = hold_bonus.turns_required - turns_held
-		var bonus_text = hold_bonus.get_formatted_description()
-		return "%s %s" % [base_desc, bonus_text]
-	else:
-		# We've reached the threshold - show the upgraded effect
-		return _generate_upgraded_description(hold_bonus)
+	# If we have a hold bonus effect, try to get its description
+	if hold_bonus and hold_bonus.has_method("get_formatted_description"):
+		var turns_required = hold_bonus.get("turns_required", 2)
+		
+		# If we haven't reached the threshold, show the hold requirement
+		if turns_held < turns_required:
+			var bonus_text = hold_bonus.get_formatted_description()
+			return "%s %s" % [base_desc, bonus_text]
+		else:
+			# We've reached the threshold - show the upgraded effect
+			return _generate_upgraded_description(hold_bonus)
+	
+	return base_desc
 
-func _generate_upgraded_description(hold_bonus: HoldBonus) -> String:
+func _generate_upgraded_description(hold_bonus) -> String:
 	# This is a simplified implementation - you might want to make this more sophisticated
 	var base_desc = card_data.description
 	
-	# Look for base numeric values and add the bonuses
-	if hold_bonus.bonus_energy > 0:
+	# Handle both GameEffect and CardEffect hold bonuses
+	if hold_bonus.has("bonus_energy") and hold_bonus.bonus_energy > 0:
 		# Try to upgrade energy gain descriptions
 		var regex = RegEx.new()
 		regex.compile("Gain (\\d+) energy")
@@ -162,7 +172,7 @@ func _generate_upgraded_description(hold_bonus: HoldBonus) -> String:
 			var new_energy = base_energy + hold_bonus.bonus_energy
 			base_desc = base_desc.replace(result.get_string(), "Gain %d energy" % new_energy)
 	
-	if hold_bonus.bonus_damage > 0:
+	if hold_bonus.has("bonus_damage") and hold_bonus.bonus_damage > 0:
 		# Try to upgrade damage descriptions
 		var regex = RegEx.new()
 		regex.compile("Deal (\\d+) damage")
@@ -201,6 +211,84 @@ func load_from_save_data(data: Dictionary) -> void:
 	instance_id = data.get("instance_id", _generate_instance_id())
 	
 	_update_dynamic_properties()
+
+# Description generation (instance-aware)
+func get_effect_descriptions(separator: String = " ") -> String:
+	"""Generate descriptions that account for conditional effects and runtime state"""
+	if not card_data or not card_data.effects:
+		return ""
+	
+	var descriptions: Array[String] = []
+	for effect in card_data.effects:
+		var desc = ""
+		
+		# Check if this is a GameEffect with conditional values
+		if effect.has_method("get") and effect.get("conditional_values") != null:
+			var conditional_values = effect.get("conditional_values")
+			if conditional_values is Array and conditional_values.size() > 0:
+				desc = _generate_conditional_description(effect)
+			else:
+				desc = _get_standard_description(effect)
+		else:
+			desc = _get_standard_description(effect)
+		
+		desc = desc.strip_edges()
+		if desc != "":
+			descriptions.append(desc)
+	
+	return separator.join(descriptions)
+
+func _generate_conditional_description(effect: Resource) -> String:
+	"""Generate description showing all conditional outcomes"""
+	var conditional_values = effect.get("conditional_values")
+	if not conditional_values or conditional_values.size() == 0:
+		return _get_standard_description(effect)
+	
+	# Get the base description for the effect type
+	var base_text = _get_effect_base_description(effect)
+	
+	# Find conditional values for important properties
+	for cv in conditional_values:
+		if cv.property_name == "amount":
+			var condition_desc = cv.condition.get_description() if cv.condition else "unknown condition"
+			
+			# Generate conditional text based on effect type
+			if effect.get_script().get_global_name() == "DamageEffect":
+				return "Deal %d damage if %s, otherwise deal %d damage" % [
+					cv.value_if_true, condition_desc, cv.value_if_false
+				]
+			elif effect.get_script().get_global_name() == "DefenseEffect":
+				return "Gain %d block if %s, otherwise gain %d block" % [
+					cv.value_if_true, condition_desc, cv.value_if_false
+				]
+			elif effect.get_script().get_global_name() == "CardManipulationEffect":
+				var action = effect.get("action") if effect.get("action") else "draw"
+				if cv.value_if_false == 0:
+					return "%s %d card(s) if %s" % [action.capitalize(), cv.value_if_true, condition_desc]
+				else:
+					return "%s %d card(s) if %s, otherwise %s %d card(s)" % [
+						action.capitalize(), cv.value_if_true, condition_desc,
+						action, cv.value_if_false
+					]
+	
+	# Fallback to standard description if we can't handle the conditional
+	return _get_standard_description(effect)
+
+func _get_standard_description(effect: Resource) -> String:
+	"""Get standard description for an effect"""
+	if effect.has_method("get_formatted_description"):
+		return effect.get_formatted_description()
+	elif effect.has_method("get_preview_text"):
+		return effect.get_preview_text(null)
+	elif "description" in effect:
+		return str(effect.description)
+	else:
+		return ""
+
+func _get_effect_base_description(effect: Resource) -> String:
+	"""Get the basic description template for an effect type"""
+	# This could be expanded to provide base templates for different effect types
+	return _get_standard_description(effect)
 
 # Utility methods
 func duplicate_instance() -> CardInstance:

@@ -61,6 +61,55 @@ func apply_card_instance_effects(duel_manager: DuelManager, card_instance: CardI
 	
 	return results
 
+func apply_card_instance_effects_with_context(duel_manager: DuelManager, card_instance: CardInstance, cards_played_before: int, hand_size_before: int) -> Dictionary:
+	# Create default results dictionary
+	var results = _create_default_results()
+	
+	# Validate inputs
+	var validation_result = _validate_card_effect_inputs(duel_manager, card_instance.card_data)
+	if validation_result.error != OK:
+		push_error("CardEffects: Cannot apply effects - %s" % validation_result.message)
+		return results
+	
+	# Create effect context with timing information
+	var context = _create_effect_context(duel_manager, card_instance, cards_played_before, hand_size_before)
+	
+	# Process effects safely
+	var processed_effects = 0
+	var failed_effects = 0
+	
+	if DEBUG_ENABLED:
+		GLog.debug("Processing %d effects for card: %s (cards played before: %d, hand size before: %d)" % [
+			card_instance.card_data.effects.size(), card_instance.get_card_name(), cards_played_before, hand_size_before
+		])
+	
+	for i in range(card_instance.card_data.effects.size()):
+		var effect = card_instance.card_data.effects[i]
+		
+		var effect_result = _apply_single_effect_with_context(effect, duel_manager, card_instance, results, context, i)
+		if effect_result.success:
+			processed_effects += 1
+		else:
+			failed_effects += 1
+			if DEBUG_ENABLED:
+				GLog.warn("Effect %d failed: %s" % [i, effect_result.error_message])
+	
+	# Apply gambling modifiers if applicable
+	_apply_gambling_modifiers(duel_manager, results)
+	
+	# Log final results
+	if failed_effects > 0:
+		push_warning("CardEffects: %d/%d effects failed for card: %s" % [
+			failed_effects,
+			card_instance.card_data.effects.size(),
+			card_instance.get_card_name()
+		])
+	
+	if DEBUG_ENABLED:
+		GLog.debug("Card effects complete: %d processed, %d failed" % [processed_effects, failed_effects])
+	
+	return results
+
 ## Create default results dictionary
 func _create_default_results() -> Dictionary:
 	return {
@@ -131,57 +180,37 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_inst
 		result.error_message = "Effect %d is invalid" % effect_index
 		return result
 	
-	# Prefer instance-aware API when available; gracefully fallback to legacy apply_effect
+	# Only GameEffect is supported now - use context-aware evaluation
+	var context = _create_effect_context(duel_manager, card_instance, 0, 0)  # Default context for non-context calls
+	
+	# Check if effect can be applied
 	var can_apply: bool = true
-	if effect.has_method("can_apply_with_instance"):
-		can_apply = effect.can_apply_with_instance(duel_manager, card_instance)
-	elif effect.has_method("can_apply"):
-		# Legacy can_apply(card_data, duel_manager) or (duel_manager, card_data)
-		# Try common signatures safely
-		can_apply = true
-		# We won't strictly call legacy can_apply to avoid signature mismatch crashes
-		# Effects without can_apply are assumed applicable
+	if effect.has_method("can_apply"):
+		can_apply = effect.can_apply(context)
 
 	if not can_apply:
 		result.error_message = "Effect %d cannot be applied in current context" % effect_index
 		return result
 
-	# Apply using the best available API
-	if effect.has_method("apply_effect_with_instance"):
-		# Snapshot key fields to detect no-op base implementation
-		var snapshot := {
-			"damage": results.get("damage", 0),
-			"defense": results.get("defense", 0),
-			"heal": results.get("heal", 0),
-			"draw": results.get("draw", 0),
-			"energy_restore": results.get("energy_restore", 0),
-			"stun_enemy": results.get("stun_enemy", 0),
-			"ignores_defense": results.get("ignores_defense", false),
-			"discard_random": results.get("discard_random", 0),
-			"add_curse": results.get("add_curse", 0),
-			"sanity_restore": results.get("sanity_restore", 0)
-		}
-		effect.apply_effect_with_instance(duel_manager, card_instance, results)
-		# Detect if nothing changed; if so, fallback to legacy apply_effect
-		var changed := false
-		for k in snapshot.keys():
-			if results.has(k) and results[k] != snapshot[k]:
-				changed = true
-				break
-		if not changed and effect.has_method("apply_effect"):
-			effect.apply_effect(duel_manager, card_instance.card_data, results)
-		result.success = true
-	elif effect.has_method("apply_effect"):
-		# Legacy path expects CardData
-		effect.apply_effect(duel_manager, card_instance.card_data, results)
-		result.success = true
+	# Apply GameEffect with context
+	if effect.has_method("apply_effect"):
+		var effect_result = effect.apply_effect(context)
+		if effect_result and effect_result.has_method("get") and effect_result.get("success"):
+			# Merge effect results into main results dictionary
+			_merge_effect_result_into_results(effect_result, results)
+			result.success = true
+		else:
+			result.error_message = "GameEffect failed to apply"
 	else:
 		result.error_message = "Effect %d has no applicable apply method" % effect_index
 	
 	var effect_name = "Unknown"
-	if effect is CardEffect:
-		if effect.has_method("get_effect_name"):
-			effect_name = effect.get_effect_name()
+	if effect.has_method("get_effect_name"):
+		effect_name = effect.get_effect_name()
+	elif effect is GameEffect:
+		effect_name = "GameEffect"
+	elif effect is CardEffect:
+		effect_name = "CardEffect"
 	
 	if DEBUG_ENABLED:
 		GLog.debug("Applied effect: %s" % effect_name)
@@ -273,23 +302,34 @@ func _calculate_effect_value(effect: Resource) -> int:
 	
 	var value = 0
 	
-	# Use type checking with error handling
-	if effect is Damage and _has_prop(effect, "damage_amount"):
-		value = effect.damage_amount * 2
-	elif effect is RandomDamage and _has_prop(effect, "min_damage") and _has_prop(effect, "max_damage"):
-		var avg_damage = (effect.min_damage + effect.max_damage) / 2.0
-		value = int(avg_damage * 2)
-	elif effect is Defense and _has_prop(effect, "defense_amount"):
-		value = effect.defense_amount * 2
-	elif effect is Heal and _has_prop(effect, "heal_amount"):
-		value = effect.heal_amount * 3
-	elif effect is Draw and _has_prop(effect, "cards_to_draw"):
-		value = effect.cards_to_draw * 3
-	elif effect is Stun and _has_prop(effect, "stun_duration"):
-		value = effect.stun_duration * 4
+	# Handle both GameEffect and legacy CardEffect types
+	if effect is GameEffect:
+		# GameEffect value estimation
+		if _has_prop(effect, "amount"):
+			value = effect.amount * 2  # Generic multiplier
+		elif _has_prop(effect, "base_value"):
+			value = effect.base_value * 2
+		else:
+			# Fallback to generic effect value
+			value = 3  # Base value for GameEffect
 	else:
-		# Generic effect value estimation
-		value = 1  # Base value for unknown effects
+		# Legacy CardEffect value estimation
+		if effect is Damage and _has_prop(effect, "damage_amount"):
+			value = effect.damage_amount * 2
+		elif effect is RandomDamage and _has_prop(effect, "min_damage") and _has_prop(effect, "max_damage"):
+			var avg_damage = (effect.min_damage + effect.max_damage) / 2.0
+			value = int(avg_damage * 2)
+		elif effect is Defense and _has_prop(effect, "defense_amount"):
+			value = effect.defense_amount * 2
+		elif effect is Heal and _has_prop(effect, "heal_amount"):
+			value = effect.heal_amount * 3
+		elif effect is Draw and _has_prop(effect, "cards_to_draw"):
+			value = effect.cards_to_draw * 3
+		elif effect is Stun and _has_prop(effect, "stun_duration"):
+			value = effect.stun_duration * 4
+		else:
+			# Generic effect value estimation
+			value = 1  # Base value for unknown effects
 	
 	return value
 
@@ -327,3 +367,66 @@ func get_effect_diagnostics(card_data: CardData) -> Dictionary:
 			diagnostics.effect_types.append(effect.get_script().get_path().get_file().get_basename())
 	
 	return diagnostics
+
+## Create effect context for conditional evaluation
+func _create_effect_context(duel_manager: DuelManager, card_instance: CardInstance, cards_played_before: int, hand_size_before: int) -> Dictionary:
+	var context = {
+		"duel_manager": duel_manager,
+		"card_instance": card_instance,
+		"cards_played_this_turn": cards_played_before,
+		"hand_size": hand_size_before,
+		"player_data": duel_manager.duel_state.player_data if duel_manager.duel_state else null,
+		"enemy_data": duel_manager.duel_state.enemy_data if duel_manager.duel_state else null,
+		"duel_state": duel_manager.duel_state
+	}
+	return context
+
+## Apply a single effect with context for conditional evaluation
+func _apply_single_effect_with_context(effect: Resource, duel_manager: DuelManager, card_instance: CardInstance, results: Dictionary, context: Dictionary, effect_index: int) -> Dictionary:
+	var result = {"success": false, "error_message": ""}
+	
+	# Validate effect
+	if not is_instance_valid(effect):
+		result.error_message = "Effect %d is invalid" % effect_index
+		return result
+	
+	# Check if GameEffect can be applied with context
+	var can_apply: bool = true
+	if effect.has_method("can_apply"):
+		can_apply = effect.can_apply(context)
+		
+	if not can_apply:
+		result.error_message = "Effect %d cannot be applied in current context" % effect_index
+		return result
+	
+	# Apply GameEffect with context
+	if effect.has_method("apply_effect"):
+		var effect_result = effect.apply_effect(context)
+		if effect_result and effect_result.has_method("get") and effect_result.get("success"):
+			# Merge effect results into main results dictionary
+			_merge_effect_result_into_results(effect_result, results)
+			result.success = true
+		else:
+			result.error_message = "GameEffect failed to apply"
+	else:
+		result.error_message = "Effect %d has no applicable apply method" % effect_index
+	
+	return result
+
+## Helper to merge GameEffect results into legacy results format
+func _merge_effect_result_into_results(effect_result: Resource, results: Dictionary) -> void:
+	if not effect_result or not effect_result.has_method("get"):
+		return
+	
+	var values_applied = effect_result.get("values_applied")
+	if values_applied is Dictionary:
+		for key in values_applied.keys():
+			if key == "damage" and values_applied[key] > 0:
+				results.damage += values_applied[key]
+			elif key == "heal" and values_applied[key] > 0:
+				results.heal += values_applied[key]
+			elif key == "defense" and values_applied[key] > 0:
+				results.defense += values_applied[key]
+			elif key == "drawn" and values_applied[key] > 0:
+				results.draw += values_applied[key]
+			# Add more mappings as needed

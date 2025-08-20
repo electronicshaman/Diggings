@@ -160,10 +160,14 @@ func _on_button_clicked():
 
 
 func format_description() -> String:
-	# Always generate from effects in the order they appear on the card resource
-	# Use CardData helper to format from effect scripts as the source of truth
-	# Separate lines for readability on the RichTextLabel
-	return card_data.get_effect_descriptions("\n")
+	# Prefer CardInstance for context-aware descriptions (handles conditionals)
+	# Fall back to CardData for basic effect descriptions
+	if card_instance and card_instance.has_method("get_effect_descriptions"):
+		return card_instance.get_effect_descriptions("\n")
+	elif card_data:
+		return card_data.get_effect_descriptions("\n")
+	else:
+		return ""
 
 func format_card_handling() -> String:
 	var handling_display = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_display_name(card_data.card_handling)

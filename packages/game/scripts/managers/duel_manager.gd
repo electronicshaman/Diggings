@@ -348,6 +348,10 @@ func play_card(card_instance: CardInstance):
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_instance.get_sanity_cost())
 	
+	# Capture timing context BEFORE incrementing counter
+	var cards_played_before = player.cards_played_this_turn
+	var hand_size_before = duel_state.hand.size() - 1  # -1 because we're about to play this card
+	
 	# Increment counter for this turn
 	player.cards_played_this_turn += 1
 	player.apply_card_cost_reductions()
@@ -364,8 +368,8 @@ func play_card(card_instance: CardInstance):
 	# Brief delay to show card on battlefield
 	await get_tree().create_timer(CARD_STAGE_DELAY).timeout
 	
-	# Immediately resolve the card
-	resolve_single_card(card_instance, true)
+	# Immediately resolve the card with timing context
+	resolve_single_card_with_context(card_instance, true, cards_played_before, hand_size_before)
 	
 	# Check if duel is over after each card
 	if duel_state.is_duel_over():
@@ -531,7 +535,20 @@ func track_player_card_for_enemy_memory(card: CardData):
 		enemy.add_to_player_memory(card.card_name)
 
 func resolve_single_card(card_instance: CardInstance, is_player_card: bool):
-	"""Immediately resolve a single card and move it to discard"""
+	"""Immediately resolve a single card and move it to discard (legacy version)"""
+	# Default timing values for compatibility
+	var cards_played_before = 0
+	var hand_size_before = 0
+	
+	if is_player_card and duel_state and duel_state.player_data:
+		# Try to get reasonable defaults
+		cards_played_before = max(0, duel_state.player_data.cards_played_this_turn - 1)
+		hand_size_before = duel_state.hand.size()
+	
+	resolve_single_card_with_context(card_instance, is_player_card, cards_played_before, hand_size_before)
+
+func resolve_single_card_with_context(card_instance: CardInstance, is_player_card: bool, cards_played_before: int, hand_size_before: int):
+	"""Immediately resolve a single card with timing context"""
 	if not duel_state or not card_instance:
 		return
 	
@@ -540,8 +557,10 @@ func resolve_single_card(card_instance: CardInstance, is_player_card: bool):
 	# Remove from battlefield
 	duel_state.battlefield.remove_card(card_instance)
 	
-	# Execute card effects - pass the CardInstance to the effects processor
-	var results = card_effects_processor.apply_card_instance_effects(self, card_instance)
+	# Execute card effects - pass the CardInstance to the effects processor with context
+	var results = card_effects_processor.apply_card_instance_effects_with_context(
+		self, card_instance, cards_played_before, hand_size_before
+	)
 	
 	if is_player_card:
 		apply_card_results(results)
@@ -563,7 +582,7 @@ func resolve_single_card(card_instance: CardInstance, is_player_card: bool):
 		var enemy = duel_state.enemy_data as EnemyState
 		apply_enemy_card_results(results, enemy)
 		
-		# Move to enemy's discard - note: enemies still use CardData for now
+		# Move enemy card to discard
 		if enemy:
 			enemy.enemy_discard.add_card_data(card_instance.card_data)
 		
