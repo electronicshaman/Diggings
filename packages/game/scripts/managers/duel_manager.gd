@@ -43,7 +43,7 @@ func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 		"enemy_died":
 			end_duel("player")
 
-func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
+func start_new_duel(player_deck: DeckData, enemy_data: Resource) -> void:
 	GLog.info("Starting new duel...")
 	
 	duel_state.enemy_data = enemy_data
@@ -57,9 +57,13 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	duel_state.hand.clear()
 	duel_state.removed_pile.clear()
 	
-	# Convert CardData array to CardInstance array
-	for card_data in player_deck:
-		duel_state.deck.add_card_data(card_data)
+	# Load cards from DeckData and convert to CardInstance array
+	for card_path in player_deck.card_paths:
+		var card_data = load(card_path) as CardData
+		if card_data:
+			duel_state.deck.add_card_data(card_data)
+		else:
+			GLog.error("Failed to load card from DeckData: %s" % card_path)
 	
 	duel_state.deck.shuffle()
 	
@@ -554,10 +558,7 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 	
 	GLog.info("Resolving card: %s" % card_instance.get_card_name())
 	
-	# Remove from battlefield
-	duel_state.battlefield.remove_card(card_instance)
-	
-	# Execute card effects - pass the CardInstance to the effects processor with context
+	# Execute card effects WHILE card is still on battlefield - pass the CardInstance to the effects processor with context
 	var results = card_effects_processor.apply_card_instance_effects_with_context(
 		self, card_instance, cards_played_before, hand_size_before
 	)
@@ -565,7 +566,8 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 	if is_player_card:
 		apply_card_results(results)
 		
-		# Move to player's final destination
+		# Now remove from battlefield and move to player's final destination
+		duel_state.battlefield.remove_card(card_instance)
 		match card_instance.get_card_handling():
 			"Standard", "Equipped", "Flash":
 				duel_state.discard_pile.add_card(card_instance)
@@ -582,7 +584,8 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 		var enemy = duel_state.enemy_data as EnemyState
 		apply_enemy_card_results(results, enemy)
 		
-		# Move enemy card to discard
+		# Now remove from battlefield and move enemy card to discard
+		duel_state.battlefield.remove_card(card_instance)
 		if enemy:
 			enemy.enemy_discard.add_card_data(card_instance.card_data)
 		

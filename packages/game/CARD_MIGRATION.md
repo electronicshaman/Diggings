@@ -221,9 +221,9 @@ Track progress in this file by updating checkboxes as cards are migrated:
 
 ### Attack Cards
 - [ ] aged_whiskey.tres
-- [ ] ambush.tres 🎯 **Next**
+- [x] ambush.tres - **MIGRATED** (DamageEffect with ConditionalValue)
 - [ ] bounty_shot.tres  
-- [ ] desperados_gambit.tres
+- [x] desperados_gambit.tres - **MIGRATED** (DamageEffect)
 - [ ] dynamite.tres
 - [ ] fan_the_hammer.tres
 - [ ] pickaxe_strike.tres
@@ -232,9 +232,9 @@ Track progress in this file by updating checkboxes as cards are migrated:
 - [ ] wild_shot.tres
 
 ### Skill Cards  
-- [ ] bandits_code.tres
+- [x] bandits_code.tres - **MIGRATED** (DefenseEffect + CardManipulationEffect, both conditional)
 - [ ] bar_fortification.tres
-- [ ] bush_cover.tres
+- [x] bush_cover.tres - **MIGRATED** (DefenseEffect)
 - [ ] bush_survival.tres
 - [ ] bush_telegraph.tres
 - [ ] campfire_rest.tres
@@ -246,7 +246,7 @@ Track progress in this file by updating checkboxes as cards are migrated:
 - [ ] last_stand.tres
 - [ ] nightcap.tres
 - [ ] outlaws_intuition.tres
-- [ ] reload.tres
+- [x] reload.tres - **MIGRATED** (CardManipulationEffect)
 - [ ] smooth_talk.tres
 - [ ] steady_hands.tres
 - [ ] swagmans_wisdom.tres
@@ -258,7 +258,7 @@ Track progress in this file by updating checkboxes as cards are migrated:
 ### Power Cards
 - [ ] bouncers_presence.tres
 - [ ] house_rules.tres  
-- [ ] pub_brawl.tres
+- [x] pub_brawl.tres - **MIGRATED** (DamageEffect + DefenseEffect)
 
 ### Fortune Cards
 - [ ] claim_jumping.tres

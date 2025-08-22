@@ -73,13 +73,13 @@ func initialize(duel_manager_ref: Node) -> Error:
 	return OK
 
 ## Start a new duel with the provided deck and enemy
-func start_duel(player_deck: Array[CardData], enemy: Resource) -> Error:
+func start_duel(player_deck: DeckData, enemy: Resource) -> Error:
 	if not is_instance_valid(duel_manager):
 		error_manager.record_error("Cannot start duel - DuelManager not initialized", "duel")
 		return ERR_UNCONFIGURED
 	
-	if player_deck.is_empty():
-		error_manager.record_error("Cannot start duel - Player deck is empty", "duel")
+	if not is_instance_valid(player_deck) or player_deck.card_paths.is_empty():
+		error_manager.record_error("Cannot start duel - Player deck is empty or invalid", "duel")
 		return ERR_INVALID_PARAMETER
 	
 	if not is_instance_valid(enemy):
@@ -87,7 +87,7 @@ func start_duel(player_deck: Array[CardData], enemy: Resource) -> Error:
 		return ERR_INVALID_PARAMETER
 	
 	# Validate deck contents
-	if not _validate_deck_contents(player_deck):
+	if not _validate_deck_data_contents(player_deck):
 		error_manager.record_error("Player deck validation failed", "duel")
 		return ERR_INVALID_DATA
 	
@@ -99,11 +99,11 @@ func start_duel(player_deck: Array[CardData], enemy: Resource) -> Error:
 ## Convenience: Start a default/test duel (used on scene load or via debug UI)
 func start_test_duel() -> void:
 	# Build a reasonable default player deck from the selected character class
-	var deck: Array[CardData] = _build_default_player_deck()
+	var deck: DeckData = _build_default_player_deck()
 	# Pick a default enemy
 	var enemy: Resource = _get_default_enemy()
 	
-	if deck.is_empty() or not is_instance_valid(enemy):
+	if not is_instance_valid(deck) or deck.card_paths.is_empty() or not is_instance_valid(enemy):
 		push_warning("GameController: Could not build default duel inputs (deck or enemy missing)")
 		return
 	
@@ -125,8 +125,7 @@ func add_random_card_to_hand() -> void:
 			EventBus.emit_ui_notification("Drew a card", "debug")
 
 # --- Internal helpers ------------------------------------------------------
-func _build_default_player_deck() -> Array[CardData]:
-	var result: Array[CardData] = []
+func _build_default_player_deck() -> DeckData:
 	var char_class = "bushranger"
 	if is_instance_valid(GameManager) and GameManager.current_character_class and GameManager.current_character_class != "":
 		char_class = GameManager.current_character_class
@@ -134,12 +133,19 @@ func _build_default_player_deck() -> Array[CardData]:
 	var character_path = "res://data/characters/%s.tres" % [char_class.to_lower()]
 	if ResourceLoader.exists(character_path):
 		var character_res = load(character_path)
-		if character_res and character_res.has_method("load_starting_deck"):
-			result = character_res.load_starting_deck()
+		if character_res and character_res.starting_deck_resource != "":
+			# Load DeckData resource directly
+			var deck_data = load(character_res.starting_deck_resource) as DeckData
+			if deck_data:
+				return deck_data
+			else:
+				push_warning("GameController: Failed to load DeckData from: " + character_res.starting_deck_resource)
+		else:
+			push_warning("GameController: Character has no starting_deck_resource: " + char_class)
 	else:
 		push_warning("GameController: Character resource not found at " + character_path)
 
-	return result
+	return null
 
 func _get_default_enemy() -> Resource:
 	# Prefer a known basic enemy; fallback to first .tres in data/enemies
@@ -161,6 +167,37 @@ func _get_default_enemy() -> Resource:
 	return null
 
 ## Validate deck contents
+func _validate_deck_data_contents(deck_data: DeckData) -> bool:
+	if not is_instance_valid(deck_data):
+		push_warning("GameController: DeckData is invalid")
+		return false
+	
+	if deck_data.card_paths.is_empty():
+		push_warning("GameController: DeckData has no cards")
+		return false
+	
+	var valid_cards = 0
+	var invalid_cards = 0
+	
+	for card_path in deck_data.card_paths:
+		if ResourceLoader.exists(card_path):
+			var card_data = load(card_path) as CardData
+			if is_instance_valid(card_data) and _has_prop(card_data, "card_name") and _has_prop(card_data, "effects"):
+				valid_cards += 1
+			else:
+				invalid_cards += 1
+				GLog.warn("Invalid card structure in DeckData: %s" % card_path)
+		else:
+			invalid_cards += 1
+			GLog.warn("Card resource not found in DeckData: %s" % card_path)
+	
+	if invalid_cards > 0:
+		push_warning("GameController: DeckData contains %d invalid cards" % invalid_cards)
+		return false
+	
+	GLog.debug("DeckData validation successful: %d valid cards" % valid_cards)
+	return true
+
 func _validate_deck_contents(deck: Array[CardData]) -> bool:
 	if deck.is_empty():
 		push_warning("GameController: Deck is empty")
