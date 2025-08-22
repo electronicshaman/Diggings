@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3 uid="uid://baec1pw0toin"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="2"]
+
+[sub_resource type="Resource" id="Damage_1"]
+script = ExtResource("2")
+damage_amount = 2
+ignores_defense = false
+
+[resource]
+script = ExtResource("1")
+card_name = "Belgian Pistol"
+energy_cost = 0
+card_type = "Gold"
+flavor_text = "Cheap, common, and just about reliable."
+effects = Array[CardEffect]([SubResource("Damage_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String]([])
+accessibility_tier = "Starting"
+mechanical_category = "Attack"

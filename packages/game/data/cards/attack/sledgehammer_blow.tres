@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3 uid="uid://c2rat5m8k4w7r"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="2"]
+
+[sub_resource type="Resource" id="Damage_1"]
+script = ExtResource("2")
+damage_amount = 12
+ignores_defense = false
+
+[resource]
+script = ExtResource("1")
+card_name = "Sledgehammer Blow"
+energy_cost = 3
+card_type = "Gold"
+flavor_text = "Twenty-five pounds of crushing force."
+effects = Array[CardEffect]([SubResource("Damage_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Prospector"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"

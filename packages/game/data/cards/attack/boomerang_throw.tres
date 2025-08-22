@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://c7w4r2lan5m8j"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="2"]
+[ext_resource type="Script" uid="uid://c8w5k2n9r6m3j" path="res://scripts/cards/effects/draw.gd" id="3"]
+
+[sub_resource type="Resource" id="Damage_1"]
+script = ExtResource("2")
+damage_amount = 4
+ignores_defense = false
+
+[sub_resource type="Resource" id="Draw_1"]
+script = ExtResource("3")
+cards_to_draw = 1
+
+[resource]
+script = ExtResource("1")
+card_name = "Boomerang Throw"
+energy_cost = 1
+card_type = "Gold"
+flavor_text = "What goes around, comes around."
+effects = Array[CardEffect]([SubResource("Damage_1"), SubResource("Draw_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Tracker"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://c57c3uy2vsiy"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="2"]
+[ext_resource type="Script" uid="uid://d6m2k8w4r7n5j" path="res://scripts/cards/effects/defense.gd" id="3"]
+
+[sub_resource type="Resource" id="Damage_1"]
+script = ExtResource("2")
+damage_amount = 3
+ignores_defense = false
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("3")
+defense_amount = 3
+
+[resource]
+script = ExtResource("1")
+card_name = "Cast Iron Pan"
+energy_cost = 1
+card_type = "Gold"
+flavor_text = "Heavy enough to cook and club."
+effects = Array[CardEffect]([SubResource("Damage_1"), SubResource("Defense_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Publican"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"
