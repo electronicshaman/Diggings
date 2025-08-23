@@ -44,10 +44,10 @@ func setup_card_visuals():
 	# Set card text
 	if has_node("CardInfo/CardName"):
 		$CardInfo/CardName.text = card_data.card_name
-	if has_node("CardInfo/EnergyCost"):
-		$CardInfo/EnergyCost.text = str(card_data.energy_cost)
-	if has_node("CardInfo/Description"):
-		var desc_node = $CardInfo/Description
+	if has_node("CardInfo/CardInfoContainer/EnergyCost"):
+		$CardInfo/CardInfoContainer/EnergyCost.text = str(card_data.energy_cost)
+	if has_node("CardInfo/CardInfoContainer/Description"):
+		var desc_node = $CardInfo/CardInfoContainer/Description
 		var description_text = format_description()
 		
 		# Handle both Label and RichTextLabel
@@ -76,29 +76,29 @@ func setup_card_visuals():
 		$CardBackground.color = Color.WHITE
 	
 	# Set card handling info
-	if has_node("CardInfo/CardHandling"):
+	if has_node("CardInfo/CardInfoContainer/CardHandling"):
 		var handling_text = format_card_handling()
-		$CardInfo/CardHandling.text = handling_text
-		$CardInfo/CardHandling.visible = handling_text.length() > 0
+		$CardInfo/CardInfoContainer/CardHandling.text = handling_text
+		$CardInfo/CardInfoContainer/CardHandling.visible = handling_text.length() > 0
 		
 		# Style the CardHandling label
 		if handling_text.length() > 0:
-			$CardInfo/CardHandling.add_theme_font_size_override("font_size", 10)
-			$CardInfo/CardHandling.add_theme_color_override("font_color", Color.ORANGE)
-			$CardInfo/CardHandling.add_theme_color_override("font_shadow_color", Color.BLACK)
-			$CardInfo/CardHandling.add_theme_constant_override("shadow_offset_x", 1)
-			$CardInfo/CardHandling.add_theme_constant_override("shadow_offset_y", 1)
+			$CardInfo/CardInfoContainer/CardHandling.add_theme_font_size_override("font_size", 10)
+			$CardInfo/CardInfoContainer/CardHandling.add_theme_color_override("font_color", Color.ORANGE)
+			$CardInfo/CardInfoContainer/CardHandling.add_theme_color_override("font_shadow_color", Color.BLACK)
+			$CardInfo/CardInfoContainer/CardHandling.add_theme_constant_override("shadow_offset_x", 1)
+			$CardInfo/CardInfoContainer/CardHandling.add_theme_constant_override("shadow_offset_y", 1)
 	
 	# Set sanity cost info
-	if has_node("CardInfo/SanityCost"):
+	if has_node("CardInfo/CardInfoContainer/SanityCost"):
 		if card_data.sanity_cost > 0:
-			$CardInfo/SanityCost.text = "Sanity: %d" % card_data.sanity_cost
-			$CardInfo/SanityCost.visible = true
-			$CardInfo/SanityCost.add_theme_font_size_override("font_size", 10)
-			$CardInfo/SanityCost.add_theme_color_override("font_color", Color.PURPLE)
-			$CardInfo/SanityCost.add_theme_color_override("font_shadow_color", Color.BLACK)
+			$CardInfo/CardInfoContainer/SanityCost.text = "Sanity: %d" % card_data.sanity_cost
+			$CardInfo/CardInfoContainer/SanityCost.visible = true
+			$CardInfo/CardInfoContainer/SanityCost.add_theme_font_size_override("font_size", 10)
+			$CardInfo/CardInfoContainer/SanityCost.add_theme_color_override("font_color", Color.PURPLE)
+			$CardInfo/CardInfoContainer/SanityCost.add_theme_color_override("font_shadow_color", Color.BLACK)
 		else:
-			$CardInfo/SanityCost.visible = false
+			$CardInfo/CardInfoContainer/SanityCost.visible = false
 	
 	# Hide card image placeholder for now - it's covering the text
 	if has_node("CardImage"):

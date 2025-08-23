@@ -261,6 +261,17 @@ func resolve_battlefield():
 		# Remove from battlefield first
 		battlefield.remove_card(card_instance)
 		
+		# Check durability first - if card has durability, decrement it
+		var card_broken = false
+		if card_instance.has_durability():
+			card_broken = card_instance.decrement_durability()
+		
+		# If card is broken due to durability, remove it from the game
+		if card_broken:
+			removed_pile.add_card(card_instance)
+			GLog.debug("Card '%s' resolved and removed from game (durability exhausted)" % card_instance.get_card_name())
+			continue
+		
 		# Determine final destination based on card handling
 		match card_instance.get_card_handling():
 			"Standard", "Equipped", "Flash":

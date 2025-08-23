@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://can5k6w3r8m2j"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://d6m2k8w4r7n5j" path="res://scripts/cards/effects/defense.gd" id="2"]
+[ext_resource type="Script" uid="uid://r5k8w2n9m6j3t" path="res://scripts/cards/effects/next_duel_bonus.gd" id="3"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+defense_amount = 2
+
+[sub_resource type="Resource" id="NextDuelBonus_1"]
+script = ExtResource("3")
+bonus_damage = 2
+bonus_defense = 0
+bonus_energy = 0
+duration = 1
+
+[resource]
+script = ExtResource("1")
+card_name = "Heavy Work Gloves"
+energy_cost = 0
+card_type = "Grit"
+flavor_text = "Leather protection for hands and hearts."
+effects = Array[CardEffect]([SubResource("Defense_1"), SubResource("NextDuelBonus_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String]([])
+accessibility_tier = "Starting"
+mechanical_category = "Skill"

@@ -16,6 +16,9 @@ class_name CardData
 # Core card costs (not effects)
 @export var sanity_cost: int = 0  # Cost to sanity when played
 
+# Card durability - number of times card can be played before being removed
+@export var base_durability: int = -1  # -1 = infinite, 0+ = limited uses
+
 # Card handling behavior - theme-agnostic strings
 @export var card_handling: String = "Standard"
 

@@ -15,6 +15,9 @@ const DEBUG_ENABLED = true
 @export var turns_held: int = 0
 @export var instance_id: String = ""  # Unique identifier for this instance
 
+# Durability tracking
+@export var current_durability: int = -1  # Current durability, initialized from card_data.base_durability
+
 # Dynamic properties that override CardData when set
 var _dynamic_description: String = ""
 var _dynamic_card_handling: String = ""
@@ -23,7 +26,8 @@ func _init(data: CardData = null) -> void:
 	if data:
 		card_data = data
 		instance_id = _generate_instance_id()
-		GLog.debug("Created CardInstance for '%s' with ID: %s" % [card_data.card_name, instance_id])
+		current_durability = data.base_durability
+		GLog.debug("Created CardInstance for '%s' with ID: %s, durability: %d" % [card_data.card_name, instance_id, current_durability])
 
 func _generate_instance_id() -> String:
 	return "%s_%d_%d" % [card_data.resource_path.get_file().get_basename(), Time.get_unix_time_from_system(), randi()]
@@ -64,6 +68,32 @@ func get_accessibility_tier() -> String:
 
 func get_mechanical_category() -> String:
 	return card_data.mechanical_category if card_data else ""
+
+# Durability methods
+func get_base_durability() -> int:
+	return card_data.base_durability if card_data else -1
+
+func get_current_durability() -> int:
+	return current_durability
+
+func has_durability() -> bool:
+	return get_base_durability() > 0
+
+func is_broken() -> bool:
+	return has_durability() and current_durability <= 0
+
+func decrement_durability() -> bool:
+	if not has_durability():
+		return false
+	
+	current_durability -= 1
+	GLog.debug("Card '%s' durability decremented to %d/%d" % [get_card_name(), current_durability, get_base_durability()])
+	
+	if is_broken():
+		GLog.info("Card '%s' is broken (durability reached 0)" % get_card_name())
+		return true
+	
+	return false
 
 # Dynamic properties with Hold X logic
 func get_description() -> String:
@@ -199,7 +229,8 @@ func get_save_data() -> Dictionary:
 	return {
 		"card_path": card_data.resource_path if card_data else "",
 		"turns_held": turns_held,
-		"instance_id": instance_id
+		"instance_id": instance_id,
+		"current_durability": current_durability
 	}
 
 func load_from_save_data(data: Dictionary) -> void:
@@ -209,6 +240,7 @@ func load_from_save_data(data: Dictionary) -> void:
 	
 	turns_held = data.get("turns_held", 0)
 	instance_id = data.get("instance_id", _generate_instance_id())
+	current_durability = data.get("current_durability", card_data.base_durability if card_data else -1)
 	
 	_update_dynamic_properties()
 
@@ -294,6 +326,7 @@ func _get_effect_base_description(effect: Resource) -> String:
 func duplicate_instance() -> CardInstance:
 	var new_instance = CardInstance.new(card_data)
 	new_instance.turns_held = turns_held
+	new_instance.current_durability = current_durability
 	new_instance._dynamic_description = _dynamic_description
 	new_instance._dynamic_card_handling = _dynamic_card_handling
 	return new_instance
@@ -304,4 +337,7 @@ func equals(other: CardInstance) -> bool:
 	return instance_id == other.instance_id
 
 func _to_string() -> String:
-	return "CardInstance[%s, held:%d, id:%s]" % [get_card_name(), turns_held, instance_id]
+	if has_durability():
+		return "CardInstance[%s, held:%d, durability:%d/%d, id:%s]" % [get_card_name(), turns_held, current_durability, get_base_durability(), instance_id]
+	else:
+		return "CardInstance[%s, held:%d, id:%s]" % [get_card_name(), turns_held, instance_id]

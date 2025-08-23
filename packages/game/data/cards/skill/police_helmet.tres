@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://c6k2w7r4oam8j"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://d6m2k8w4r7n5j" path="res://scripts/cards/effects/defense.gd" id="2"]
+[ext_resource type="Script" uid="uid://c7p4f8w5k2n9r" path="res://scripts/cards/effects/enemy_debuff.gd" id="3"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+defense_amount = 7
+
+[sub_resource type="Resource" id="EnemyDebuff_1"]
+script = ExtResource("3")
+debuff_type = "intimidated"
+debuff_amount = 1
+
+[resource]
+script = ExtResource("1")
+card_name = "Police Helmet"
+energy_cost = 2
+card_type = "Grit"
+flavor_text = "Authority's crown commands respect."
+effects = Array[CardEffect]([SubResource("Defense_1"), SubResource("EnemyDebuff_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Class"
+mechanical_category = "Skill"
