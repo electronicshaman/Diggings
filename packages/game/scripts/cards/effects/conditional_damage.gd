@@ -14,9 +14,17 @@ func _init() -> void:
 	pass
 
 func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
+	_apply_conditional_damage(duel_manager, card_data.card_name, results)
+
+# Instance-aware API
+func apply_effect_with_instance(duel_manager: Node, card_instance, results: Dictionary) -> void:
+	var name = card_instance.get_card_name() if card_instance and "get_card_name" in card_instance else (card_instance.card_data.card_name if card_instance and "card_data" in card_instance else "Unknown")
+	_apply_conditional_damage(duel_manager, name, results)
+
+func _apply_conditional_damage(duel_manager: Node, card_name: String, results: Dictionary) -> void:
 	var total_damage = base_damage
 	var condition_met = false
-	
+
 	# Check condition based on type
 	if duel_manager:
 		match condition_type:
@@ -32,23 +40,23 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 				if duel_manager.has_method("get_enemy_health"):
 					var health = duel_manager.get_enemy_health()
 					condition_met = _check_condition(health, condition_value, condition_operator)
-	
+
 	if condition_met:
 		total_damage += bonus_damage
 		print("Condition met! Bonus damage applied.")
-		
+
 		# Add notification for the bonus
 		if "notifications" in results:
 			results.notifications.append("Bonus! +%d damage" % bonus_damage)
 		else:
 			results.notifications = ["Bonus! +%d damage" % bonus_damage]
-	
+
 	# Add damage to results
 	if not results.has("damage"):
 		results.damage = 0
 	results.damage += total_damage
-	
-	print("Applied %s effect from %s: %d damage" % [get_effect_name(), card_data.card_name, total_damage])
+
+	print("Applied %s effect from %s: %d damage" % [get_effect_name(), card_name, total_damage])
 
 func _check_condition(value: int, threshold: int, operator: String) -> bool:
 	match operator:

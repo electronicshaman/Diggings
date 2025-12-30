@@ -15,6 +15,10 @@ var events_encountered: Dictionary = {}
 var encountered_ids: Dictionary = {}
 var delayed_outcomes: Array[Dictionary] = []
 
+# Outcome data for display in encounter_outcome scene
+var last_outcome_data: EncounterOutcomeData = null
+var last_triggers_combat: bool = false
+
 var event_bus: Node = null
 var game_manager: Node = null
 var curio_manager: Node = null
@@ -179,29 +183,29 @@ func make_choice(choice_index: int) -> void:
 	if not active_event:
 		GLog.error("No active event to make choice for")
 		return
-	
+
 	var game_state = _get_current_game_state()
 	var outcomes = active_event.make_choice(choice_index, game_state)
-	
+
 	event_choice_made.emit(active_event, choice_index)
-	
-	# Track rewards from outcomes for summary
-	var reward_data = {
-		"gold": 0,
-		"karma_changes": {},
-		"total_karma": 0,
-		"corruption": 0,
-		"cards": [],
-		"curios": [],
-		"custom_rewards": []
-	}
-	
+
+	# Collect outcome data for display
+	last_outcome_data = EncounterOutcomeData.new()
+
+	# Store choice text for context
+	if choice_index >= 0 and choice_index < active_event.encounter_data.choices.size():
+		var choice = active_event.encounter_data.choices[choice_index]
+		last_outcome_data.choice_text = choice.choice_text
+
 	for effect in outcomes:
 		if effect:
-			_track_effect_rewards(effect, reward_data)
+			_track_effect_rewards(effect, last_outcome_data)
 			apply_effect(effect)
-	
-	complete_current_event(reward_data)
+
+	# Check if combat was triggered
+	last_triggers_combat = game_manager and game_manager.is_duel_prepared()
+
+	complete_current_event({})
 
 func apply_effect(effect: Resource, extra_context: Dictionary = {}) -> void:
 	if not effect:
@@ -530,23 +534,76 @@ func trigger_from_context(encounter_context: Dictionary) -> EncounterInstance:
 # REWARD TRACKING FUNCTIONS
 # ============================================================================
 
-func _track_effect_rewards(_effect, _reward_data: Dictionary) -> void:
-	# Placeholder: reward aggregation can be handled via EffectResult in apply_effect if desired
-	pass
+func _track_effect_rewards(effect: Resource, outcome_data: EncounterOutcomeData) -> void:
+	if not effect or not outcome_data:
+		return
+
+	# Extract narrative description from all effects (most effects have this)
+	var description = effect.get("description")
+	if description and description != "":
+		outcome_data.narrative_texts.append(description)
+
+	# Handle KarmaEffect specifically
+	if effect.get("karma_category"):
+		var narrative_desc = effect.get("narrative_description")
+		if narrative_desc and narrative_desc != "":
+			outcome_data.karma_narratives.append(narrative_desc)
+		var category = effect.karma_category
+		var amount = effect.get("amount") if effect.get("amount") else 0
+		outcome_data.karma_changes[category] = outcome_data.karma_changes.get(category, 0) + amount
+
+	# Handle ResourceEffect (gold, corruption, etc.)
+	if effect.get("resource_type"):
+		var amount = effect.get("amount") if effect.get("amount") else 0
+		match effect.resource_type:
+			"gold":
+				outcome_data.gold_change += amount
+			"corruption":
+				outcome_data.corruption_change += amount
+
+	# Handle DamageEffect (check script path since we can't use 'is' easily)
+	var script = effect.get_script()
+	if script:
+		var script_path = script.resource_path if script.resource_path else ""
+		if "damage_effect" in script_path.to_lower():
+			var amount = effect.get("amount") if effect.get("amount") else 0
+			outcome_data.health_change -= amount
+
+		# Handle SanityEffect
+		if "sanity_effect" in script_path.to_lower():
+			var amount = effect.get("amount") if effect.get("amount") else 0
+			outcome_data.sanity_change += amount
+
+		# Handle HealthEffect (healing)
+		if "health_effect" in script_path.to_lower():
+			var amount = effect.get("amount") if effect.get("amount") else 0
+			outcome_data.health_change += amount
+
+		# Handle CombatTriggerEffect
+		if "combat_trigger" in script_path.to_lower():
+			outcome_data.combat_triggered = true
+			var enemy_path = effect.get("enemy_path")
+			if enemy_path and ResourceLoader.exists(enemy_path):
+				var enemy_res = load(enemy_path)
+				if enemy_res and enemy_res.get("enemy_name"):
+					outcome_data.enemy_name = enemy_res.enemy_name
 
 func _has_meaningful_rewards(reward_data: Dictionary) -> bool:
 	"""Check if the reward data contains any meaningful rewards to display"""
-	if reward_data.gold != 0:
+	if reward_data.get("gold", 0) != 0:
 		return true
-	if reward_data.total_karma != 0:
+	if reward_data.get("total_karma", 0) != 0:
 		return true
-	if reward_data.corruption != 0:
+	if reward_data.get("corruption", 0) != 0:
 		return true
-	if not reward_data.cards.is_empty():
+	var cards = reward_data.get("cards", [])
+	if cards is Array and not cards.is_empty():
 		return true
-	if not reward_data.curios.is_empty():
+	var curios = reward_data.get("curios", [])
+	if curios is Array and not curios.is_empty():
 		return true
-	if not reward_data.custom_rewards.is_empty():
+	var custom_rewards = reward_data.get("custom_rewards", [])
+	if custom_rewards is Array and not custom_rewards.is_empty():
 		return true
-	
+
 	return false

@@ -535,6 +535,21 @@ func get_cards_played_this_turn() -> int:
 		return duel_state.player_data.cards_played_this_turn
 	return 0
 
+func get_player_gold() -> int:
+	if duel_state and duel_state.player_data:
+		return duel_state.player_data.gold
+	return 0
+
+func get_player_health() -> int:
+	if duel_state and duel_state.player_data:
+		return duel_state.player_data.current_health
+	return 0
+
+func get_enemy_health() -> int:
+	if duel_state and duel_state.enemy_data:
+		return duel_state.enemy_data.current_health
+	return 0
+
 func track_player_card_for_enemy_memory(card: CardData):
 	"""Track cards played by player for enemy AI adaptation"""
 	var enemy = duel_state.enemy_data as EnemyState

@@ -24,6 +24,7 @@ const SCENE_PATHS: Dictionary = {
 	"junction": "res://scenes/game/junction.tscn",
 	"rest_site": "res://scenes/game/rest_site.tscn",
 	"event": "res://scenes/game/event.tscn",
+	"encounter_outcome": "res://scenes/game/encounter_outcome.tscn",
 	"game_over": "res://scenes/ui/game_over.tscn",
 	"victory": "res://scenes/ui/victory.tscn",
 	"settings": "res://scenes/ui/settings.tscn",

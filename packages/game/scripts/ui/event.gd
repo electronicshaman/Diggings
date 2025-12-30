@@ -63,19 +63,17 @@ func _on_choice_selected(choice_index: int):
 	if not current_encounter:
 		return
 
+	# Disable choice buttons to prevent double-clicks
+	for child in choices_container.get_children():
+		if child is Button:
+			child.disabled = true
+
 	var encounter_manager = get_node_or_null("/root/EncounterManager")
 	if encounter_manager:
 		encounter_manager.make_choice(choice_index)
 
-		# Wait a moment for outcomes to process
-		await get_tree().create_timer(1.0).timeout
-
-		# Check if a duel was prepared by the choice outcome
-		var game_manager = get_node_or_null("/root/GameManager")
-		if game_manager and game_manager.is_duel_prepared():
-			_start_combat()
-		else:
-			_on_return_pressed()
+	# Transition to outcome scene to display what happened
+	SceneManager.load_scene_by_name("encounter_outcome")
 
 
 func _start_combat():
