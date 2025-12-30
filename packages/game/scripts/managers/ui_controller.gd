@@ -1,6 +1,9 @@
 extends Node
 
 const DEBUG_ENABLED: bool = true
+const CURIO_ICON_SLOT_SIZE := Vector2(64, 64)
+const CURIO_ICON_TEXTURE_SIZE := Vector2(56, 56)
+const CURIO_ICON_MARGIN := 6
 
 signal ui_refresh_requested()
 signal hand_refresh_requested()
@@ -441,69 +444,117 @@ func _on_ui_notification(message: String, type: String) -> void:
 		GLog.info("Curio reward notification displayed!")
 
 func update_curios_display() -> void:
-	"""Update the display of active curios in the UI"""
+	"""Render active curios as icons with overlays for duels"""
 	if not curios_list:
 		return
-	
-	# Clear existing labels (except the first one which might be placeholder)
-	for child in curios_list.get_children():
-		if child != curios_list.get_child(0):
-			child.queue_free()
-	
-	# Get active curios from CurioManager
+
+	_clear_curios_display()
+
 	if not CurioManager:
+		_show_empty_curio_state()
 		return
-	
+
 	var active_curios = CurioManager.get_active_curios()
-	
 	if active_curios.is_empty():
-		# Show "No Curios" if empty
-		var label = curios_list.get_child(0) if curios_list.get_child_count() > 0 else null
-		if label and label is Label:
-			label.text = "No Curios"
-			label.modulate = Color.GRAY
+		_show_empty_curio_state()
 		return
-	
-	# Remove placeholder if we have curios
-	if curios_list.get_child_count() > 0:
-		curios_list.get_child(0).queue_free()
-	
-	# Add a label for each active curio
+
 	for curio in active_curios:
 		if not curio:
 			continue
-		
-		var label = Label.new()
-		var curio_name = curio.curio_name if curio.curio_name else "Unknown"
-		var stack_count = CurioManager.get_curio_stack_count(curio_name)
-		
-		# Format the text with stack count if applicable
-		if stack_count > 1:
-			label.text = "%s (x%d)" % [curio_name, stack_count]
-		else:
-			label.text = curio_name
-		
-		# Color based on rarity
-		if curio.has_method("get_rarity_color"):
-			label.modulate = curio.get_rarity_color()
-		else:
-			# Fallback color based on rarity string
-			var rarity = curio.rarity if curio.rarity else "Common"
-			match rarity:
-				"Rare":
-					label.modulate = Color.CYAN
-				"Legendary":
-					label.modulate = Color.GOLD
-				"Corrupted":
-					label.modulate = Color.PURPLE
-				_:
-					label.modulate = Color.WHITE
-		
-		# Add tooltip with description
-		if curio.description:
-			label.tooltip_text = curio.description
-		
-		curios_list.add_child(label)
+		var curio_name = curio.curio_name if curio.curio_name else ""
+		var stack_count = 1
+		if CurioManager and curio_name != "":
+			stack_count = max(CurioManager.get_curio_stack_count(curio_name), 1)
+		curios_list.add_child(_create_curio_icon_node(curio, stack_count))
+
+func _clear_curios_display() -> void:
+	for child in curios_list.get_children():
+		child.queue_free()
+
+func _show_empty_curio_state() -> void:
+	var label = Label.new()
+	label.text = "No Curios"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.modulate = Color(0.7, 0.7, 0.7, 0.9)
+	label.add_theme_font_size_override("font_size", 18)
+	curios_list.add_child(label)
+
+func _create_curio_icon_node(curio: CurioData, stack_count: int) -> Control:
+	var slot = MarginContainer.new()
+	slot.custom_minimum_size = CURIO_ICON_SLOT_SIZE
+	slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	slot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	slot.tooltip_text = _build_curio_tooltip(curio, stack_count)
+	slot.add_theme_constant_override("margin_left", CURIO_ICON_MARGIN)
+	slot.add_theme_constant_override("margin_right", CURIO_ICON_MARGIN)
+	slot.add_theme_constant_override("margin_top", CURIO_ICON_MARGIN)
+	slot.add_theme_constant_override("margin_bottom", CURIO_ICON_MARGIN)
+
+	var holder = Control.new()
+	holder.custom_minimum_size = CURIO_ICON_TEXTURE_SIZE
+	holder.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	slot.add_child(holder)
+	holder.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+	var background = ColorRect.new()
+	background.color = _get_curio_background_color(curio)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	holder.add_child(background)
+
+	var icon_texture: Texture2D = curio.icon if curio.icon else null
+	if icon_texture:
+		var icon_rect = TextureRect.new()
+		icon_rect.texture = icon_texture
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		icon_rect.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		icon_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		holder.add_child(icon_rect)
+	else:
+		var fallback_label = Label.new()
+		fallback_label.text = curio.curio_name if curio.curio_name else "Curio"
+		fallback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		fallback_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		fallback_label.add_theme_font_size_override("font_size", 12)
+		fallback_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		holder.add_child(fallback_label)
+
+	if stack_count > 1:
+		var stack_badge = Label.new()
+		stack_badge.text = "x%d" % stack_count
+		stack_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		stack_badge.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+		stack_badge.add_theme_font_size_override("font_size", 14)
+		stack_badge.add_theme_color_override("font_color", Color.WHITE)
+		stack_badge.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+		stack_badge.add_theme_constant_override("outline_size", 2)
+		stack_badge.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+		stack_badge.offset_left = -36
+		stack_badge.offset_top = -24
+		stack_badge.offset_right = -4
+		stack_badge.offset_bottom = -4
+		holder.add_child(stack_badge)
+
+	return slot
+
+func _build_curio_tooltip(curio: CurioData, stack_count: int) -> String:
+	var parts: PackedStringArray = PackedStringArray()
+	var display_name = curio.curio_name if curio.curio_name else "Unknown Curio"
+	if stack_count > 1:
+		display_name += " (x%d)" % stack_count
+	parts.append(display_name)
+	if curio.description:
+		parts.append(curio.description)
+	return "\n".join(parts)
+
+func _get_curio_background_color(curio: CurioData) -> Color:
+	var rarity_color = curio.get_rarity_color() if curio and curio.has_method("get_rarity_color") else Color(0.3, 0.3, 0.3)
+	var blended = rarity_color.lerp(Color.BLACK, 0.55)
+	blended.a = 0.9
+	return blended
 
 func _on_curio_acquired(curio: Resource) -> void:
 	"""Handle when a new curio is acquired"""

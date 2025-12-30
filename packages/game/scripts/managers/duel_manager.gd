@@ -46,7 +46,15 @@ func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 func start_new_duel(player_deck: DeckData, enemy_data: Resource) -> void:
 	GLog.info("Starting new duel...")
 	
+	# Debug enemy health before assignment
+	if enemy_data and enemy_data.has_method("get") and enemy_data.stats:
+		GLog.debug("Enemy loaded with HP: %d/%d" % [enemy_data.stats.current_health, enemy_data.stats.max_health])
+	
 	duel_state.enemy_data = enemy_data
+	
+	# Debug enemy health after assignment
+	if duel_state.enemy_data and duel_state.enemy_data.stats:
+		GLog.debug("Enemy assigned to duel_state with HP: %d/%d" % [duel_state.enemy_data.stats.current_health, duel_state.enemy_data.stats.max_health])
 	
 	# Batch notifications during duel setup to avoid UI flicker/resets
 	if duel_state and duel_state.has_method("begin_batch_changes"):
@@ -79,7 +87,7 @@ func start_new_duel(player_deck: DeckData, enemy_data: Resource) -> void:
 	draw_initial_hand()
 	
 	duel_started.emit()
-    
+	
 	# End batch and emit a consolidated update once everything is ready
 	if duel_state and duel_state.has_method("end_batch_changes"):
 		duel_state.end_batch_changes()
@@ -464,10 +472,17 @@ func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
 	duel_state.end_duel(winner)
-	
-	# Check for curio rewards on player victory
+
 	if winner == "player":
-		_check_curio_reward()
+		# Check if this enemy should offer curio reward (boss/elite only)
+		var should_offer_curio = _should_offer_curio_reward()
+
+		# Store flag for victory reward scene
+		if GameManager:
+			GameManager.game_data["pending_curio_reward"] = should_offer_curio
+			if should_offer_curio:
+				GLog.info("Elite/Boss defeated! Curio reward will be offered")
+
 		# Load victory reward scene for card selection
 		await get_tree().create_timer(1.0).timeout  # Brief pause before transition
 		SceneManager.load_scene("res://scenes/ui/victory_reward.tscn")
@@ -475,39 +490,27 @@ func end_duel(winner: String):
 		# Player lost - go to game over or appropriate scene
 		await get_tree().create_timer(1.0).timeout
 		SceneManager.load_scene_by_name("game_over")
-	
+
 	duel_ended.emit(winner)
 
-func _check_curio_reward():
-	# Simple curio reward system - 30% chance on victory
-	if randf() < 0.3:
-		# For now, only Lucky Nugget is implemented
-		var curio_paths = [
-			"res://data/curios/common/lucky_nugget.tres"
-		]
-		
-		var random_path = curio_paths[randi() % curio_paths.size()]
-		
-		# Try to load the curio resource
-		if ResourceLoader.exists(random_path):
-			var curio_resource = load(random_path)
-			
-			if curio_resource and has_node("/root/CurioManager"):
-				var cm = get_node("/root/CurioManager")
-				var success = cm.add_curio(curio_resource)
-				
-				if success:
-					GLog.info("🏆 Curio Reward: You found %s!" % curio_resource.curio_name)
-					GLog.info("   %s" % curio_resource.description)
-					
-					# Emit a reward event for UI display
-					EventBus.ui_notification.emit("Found curio: %s" % curio_resource.curio_name, "reward")
-				else:
-					GLog.debug("Could not add curio (may be at max stacks)")
-			else:
-				GLog.error("CurioManager not found or curio resource invalid")
-		else:
-			GLog.error("Curio resource not found at: %s" % random_path)
+func _should_offer_curio_reward() -> bool:
+	"""Check if defeated enemy should offer a curio reward (boss/elite only)"""
+	if not duel_state or not duel_state.enemy_data:
+		return false
+
+	var enemy = duel_state.enemy_data
+
+	# Check for boss
+	if "is_boss" in enemy and enemy.is_boss:
+		GLog.debug("Boss enemy defeated - curio reward triggered")
+		return true
+
+	# Check for elite
+	if "is_elite" in enemy and enemy.is_elite:
+		GLog.debug("Elite enemy defeated - curio reward triggered")
+		return true
+
+	return false
 
 func get_hand_cards() -> Array[CardInstance]:
 	return duel_state.hand.cards if duel_state.hand else []

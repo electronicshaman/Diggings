@@ -66,7 +66,14 @@ func evaluate(context) -> bool:
 	return result if not invert else not result
 
 func _get_cards_played_this_turn(context) -> int:
-	# Handle Dictionary context (from new system)
+	# Handle EffectContext from new GameEffect system
+	if context is Resource and context.has_method("get"):
+		# Check for trigger_data dictionary containing cards_played_this_turn
+		var trigger_data = context.get("trigger_data")
+		if trigger_data is Dictionary and trigger_data.has("cards_played_this_turn"):
+			return trigger_data["cards_played_this_turn"]
+	
+	# Handle Dictionary context (from legacy system)
 	if context is Dictionary:
 		if context.has("cards_played_this_turn"):
 			return context["cards_played_this_turn"]
@@ -75,7 +82,7 @@ func _get_cards_played_this_turn(context) -> int:
 			if player_data.has_method("get") and "cards_played_this_turn" in player_data:
 				return player_data.cards_played_this_turn
 	
-	# Handle Resource context (legacy)
+	# Handle Resource context (legacy fallback)
 	if context is Resource:
 		if context.has_method("get") and context.get("cards_played_this_turn") != null:
 			return context.get("cards_played_this_turn")
@@ -89,7 +96,14 @@ func _get_cards_played_this_turn(context) -> int:
 	return 0
 
 func _get_cards_in_hand(context) -> int:
-	# Handle Dictionary context (from new system)
+	# Handle EffectContext from new GameEffect system
+	if context is Resource and context.has_method("get"):
+		# Check for trigger_data dictionary containing hand_size
+		var trigger_data = context.get("trigger_data")
+		if trigger_data is Dictionary and trigger_data.has("hand_size"):
+			return trigger_data["hand_size"]
+	
+	# Handle Dictionary context (from legacy system)
 	if context is Dictionary:
 		if context.has("hand_size"):
 			return context["hand_size"]
@@ -98,7 +112,7 @@ func _get_cards_in_hand(context) -> int:
 			if duel_state.has_method("get_hand_size"):
 				return duel_state.get_hand_size()
 	
-	# Handle Resource context (legacy)
+	# Handle Resource context (legacy fallback)
 	if context is Resource:
 		if context.has_method("get") and context.get("hand_size") != null:
 			return context.get("hand_size")

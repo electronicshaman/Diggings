@@ -1,9 +1,27 @@
-[gd_resource type="Resource" script_class="EncounterData" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="EncounterData" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="4"]
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("3")
+description = "The redback bites as you shake the bedroll!"
+delayed = false
+delay_turns = 0
+amount = 6
+ignores_defense = false
+multi_hit = false
+hits = 1
+
+[sub_resource type="Resource" id="4"]
+script = ExtResource("4")
+description = "Killing the spider brings bad omens"
+delayed = false
+delay_turns = 0
+resource_type = "corruption"
+amount = 2
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("2")
@@ -44,24 +62,6 @@ show_requirements = true
 one_time_only = false
 highlight_color = Color(1, 1, 1, 1)
 disabled_color = Color(0.5, 0.5, 0.5, 0.7)
-
-[sub_resource type="Resource" id="3"]
-script = ExtResource("3")
-description = "The redback bites as you shake the bedroll!"
-delayed = false
-delay_turns = 0
-amount = 6
-ignores_defense = false
-multi_hit = false
-hits = 1
-
-[sub_resource type="Resource" id="4"]
-script = ExtResource("4")
-description = "Killing the spider brings bad omens"
-delayed = false
-delay_turns = 0
-resource_type = "corruption"
-amount = 2
 
 [sub_resource type="Resource" id="5"]
 script = ExtResource("2")

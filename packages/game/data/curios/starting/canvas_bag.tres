@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/curios/effects/stat_modifier.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon9.png" id="3"]
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
@@ -19,7 +20,7 @@ condition = ""
 script = ExtResource("1")
 curio_name = "Canvas Bag"
 description = "+1 max energy"
-icon = null
+icon = ExtResource("3")
 flavor_text = "A sturdy prospector's satchel with surprisingly deep pockets."
 mechanical_category = "Resource"
 rarity = "Common"

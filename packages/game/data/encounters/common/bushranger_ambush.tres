@@ -1,0 +1,102 @@
+[gd_resource type="Resource" script_class="EncounterData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/combat_trigger_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="4"]
+
+[sub_resource type="Resource" id="combat_effect"]
+script = ExtResource("3")
+description = "You stand your ground and face the bushrangers"
+delayed = false
+delay_turns = 0
+enemy_path = "res://data/enemies/claim_jumper.tres"
+combat_context = "bushranger_ambush"
+combat_modifiers = {}
+
+[sub_resource type="Resource" id="gold_loss"]
+script = ExtResource("4")
+description = "You toss your coin purse and run"
+delayed = false
+delay_turns = 0
+resource_type = "gold"
+amount = -15
+can_go_negative = false
+
+[sub_resource type="Resource" id="fight_choice"]
+script = ExtResource("2")
+choice_text = "Stand and fight"
+choice_description = "Draw your weapon and face them head-on"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("combat_effect")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(0.8, 0.2, 0.2, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[sub_resource type="Resource" id="flee_choice"]
+script = ExtResource("2")
+choice_text = "Throw gold and flee"
+choice_description = "Toss your coin purse as a distraction and escape (-15 gold)"
+gold_cost = 0
+sanity_cost = 0
+corruption_cost = 0
+health_cost = 0
+required_item = ""
+required_class = ""
+min_stat_requirement = {}
+outcomes = [SubResource("gold_loss")]
+success_chance = 1.0
+failure_outcomes = []
+is_hidden = false
+show_requirements = true
+one_time_only = false
+highlight_color = Color(0.9, 0.7, 0.2, 1)
+disabled_color = Color(0.5, 0.5, 0.5, 0.7)
+
+[resource]
+script = ExtResource("1")
+encounter_id = "C10"
+encounter_name = "Bushranger Ambush"
+description = "A rough voice calls out from behind a gum tree. 'Stand and deliver!' Two armed men step onto the track, their faces hidden beneath wide-brimmed hats. One levels a pistol at your chest while the other eyes your belongings with a greedy glint."
+flavor_text = "The bush has eyes, and sometimes they belong to desperate men..."
+rarity = "Common"
+encounter_type = "Negative"
+repeatable = true
+max_occurrences = -1
+weight = 1.2
+choices = [SubResource("fight_choice"), SubResource("flee_choice")]
+min_gold = 10
+max_gold = -1
+min_corruption = -1
+max_corruption = -1
+min_sanity = -1
+max_sanity = -1
+required_classes = []
+excluded_classes = []
+required_curios = []
+required_cards = []
+min_act = 1
+max_act = -1
+regional_weights = {
+"scrubland": 1.5,
+"bush": 2.0,
+"breakaway": 1.0,
+"plains": 0.8,
+"hills": 1.2,
+"goldfields": 1.8,
+"outback": 0.5,
+"mountain": 0.3,
+"coast": 0.4,
+"road": 2.5
+}
+encounter_color = Color(0.6, 0.3, 0.1, 1)

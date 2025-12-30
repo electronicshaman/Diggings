@@ -36,6 +36,12 @@ func _ready() -> void:
 		push_error("TestDuelBootstrap: Failed to load enemy")
 		return
 	
+	# Debug enemy health
+	if enemy_data.stats:
+		print("TestDuelBootstrap: Enemy loaded with HP: %d/%d" % [enemy_data.stats.current_health, enemy_data.stats.max_health])
+	else:
+		print("TestDuelBootstrap: Enemy has no stats!")
+	
 	# Start test duel with GameEffect cards only
 	print("TestDuelBootstrap: Starting test duel with %d GameEffect cards" % deck_data.card_paths.size())
 	if game_controller.has_method("start_duel"):

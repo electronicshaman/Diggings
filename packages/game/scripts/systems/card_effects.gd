@@ -404,13 +404,19 @@ func _create_effect_context(duel_manager: DuelManager, card_instance: CardInstan
 		"duel_state": duel_manager.duel_state
 	}
 	
-	# Set targeting (primary target defaults to enemy for attacks, player for skills)
+	# Set targeting: need to account for whether this card is owned by the player or enemy
 	if card_instance and card_instance.card_data:
 		var card_type = card_instance.card_data.get_mechanical_category()
+		var is_player_owned = false
+		# Heuristic: reuse duel_manager._is_player_card if available
+		if duel_manager and duel_manager.has_method("_is_player_card"):
+			is_player_owned = duel_manager._is_player_card(card_instance.card_data)
+		# If attack: player-owned targets enemy, enemy-owned targets player
 		if card_type == "Attack":
-			context.primary_target = context.enemy_data
+			context.primary_target = context.enemy_data if is_player_owned else context.player_data
 		else:
-			context.primary_target = context.player_data
+			# Non-attack cards typically target self side
+			context.primary_target = context.player_data if is_player_owned else context.enemy_data
 	
 	return context
 
@@ -460,7 +466,7 @@ func _apply_single_effect_with_context(effect: Resource, duel_manager: DuelManag
 	
 	else:
 		# Legacy CardEffect: Convert EffectContext to Dictionary for compatibility
-		var legacy_context = _effect_context_to_dict(context)
+		var _legacy_context = _effect_context_to_dict(context)
 		
 		# Apply legacy CardEffect
 		if effect.has_method("apply_effect_with_instance"):
@@ -484,10 +490,15 @@ func _merge_effect_result_into_results(effect_result: Resource, results: Diction
 		for key in values_applied.keys():
 			if key == "damage" and values_applied[key] > 0:
 				results.damage += values_applied[key]
+			elif key == "damage_hits" and values_applied[key] > 0:
+				# Preserve multi-hit count for later application loop
+				results.damage_hits = int(values_applied[key])
 			elif key == "heal" and values_applied[key] > 0:
 				results.heal += values_applied[key]
 			elif key == "defense" and values_applied[key] > 0:
 				results.defense += values_applied[key]
 			elif key == "drawn" and values_applied[key] > 0:
 				results.draw += values_applied[key]
+			elif key == "ignores_defense" and values_applied[key]:
+				results.ignores_defense = true
 			# Add more mappings as needed

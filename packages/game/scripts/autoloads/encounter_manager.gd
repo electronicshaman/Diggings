@@ -103,14 +103,14 @@ func trigger_encounter(encounter_data: EncounterData, force: bool = false) -> En
 	if not force and _eid != "" and encountered_ids.has(_eid):
 		GLog.debug("Event '%s' with id '%s' already encountered this run" % [encounter_data.encounter_name, _eid])
 		return null
-    
+	
 	if not force and not encounter_data.can_trigger(game_state):
 		GLog.debug("Event '%s' cannot trigger - requirements not met" % encounter_data.encounter_name)
 		return null
-    
+	
 	var instance = EncounterInstance.new(encounter_data)
 	instance.increment_encounter_count()
-    
+	
 	if events_encountered.has(encounter_data.encounter_name):
 		events_encountered[encounter_data.encounter_name] += 1
 	else:
@@ -118,13 +118,13 @@ func trigger_encounter(encounter_data: EncounterData, force: bool = false) -> En
 
 	if _eid != "":
 		encountered_ids[_eid] = encountered_ids.get(_eid, 0) + 1
-    
+	
 	active_event = instance
 	event_triggered.emit(instance)
-    
+	
 	if event_bus:
 		event_bus.emit_signal("ui_popup_opened", "event")
-    
+	
 	GLog.debug("Triggered event: %s" % encounter_data.encounter_name)
 	return instance
 
@@ -488,6 +488,10 @@ func trigger_tile_encounter(tile: Object) -> EncounterInstance:
 	# If tile has encounter data by name, look it up
 	elif encounter_dict.has("encounter_name"):
 		encounter_data = get_event_by_name(encounter_dict.encounter_name)
+	# Fallback for legacy gold tiles
+	elif encounter_dict.has("resource") and encounter_dict.resource == "gold":
+		GLog.warn("Legacy gold tile detected, defaulting to Old Mine Shaft")
+		encounter_data = get_event_by_name("Old Mine Shaft")
 	else:
 		GLog.error("Tile encounter data has no resource or encounter_name")
 		return null

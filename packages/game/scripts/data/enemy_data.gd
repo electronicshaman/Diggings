@@ -18,6 +18,10 @@ const DEBUG_ENABLED: bool = true
 @export var enemy_name: String = ""
 @export var description: String = ""
 
+# Enemy tier (for rewards and difficulty)
+@export var is_boss: bool = false
+@export var is_elite: bool = false
+
 # AI and combat state
 @export var stun_turns_remaining: int = 0
 @export var current_pattern_index: int = 0
@@ -50,6 +54,11 @@ func _init():
 	# Initialize with default stats if none provided
 	if not stats:
 		stats = Stats.new()
+		if DEBUG_ENABLED:
+			GLog.debug("EnemyState._init(): Created new default Stats")
+	else:
+		if DEBUG_ENABLED:
+			GLog.debug("EnemyState._init(): Using existing Stats - HP: %d/%d" % [stats.current_health, stats.max_health])
 	
 	# Initialize card piles
 	if not enemy_hand:
@@ -346,6 +355,8 @@ func get_save_data() -> Dictionary:
 		"stats": stats.get_save_data() if stats else {},
 		"enemy_name": enemy_name,
 		"description": description,
+		"is_boss": is_boss,
+		"is_elite": is_elite,
 		"stun_turns_remaining": stun_turns_remaining,
 		"current_pattern_index": current_pattern_index,
 		"turns_alive": turns_alive,
@@ -373,6 +384,8 @@ func load_from_data(data: Dictionary):
 	stats.load_from_data(data.get("stats", {}))
 	enemy_name = data.get("enemy_name", "")
 	description = data.get("description", "")
+	is_boss = data.get("is_boss", false)
+	is_elite = data.get("is_elite", false)
 	stun_turns_remaining = data.get("stun_turns_remaining", 0)
 	current_pattern_index = data.get("current_pattern_index", 0)
 	turns_alive = data.get("turns_alive", 0)

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3 uid="uid://ccbuvl1g8tmrm"]
+
+[ext_resource type="Script" uid="uid://7qh5hm4q71y5" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://br5pycfyswbqs" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://cvde0hec4nc3t" path="res://assets/textures/curios/Icon2.png" id="3"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+resource_type = "defense"
+description = "Gain 1 defense"
+trigger_event = "turn_start"
+
+[resource]
+script = ExtResource("1")
+curio_name = "Thick Leather"
+description = "+1 defense at the start of each turn"
+icon = ExtResource("3")
+flavor_text = "Worn and weathered, this leather has stopped more than a few blades in its time."
+mechanical_category = "Triggered"
+stackable = true
+max_stacks = 3
+effects = Array[Resource]([SubResource("SubResource_1")])
+gold_cost = 75
+bushranger_synergy = 1.3
+tracker_synergy = 1.2
+glow_color = Color(0.6, 0.4, 0.2, 1)

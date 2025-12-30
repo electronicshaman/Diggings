@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **Gold Rush Lovecraft card battler prototype** built in **Godot 4.4.1**. It's a roguelite card game set in the Australian gold rush with Lovecraftian horror elements, featuring 1v1 duels, hex-based exploration, and a day/night cycle.
+This is a **Gold Rush Lovecraft card battler prototype** built in **Godot 4.5.1**. It's a roguelite card game set in the Australian gold rush with Lovecraftian horror elements, featuring 1v1 duels, hex-based exploration, and a day/night cycle.
 
 ## Core Architecture
 

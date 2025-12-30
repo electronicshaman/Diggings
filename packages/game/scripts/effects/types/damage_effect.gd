@@ -7,10 +7,10 @@ class_name DamageEffect
 @export var hits: int = 1
 @export var random_target: bool = false
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
+var EffectResultResource := preload("res://scripts/effects/core/effect_result.gd")
 
 func apply_effect(context):
-	var result = EffectResult.new()
+	var result = EffectResultResource.new()
 	var applied = 0
 	var target = _select_target(context)
 	if target == null:
@@ -23,15 +23,18 @@ func apply_effect(context):
 	var final_hits = resolve_conditional_value("hits", hits, context)
 	var final_ignores_defense = _resolve_conditional_bool("ignores_defense", ignores_defense, context)
 	
+	# NOTE: GameEffect system standardizes on NOT directly mutating targets during
+	# effect resolution; instead we accumulate intended outcomes in EffectResult
+	# and let the central DuelManager.apply_card_results() perform mutations.
+	# The previous implementation applied damage immediately AND then the
+	# aggregated results pipeline applied it again, causing double damage.
 	var times = final_hits if multi_hit else 1
-	for i in times:
-		var dmg = final_amount
-		if target.has_method("apply_damage"):
-			target.apply_damage(dmg, final_ignores_defense)
-		elif target.has_method("take_damage"):
-			target.take_damage(dmg)
-		applied += dmg
+	applied = final_amount * times
 	result.values_applied["damage"] = applied
+	if final_ignores_defense:
+		result.values_applied["ignores_defense"] = true
+	if multi_hit and times > 1:
+		result.values_applied["damage_hits"] = times
 	result.success = true
 	return result
 

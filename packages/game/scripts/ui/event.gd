@@ -62,14 +62,30 @@ func _display_placeholder():
 func _on_choice_selected(choice_index: int):
 	if not current_encounter:
 		return
-	
+
 	var encounter_manager = get_node_or_null("/root/EncounterManager")
 	if encounter_manager:
 		encounter_manager.make_choice(choice_index)
-		
-		# Wait a moment for outcomes to process, then return to map
+
+		# Wait a moment for outcomes to process
 		await get_tree().create_timer(1.0).timeout
-		_on_return_pressed()
+
+		# Check if a duel was prepared by the choice outcome
+		var game_manager = get_node_or_null("/root/GameManager")
+		if game_manager and game_manager.is_duel_prepared():
+			_start_combat()
+		else:
+			_on_return_pressed()
+
+
+func _start_combat():
+	var game_manager = get_node_or_null("/root/GameManager")
+	if game_manager:
+		# Start the prepared duel
+		game_manager.start_prepared_duel()
+	else:
+		# Fallback: just load duel scene directly
+		SceneManager.load_scene_by_name("duel")
 
 func _on_return_pressed():
 	# Clear encounter progress flag in player

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon4.png" id="3"]
+
+[sub_resource type="Resource" id="SubResource_energy"]
+script = ExtResource("2")
+description = "Gain 1 energy at combat start"
+trigger_event = "combat_start"
+only_first_per_combat = true
+only_first_per_turn = false
+chance_to_trigger = 1.0
+resource_type = "energy"
+amount = 1
+random_range = false
+condition = ""
+
+[sub_resource type="Resource" id="SubResource_cards"]
+script = ExtResource("2")
+description = "Draw 1 card at combat start"
+trigger_event = "combat_start"
+only_first_per_combat = true
+only_first_per_turn = false
+chance_to_trigger = 1.0
+resource_type = "cards"
+amount = 1
+random_range = false
+condition = ""
+
+[resource]
+script = ExtResource("1")
+curio_name = "Eureka License"
+description = "+1 energy and draw 1 card at combat start"
+icon = ExtResource("3")
+flavor_text = "Official permission to strike it rich. The real treasure is the head start it gives you."
+mechanical_category = "Triggered"
+rarity = "Legendary"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_energy"), SubResource("SubResource_cards")]
+gold_cost = 300
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.2
+prospector_synergy = 1.8
+tracker_synergy = 1.0
+publican_synergy = 1.2
+glow_color = Color(1.0, 0.8, 0.2, 1.0)
+trigger_particle = null

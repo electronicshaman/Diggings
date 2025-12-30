@@ -75,7 +75,7 @@ func _load_random_curio_from_folder(folder_path: String, character_class: String
 				if include:
 					var already_has = false
 					if curio_manager and curio_manager.has_method("has_curio"):
-						already_has = curio_manager.has_curio(curio.curio_name) if curio.has("curio_name") else false
+						already_has = curio_manager.has_curio(curio.curio_name)
 					if not already_has:
 						valid_curios.append(curio)
 		file_name = dir.get_next()

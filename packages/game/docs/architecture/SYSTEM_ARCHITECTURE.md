@@ -75,7 +75,7 @@ Event-driven architecture. Key signals include:
 
 ## Overview
 
-The card battler prototype uses a **clean MVC architecture** with Godot 4.4 autoloads providing singleton services. The system prioritizes **separation of concerns**, **data-driven design**, and **theme-agnostic core mechanics**.
+The card battler prototype uses a **clean MVC architecture** with Godot 4.5 autoloads providing singleton services. The system prioritizes **separation of concerns**, **data-driven design**, and **theme-agnostic core mechanics**.
 
 ## Architectural Patterns
 

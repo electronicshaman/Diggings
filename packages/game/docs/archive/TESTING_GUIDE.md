@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-1. Open Godot 4.4
+1. Open Godot 4.5
 2. Run the project (F5 or Play button)
 3. The game will automatically start with a test duel
 

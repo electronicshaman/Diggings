@@ -159,6 +159,10 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	initialize_game_data()
 	reset_run_statistics()
 
+	# Reset curio tracking for new run
+	if CurioManager:
+		CurioManager.reset_run_curios()
+
 	# Clear any previous hexmap state for a fresh run
 	var _hexmap_state := get_node_or_null("/root/HexmapState")
 	if _hexmap_state:
