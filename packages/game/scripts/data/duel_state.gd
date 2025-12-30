@@ -31,6 +31,10 @@ const DEBUG_ENABLED: bool = true
 # Change tracking system
 var _change_listeners: Array[Callable] = []
 
+# Notification batching to coalesce rapid state changes (e.g., duel start)
+var _suspend_notifications: int = 0
+var _pending_batch_change: bool = false
+
 func _init():
 	# Initialize all resources if they don't exist
 	if not player_data:
@@ -91,10 +95,26 @@ func remove_change_listener(callback: Callable):
 
 func _emit_change(change_type: String, data: Dictionary = {}):
 	"""Emit change notification to all listeners"""
+	# If notifications are suspended, just mark that we have pending changes
+	if _suspend_notifications > 0:
+		_pending_batch_change = true
+		return
+
 	data["turn"] = current_turn
 	data["is_player_turn"] = is_player_turn
 	for callback in _change_listeners:
 		callback.call(change_type, data)
+
+func begin_batch_changes():
+	"""Suspend change notifications until end_batch_changes is called"""
+	_suspend_notifications += 1
+
+func end_batch_changes():
+	"""Resume notifications and emit a single consolidated update if needed"""
+	_suspend_notifications = max(0, _suspend_notifications - 1)
+	if _suspend_notifications == 0 and _pending_batch_change:
+		_pending_batch_change = false
+		_emit_change("batch_update", {})
 
 # Change forwarding methods
 func _forward_player_change(change_type: String, old_value, new_value):
@@ -240,6 +260,17 @@ func resolve_battlefield():
 	for card_instance in cards_to_resolve:
 		# Remove from battlefield first
 		battlefield.remove_card(card_instance)
+		
+		# Check durability first - if card has durability, decrement it
+		var card_broken = false
+		if card_instance.has_durability():
+			card_broken = card_instance.decrement_durability()
+		
+		# If card is broken due to durability, remove it from the game
+		if card_broken:
+			removed_pile.add_card(card_instance)
+			GLog.debug("Card '%s' resolved and removed from game (durability exhausted)" % card_instance.get_card_name())
+			continue
 		
 		# Determine final destination based on card handling
 		match card_instance.get_card_handling():

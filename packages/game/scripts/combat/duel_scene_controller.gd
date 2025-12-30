@@ -82,7 +82,7 @@ func initialize_controllers() -> void:
 	
 	var end_turn_btn = ui_manager.get_ui_node("end_turn_button")
 	if is_instance_valid(input_controller):
-		input_controller.initialize(self, ui_controller, end_turn_btn)
+		input_controller.initialize(duel_manager, ui_controller, end_turn_btn)
 	else:
 		push_error("DuelSceneController: InputController is invalid")
 		return
@@ -147,26 +147,34 @@ func setup_connections() -> void:
 func _initialize_duel() -> void:
 	GLog.debug("Initializing duel...")
 	
+	# Check if a duel is already running (from bootstrap or other source)
+	if is_instance_valid(duel_manager) and "duel_state" in duel_manager and is_instance_valid(duel_manager.duel_state):
+		if duel_manager.duel_state.has_method("is_duel_active") and duel_manager.duel_state.is_duel_active():
+			GLog.debug("Duel already active - skipping initialization")
+			return
+	
 	# Check for pending duel config from GameManager
 	if is_instance_valid(GameManager) and GameManager.is_duel_prepared():
 		var duel_config = GameManager.get_pending_duel_config()
 		if duel_config and duel_config.is_valid():
 			GLog.info("Starting duel from config: %s" % str(duel_config.get_summary()))
-			
+
 			# Get the modified deck (applies any temporary modifiers)
-			var player_deck = duel_config.get_modified_deck()
+			var card_array = duel_config.get_modified_deck()
 			var enemy_data = duel_config.enemy_data
-			
+
+			# Convert Array[CardData] to DeckData for start_duel()
+			var player_deck = _create_deck_data_from_cards(card_array, duel_config.scene_context)
+
 			# Start the duel via DuelStateManager
 			duel_state_manager.start_duel(player_deck, enemy_data)
-			
+
 			# Clear the config after using it
 			GameManager.clear_pending_duel_config()
 			return
 	
-	# Fallback: start test duel for debugging
-	GLog.warn("No duel config found - starting test duel")
-	duel_state_manager.start_test_duel()
+	# No fallback - let test scenes handle their own initialization
+	GLog.debug("No duel config found - waiting for external initialization")
 
 
 func _on_game_state_updated() -> void:
@@ -282,3 +290,19 @@ func refresh_ui_references() -> void:
 		GLog.debug("DuelSceneController: UI references refreshed")
 	else:
 		push_warning("DuelSceneController: Cannot refresh UI - UI manager not initialized")
+
+
+## Convert Array[CardData] to DeckData for duel initialization
+func _create_deck_data_from_cards(cards: Array[CardData], context: String = "") -> DeckData:
+	var deck_data = DeckData.new("Encounter Deck", "encounter")
+	deck_data.description = "Deck for %s" % context if context else "Encounter deck"
+
+	for card in cards:
+		if is_instance_valid(card) and not card.resource_path.is_empty():
+			deck_data.card_paths.append(card.resource_path)
+		elif is_instance_valid(card):
+			# Card was created at runtime without a resource path - skip with warning
+			push_warning("DuelSceneController: Card '%s' has no resource_path, skipping" % card.card_name)
+
+	GLog.debug("Created DeckData with %d cards from Array[CardData]" % deck_data.card_paths.size())
+	return deck_data

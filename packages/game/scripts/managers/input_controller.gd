@@ -4,7 +4,7 @@ const DEBUG_ENABLED: bool = true
 
 signal input_action_triggered(action: String)
 
-var game_controller: Node
+var duel_manager: Node
 var ui_controller: Node
 var end_turn_button: Button
 var debug_controller: DebugController
@@ -20,8 +20,8 @@ func _ready() -> void:
 	if OS.is_debug_build():
 		debug_controller = get_node_or_null("/root/DebugController")
 
-func initialize(game_controller_ref: Node, ui_controller_ref: Node, button_ref: Button) -> void:
-	game_controller = game_controller_ref
+func initialize(duel_manager_ref: Node, ui_controller_ref: Node, button_ref: Button) -> void:
+	duel_manager = duel_manager_ref
 	ui_controller = ui_controller_ref
 	end_turn_button = button_ref
 	
@@ -30,7 +30,7 @@ func initialize(game_controller_ref: Node, ui_controller_ref: Node, button_ref: 
 	
 	# Initialize debug controller if available
 	if is_instance_valid(debug_controller):
-		debug_controller.initialize(game_controller, ui_controller, get_node_or_null("/root/DuelManager"))
+		debug_controller.initialize(duel_manager, ui_controller, duel_manager)
 	
 	setup_event_connections()
 
@@ -75,19 +75,19 @@ func _handle_end_turn() -> void:
 		_on_end_turn_pressed()
 
 func _on_end_turn_pressed() -> void:
-	if not game_controller:
+	if not duel_manager:
 		return
 	
-	game_controller.end_player_turn()
+	duel_manager.end_player_turn()
 	GLog.debug("End turn requested")
 	input_action_triggered.emit("end_turn")
 
 func can_end_turn() -> bool:
-	if not game_controller or not ("current_duel_state" in game_controller):
+	if not duel_manager or not duel_manager.duel_state:
 		return false
 	
-	var duel_state = game_controller.current_duel_state
-	return duel_state and duel_state.is_player_turn and not duel_state.get("duel_ended", false)
+	var duel_state = duel_manager.duel_state
+	return duel_state.is_player_turn and not duel_state.get("duel_ended", false)
 
 func set_input_enabled(enabled: bool) -> void:
 	input_enabled = enabled

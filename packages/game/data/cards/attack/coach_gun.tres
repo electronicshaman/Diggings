@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3 uid="uid://c8h5t2xam4n7k"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://cjfng8cj5drp1" path="res://scripts/cards/effects/conditional_damage.gd" id="2"]
+
+[sub_resource type="Resource" id="ConditionalDamage_1"]
+script = ExtResource("2")
+base_damage = 6
+bonus_damage = 4
+condition_type = "enemy_health"
+condition_value = 50
+condition_operator = "<="
+
+[resource]
+script = ExtResource("1")
+card_name = "Coach Gun"
+energy_cost = 2
+card_type = "Gold"
+flavor_text = "Double barrels for close encounters."
+effects = Array[CardEffect]([SubResource("ConditionalDamage_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Bushranger"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"

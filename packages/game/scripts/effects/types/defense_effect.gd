@@ -25,3 +25,7 @@ func apply_effect(context):
 	result.values_applied["condition"] = condition
 	result.success = true
 	return result
+
+func get_preview_text(context: Resource) -> String:
+	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
+	return "Gain %d block" % final_amount

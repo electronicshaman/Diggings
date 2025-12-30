@@ -1,14 +1,33 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/data/card_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/ambush_damage.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
+
+[sub_resource type="Resource" id="FirstCardCondition_1"]
+script = ExtResource("4")
+condition_type = 0
+comparison_value = 0
+comparison_operator = "equal"
+invert = false
+
+[sub_resource type="Resource" id="AmbushConditionalValue_1"]
+script = ExtResource("3")
+property_name = "amount"
+condition = SubResource("FirstCardCondition_1")
+value_if_true = 15
+value_if_false = 6
+applies_to_base_value = false
 
 [sub_resource type="Resource" id="AmbushDamage_1"]
-script = ExtResource("3")
-first_card_damage = 15
-normal_damage = 6
+script = ExtResource("2")
+amount = 6
 ignores_defense = false
+multi_hit = false
+hits = 1
+random_target = false
+conditional_values = Array[ConditionalValue]([SubResource("AmbushConditionalValue_1")])
 
 [resource]
 script = ExtResource("1")
@@ -17,7 +36,7 @@ energy_cost = 2
 card_type = "Gold"
 card_icon = null
 flavor_text = "Strike first, strike hard, no mercy."
-effects = Array[CardEffect]([SubResource("AmbushDamage_1")])
+effects = Array[GameEffect]([SubResource("AmbushDamage_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

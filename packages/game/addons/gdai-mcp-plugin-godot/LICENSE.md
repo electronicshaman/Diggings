@@ -25,7 +25,7 @@ You are granted a non-exclusive, non-transferable, royalty-free license to use t
   The Plugin is distributed in binary form only. Source code is not provided and may not be requested, extracted, or reconstructed.
 
 - **No Hosting**  
-  You may not upload the Plugin to any public or private repository, package registry, or file sharing service.
+  You may not upload the Plugin to any public repository, package registry, or file sharing service.
 
 ---
 
@@ -59,16 +59,17 @@ This license shall be governed by and construed in accordance with the laws of I
 
 ---
 
+## 8. Data Collection
+The Licensor may collect anonymous usage data through PostHog to improve the Plugin and associated services. This data collection is designed to be non-intrusive and does not include personally identifiable information.
+
+- Website Analytics: Anonymous metrics such as page views, button clicks, session duration, user navigation patterns, etc may be collected to understand user engagement and optimize the website experience.
+- Plugin Analytics: Anonymous metrics such as active user counts, tool call success and failure rates, feature usage frequency, error rate, etc may be collected to monitor performance, and guide future development.
+
 **For licensing inquiries, please contact:** 3ddelano (at symbol) gmail (period) com
 
 
+---
 
-
----
----
----
----
----
 
 ## godot-cpp LICENSE
 
@@ -94,11 +95,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+
 ---
----
----
----
----
+
+
 ## Godot Engine LICENSE
 
 Copyright (c) 2014-present Godot Engine contributors (see AUTHORS.md).

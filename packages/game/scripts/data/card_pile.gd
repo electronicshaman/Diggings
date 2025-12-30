@@ -2,7 +2,7 @@ extends Resource
 class_name CardPile
 
 # Per-file debug control (GLog will check this)
-const DEBUG_ENABLED = true
+const DEBUG_ENABLED = false
 
 # CardPile Resource - Generic card collection for hand, deck, discard, and removed piles
 # Part of the resource-based architecture migration for better performance and reusability

@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon12.png" id="3"]
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
@@ -19,7 +20,7 @@ condition = "if_first_turn"
 script = ExtResource("1")
 curio_name = "Old Compass"
 description = "Draw 1 additional card on turn 1"
-icon = null
+icon = ExtResource("3")
 flavor_text = "Its needle spins wildly, yet somehow always points to opportunity."
 mechanical_category = "Triggered"
 rarity = "Common"

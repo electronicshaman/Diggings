@@ -17,7 +17,8 @@ class_name CharacterClass
 
 # Starting deck composition
 @export_group("Starting Deck")
-@export var starting_deck_paths: Array[String] = []  # Paths to starting cards
+@export var starting_deck_paths: Array[String] = []  # Paths to starting cards (legacy)
+@export var starting_deck_resource: String = ""      # Path to DeckData resource (preferred)
 @export var starting_deck_size: int = 15
 
 # Character mechanics and abilities
@@ -105,7 +106,40 @@ func get_all_abilities() -> Array[String]:
 	return all_abilities
 
 func load_starting_deck() -> Array[CardData]:
-	"""Load starting deck cards from their resource paths"""
+	"""Load starting deck cards from DeckData resource or legacy paths"""
+	var deck: Array[CardData] = []
+	
+	# Prefer DeckData resource if available
+	if starting_deck_resource != "" and ResourceLoader.exists(starting_deck_resource):
+		var deck_data = load(starting_deck_resource) as DeckData
+		if deck_data:
+			GLog.debug("Loading starting deck from DeckData resource: %s" % starting_deck_resource)
+			for card_path in deck_data.card_paths:
+				if ResourceLoader.exists(card_path):
+					var card_data = load(card_path) as CardData
+					if card_data:
+						deck.append(card_data)
+					else:
+						GLog.warn("Failed to load card from DeckData at path: " + card_path)
+				else:
+					GLog.warn("Card resource from DeckData not found: " + card_path)
+		else:
+			GLog.error("Failed to load DeckData resource: " + starting_deck_resource)
+			# Fall back to legacy method
+			return _load_legacy_deck()
+	
+	# Legacy fallback: load from starting_deck_paths
+	elif starting_deck_paths.size() > 0:
+		GLog.debug("Loading starting deck from legacy paths")
+		return _load_legacy_deck()
+	
+	else:
+		GLog.error("No starting deck configuration found for %s" % character_class_name)
+	
+	return deck
+
+func _load_legacy_deck() -> Array[CardData]:
+	"""Load starting deck from legacy starting_deck_paths array"""
 	var deck: Array[CardData] = []
 	
 	for card_path in starting_deck_paths:

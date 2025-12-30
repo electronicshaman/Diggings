@@ -11,6 +11,14 @@ func _init() -> void:
 	pass
 
 func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
+	_apply_quick_draw(duel_manager, card_data.card_name, results)
+
+# Instance-aware API
+func apply_effect_with_instance(duel_manager: Node, card_instance, results: Dictionary) -> void:
+	var name = card_instance.get_card_name() if card_instance and "get_card_name" in card_instance else (card_instance.card_data.card_name if card_instance and "card_data" in card_instance else "Unknown")
+	_apply_quick_draw(duel_manager, name, results)
+
+func _apply_quick_draw(duel_manager: Node, card_name: String, results: Dictionary) -> void:
 	var total_damage := 0
 
 	# Add base damage only if configured (> 0)
@@ -18,9 +26,10 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 		total_damage += base_damage
 
 	# Check if this is the first card played (Quick Draw active)
+	# Note: Counter is already incremented before effects resolve, so first card = 1
 	if duel_manager and duel_manager.has_method("get_cards_played_this_turn"):
 		var cards_played = duel_manager.get_cards_played_this_turn()
-		if cards_played == 0 and quick_draw_bonus > 0:
+		if cards_played == 1 and quick_draw_bonus > 0:
 			total_damage += quick_draw_bonus
 			print("Quick Draw! Bonus damage applied.")
 			if "notifications" in results:
@@ -37,7 +46,7 @@ func apply_effect(duel_manager: Node, card_data: Resource, results: Dictionary) 
 		results.ignores_defense = true
 
 	var defense_text: String = " (ignores defense)" if ignores_defense else ""
-	print("Applied %s effect from %s (+%d damage%s, total: %d)" % [get_effect_name(), card_data.card_name, total_damage, defense_text, results.damage])
+	print("Applied %s effect from %s (+%d damage%s, total: %d)" % [get_effect_name(), card_name, total_damage, defense_text, results.damage])
 
 func get_formatted_description() -> String:
 	var base_text: String

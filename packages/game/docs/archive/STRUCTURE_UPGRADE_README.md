@@ -1,6 +1,6 @@
 # Project Structure Upgrade - The Great Reorganization
 
-This document chronicles the eldritch transformation that has cleansed this codebase of its organizational demons and aligned it with Godot 4.4 best practices.
+This document chronicles the eldritch transformation that has cleansed this codebase of its organizational demons and aligned it with Godot 4.5 best practices.
 
 ## 🔥 What Has Been Transformed
 
@@ -89,7 +89,7 @@ This document chronicles the eldritch transformation that has cleansed this code
 - **ENHANCED**: Function signatures with void returns
 - **IMPROVED**: Variable type declarations
 
-#### 3.3 Godot 4.4 Best Practices
+#### 3.3 Godot 4.5 Best Practices
 - **IMPLEMENTED**: `@export_group` for inspector organization
 - **ADDED**: `@export_range` for value constraints
 - **ENHANCED**: Proper signal typing

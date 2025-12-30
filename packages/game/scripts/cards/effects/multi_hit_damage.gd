@@ -11,30 +11,38 @@ func _init() -> void:
 	pass
 
 func apply_effect(_duel_manager: Node, card_data: Resource, results: Dictionary) -> void:
+	_apply_multi_hit(card_data.card_name, results)
+
+# Instance-aware API
+func apply_effect_with_instance(_duel_manager: Node, card_instance, results: Dictionary) -> void:
+	var name = card_instance.get_card_name() if card_instance and "get_card_name" in card_instance else (card_instance.card_data.card_name if card_instance and "card_data" in card_instance else "Unknown")
+	_apply_multi_hit(name, results)
+
+func _apply_multi_hit(card_name: String, results: Dictionary) -> void:
 	var total_damage = damage_per_hit * hit_count
-	
+
 	# Add damage to results (total damage for all hits)
 	results.damage += total_damage
-	
+
 	# Store hit information for animation purposes
 	if not "multi_hits" in results:
 		results.multi_hits = []
-	
+
 	results.multi_hits.append({
 		"damage_per_hit": damage_per_hit,
 		"hit_count": hit_count,
 		"total": total_damage
 	})
-	
+
 	# Set ignore defense flag if applicable
 	if ignores_defense:
 		results.ignores_defense = true
-	
+
 	var defense_text: String = " (ignores defense)" if ignores_defense else ""
 	print("Applied %s effect from %s (%d damage x %d hits = %d total%s)" % [
-		get_effect_name(), card_data.card_name, damage_per_hit, hit_count, total_damage, defense_text
+		get_effect_name(), card_name, damage_per_hit, hit_count, total_damage, defense_text
 	])
-	
+
 	# Add notification for multi-hit
 	if "notifications" in results:
 		results.notifications.append("Rapid fire! %d hits!" % hit_count)

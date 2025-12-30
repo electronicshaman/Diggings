@@ -43,19 +43,35 @@ func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 		"enemy_died":
 			end_duel("player")
 
-func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
+func start_new_duel(player_deck: DeckData, enemy_data: Resource) -> void:
 	GLog.info("Starting new duel...")
+	
+	# Debug enemy health before assignment
+	if enemy_data and enemy_data.has_method("get") and enemy_data.stats:
+		GLog.debug("Enemy loaded with HP: %d/%d" % [enemy_data.stats.current_health, enemy_data.stats.max_health])
 	
 	duel_state.enemy_data = enemy_data
 	
+	# Debug enemy health after assignment
+	if duel_state.enemy_data and duel_state.enemy_data.stats:
+		GLog.debug("Enemy assigned to duel_state with HP: %d/%d" % [duel_state.enemy_data.stats.current_health, duel_state.enemy_data.stats.max_health])
+	
+	# Batch notifications during duel setup to avoid UI flicker/resets
+	if duel_state and duel_state.has_method("begin_batch_changes"):
+		duel_state.begin_batch_changes()
+
 	duel_state.deck.clear()
 	duel_state.discard_pile.clear()
 	duel_state.hand.clear()
 	duel_state.removed_pile.clear()
 	
-	# Convert CardData array to CardInstance array
-	for card_data in player_deck:
-		duel_state.deck.add_card_data(card_data)
+	# Load cards from DeckData and convert to CardInstance array
+	for card_path in player_deck.card_paths:
+		var card_data = load(card_path) as CardData
+		if card_data:
+			duel_state.deck.add_card_data(card_data)
+		else:
+			GLog.error("Failed to load card from DeckData: %s" % card_path)
 	
 	duel_state.deck.shuffle()
 	
@@ -71,6 +87,10 @@ func start_new_duel(player_deck: Array[CardData], enemy_data: Resource) -> void:
 	draw_initial_hand()
 	
 	duel_started.emit()
+	
+	# End batch and emit a consolidated update once everything is ready
+	if duel_state and duel_state.has_method("end_batch_changes"):
+		duel_state.end_batch_changes()
 	
 	start_player_turn()
 
@@ -340,6 +360,10 @@ func play_card(card_instance: CardInstance):
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_instance.get_sanity_cost())
 	
+	# Capture timing context BEFORE incrementing counter
+	var cards_played_before = player.cards_played_this_turn
+	var hand_size_before = duel_state.hand.size() - 1  # -1 because we're about to play this card
+	
 	# Increment counter for this turn
 	player.cards_played_this_turn += 1
 	player.apply_card_cost_reductions()
@@ -356,8 +380,8 @@ func play_card(card_instance: CardInstance):
 	# Brief delay to show card on battlefield
 	await get_tree().create_timer(CARD_STAGE_DELAY).timeout
 	
-	# Immediately resolve the card
-	resolve_single_card(card_instance, true)
+	# Immediately resolve the card with timing context
+	resolve_single_card_with_context(card_instance, true, cards_played_before, hand_size_before)
 	
 	# Check if duel is over after each card
 	if duel_state.is_duel_over():
@@ -448,10 +472,17 @@ func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
 	duel_state.end_duel(winner)
-	
-	# Check for curio rewards on player victory
+
 	if winner == "player":
-		_check_curio_reward()
+		# Check if this enemy should offer curio reward (boss/elite only)
+		var should_offer_curio = _should_offer_curio_reward()
+
+		# Store flag for victory reward scene
+		if GameManager:
+			GameManager.game_data["pending_curio_reward"] = should_offer_curio
+			if should_offer_curio:
+				GLog.info("Elite/Boss defeated! Curio reward will be offered")
+
 		# Load victory reward scene for card selection
 		await get_tree().create_timer(1.0).timeout  # Brief pause before transition
 		SceneManager.load_scene("res://scenes/ui/victory_reward.tscn")
@@ -459,39 +490,27 @@ func end_duel(winner: String):
 		# Player lost - go to game over or appropriate scene
 		await get_tree().create_timer(1.0).timeout
 		SceneManager.load_scene_by_name("game_over")
-	
+
 	duel_ended.emit(winner)
 
-func _check_curio_reward():
-	# Simple curio reward system - 30% chance on victory
-	if randf() < 0.3:
-		# For now, only Lucky Nugget is implemented
-		var curio_paths = [
-			"res://data/curios/common/lucky_nugget.tres"
-		]
-		
-		var random_path = curio_paths[randi() % curio_paths.size()]
-		
-		# Try to load the curio resource
-		if ResourceLoader.exists(random_path):
-			var curio_resource = load(random_path)
-			
-			if curio_resource and has_node("/root/CurioManager"):
-				var cm = get_node("/root/CurioManager")
-				var success = cm.add_curio(curio_resource)
-				
-				if success:
-					GLog.info("🏆 Curio Reward: You found %s!" % curio_resource.curio_name)
-					GLog.info("   %s" % curio_resource.description)
-					
-					# Emit a reward event for UI display
-					EventBus.ui_notification.emit("Found curio: %s" % curio_resource.curio_name, "reward")
-				else:
-					GLog.debug("Could not add curio (may be at max stacks)")
-			else:
-				GLog.error("CurioManager not found or curio resource invalid")
-		else:
-			GLog.error("Curio resource not found at: %s" % random_path)
+func _should_offer_curio_reward() -> bool:
+	"""Check if defeated enemy should offer a curio reward (boss/elite only)"""
+	if not duel_state or not duel_state.enemy_data:
+		return false
+
+	var enemy = duel_state.enemy_data
+
+	# Check for boss
+	if "is_boss" in enemy and enemy.is_boss:
+		GLog.debug("Boss enemy defeated - curio reward triggered")
+		return true
+
+	# Check for elite
+	if "is_elite" in enemy and enemy.is_elite:
+		GLog.debug("Elite enemy defeated - curio reward triggered")
+		return true
+
+	return false
 
 func get_hand_cards() -> Array[CardInstance]:
 	return duel_state.hand.cards if duel_state.hand else []
@@ -516,6 +535,21 @@ func get_cards_played_this_turn() -> int:
 		return duel_state.player_data.cards_played_this_turn
 	return 0
 
+func get_player_gold() -> int:
+	if duel_state and duel_state.player_data:
+		return duel_state.player_data.gold
+	return 0
+
+func get_player_health() -> int:
+	if duel_state and duel_state.player_data:
+		return duel_state.player_data.current_health
+	return 0
+
+func get_enemy_health() -> int:
+	if duel_state and duel_state.enemy_data:
+		return duel_state.enemy_data.current_health
+	return 0
+
 func track_player_card_for_enemy_memory(card: CardData):
 	"""Track cards played by player for enemy AI adaptation"""
 	var enemy = duel_state.enemy_data as EnemyState
@@ -523,22 +557,35 @@ func track_player_card_for_enemy_memory(card: CardData):
 		enemy.add_to_player_memory(card.card_name)
 
 func resolve_single_card(card_instance: CardInstance, is_player_card: bool):
-	"""Immediately resolve a single card and move it to discard"""
+	"""Immediately resolve a single card and move it to discard (legacy version)"""
+	# Default timing values for compatibility
+	var cards_played_before = 0
+	var hand_size_before = 0
+	
+	if is_player_card and duel_state and duel_state.player_data:
+		# Try to get reasonable defaults
+		cards_played_before = max(0, duel_state.player_data.cards_played_this_turn - 1)
+		hand_size_before = duel_state.hand.size()
+	
+	resolve_single_card_with_context(card_instance, is_player_card, cards_played_before, hand_size_before)
+
+func resolve_single_card_with_context(card_instance: CardInstance, is_player_card: bool, cards_played_before: int, hand_size_before: int):
+	"""Immediately resolve a single card with timing context"""
 	if not duel_state or not card_instance:
 		return
 	
 	GLog.info("Resolving card: %s" % card_instance.get_card_name())
 	
-	# Remove from battlefield
-	duel_state.battlefield.remove_card(card_instance)
-	
-	# Execute card effects - pass the CardInstance to the effects processor
-	var results = card_effects_processor.apply_card_instance_effects(self, card_instance)
+	# Execute card effects WHILE card is still on battlefield - pass the CardInstance to the effects processor with context
+	var results = card_effects_processor.apply_card_instance_effects_with_context(
+		self, card_instance, cards_played_before, hand_size_before
+	)
 	
 	if is_player_card:
 		apply_card_results(results)
 		
-		# Move to player's final destination
+		# Now remove from battlefield and move to player's final destination
+		duel_state.battlefield.remove_card(card_instance)
 		match card_instance.get_card_handling():
 			"Standard", "Equipped", "Flash":
 				duel_state.discard_pile.add_card(card_instance)
@@ -555,7 +602,8 @@ func resolve_single_card(card_instance: CardInstance, is_player_card: bool):
 		var enemy = duel_state.enemy_data as EnemyState
 		apply_enemy_card_results(results, enemy)
 		
-		# Move to enemy's discard - note: enemies still use CardData for now
+		# Now remove from battlefield and move enemy card to discard
+		duel_state.battlefield.remove_card(card_instance)
 		if enemy:
 			enemy.enemy_discard.add_card_data(card_instance.card_data)
 		

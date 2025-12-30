@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://bqt9h5k1m2n7p8"]
+
+[ext_resource type="Script" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "GameEffect Test Deck"
+description = "Test deck containing only migrated GameEffect cards for testing the new effect system."
+deck_theme = "test"
+difficulty_level = 1
+card_paths = Array[String](["res://data/cards/attack/ambush.tres", "res://data/cards/attack/desperados_gambit.tres", "res://data/cards/skill/bandits_code.tres", "res://data/cards/skill/canvas_overalls.tres", "res://data/cards/skill/reload.tres", "res://data/cards/power/pub_brawl.tres"])
+min_deck_size = 6
+max_deck_size = 6
+preferred_strategy = "test"
+priority_card_types = Array[String]([])

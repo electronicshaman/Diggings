@@ -2,42 +2,42 @@
 
 [ext_resource type="Script" uid="uid://clflmmjdgf4vm" path="res://scripts/cards/card.gd" id="1_card_script"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_d81rb"]
-size = Vector2(150, 200)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_45qsb"]
+size = Vector2(300, 420)
 
 [node name="Card" type="Area2D"]
 script = ExtResource("1_card_script")
 
 [node name="CardBackground" type="ColorRect" parent="."]
-offset_left = -75.0
-offset_top = -100.0
-offset_right = 75.0
-offset_bottom = 100.0
+offset_left = -150.0
+offset_top = -210.0
+offset_right = 150.0
+offset_bottom = 210.0
 
 [node name="CardBorder" type="ColorRect" parent="."]
-offset_left = -75.0
-offset_top = -100.0
-offset_right = 75.0
-offset_bottom = 100.0
+offset_left = -150.0
+offset_top = -210.0
+offset_right = 150.0
+offset_bottom = 210.0
 color = Color(0.831, 0.686, 0.216, 1)
 
 [node name="CardInner" type="ColorRect" parent="."]
-offset_left = -70.0
-offset_top = -95.0
-offset_right = 70.0
-offset_bottom = 95.0
+offset_left = -140.0
+offset_top = -190.0
+offset_right = 140.0
+offset_bottom = 190.0
 color = Color(0.95, 0.93, 0.9, 1)
 
 [node name="TypeSymbol" type="Label" parent="."]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 3.0
-offset_top = -90.0
-offset_right = 63.0
-offset_bottom = -56.0
+offset_left = 6.0
+offset_top = -180.0
+offset_right = 126.0
+offset_bottom = -112.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 48
 text = "⛏"
 horizontal_alignment = 2
 vertical_alignment = 1
@@ -47,10 +47,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -75.0
-offset_top = -100.0
-offset_right = 75.0
-offset_bottom = 100.0
+offset_left = -150.0
+offset_top = -210.0
+offset_right = 150.0
+offset_bottom = 210.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -59,80 +59,50 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -67.0
-offset_top = 10.0
-offset_right = 53.0
-offset_bottom = 35.0
+offset_left = -134.0
+offset_top = 20.0
+offset_right = 106.0
+offset_bottom = 70.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "Card Name"
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="EnergyCost" type="Label" parent="CardInfo"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = -25.0
-offset_right = 35.0
-offset_bottom = -5.0
-grow_vertical = 0
-theme_override_colors/font_color = Color(0, 0.5, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "1"
-horizontal_alignment = 1
+[node name="CardInfoContainer" type="VBoxContainer" parent="CardInfo"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 102.0
+offset_right = 290.0
+offset_bottom = 350.0
+
+[node name="CardHandling" type="Label" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Handling"
 vertical_alignment = 1
 
-[node name="Description" type="RichTextLabel" parent="CardInfo"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -65.0
-offset_top = -20.0
-offset_right = 65.0
-offset_bottom = 50.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Description" type="RichTextLabel" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/normal_font_size = 11
+theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
 text = "Card effect description goes here"
 fit_content = true
 
-[node name="CardHandling" type="Label" parent="CardInfo"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -60.0
-offset_top = -25.0
-offset_right = -5.0
-offset_bottom = -5.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.5, 0, 1)
-theme_override_font_sizes/font_size = 10
-text = "Handling"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="SanityCost" type="Label" parent="CardInfo"]
-layout_mode = 1
-offset_left = 51.0
-offset_top = 175.0
-offset_right = 106.0
-offset_bottom = 195.0
+[node name="SanityCost" type="Label" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0, 0.5, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 20
 text = "Sanity: 5"
+
+[node name="EnergyCost" type="Label" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.5, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "1"
 
 [node name="CardImage" type="ColorRect" parent="."]
 visible = false
@@ -143,4 +113,5 @@ offset_bottom = 30.0
 color = Color(0.8, 0.8, 0.8, 0.2)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_d81rb")
+visible = false
+shape = SubResource("RectangleShape2D_45qsb")

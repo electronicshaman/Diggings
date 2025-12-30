@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://bs7k2xma8k8gy"]
 
-[ext_resource type="Script" path="res://scripts/data/deck_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://d1f3tqu7uyhl3" path="res://scripts/data/deck_data.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
@@ -8,7 +8,7 @@ deck_name = "Claim Jumper's Arsenal"
 description = "A greedy prospector's collection focused on mining equipment and opportunistic attacks. Emphasizes quick strikes and defensive positioning."
 deck_theme = "mining_opportunist"
 difficulty_level = 2
-card_paths = Array[String](["res://data/cards/attack/pickaxe_strike.tres", "res://data/cards/attack/pickaxe_strike.tres", "res://data/cards/attack/quick_shot.tres", "res://data/cards/attack/wild_shot.tres", "res://data/cards/skill/take_cover.tres", "res://data/cards/skill/take_cover.tres", "res://data/cards/fortune/strike_it_rich.tres", "res://data/cards/attack/ambush.tres"])
+card_paths = Array[String](["res://data/cards/attack/navy_colt.tres", "res://data/cards/attack/navy_colt.tres", "res://data/cards/attack/bowie_knife.tres", "res://data/cards/attack/bowie_knife.tres", "res://data/cards/attack/enfield_rifle.tres", "res://data/cards/attack/enfield_rifle.tres"])
 min_deck_size = 6
 max_deck_size = 12
 preferred_strategy = "opportunist"

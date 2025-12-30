@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://b6oak3w7r2m8j"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://d6m2k8w4r7n5j" path="res://scripts/cards/effects/defense.gd" id="2"]
+[ext_resource type="Script" uid="uid://s4m8r6k2w9n7j" path="res://scripts/cards/effects/sanity_restore.gd" id="3"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+defense_amount = 4
+
+[sub_resource type="Resource" id="SanityRestore_1"]
+script = ExtResource("3")
+sanity_amount = 2
+
+[resource]
+script = ExtResource("1")
+card_name = "Bible Block"
+energy_cost = 1
+card_type = "Grit"
+flavor_text = "Thick book protects body and soul."
+effects = Array[CardEffect]([SubResource("Defense_1"), SubResource("SanityRestore_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String]([])
+accessibility_tier = "Neutral"
+mechanical_category = "Skill"

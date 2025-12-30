@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://ecy70s2xshy"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="2"]
+[ext_resource type="Script" uid="uid://b3m8r5k7w4n6j" path="res://scripts/cards/effects/gold_gain.gd" id="3"]
+
+[sub_resource type="Resource" id="Damage_1"]
+script = ExtResource("2")
+damage_amount = 3
+ignores_defense = false
+
+[sub_resource type="Resource" id="GoldGain_1"]
+script = ExtResource("3")
+min_gold = 2
+max_gold = 2
+success_chance = 1.0
+failure_gold = 0
+
+[resource]
+script = ExtResource("1")
+card_name = "Gold Pan Bash"
+energy_cost = 1
+card_type = "Gold"
+flavor_text = "Heavy iron pan finds gold and trouble."
+effects = Array[CardEffect]([SubResource("Damage_1"), SubResource("GoldGain_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Prospector"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"

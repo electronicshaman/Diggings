@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://bmpklokl1f3lw"]
+
+[ext_resource type="Script" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Bushranger Starter Deck"
+description = "Attack-focused outlaw deck with quick-draw tactics and high-risk plays. Specializes in aggressive combat with ammo mechanics and conditional effects."
+deck_theme = "aggressive"
+difficulty_level = 2
+card_paths = Array[String](["res://data/cards/attack/quick_shot.tres", "res://data/cards/skill/cavalry_sabre_belt.tres", "res://data/cards/skill/reload.tres", "res://data/cards/attack/navy_colt.tres", "res://data/cards/attack/pepperbox_pistol.tres", "res://data/cards/attack/ambush.tres", "res://data/cards/attack/desperados_gambit.tres", "res://data/cards/attack/bounty_shot.tres", "res://data/cards/attack/wild_shot.tres", "res://data/cards/skill/outlaws_intuition.tres", "res://data/cards/skill/bush_survival.tres", "res://data/cards/skill/wanted_poster.tres", "res://data/cards/skill/bandits_code.tres", "res://data/cards/skill/last_stand.tres", "res://data/cards/skill/oilskin_coat.tres"])
+min_deck_size = 15
+max_deck_size = 15
+preferred_strategy = "aggressive"
+priority_card_types = Array[String](["Gold"])

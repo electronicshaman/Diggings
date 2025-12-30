@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3 uid="uid://ed8y00x3vrfy"]
+
+[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://d6m2k8w4r7n5j" path="res://scripts/cards/effects/defense.gd" id="2"]
+
+[sub_resource type="Resource" id="Defense_1"]
+script = ExtResource("2")
+defense_amount = 5
+
+[resource]
+script = ExtResource("1")
+card_name = "Canvas Overalls"
+energy_cost = 1
+card_type = "Grit"
+flavor_text = "Thick work clothing built to last."
+effects = Array[CardEffect]([SubResource("Defense_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Prospector"])
+accessibility_tier = "Neutral"
+mechanical_category = "Skill"

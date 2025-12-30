@@ -141,6 +141,7 @@ func _create_resource(hex_grid: HexGrid, coord: HexCoordinates, resource_type: S
 		tile.set_terrain_resource(terrain_db.get_terrain_by_name("Goldfield"))
 		tile.has_encounter = true
 		tile.encounter_data = {
+			"encounter_name": "Old Mine Shaft",
 			"resource": "gold",
 			"kind": resource_type
 		}

@@ -3,7 +3,7 @@ extends RefCounted
 
 ## UIReferenceManager - Centralized UI node reference management
 ##
-## This class provides safe, validated access to UI nodes using Godot 4.4 best practices:
+## This class provides safe, validated access to UI nodes using Godot 4.5 best practices:
 ## - Uses unique names (%) for critical UI elements
 ## - Implements null-safe node access
 ## - Provides graceful degradation for missing nodes
@@ -132,7 +132,7 @@ func _cache_ui_reference(reference_key: String) -> bool:
 	
 	var node: Node = null
 	
-	# Try to find node using unique name first (Godot 4.4 best practice)
+	# Try to find node using unique name first (Godot 4.5 best practice)
 	var unique_name = _get_unique_name_for_reference(reference_key)
 	if unique_name != "":
 		node = _root_node.get_node_or_null(unique_name)

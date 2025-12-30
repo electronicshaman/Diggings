@@ -244,6 +244,166 @@ func _on_node_selected(node: Node) -> void:
 func _on_shop_entered() -> void:
 	trigger_curio_effects("shop_entered", {})
 
+# ============================================
+# REWARD POOL SELECTION METHODS
+# ============================================
+
+# Cached reward pool to avoid repeated disk access
+var _reward_pool_cache: Array = []
+var _reward_pool_cached: bool = false
+
+## Get all reward-tier curios (excludes starting/ directory)
+func get_reward_curio_pool() -> Array:
+	if _reward_pool_cached:
+		return _reward_pool_cache.duplicate()
+
+	_reward_pool_cache.clear()
+
+	var reward_directories = [
+		"res://data/curios/common/",
+		"res://data/curios/rare/",
+		"res://data/curios/legendary/",
+		"res://data/curios/corrupted/"
+	]
+
+	for dir_path in reward_directories:
+		var dir = DirAccess.open(dir_path)
+		if dir:
+			dir.list_dir_begin()
+			var file_name = dir.get_next()
+			while file_name != "":
+				if file_name.ends_with(".tres") and not file_name.begins_with("template"):
+					var full_path = dir_path + file_name
+					var curio = load(full_path)
+					if curio and curio is Resource:
+						_reward_pool_cache.append(curio)
+						GLog.debug("Loaded reward curio: %s" % file_name)
+				file_name = dir.get_next()
+			dir.list_dir_end()
+
+	_reward_pool_cached = true
+	GLog.debug("Cached %d reward-tier curios" % _reward_pool_cache.size())
+	return _reward_pool_cache.duplicate()
+
+## Filter to curios available for reward (not owned, not offered, unlocks met)
+func get_available_curios_for_reward(character_class: String) -> Array:
+	var pool = get_reward_curio_pool()
+	var available: Array = []
+
+	for curio in pool:
+		var curio_name = curio.curio_name if "curio_name" in curio else ""
+
+		# Skip if already owned and not stackable (or at max stacks)
+		if has_curio(curio_name):
+			var is_stackable = curio.stackable if "stackable" in curio else false
+			if not is_stackable:
+				continue
+			var max_stacks = curio.max_stacks if "max_stacks" in curio else 1
+			if get_curio_stack_count(curio_name) >= max_stacks:
+				continue
+
+		# Skip if already offered this run (for non-stackable)
+		var is_stackable = curio.stackable if "stackable" in curio else false
+		if not is_stackable and curio_name in curios_offered_this_run:
+			continue
+
+		# Check unlock requirements (if any)
+		var unlock_req = curio.unlock_requirement if "unlock_requirement" in curio else ""
+		if unlock_req != "" and not _check_unlock_requirement(unlock_req):
+			continue
+
+		available.append(curio)
+
+	GLog.debug("Found %d available curios for reward (class: %s)" % [available.size(), character_class])
+	return available
+
+## Get weighted selection based on class synergy
+func get_weighted_curio_selection(character_class: String, count: int = 3) -> Array:
+	var available = get_available_curios_for_reward(character_class)
+
+	if available.is_empty():
+		GLog.debug("No curios available for selection")
+		return []
+
+	# Build weighted selection
+	var selected: Array = []
+	var remaining = available.duplicate()
+
+	for i in range(mini(count, remaining.size())):
+		# Calculate weights based on class synergy
+		var weights: Array[float] = []
+		var total_weight: float = 0.0
+
+		for curio in remaining:
+			var weight: float = 1.0
+			if curio.has_method("get_synergy_for_class"):
+				weight = curio.get_synergy_for_class(character_class)
+			elif character_class != "":
+				# Fallback: check synergy properties directly
+				var synergy_prop = character_class.to_lower() + "_synergy"
+				if synergy_prop in curio:
+					weight = curio.get(synergy_prop)
+
+			# Ensure minimum weight
+			weight = maxf(weight, 0.1)
+			weights.append(weight)
+			total_weight += weight
+
+		# Weighted random selection
+		var roll = randf() * total_weight
+		var cumulative: float = 0.0
+		var selected_index: int = 0
+
+		for j in range(weights.size()):
+			cumulative += weights[j]
+			if roll <= cumulative:
+				selected_index = j
+				break
+
+		# Add to selection and remove from remaining
+		var chosen = remaining[selected_index]
+		selected.append(chosen)
+		remaining.remove_at(selected_index)
+
+		# Track that this curio was offered
+		var curio_name = chosen.curio_name if "curio_name" in chosen else ""
+		if curio_name != "" and not curio_name in curios_offered_this_run:
+			curios_offered_this_run.append(curio_name)
+
+	GLog.debug("Selected %d curios with class weighting" % selected.size())
+	return selected
+
+## Reset curio tracking at run start
+func reset_run_curios() -> void:
+	curios_offered_this_run.clear()
+	GLog.debug("Reset curios_offered_this_run for new run")
+
+## Invalidate the reward pool cache (call if curios are added/modified)
+func invalidate_reward_pool_cache() -> void:
+	_reward_pool_cached = false
+	_reward_pool_cache.clear()
+
+## Check unlock requirement (placeholder for future implementation)
+func _check_unlock_requirement(requirement: String) -> bool:
+	# TODO: Implement unlock requirement checks
+	# For now, all curios are considered unlocked
+	if requirement.is_empty():
+		return true
+	return true
+
+# ============================================
+# CURIO STAT HELPER (for player stat queries)
+# ============================================
+
+## Get curio-based modifier for a specific stat (used by player systems)
+func get_curio_stat_modifier(_stat_name: String) -> float:
+	# Alias for get_stat_modifier for clearer API
+	return get_stat_modifier(_stat_name)
+
+# ============================================
+# SAVE/LOAD SUPPORT
+# ============================================
+
 # Save/Load support
 func get_save_data() -> Dictionary:
 	var save_data = {
