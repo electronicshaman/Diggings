@@ -1,21 +1,12 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://dan6r3k8w2m5j"]
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3 uid="uid://dan6r3k8w2m5j"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="2"]
-[ext_resource type="Script" uid="uid://r7k4w9n2m8j5t" path="res://scripts/cards/effects/mutual_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
 
-[sub_resource type="Resource" id="Damage_1"]
+[sub_resource type="Resource" id="DamageEffect_1"]
 script = ExtResource("2")
-damage_amount = 6
+amount = 7
 ignores_defense = false
-
-[sub_resource type="Resource" id="MutualEffect_1"]
-script = ExtResource("3")
-mutual_healing = 0
-mutual_energy = 0
-mutual_damage = 2
-mutual_defense = 0
-effect_type = "damage"
 
 [resource]
 script = ExtResource("1")
@@ -23,7 +14,7 @@ card_name = "Broken Bottle"
 energy_cost = 1
 card_type = "Gold"
 flavor_text = "Jagged glass cuts both ways."
-effects = Array[CardEffect]([SubResource("Damage_1"), SubResource("MutualEffect_1")])
+effects = Array[GameEffect]([SubResource("DamageEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

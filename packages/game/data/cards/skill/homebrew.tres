@@ -1,35 +1,24 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/cards/effects/temporary_energy.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/hold_bonus.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="2"]
 
-[sub_resource type="Resource" id="TemporaryEnergy_1"]
+[sub_resource type="Resource" id="ResourceEffect_1"]
 script = ExtResource("2")
-energy_gain = 1
-condition = ""
-condition_value = 0
-
-[sub_resource type="Resource" id="HoldBonus_1"]
-script = ExtResource("3")
-turns_required = 1
-bonus_damage = 0
-bonus_defense = 0
-bonus_healing = 0
-bonus_energy = 1
-card_type_filter = ""
+resource_type = "energy"
+amount = 1
 
 [resource]
 script = ExtResource("1")
 card_name = "Homebrew"
 energy_cost = 1
-description = "Gain 1 energy. If held for 1 turn: Gain 2 energy instead."
+description = "Gain 1 energy."
 card_type = "Grog"
-effects = [SubResource("TemporaryEnergy_1"), SubResource("HoldBonus_1")]
+effects = Array[GameEffect]([SubResource("ResourceEffect_1")])
 sanity_cost = 0
-card_handling = "Hold"
+card_handling = "Standard"
 volatile_bonus = false
 luck_modifier = 0.0
-class_affinity = ["Publican"]
+class_affinity = Array[String](["Publican"])
 accessibility_tier = "Class"
 mechanical_category = "Skill"

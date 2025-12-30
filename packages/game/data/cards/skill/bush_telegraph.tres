@@ -1,19 +1,11 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/data/card_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/enemy_intent_reveal.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/cards/effects/conditional_defense.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="2"]
 
-[sub_resource type="Resource" id="EnemyIntentReveal_1"]
-script = ExtResource("3")
-reveal_turns = 1
-
-[sub_resource type="Resource" id="ConditionalDefense_1"]
-script = ExtResource("4")
-base_defense = 0
-bonus_defense = 6
-enemy_intent_type = "attack"
+[sub_resource type="Resource" id="DefenseEffect_1"]
+script = ExtResource("2")
+amount = 6
 
 [resource]
 script = ExtResource("1")
@@ -21,7 +13,7 @@ card_name = "Bush Telegraph"
 energy_cost = 1
 card_type = "Grit"
 flavor_text = "News travels fast in the outback."
-effects = Array[CardEffect]([SubResource("EnemyIntentReveal_1"), SubResource("ConditionalDefense_1")])
+effects = Array[GameEffect]([SubResource("DefenseEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

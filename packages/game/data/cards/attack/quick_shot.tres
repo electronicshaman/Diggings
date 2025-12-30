@@ -1,18 +1,27 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=7 format=3 uid="uid://dbebu72mj3wkj"]
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://dbebu72mj3wkj"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" uid="uid://cjfng8cj5drp1" path="res://scripts/data/card_effect.gd" id="2"]
-[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="3"]
-[ext_resource type="Script" uid="uid://pgvqrf4d5ofg" path="res://scripts/cards/effects/first_card_draw.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/card_manipulation_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
 
-[sub_resource type="Resource" id="Damage_1"]
-script = ExtResource("3")
-damage_amount = 4
+[sub_resource type="Resource" id="DamageEffect_1"]
+script = ExtResource("2")
+amount = 4
 ignores_defense = false
 
-[sub_resource type="Resource" id="FirstCardDraw_1"]
+[sub_resource type="Resource" id="FirstCardCondition_1"]
 script = ExtResource("4")
-cards_to_draw = 1
+condition_type = 0
+comparison_value = 0
+comparison_operator = "equal"
+invert = false
+
+[sub_resource type="Resource" id="CardManipulationEffect_1"]
+script = ExtResource("3")
+action = "draw"
+amount = 1
+activation_condition = SubResource("FirstCardCondition_1")
 
 [resource]
 script = ExtResource("1")
@@ -20,7 +29,7 @@ card_name = "Quick Shot"
 energy_cost = 1
 card_type = "Gold"
 flavor_text = "Speed is life in the outback."
-effects = Array[CardEffect]([SubResource("Damage_1"), SubResource("FirstCardDraw_1")])
+effects = Array[GameEffect]([SubResource("DamageEffect_1"), SubResource("CardManipulationEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

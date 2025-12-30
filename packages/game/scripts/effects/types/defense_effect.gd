@@ -4,6 +4,7 @@ class_name DefenseEffect
 @export var amount: int = 0
 @export var duration: int = 0
 @export var condition: String = "" # descriptive only; enforcement left to systems
+# Note: delayed is inherited from GameEffect base class
 
 var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
 
@@ -14,13 +15,23 @@ func apply_effect(context):
 		result.success = false
 		result.prevented_by = "no_target"
 		return result
-	if target.has_method("add_armor"):
-		target.add_armor(amount)
+
+	# Resolve conditional values
+	var final_amount = resolve_conditional_value("amount", amount, context)
+
+	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
+	# resolution. We accumulate intended outcomes in EffectResult and let
+	# DuelManager.apply_card_results() perform the actual mutations.
+	if delayed:
+		if not result.values_applied.has("delayed_defense"):
+			result.values_applied["delayed_defense"] = []
+		result.values_applied["delayed_defense"].append({
+			"defense_amount": final_amount,
+			"condition": condition
+		})
 	else:
-		var armor = target.get("armor")
-		if armor != null:
-			target.set("armor", int(armor) + amount)
-	result.values_applied["defense"] = amount
+		result.values_applied["defense"] = final_amount
+
 	result.values_applied["duration"] = duration
 	result.values_applied["condition"] = condition
 	result.success = true
@@ -28,4 +39,7 @@ func apply_effect(context):
 
 func get_preview_text(context: Resource) -> String:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
-	return "Gain %d block" % final_amount
+	var text = "Gain %d block" % final_amount
+	if delayed:
+		text = "Next turn: " + text
+	return text

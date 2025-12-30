@@ -6,6 +6,10 @@ class_name DamageEffect
 @export var multi_hit: bool = false
 @export var hits: int = 1
 @export var random_target: bool = false
+# Random damage range (when random_range is true, damage is randi_range(min_amount, max_amount))
+@export var random_range: bool = false
+@export var min_amount: int = 0
+@export var max_amount: int = 0
 
 var EffectResultResource := preload("res://scripts/effects/core/effect_result.gd")
 
@@ -19,7 +23,14 @@ func apply_effect(context):
 		return result
 	
 	# Resolve conditional values
-	var final_amount = resolve_conditional_value("amount", amount, context)
+	var final_amount: int
+	if random_range:
+		# Random damage between min and max
+		var final_min = resolve_conditional_value("min_amount", min_amount, context)
+		var final_max = resolve_conditional_value("max_amount", max_amount, context)
+		final_amount = randi_range(final_min, final_max)
+	else:
+		final_amount = resolve_conditional_value("amount", amount, context)
 	var final_hits = resolve_conditional_value("hits", hits, context)
 	var final_ignores_defense = _resolve_conditional_bool("ignores_defense", ignores_defense, context)
 	
@@ -51,15 +62,24 @@ func _resolve_conditional_bool(property_name: String, base_value: bool, context:
 	return resolved_int != 0
 
 func get_preview_text(context: Resource) -> String:
-	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
-	var base_text = "Deal %d damage" % final_amount
-	
+	var base_text: String
+	if random_range:
+		var final_min = resolve_conditional_value("min_amount", min_amount, context) if context else min_amount
+		var final_max = resolve_conditional_value("max_amount", max_amount, context) if context else max_amount
+		if final_min == final_max:
+			base_text = "Deal %d damage" % final_min
+		else:
+			base_text = "Deal %d-%d damage" % [final_min, final_max]
+	else:
+		var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
+		base_text = "Deal %d damage" % final_amount
+
 	var final_ignores_defense = _resolve_conditional_bool("ignores_defense", ignores_defense, context) if context else ignores_defense
 	if final_ignores_defense:
 		base_text += " (ignores defense)"
-	
+
 	if multi_hit:
 		var final_hits = resolve_conditional_value("hits", hits, context) if context else hits
 		base_text += " (%d hits)" % final_hits
-	
+
 	return base_text
