@@ -1,16 +1,16 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://c8k4w7r2oam6j"]
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3 uid="uid://c8k4w7r2oam6j"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" uid="uid://d6m2k8w4r7n5j" path="res://scripts/cards/effects/defense.gd" id="2"]
-[ext_resource type="Script" uid="uid://h3m7r2k8w5n9j" path="res://scripts/cards/effects/heal.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/health_effect.gd" id="3"]
 
-[sub_resource type="Resource" id="Defense_1"]
+[sub_resource type="Resource" id="DefenseEffect_1"]
 script = ExtResource("2")
-defense_amount = 6
+amount = 6
 
-[sub_resource type="Resource" id="Heal_1"]
+[sub_resource type="Resource" id="HealthEffect_1"]
 script = ExtResource("3")
-healing_amount = 1
+amount = 1
 
 [resource]
 script = ExtResource("1")
@@ -18,7 +18,7 @@ card_name = "Possum Skin Cloak"
 energy_cost = 2
 card_type = "Grit"
 flavor_text = "Thick hide protection from the cold and cruel."
-effects = Array[CardEffect]([SubResource("Defense_1"), SubResource("Heal_1")])
+effects = Array[GameEffect]([SubResource("DefenseEffect_1"), SubResource("HealthEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

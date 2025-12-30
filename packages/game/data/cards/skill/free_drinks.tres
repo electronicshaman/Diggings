@@ -1,34 +1,29 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/cards/effects/temporary_energy.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/mutual_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/health_effect.gd" id="3"]
 
-[sub_resource type="Resource" id="TemporaryEnergy_1"]
+[sub_resource type="Resource" id="ResourceEffect_1"]
 script = ExtResource("2")
-energy_gain = 1
-condition = ""
-condition_value = 0
+resource_type = "energy"
+amount = 1
 
-[sub_resource type="Resource" id="MutualEffect_1"]
+[sub_resource type="Resource" id="HealthEffect_1"]
 script = ExtResource("3")
-mutual_healing = 2
-mutual_energy = 0
-mutual_damage = 0
-mutual_defense = 0
-effect_type = "healing"
+amount = 2
 
 [resource]
 script = ExtResource("1")
 card_name = "Free Drinks"
 energy_cost = 0
-description = "Gain 1 energy. Both you and enemy heal 2 health."
+description = "Gain 1 energy. Heal 2 health."
 card_type = "Grog"
-effects = [SubResource("TemporaryEnergy_1"), SubResource("MutualEffect_1")]
+effects = Array[GameEffect]([SubResource("ResourceEffect_1"), SubResource("HealthEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
 luck_modifier = 0.0
-class_affinity = ["Publican"]
+class_affinity = Array[String](["Publican"])
 accessibility_tier = "Class"
 mechanical_category = "Skill"

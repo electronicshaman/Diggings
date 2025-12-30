@@ -1,15 +1,12 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/data/card_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/conditional_draw.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/card_manipulation_effect.gd" id="2"]
 
-[sub_resource type="Resource" id="ConditionalDraw_1"]
-script = ExtResource("3")
-base_draw = 2
-bonus_draw = 1
-bonus_gold = 3
-condition_type = "same_type"
+[sub_resource type="Resource" id="CardManipulationEffect_1"]
+script = ExtResource("2")
+action = "draw"
+amount = 2
 
 [resource]
 script = ExtResource("1")
@@ -17,7 +14,7 @@ card_name = "Swagman's Wisdom"
 energy_cost = 2
 card_type = "Grit"
 flavor_text = "The road teaches many lessons."
-effects = Array[CardEffect]([SubResource("ConditionalDraw_1")])
+effects = Array[GameEffect]([SubResource("CardManipulationEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

@@ -4,8 +4,7 @@ class_name DefenseEffect
 @export var amount: int = 0
 @export var duration: int = 0
 @export var condition: String = "" # descriptive only; enforcement left to systems
-# Delayed defense (applied next turn)
-@export var delayed: bool = false
+# Note: delayed is inherited from GameEffect base class
 
 var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
 

@@ -1,19 +1,18 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/cards/effects/defense.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/cards/effects/enemy_debuff.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/status_effect.gd" id="3"]
 
-[sub_resource type="Resource" id="Defense_1"]
+[sub_resource type="Resource" id="DefenseEffect_1"]
 script = ExtResource("2")
-defense_amount = 5
+amount = 5
 
-[sub_resource type="Resource" id="EnemyDebuff_1"]
+[sub_resource type="Resource" id="StatusEffect_1"]
 script = ExtResource("3")
-damage_reduction = 3
-defense_reduction = 0
+status_type = "weaken"
 duration = 1
-debuff_type = "weaken"
+damage_modifier = -3
 
 [resource]
 script = ExtResource("1")
@@ -21,11 +20,11 @@ card_name = "Smooth Talk"
 energy_cost = 1
 description = "Gain 5 block. Enemy deals -3 damage next attack."
 card_type = "Grog"
-effects = [SubResource("Defense_1"), SubResource("EnemyDebuff_1")]
+effects = Array[GameEffect]([SubResource("DefenseEffect_1"), SubResource("StatusEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
 luck_modifier = 0.0
-class_affinity = ["Publican"]
+class_affinity = Array[String](["Publican"])
 accessibility_tier = "Class"
 mechanical_category = "Skill"

@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3 uid="uid://b6r3k7xan4m8j"]
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3 uid="uid://b6r3k7xan4m8j"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" uid="uid://j52wvanrcivs" path="res://scripts/cards/effects/damage.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
 
-[sub_resource type="Resource" id="Damage_1"]
+[sub_resource type="Resource" id="DamageEffect_1"]
 script = ExtResource("2")
-damage_amount = 7
+amount = 7
 ignores_defense = true
 
 [resource]
@@ -14,7 +14,7 @@ card_name = "Spear Thrust"
 energy_cost = 2
 card_type = "Gold"
 flavor_text = "Three meters of Burgan tree precision."
-effects = Array[CardEffect]([SubResource("Damage_1")])
+effects = Array[GameEffect]([SubResource("DamageEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

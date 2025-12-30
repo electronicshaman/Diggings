@@ -165,9 +165,7 @@ func _get_hold_bonus_effect():
 		# Check if this effect has hold bonus characteristics (duck typing)
 		if effect.has_method("get_effect_name") and "Hold" in effect.get_effect_name():
 			return effect
-		elif effect is HoldBonus:  # Legacy CardEffect support
-			return effect
-	
+
 	return null
 
 func _generate_dynamic_description(hold_bonus) -> String:
