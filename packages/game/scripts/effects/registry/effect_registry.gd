@@ -10,6 +10,7 @@ var _class_by_type: Dictionary = {
 	"defense": "res://scripts/effects/types/defense_effect.gd",
 	"card": "res://scripts/effects/types/card_manipulation_effect.gd",
 	"karma": "res://scripts/effects/types/karma_effect.gd",
+	"status": "res://scripts/effects/types/status_effect.gd",
 }
 
 func register_effect(effect) -> void:

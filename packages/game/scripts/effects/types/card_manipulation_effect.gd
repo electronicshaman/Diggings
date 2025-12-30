@@ -13,22 +13,28 @@ func apply_effect(context):
 		result.success = false
 		result.prevented_by = "no_context"
 		return result
-	
+
 	# Resolve conditional values
 	var final_amount = resolve_conditional_value("amount", amount, context)
-	
-	# Delegate to DeckManager if available
-	if action == "draw" and DeckManager and DeckManager.has_method("draw_cards"):
-		DeckManager.draw_cards(final_amount)
-		result.values_applied["drawn"] = final_amount
-		result.success = true
-	elif action == "discard" and DeckManager and DeckManager.has_method("force_discard"):
-		DeckManager.force_discard(final_amount, card_filter)
-		result.values_applied["discarded"] = final_amount
-		result.success = true
-	else:
-		result.success = false
-		result.prevented_by = "unsupported_action"
+
+	# NOTE: Like DamageEffect, we do NOT directly perform actions during effect
+	# resolution. We accumulate intended outcomes in EffectResult and let
+	# DuelManager.apply_card_results() perform the actual operations.
+	match action:
+		"draw":
+			result.values_applied["drawn"] = final_amount
+			result.success = true
+		"discard":
+			result.values_applied["discard_random"] = final_amount
+			if card_filter != "":
+				result.values_applied["discard_filter"] = card_filter
+			result.success = true
+		"shuffle":
+			result.values_applied["shuffle_deck"] = true
+			result.success = true
+		_:
+			result.success = false
+			result.prevented_by = "unsupported_action"
 	return result
 
 func get_preview_text(context: Resource) -> String:

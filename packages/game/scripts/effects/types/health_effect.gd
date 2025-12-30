@@ -16,18 +16,16 @@ func apply_effect(context):
 		result.success = false
 		result.prevented_by = "no_target"
 		return result
-	var heal_amount = _calculate_amount(target)
+	var heal_amount = _calculate_amount(target, context)
 	if heal_amount <= 0:
 		result.success = true
-		result.values_applied["healing"] = 0
+		result.values_applied["heal"] = 0
 		return result
-	# Apply healing if target supports it
-	if target and target.has_method("heal"):
-		target.heal(heal_amount)
-	result.values_applied["healing"] = heal_amount
+	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
+	# resolution. We accumulate intended outcomes in EffectResult and let
+	# DuelManager.apply_card_results() perform the actual mutations.
+	result.values_applied["heal"] = heal_amount
 	result.success = true
-	if context and context.game_manager and context.game_manager.has_signal("healing_applied"):
-		context.game_manager.emit_signal("healing_applied", heal_amount)
 	return result
 
 func _get_target(context):
@@ -35,7 +33,7 @@ func _get_target(context):
 		return context.primary_target
 	return context.player_data if context else null
 
-func _calculate_amount(target) -> int:
+func _calculate_amount(target, context) -> int:
 	var max_hp = null
 	if target:
 		max_hp = target.get("max_hp")
@@ -43,7 +41,9 @@ func _calculate_amount(target) -> int:
 		return int(max_hp)
 	if percentage_based and max_hp != null:
 		return int(round(float(max_hp) * clamp(percentage, 0.0, 1.0)))
-	return max(0, amount)
+	# Use conditional value resolution for base amount
+	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
+	return max(0, final_amount)
 
 func get_preview_text(context: Resource) -> String:
 	if full_heal:
