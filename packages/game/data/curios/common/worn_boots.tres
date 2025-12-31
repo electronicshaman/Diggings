@@ -6,20 +6,20 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "Increase max health by 5"
+description = "Increase max health by 8"
 trigger_event = "passive"
 only_first_per_combat = false
 only_first_per_turn = false
 chance_to_trigger = 1.0
 stat_name = "max_health"
-modifier_value = 5
+modifier_value = 8
 modifier_type = "flat"
 condition = ""
 
 [resource]
 script = ExtResource("1")
 curio_name = "Worn Boots"
-description = "+5 max health"
+description = "+8 max health"
 icon = ExtResource("3")
 flavor_text = "These boots have walked a thousand miles and have a thousand more to go."
 mechanical_category = "Passive"

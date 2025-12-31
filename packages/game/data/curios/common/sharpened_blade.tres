@@ -5,20 +5,20 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "+2 damage to all Attack cards"
+description = "+3 damage to all Attack cards"
 trigger_event = "card_played"
 only_first_per_combat = false
 only_first_per_turn = false
 chance_to_trigger = 1.0
 target_card_type = "attack"
 modification_type = "damage"
-modification_value = 2
+modification_value = 3
 only_specific_card = ""
 
 [resource]
 script = ExtResource("1")
 curio_name = "Sharpened Blade"
-description = "+2 damage to all Attack cards"
+description = "+3 damage to all Attack cards"
 icon = null
 flavor_text = "A well-maintained knife, essential for survival in the bush."
 mechanical_category = "Passive"

@@ -5,11 +5,11 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "30% chance to gain 5-10 gold when defeating an enemy"
+description = "50% chance to gain 5-10 gold when defeating an enemy"
 trigger_event = "enemy_defeated"
 only_first_per_combat = false
 only_first_per_turn = false
-chance_to_trigger = 0.3
+chance_to_trigger = 0.5
 resource_type = "gold"
 amount = 10
 random_range = true
@@ -18,7 +18,7 @@ condition = ""
 [resource]
 script = ExtResource("1")
 curio_name = "Lucky Pickaxe"
-description = "30% chance to gain 5-10 gold when defeating an enemy"
+description = "50% chance to gain 5-10 gold when defeating an enemy"
 icon = null
 flavor_text = "Strikes gold more often than it should."
 mechanical_category = "Triggered"

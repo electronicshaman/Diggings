@@ -16,17 +16,29 @@ amount = 5
 random_range = false
 condition = ""
 
+[sub_resource type="Resource" id="SubResource_2"]
+script = ExtResource("2")
+description = "Gain 2 defense each turn"
+trigger_event = "turn_start"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+resource_type = "defense"
+amount = 2
+random_range = false
+condition = "if_player_turn"
+
 [resource]
 script = ExtResource("1")
 curio_name = "Ned Kelly's Helm"
-description = "+5 defense at the start of each combat"
+description = "+5 defense at the start of combat, +2 defense each turn"
 icon = ExtResource("3")
 flavor_text = "The infamous outlaw's armor. Heavy, but nothing gets through it."
 mechanical_category = "Triggered"
 rarity = "Legendary"
 stackable = false
 max_stacks = 1
-effects = [SubResource("SubResource_1")]
+effects = [SubResource("SubResource_1"), SubResource("SubResource_2")]
 gold_cost = 450
 corruption_cost = 0
 unlock_requirement = ""

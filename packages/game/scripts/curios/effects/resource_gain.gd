@@ -61,6 +61,8 @@ func _check_condition(game_state: Node, context: Dictionary) -> bool:
 			return player and player.get_sanity_percentage() < 0.25
 		"if_first_turn":
 			return context.get("turn_number", 0) == 1
+		"if_player_turn":
+			return context.get("is_player_turn", true)
 		"if_power_card":
 			var card_data = context.get("card_data", null)
 			return card_data and card_data.mechanical_category.to_lower() == "power"

@@ -203,7 +203,7 @@ func _on_combat_started(_enemy_data: Resource) -> void:
 func _on_combat_ended(victory: bool) -> void:
 	trigger_curio_effects("combat_end", {"victory": victory})
 
-func _on_turn_started(turn_number: int) -> void:
+func _on_turn_started(turn_number: int, is_player_turn: bool) -> void:
 	# Reset turn tracking for all effects
 	for curio in active_curios:
 		var effects = curio.effects if curio.effects != null else []
@@ -212,7 +212,7 @@ func _on_turn_started(turn_number: int) -> void:
 				effect.reset_turn_tracking()
 	
 	# Trigger turn start effects
-	trigger_curio_effects("turn_start", {"turn_number": turn_number})
+	trigger_curio_effects("turn_start", {"turn_number": turn_number, "is_player_turn": is_player_turn})
 
 func _on_turn_ended(turn_number: int) -> void:
 	trigger_curio_effects("turn_end", {"turn_number": turn_number})

@@ -5,11 +5,11 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "25% chance to gain 1 defense when taking damage"
+description = "50% chance to gain 1 defense when taking damage"
 trigger_event = "damage_taken"
 only_first_per_combat = false
 only_first_per_turn = false
-chance_to_trigger = 0.25
+chance_to_trigger = 0.5
 resource_type = "defense"
 amount = 1
 random_range = false
@@ -18,7 +18,7 @@ condition = ""
 [resource]
 script = ExtResource("1")
 curio_name = "Rabbit's Foot"
-description = "25% chance to gain 1 defense when taking damage"
+description = "50% chance to gain 1 defense when taking damage"
 icon = null
 flavor_text = "A traditional charm against the bad luck of the goldfields."
 mechanical_category = "Triggered"

@@ -6,20 +6,20 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "Gain 1 defense"
+description = "Gain 2 defense"
 trigger_event = "turn_start"
 only_first_per_combat = false
 only_first_per_turn = false
 chance_to_trigger = 1.0
 resource_type = "defense"
-amount = 1
+amount = 2
 random_range = false
-condition = ""
+condition = "if_player_turn"
 
 [resource]
 script = ExtResource("1")
 curio_name = "Thick Leather"
-description = "+1 defense at the start of each turn"
+description = "+2 defense at the start of each turn"
 icon = ExtResource("3")
 flavor_text = "Well-worn hide from the outback, toughened by sun and sand."
 mechanical_category = "Passive"

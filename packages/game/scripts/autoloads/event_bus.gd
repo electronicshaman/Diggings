@@ -13,7 +13,7 @@ signal scene_loaded(scene: Node)
 
 signal duel_started(enemy_data: Resource)
 signal duel_ended(victory: bool)
-signal turn_started(turn_number: int)
+signal turn_started(turn_number: int, is_player_turn: bool)
 signal turn_ended(turn_number: int)
 signal phase_changed(phase: String)
 

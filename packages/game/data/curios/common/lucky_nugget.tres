@@ -6,20 +6,20 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "Gain 3 gold"
+description = "Gain 5 gold"
 trigger_event = "combat_start"
 only_first_per_combat = false
 only_first_per_turn = false
 chance_to_trigger = 1.0
 resource_type = "gold"
-amount = 3
+amount = 5
 random_range = false
 condition = ""
 
 [resource]
 script = ExtResource("1")
 curio_name = "Lucky Nugget"
-description = "+3 gold at the start of each combat"
+description = "+5 gold at the start of each combat"
 icon = ExtResource("3")
 flavor_text = "A small gold nugget that seems to attract wealth wherever you go."
 mechanical_category = "Resource"

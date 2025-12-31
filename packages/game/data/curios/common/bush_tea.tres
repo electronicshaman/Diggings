@@ -6,20 +6,20 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "Heal 2 HP if below 50% health"
+description = "Heal 5 HP if below 50% health"
 trigger_event = "combat_end"
 only_first_per_combat = false
 only_first_per_turn = false
 chance_to_trigger = 1.0
 resource_type = "health"
-amount = 2
+amount = 5
 random_range = false
 condition = "if_low_health"
 
 [resource]
 script = ExtResource("1")
 curio_name = "Bush Tea"
-description = "Heal 2 HP at the end of combat if below 50% health"
+description = "Heal 5 HP at the end of combat if below 50% health"
 icon = ExtResource("3")
 flavor_text = "A restorative brew from native herbs."
 mechanical_category = "Triggered"

@@ -6,20 +6,20 @@
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-description = "Gain 10 gold on victory"
+description = "Gain 15 gold on victory"
 trigger_event = "combat_end"
 only_first_per_combat = true
 only_first_per_turn = false
 chance_to_trigger = 1.0
 resource_type = "gold"
-amount = 10
+amount = 15
 random_range = false
 condition = ""
 
 [resource]
 script = ExtResource("1")
 curio_name = "Fool's Gold Crown"
-description = "+10 gold when you win combat"
+description = "+15 gold when you win combat"
 icon = ExtResource("3")
 flavor_text = "It may not be real gold, but it brings real fortune to its wearer."
 mechanical_category = "Triggered"
