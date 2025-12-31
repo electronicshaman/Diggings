@@ -28,6 +28,7 @@ signal hand_changed(hand: Array)
 signal deck_shuffled()
 
 signal damage_dealt(target: Node, amount: int, source: Node)
+signal damage_taken(target: Object, amount: int)
 signal damage_blocked(target: Node, amount: int)
 signal healing_received(target: Node, amount: int)
 signal status_applied(target: Node, status: String, stacks: int)

@@ -117,10 +117,9 @@ func _add_corruption(game_state: Node, value: int) -> void:
 
 func _draw_cards(game_state: Node, value: int) -> void:
 	# This would need to interact with the duel manager
-	if game_state.has_node("/root/DuelManager"):
-		var dm = game_state.get_node("/root/DuelManager")
-		if dm.has_method("draw_cards"):
-			dm.draw_cards(value)
+	var dm = _find_duel_manager(game_state)
+	if dm and dm.duel_state:
+		dm.duel_state.draw_cards(value)
 
 func _get_player_data(game_state: Node):
 	# If the caller provides a direct accessor (e.g., DuelManager), use it

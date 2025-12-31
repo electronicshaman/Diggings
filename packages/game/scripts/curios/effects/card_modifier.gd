@@ -60,18 +60,35 @@ func _modify_cost(card_data: CardData) -> void:
 	card_data.energy_cost = max(0, card_data.energy_cost - modification_value)
 
 func _trigger_draw(game_state: Node) -> void:
-	if game_state.has_node("/root/DuelManager"):
-		var dm = game_state.get_node("/root/DuelManager")
-		if dm.has_method("draw_cards"):
-			dm.draw_cards(modification_value)
+	var dm = _find_duel_manager(game_state)
+	if dm and dm.duel_state:
+		dm.duel_state.draw_cards(modification_value)
 
 func _return_to_hand(game_state: Node, card: Node) -> void:
 	if card and card.has_method("return_to_hand"):
 		card.return_to_hand()
-	elif game_state.has_node("/root/DuelManager"):
-		var dm = game_state.get_node("/root/DuelManager")
-		if dm.has_method("return_card_to_hand"):
+	else:
+		var dm = _find_duel_manager(game_state)
+		if dm and dm.has_method("return_card_to_hand"):
 			dm.return_card_to_hand(card)
+
+func _find_duel_manager(game_state: Node):
+	if not game_state or not game_state.get_tree():
+		return null
+	var root = game_state.get_tree().get_root()
+	if not root:
+		return null
+	# Breadth-first search for a node of type DuelManager
+	var queue: Array = [root]
+	while not queue.is_empty():
+		var node = queue.pop_front()
+		# Direct type check using class_name
+		if node is DuelManager:
+			return node
+		for child in node.get_children():
+			if child is Node:
+				queue.append(child)
+	return null
 
 func _generate_description() -> String:
 	var desc = ""

@@ -120,7 +120,15 @@ func is_insane() -> bool:
 
 func take_damage(amount: int) -> int:
 	damage_taken_this_turn += amount
-	return stats.take_damage(amount)
+	var actual_damage = stats.take_damage(amount)
+	
+	# Emit damage taken signal via EventBus
+	# We use get_node_or_null to be safe in test environments where autoloads might not exist
+	var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
+	if event_bus:
+		event_bus.damage_taken.emit(self, actual_damage)
+	
+	return actual_damage
 
 func heal(amount: int):
 	stats.heal(amount)

@@ -43,7 +43,7 @@ func setup_event_connections() -> void:
 	
 	# Damage events
 	event_bus.connect_safe("damage_dealt", _on_damage_dealt)
-	# Note: damage_taken signal doesn't exist in EventBus yet
+	event_bus.connect_safe("damage_taken", _on_damage_taken)
 	
 	# Enemy events
 	event_bus.connect_safe("enemy_defeated", _on_enemy_defeated)
@@ -231,9 +231,11 @@ func _on_damage_dealt(target: Node, amount: int, source: Node) -> void:
 		"source": source
 	})
 
-# Note: damage_taken not implemented yet
-# func _on_damage_taken(target: Node, amount: int) -> void:
-#	trigger_curio_effects("damage_taken", {"amount": amount})
+func _on_damage_taken(target: Object, amount: int) -> void:
+	trigger_curio_effects("damage_taken", {
+		"target": target,
+		"amount": amount
+	})
 
 func _on_enemy_defeated(enemy: Node) -> void:
 	trigger_curio_effects("enemy_defeated", {"enemy": enemy})

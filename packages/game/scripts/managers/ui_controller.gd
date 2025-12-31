@@ -264,10 +264,9 @@ func refresh_hand_display() -> void:
 	
 	var hand_data = duel_state_manager.get_hand_cards()
 	
-	# Check if we should highlight quick draw cards (first turn, before any cards played)
+	# Check if we should highlight quick draw cards (before any cards played this turn)
 	var duel_state_ref = duel_state_manager.current_duel_state
 	var should_highlight_quick_draw = (duel_state_ref
-		and duel_state_ref.player_turn_count == 1
 		and duel_state_ref.player_data
 		and duel_state_ref.player_data.cards_played_this_turn == 0)
 
