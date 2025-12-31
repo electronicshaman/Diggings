@@ -60,6 +60,11 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 text = "Settings"
 
+[node name="TestDuelButton" type="Button" parent="MenuContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "Test Duel"
+
 [node name="QuitButton" type="Button" parent="MenuContainer"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
