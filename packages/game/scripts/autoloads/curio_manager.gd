@@ -373,6 +373,12 @@ func get_weighted_curio_selection(character_class: String, count: int = 3) -> Ar
 	GLog.debug("Selected %d curios with class weighting" % selected.size())
 	return selected
 
+## Clear all active curios and their stacks
+func clear_curios() -> void:
+	active_curios.clear()
+	curio_stacks.clear()
+	GLog.debug("Cleared all active curios")
+
 ## Reset curio tracking at run start
 func reset_run_curios() -> void:
 	curios_offered_this_run.clear()
