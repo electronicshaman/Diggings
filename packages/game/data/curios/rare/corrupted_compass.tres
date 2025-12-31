@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "Draw 2 cards when playing a Power card"
+trigger_event = "card_played"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+resource_type = "cards"
+amount = 2
+random_range = false
+condition = "if_power_card"
+
+[sub_resource type="Resource" id="SubResource_2"]
+script = ExtResource("2")
+description = "Gain 1 corruption when playing a Power card"
+trigger_event = "card_played"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+resource_type = "corruption"
+amount = 1
+random_range = false
+condition = "if_power_card"
+
+[resource]
+script = ExtResource("1")
+curio_name = "Corrupted Compass"
+description = "Draw 2 cards and gain 1 corruption when you play a Power card"
+icon = null
+flavor_text = "Its needle points to power, but the path it shows is treacherous."
+mechanical_category = "Triggered"
+rarity = "Rare"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1"), SubResource("SubResource_2")]
+gold_cost = 200
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.3
+prospector_synergy = 1.4
+tracker_synergy = 0.7
+publican_synergy = 1.2
+glow_color = Color(0.5, 0.0, 0.5, 1.0)

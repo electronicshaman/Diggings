@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "Gain 2 energy when below 25% sanity"
+trigger_event = "turn_start"
+only_first_per_combat = false
+only_first_per_turn = true
+chance_to_trigger = 1.0
+resource_type = "energy"
+amount = 2
+random_range = false
+condition = "if_low_sanity"
+
+[resource]
+script = ExtResource("1")
+curio_name = "Miner's Madness"
+description = "Gain 2 energy when below 25% sanity"
+icon = null
+flavor_text = "The gold fever that consumed so many, distilled into physical form."
+mechanical_category = "Triggered"
+rarity = "Corrupted"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1")]
+gold_cost = 150
+corruption_cost = 2
+unlock_requirement = ""
+bushranger_synergy = 1.3
+prospector_synergy = 1.6
+tracker_synergy = 1.0
+publican_synergy = 1.4
+glow_color = Color(0.5, 0.2, 0.0, 1.0)

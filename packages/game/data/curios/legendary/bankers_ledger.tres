@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/interest_gain.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "Gain 5% interest on gold at the end of each combat"
+trigger_event = "combat_end"
+only_first_per_combat = true
+only_first_per_turn = false
+chance_to_trigger = 1.0
+interest_rate = 0.05
+
+[resource]
+script = ExtResource("1")
+curio_name = "Banker's Ledger"
+description = "Gain 5% interest on gold at the end of each combat"
+icon = null
+flavor_text = "Every transaction is recorded, every debt collected."
+mechanical_category = "Resource"
+rarity = "Legendary"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1")]
+gold_cost = 450
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 0.8
+prospector_synergy = 1.5
+tracker_synergy = 0.9
+publican_synergy = 1.9
+glow_color = Color(1.0, 0.9, 0.0, 1.0)

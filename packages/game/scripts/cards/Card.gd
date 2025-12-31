@@ -9,6 +9,8 @@ var is_selected: bool = false
 var is_hovering: bool = false
 var original_scale: Vector2
 var original_z_index: int = 0  # Store original z-index for hand positioning
+var is_quick_draw_highlighted: bool = false
+var original_border_color: Color = Color.WHITE
 
 # Signals
 signal card_played(card)
@@ -72,6 +74,7 @@ func setup_card_visuals():
 	var type_color = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_color(card_data.card_type)
 	if has_node("CardBorder"):
 		$CardBorder.color = type_color
+		original_border_color = type_color
 	if has_node("CardBackground"):
 		$CardBackground.color = Color.WHITE
 	
@@ -200,6 +203,27 @@ func update_visual_state():
 		# Normal appearance
 		$CardBackground.color = base_color
 		position.y += 10 if position.y < 500 else 0  # Reset position if lifted
+
+func set_quick_draw_highlight(enabled: bool) -> void:
+	"""Highlight or unhighlight this card for quick draw/first turn bonus"""
+	if not has_node("CardBorder"):
+		return
+
+	var border = $CardBorder
+
+	if enabled:
+		# Store original color if not already highlighted
+		if not is_quick_draw_highlighted:
+			original_border_color = border.color
+		# Apply bright gold highlight
+		border.color = Color(1.0, 0.85, 0.0)
+		is_quick_draw_highlighted = true
+	else:
+		# Restore original type-based border color
+		if card_data:
+			var type_color = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_color(card_data.card_type)
+			border.color = type_color
+		is_quick_draw_highlighted = false
 
 func show_as_card_back():
 	"""Display this card as a card back (hide information)"""

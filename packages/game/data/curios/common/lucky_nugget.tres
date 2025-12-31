@@ -1,14 +1,20 @@
-[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3 uid="uid://bb6i56e66t7xj"]
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
 
-[ext_resource type="Script" uid="uid://7qh5hm4q71y5" path="res://scripts/data/curio_data.gd" id="1"]
-[ext_resource type="Script" uid="uid://br5pycfyswbqs" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
-[ext_resource type="Texture2D" uid="uid://dbsol0x6601oq" path="res://assets/textures/curios/Icon1.png" id="3"]
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon1.png" id="3"]
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-amount = 3
 description = "Gain 3 gold"
 trigger_event = "combat_start"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+resource_type = "gold"
+amount = 3
+random_range = false
+condition = ""
 
 [resource]
 script = ExtResource("1")
@@ -17,9 +23,16 @@ description = "+3 gold at the start of each combat"
 icon = ExtResource("3")
 flavor_text = "A small gold nugget that seems to attract wealth wherever you go."
 mechanical_category = "Resource"
+rarity = "Common"
 stackable = true
 max_stacks = 3
-effects = Array[Resource]([SubResource("SubResource_1")])
+effects = [SubResource("SubResource_1")]
+gold_cost = 100
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.0
 prospector_synergy = 1.3
+tracker_synergy = 1.0
 publican_synergy = 1.2
-glow_color = Color(1, 0.843, 0, 1)
+glow_color = Color(1.0, 0.843, 0.0, 1.0)
+trigger_particle = null

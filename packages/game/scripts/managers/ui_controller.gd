@@ -38,6 +38,9 @@ var battlefield_area: Node2D
 var enemy_hand_cards: Array[Node] = []
 var battlefield_cards: Array[Node] = []
 
+# Quick draw highlighting system
+var quick_draw_highlighting_active: bool = false
+
 var curios_panel: Control
 var curios_list: HBoxContainer
 
@@ -89,7 +92,13 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 		game_controller.game_state_updated.connect(update_all_ui)
 		if "current_duel_state" in game_controller:
 			duel_state = game_controller.current_duel_state
-	
+
+		# Connect to DuelManager's turn_ended signal for clearing quick draw highlights
+		if game_controller.has_node("DuelManager"):
+			var duel_manager_node = game_controller.get_node("DuelManager")
+			if duel_manager_node.has_signal("turn_ended"):
+				duel_manager_node.turn_ended.connect(_on_turn_ended)
+
 	# Connect to CurioManager signals
 	if CurioManager:
 		CurioManager.curio_acquired.connect(_on_curio_acquired)
@@ -255,19 +264,26 @@ func refresh_hand_display() -> void:
 	
 	var hand_data = duel_state_manager.get_hand_cards()
 	
+	# Check if we should highlight quick draw cards (first turn, before any cards played)
+	var duel_state_ref = duel_state_manager.current_duel_state
+	var should_highlight_quick_draw = (duel_state_ref
+		and duel_state_ref.player_turn_count == 1
+		and duel_state_ref.player_data
+		and duel_state_ref.player_data.cards_played_this_turn == 0)
+
 	for i in range(hand_data.size()):
 		var ci = hand_data[i]
 		var card_node = card_scene.instantiate()
 		hand_area.add_child(card_node)
 		hand_cards.append(card_node)
-		
+
 		var card_spacing = 160
 		var total_width = (hand_data.size() - 1) * card_spacing
 		var start_x = -total_width / 2
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
 		card_node.scale = Vector2(0.625, 0.625)  # Scale down from 300x420 to 187x262 (25% larger)
-		
+
 		if card_node.has_method("set_card"):
 			card_node.set_card(ci)
 		elif "card_instance" in card_node:
@@ -278,7 +294,14 @@ func refresh_hand_display() -> void:
 		if card_node.has_method("setup_card_visuals"):
 			card_node.setup_card_visuals()
 		card_node.card_played.connect(_on_hand_card_played)
-	
+
+		# Apply quick draw highlighting if applicable
+		if should_highlight_quick_draw and ci.card_data:
+			if ci.card_data.has_first_card_played_condition():
+				if card_node.has_method("set_quick_draw_highlight"):
+					card_node.set_quick_draw_highlight(true)
+					quick_draw_highlighting_active = true
+
 	hand_refresh_requested.emit()
 
 func _queue_visual_refresh() -> void:
@@ -299,16 +322,31 @@ func clear_hand_display() -> void:
 			card_node.queue_free()
 	hand_cards.clear()
 
+func clear_quick_draw_highlights() -> void:
+	"""Clear quick draw highlighting from all cards in hand"""
+	if not quick_draw_highlighting_active:
+		return
+
+	if not hand_area:
+		quick_draw_highlighting_active = false
+		return
+
+	for child in hand_area.get_children():
+		if child.has_method("set_quick_draw_highlight"):
+			child.set_quick_draw_highlight(false)
+
+	quick_draw_highlighting_active = false
+
 func _on_hand_card_played(card_node: Node) -> void:
 	if not game_controller:
 		return
-	
+
 	# Get DuelStateManager from the scene controller
 	var duel_state_manager = game_controller.get_duel_state_manager()
 	if not duel_state_manager:
 		GLog.debug("duel_state_manager not available - cannot play card")
 		return
-	
+
 	var ci = null
 	if card_node.has_method("get_card_instance_or_null"):
 		ci = card_node.get_card_instance_or_null()
@@ -320,6 +358,11 @@ func _on_hand_card_played(card_node: Node) -> void:
 			ci = CardInstance.new(cd)
 	if ci:
 		duel_state_manager.play_card(ci)
+
+func _on_turn_ended(is_player_turn: bool) -> void:
+	"""Handle turn end signal to clear quick draw highlights"""
+	if is_player_turn:
+		clear_quick_draw_highlights()
 
 func refresh_enemy_hand_display() -> void:
 	clear_enemy_hand_display()
