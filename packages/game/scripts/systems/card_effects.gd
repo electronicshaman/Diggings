@@ -373,23 +373,22 @@ func _create_effect_context(duel_manager: DuelManager, card_instance: CardInstan
 		"duel_state": duel_manager.duel_state
 	}
 
-	# Add curio modifications to context for effect application
-	if CurioManager and context.source_object:
-		context.curio_modifications = CurioManager.calculate_card_modifications(context.source_object)
-
 	# Set targeting: need to account for whether this card is owned by the player or enemy
-	if card_instance and card_instance.card_data:
-		var card_type = card_instance.card_data.get_mechanical_category()
-		var is_player_owned = false
-		# Heuristic: reuse duel_manager._is_player_card if available
-		if duel_manager and duel_manager.has_method("_is_player_card"):
-			is_player_owned = duel_manager._is_player_card(card_instance.card_data)
+	var is_player_owned = false
+	if card_instance:
+		is_player_owned = card_instance.owner == CardInstance.Owner.PLAYER
+		var card_type = card_instance.card_data.get_mechanical_category() if card_instance.card_data else ""
 		# If attack: player-owned targets enemy, enemy-owned targets player
 		if card_type == "Attack":
 			context.primary_target = context.enemy_data if is_player_owned else context.player_data
 		else:
 			# Non-attack cards typically target self side
 			context.primary_target = context.player_data if is_player_owned else context.enemy_data
+
+	# Add curio modifications to context for effect application
+	# Only apply curio modifications to player cards
+	if CurioManager and context.source_object:
+		context.curio_modifications = CurioManager.calculate_card_modifications(context.source_object, is_player_owned)
 	
 	return context
 

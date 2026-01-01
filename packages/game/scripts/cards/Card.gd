@@ -39,6 +39,12 @@ func set_card(card) -> void:
 func get_card_instance_or_null():
 	return card_instance if card_instance else null
 
+# Determine if this is a player card (for curio effect application)
+func _is_player_card() -> bool:
+	if card_instance:
+		return card_instance.owner == CardInstance.Owner.PLAYER
+	return true  # Default for preview/shop cards
+
 func setup_card_visuals():
 	if not card_data:
 		return
@@ -53,7 +59,7 @@ func setup_card_visuals():
 		var cost_modified = false
 
 		if CurioManager:
-			var mods = CurioManager.calculate_card_modifications(card_data)
+			var mods = CurioManager.calculate_card_modifications(card_data, _is_player_card())
 			var cost_reduction = mods.get("cost", 0)
 			if cost_reduction != 0:
 				display_cost = max(0, base_cost + cost_reduction)
@@ -260,3 +266,32 @@ func show_as_card_back():
 	if has_node("TypeSymbol"):
 		$TypeSymbol.text = "?"
 		$TypeSymbol.visible = true
+
+func update_energy_status(current_energy: int) -> void:
+	if not has_node("CardInfo/CardInfoContainer/EnergyCost") or not card_data:
+		return
+		
+	var base_cost = card_data.energy_cost
+	var display_cost = base_cost
+	var cost_modified = false
+
+	if CurioManager:
+		var mods = CurioManager.calculate_card_modifications(card_data, _is_player_card())
+		var cost_reduction = mods.get("cost", 0)
+		if cost_reduction != 0:
+			display_cost = max(0, base_cost + cost_reduction)
+			cost_modified = true
+			
+	# Update text just in case
+	$CardInfo/CardInfoContainer/EnergyCost.text = str(display_cost)
+
+	if current_energy < display_cost:
+		$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color.DARK_RED)
+		modulate = Color(0.6, 0.6, 0.6, 1)
+	else:
+		modulate = Color.WHITE
+		if cost_modified:
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color.LIME)
+		else:
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color(0, 0.5, 1, 1))
+

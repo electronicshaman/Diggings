@@ -416,7 +416,7 @@ func initialize_deck_from_data():
 	if enemy_deck_data:
 		if DEBUG_ENABLED:
 			GLog.debug("Loading enemy deck from DeckData resource: %s" % enemy_deck_data.deck_name)
-		var deck_pile = enemy_deck_data.to_card_pile()
+		var deck_pile = enemy_deck_data.to_card_pile(CardInstance.Owner.ENEMY)
 		deck_pile.move_all_to(enemy_deck)
 		if DEBUG_ENABLED:
 			GLog.debug("Loaded %d cards from DeckData" % enemy_deck.size())

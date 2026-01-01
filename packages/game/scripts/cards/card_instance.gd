@@ -11,6 +11,10 @@ const DEBUG_ENABLED = true
 # Reference to the immutable card template
 @export var card_data: CardData
 
+# Card ownership tracking
+enum Owner { PLAYER, ENEMY, NEUTRAL }
+@export var owner: Owner = Owner.PLAYER
+
 # Runtime instance state
 @export var turns_held: int = 0
 @export var instance_id: String = ""  # Unique identifier for this instance
@@ -22,12 +26,13 @@ const DEBUG_ENABLED = true
 var _dynamic_description: String = ""
 var _dynamic_card_handling: String = ""
 
-func _init(data: CardData = null) -> void:
+func _init(data: CardData = null, card_owner: Owner = Owner.PLAYER) -> void:
 	if data:
 		card_data = data
+		owner = card_owner
 		instance_id = _generate_instance_id()
 		current_durability = data.base_durability
-		GLog.debug("Created CardInstance for '%s' with ID: %s, durability: %d" % [card_data.card_name, instance_id, current_durability])
+		GLog.debug("Created CardInstance for '%s' with ID: %s, owner: %s, durability: %d" % [card_data.card_name, instance_id, "PLAYER" if owner == Owner.PLAYER else ("ENEMY" if owner == Owner.ENEMY else "NEUTRAL"), current_durability])
 
 func _generate_instance_id() -> String:
 	return "%s_%d_%d" % [card_data.resource_path.get_file().get_basename(), Time.get_unix_time_from_system(), randi()]
@@ -275,10 +280,12 @@ func _generate_conditional_description(effect: Resource) -> String:
 		return _get_standard_description(effect)
 
 	# Get curio bonuses if available
+	# Note: CardInstance descriptions are typically for player cards (hand, deck, shop, etc.)
+	# Enemy cards rarely show full descriptions, so defaulting to true is safe
 	var curio_damage_bonus = 0
 	var curio_defense_bonus = 0
 	if CurioManager and card_data:
-		var mods = CurioManager.calculate_card_modifications(card_data)
+		var mods = CurioManager.calculate_card_modifications(card_data, true)
 		curio_damage_bonus = mods.get("damage", 0)
 		curio_defense_bonus = mods.get("defense", 0)
 
@@ -334,8 +341,9 @@ func _get_standard_description(effect: Resource) -> String:
 		preview_context.source_type = "card"
 		preview_context.source_object = card_data
 		# Populate curio modifications for preview
+		# Note: CardInstance descriptions are typically for player cards (hand, deck, shop, etc.)
 		if CurioManager:
-			preview_context.curio_modifications = CurioManager.calculate_card_modifications(card_data)
+			preview_context.curio_modifications = CurioManager.calculate_card_modifications(card_data, true)
 
 	# Use the context for all description methods
 	if effect.has_method("get_formatted_description"):

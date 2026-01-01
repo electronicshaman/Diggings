@@ -27,17 +27,17 @@ func _init(name: String = "", theme: String = "balanced") -> void:
 		GLog.debug("DeckData initialized")
 
 # Convert this deck to a CardPile resource
-func to_card_pile() -> CardPile:
+func to_card_pile(owner = null) -> CardPile:
 	if DEBUG_ENABLED:
 		GLog.debug("Converting DeckData '%s' to CardPile" % deck_name)
 	var pile = CardPile.new("deck")
-	
+
 	var loaded_count = 0
 	for path in card_paths:
 		var card_data: CardData = load(path) as CardData
 		if card_data:
 			# Create CardInstance via compatibility helper
-			pile.add_card_data(card_data)
+			pile.add_card_data(card_data, owner)
 			loaded_count += 1
 			if DEBUG_ENABLED:
 				GLog.trace("Loaded card %d/%d: '%s'" % [loaded_count, card_paths.size(), card_data.card_name])

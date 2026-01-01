@@ -190,7 +190,8 @@ func get_stat_modifier(stat_name: String) -> float:
 
 ## Calculate card modifications from all active curios for preview/application
 ## Returns dictionary with modification values: {damage: int, defense: int, cost: int, draw: int}
-func calculate_card_modifications(card_data: CardData) -> Dictionary:
+## @param is_player_card: Only apply modifications if this is a player card (default: true)
+func calculate_card_modifications(card_data: CardData, is_player_card: bool = true) -> Dictionary:
 	var modifications = {
 		"damage": 0,
 		"defense": 0,
@@ -199,6 +200,10 @@ func calculate_card_modifications(card_data: CardData) -> Dictionary:
 	}
 
 	if not card_data:
+		return modifications
+
+	# Player curios should only affect player cards
+	if not is_player_card:
 		return modifications
 
 	# Iterate through all active curios

@@ -425,10 +425,18 @@ func print_contents() -> void:
 # Utility methods for compatibility with existing CardData-based code
 
 # Create and add a CardInstance from CardData
-func add_card_data(card_data: CardData) -> bool:
+func add_card_data(card_data: CardData, owner = null) -> bool:
 	if not card_data:
 		return false
-	var card_instance = CardInstance.new(card_data)
+
+	# Determine owner from pile type if not specified
+	if owner == null:
+		if pile_type.begins_with("enemy"):
+			owner = CardInstance.Owner.ENEMY
+		else:
+			owner = CardInstance.Owner.PLAYER
+
+	var card_instance = CardInstance.new(card_data, owner)
 	return add_card(card_instance)
 
 # Create and add multiple CardInstances from CardData array
