@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
+
+[sub_resource type="Resource" id="DamageEffect_1"]
+script = ExtResource("2")
+amount = 15
+ignores_defense = false
+
+[resource]
+script = ExtResource("1")
+card_name = "Feral Rage"
+energy_cost = 3
+card_type = "Gold"
+flavor_text = "Primal fury unleashed in a devastating assault."
+effects = Array[GameEffect]([SubResource("DamageEffect_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String]([])
+accessibility_tier = "Neutral"
+mechanical_category = "Attack"
+

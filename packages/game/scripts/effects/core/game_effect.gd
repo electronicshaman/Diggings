@@ -50,12 +50,19 @@ func on_removed(_context: Resource) -> void:
 	pass
 
 # Helper method to resolve conditional values for a given property
+# Processes ALL conditional values with the matching property name, accumulating their effects
 func resolve_conditional_value(property_name: String, base_value: int, context: Resource) -> int:
+	var resolved_value = base_value
+	var found_any = false
+	
 	for conditional_value in conditional_values:
 		if conditional_value.property_name == property_name:
-			return conditional_value.resolve_value(context, base_value)
+			found_any = true
+			# Use resolve_value which handles both applies_to_base_value cases correctly
+			# Pass resolved_value (not base_value) so modifications accumulate if multiple conditional values exist
+			resolved_value = conditional_value.resolve_value(context, resolved_value)
 	
-	return base_value
+	return resolved_value if found_any else base_value
 
 # Get description including conditions
 func get_full_description(context: Resource = null) -> String:

@@ -58,7 +58,7 @@ func get_preview_text(context: Resource) -> String:
 			if damage_modifier != 0:
 				effects.append("deals %+d damage" % (-damage_modifier))
 			if defense_modifier != 0:
-				effects.append("gains %+d block" % (-defense_modifier))
+				effects.append("gains %+d defense" % (-defense_modifier))
 			if effects.is_empty():
 				return "Apply %s" % status_type
 			var effect_text = ", ".join(effects)

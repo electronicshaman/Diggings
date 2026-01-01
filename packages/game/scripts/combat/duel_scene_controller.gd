@@ -173,6 +173,25 @@ func _initialize_duel() -> void:
 			if duel_config.get_modifier("test_duel", false):
 				GameManager.game_data["is_test_duel"] = true
 				GLog.info("Test duel mode activated", "duel_scene_controller")
+				
+				# Apply health override if present
+				var health_override = duel_config.get_modifier("health_override", -1)
+				if health_override > 0:
+					if is_instance_valid(duel_manager) and "duel_state" in duel_manager and is_instance_valid(duel_manager.duel_state):
+						var ds = duel_manager.duel_state
+						if ds.player_data and ds.player_data.stats:
+							ds.player_data.stats.current_health = health_override
+							GLog.info("Applied health override: %d" % health_override, "duel_scene_controller")
+
+				# Apply energy override if present
+				var energy_override = duel_config.get_modifier("energy_override", -1)
+				if energy_override > 0:
+					if is_instance_valid(duel_manager) and "duel_state" in duel_manager and is_instance_valid(duel_manager.duel_state):
+						var ds = duel_manager.duel_state
+						if ds.player_data and ds.player_data.stats:
+							ds.player_data.stats.max_energy = energy_override
+							ds.player_data.stats.current_energy = energy_override
+							GLog.info("Applied energy override: %d" % energy_override, "duel_scene_controller")
 			else:
 				GameManager.game_data["is_test_duel"] = false
 
@@ -202,6 +221,12 @@ func _on_duel_started_signal() -> void:
 func _on_duel_ended_from_state_manager(victory: bool) -> void:
 	GLog.debug("Duel ended (from state manager) - Victory: %s" % victory)
 	game_state_updated.emit()
+	
+	# Check for test sequence - let DuelManager handle the transition and persistence
+	if GameManager.test_sequence_state and GameManager.test_sequence_state.is_active:
+		GLog.debug("Test sequence active - deferring end game logic to DuelManager", "duel_scene_controller")
+		return
+
 	await get_tree().create_timer(0.6).timeout
 	if victory:
 		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):

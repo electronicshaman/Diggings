@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Publican Starter Deck"
+description = "Defensive pub owner deck specializing in energy generation, hold-based effects, and patient defensive play. Builds power through social connections and hospitality."
+deck_theme = "defensive"
+difficulty_level = 3
+card_paths = Array[String](["res://data/cards/attack/aged_whiskey.tres", "res://data/cards/attack/cast_iron_pan.tres", "res://data/cards/attack/meat_cleaver.tres", "res://data/cards/skill/bar_fortification.tres", "res://data/cards/skill/cast_iron_defense.tres", "res://data/cards/skill/chair_defense.tres", "res://data/cards/skill/free_drinks.tres", "res://data/cards/skill/happy_hour.tres", "res://data/cards/skill/homebrew.tres", "res://data/cards/skill/last_call.tres", "res://data/cards/skill/nightcap.tres", "res://data/cards/skill/smooth_talk.tres", "res://data/cards/skill/vintage_wine.tres", "res://data/cards/power/bouncers_presence.tres", "res://data/cards/power/house_rules.tres", "res://data/cards/power/pub_brawl.tres"])
+min_deck_size = 16
+max_deck_size = 20
+preferred_strategy = "control"
+priority_card_types = Array[String](["Grog", "Power"])
+

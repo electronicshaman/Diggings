@@ -20,8 +20,10 @@ var character_name_label: Label
 var enemy_name_label: Label
 var enemy_health_label: Label
 var enemy_defense_label: Label
+var enemy_status_container: VBoxContainer
 var deck_label: Label
 var discard_label: Label
+var removed_label: Label
 var turn_label: Label
 var phase_label: Label
 var seed_label: Label
@@ -74,8 +76,10 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	enemy_name_label = ui_references.get("enemy_name")
 	enemy_health_label = ui_references.get("enemy_health")
 	enemy_defense_label = ui_references.get("enemy_defense")
+	enemy_status_container = ui_references.get("enemy_status_container")
 	deck_label = ui_references.get("deck")
 	discard_label = ui_references.get("discard")
+	removed_label = ui_references.get("removed")
 	turn_label = ui_references.get("turn")
 	phase_label = ui_references.get("phase")
 	seed_label = ui_references.get("seed")
@@ -192,6 +196,51 @@ func update_enemy_ui() -> void:
 		enemy_defense_label.text = "Defense: %d" % e.defense
 	else:
 		GLog.debug("enemy_defense_label is null - UI element missing")
+	
+	# Update status effects display
+	_update_enemy_status_display(e)
+
+func _update_enemy_status_display(enemy: EnemyState) -> void:
+	"""Update the enemy status effects display with all active statuses"""
+	if not enemy_status_container:
+		GLog.debug("enemy_status_container is null - UI element missing")
+		return
+	
+	# Clear existing status labels
+	for child in enemy_status_container.get_children():
+		child.queue_free()
+	
+	# Build list of active statuses
+	var active_statuses: Array[Dictionary] = []
+	
+	# Check for stun
+	if enemy.is_stunned():
+		var stun_turns = enemy.stun_turns_remaining
+		var status_text = "⚡ STUNNED"
+		if stun_turns == 1:
+			status_text += " (next turn)"
+		else:
+			status_text += " (%d turns)" % stun_turns
+		active_statuses.append({
+			"text": status_text,
+			"color": Color(1, 0.8, 0, 1)  # Yellow/orange for stun
+		})
+	
+	# TODO: Add other status effects here as they are implemented
+	# Example for future debuffs:
+	# if enemy.has_debuff():
+	#     active_statuses.append({
+	#         "text": "🔻 WEAKENED (2 turns)",
+	#         "color": Color(0.8, 0.2, 0.2, 1)  # Red for debuffs
+	#     })
+	
+	# Create and add labels for each active status
+	for status in active_statuses:
+		var status_label = Label.new()
+		status_label.text = status.text
+		status_label.add_theme_color_override("font_color", status.color)
+		status_label.add_theme_font_size_override("font_size", 18)
+		enemy_status_container.add_child(status_label)
 
 func update_pile_ui() -> void:
 	if not game_controller:
@@ -212,6 +261,11 @@ func update_pile_ui() -> void:
 		discard_label.text = "Discard: %d" % duel_state_manager.get_discard_count()
 	else:
 		GLog.debug("discard_label is null - UI element missing")
+
+	if removed_label:
+		removed_label.text = "Removed: %d" % duel_state_manager.get_removed_count()
+	else:
+		GLog.debug("removed_label is null - UI element missing")
 
 func update_turn_ui() -> void:
 	if not duel_state:

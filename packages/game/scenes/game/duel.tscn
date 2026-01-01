@@ -136,6 +136,10 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Defense: 0"
 
+[node name="EnemyStatusContainer" type="VBoxContainer" parent="UI/Control/EnemyArea/EnemyStats"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
 [node name="EnemyHandArea" type="Node2D" parent="UI/Control"]
 position = Vector2(680, 216)
 
