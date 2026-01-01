@@ -151,6 +151,9 @@ func update_player_ui() -> void:
 		player_energy_label.text = "Energy: %d/%d" % [p.current_energy, p.max_energy]
 	else:
 		GLog.debug("player_energy_label is null - UI element missing")
+	
+	# Update hand cards energy status
+	update_hand_energy_status(p.current_energy)
 		
 	if player_defense_label:
 		player_defense_label.text = "Defense: %d" % p.defense
@@ -250,6 +253,11 @@ func update_seed_ui() -> void:
 	else:
 		seed_label.visible = false
 
+func update_hand_energy_status(current_energy: int) -> void:
+	for card in hand_cards:
+		if card.has_method("update_energy_status"):
+			card.update_energy_status(current_energy)
+
 func refresh_hand_display() -> void:
 	clear_hand_display()
 	
@@ -292,6 +300,11 @@ func refresh_hand_display() -> void:
 			card_node.card_data = ci.card_data
 		if card_node.has_method("setup_card_visuals"):
 			card_node.setup_card_visuals()
+		
+		# Update energy status immediately
+		if duel_state_ref and duel_state_ref.player_data and card_node.has_method("update_energy_status"):
+			card_node.update_energy_status(duel_state_ref.player_data.current_energy)
+
 		card_node.card_played.connect(_on_hand_card_played)
 
 		# Apply quick draw highlighting if applicable
