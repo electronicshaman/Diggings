@@ -19,6 +19,14 @@ func apply_effect(context):
 	# Resolve conditional values
 	var final_amount = resolve_conditional_value("amount", amount, context)
 
+	# Apply curio defense bonus from context (only for player cards)
+	# Player cards typically target player_data for defense
+	var is_player_card = context and context.primary_target == context.player_data
+	if is_player_card:
+		var curio_defense_bonus = _get_curio_bonus(context, "defense")
+		if curio_defense_bonus > 0:
+			final_amount += curio_defense_bonus
+
 	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual mutations.
@@ -39,7 +47,14 @@ func apply_effect(context):
 
 func get_preview_text(context: Resource) -> String:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
-	var text = "Gain %d block" % final_amount
+	var curio_bonus = _get_curio_bonus(context, "defense")
+
+	var text: String
+	if curio_bonus > 0:
+		text = "Gain %s block" % _format_value_with_bonus(final_amount, curio_bonus, "")
+	else:
+		text = "Gain %d block" % final_amount
+
 	if delayed:
 		text = "Next turn: " + text
 	return text

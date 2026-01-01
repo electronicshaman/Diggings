@@ -372,7 +372,11 @@ func _create_effect_context(duel_manager: DuelManager, card_instance: CardInstan
 		"card_instance": card_instance,
 		"duel_state": duel_manager.duel_state
 	}
-	
+
+	# Add curio modifications to context for effect application
+	if CurioManager and context.source_object:
+		context.curio_modifications = CurioManager.calculate_card_modifications(context.source_object)
+
 	# Set targeting: need to account for whether this card is owned by the player or enemy
 	if card_instance and card_instance.card_data:
 		var card_type = card_instance.card_data.get_mechanical_category()

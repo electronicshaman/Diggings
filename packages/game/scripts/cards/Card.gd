@@ -47,7 +47,25 @@ func setup_card_visuals():
 	if has_node("CardInfo/CardName"):
 		$CardInfo/CardName.text = card_data.card_name
 	if has_node("CardInfo/CardInfoContainer/EnergyCost"):
-		$CardInfo/CardInfoContainer/EnergyCost.text = str(card_data.energy_cost)
+		# Check for curio cost modifications
+		var base_cost = card_data.energy_cost
+		var display_cost = base_cost
+		var cost_modified = false
+
+		if CurioManager:
+			var mods = CurioManager.calculate_card_modifications(card_data)
+			var cost_reduction = mods.get("cost", 0)
+			if cost_reduction != 0:
+				display_cost = max(0, base_cost + cost_reduction)
+				cost_modified = true
+
+		# Display cost with green color if modified by curios
+		$CardInfo/CardInfoContainer/EnergyCost.text = str(display_cost)
+		if cost_modified:
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color.LIME)
+		else:
+			# Reset to default blue color for energy cost
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color(0, 0.5, 1, 1))
 	if has_node("CardInfo/CardInfoContainer/Description"):
 		var desc_node = $CardInfo/CardInfoContainer/Description
 		var description_text = format_description()
@@ -56,7 +74,7 @@ func setup_card_visuals():
 		if desc_node is RichTextLabel:
 			desc_node.text = description_text
 			desc_node.visible = true
-			desc_node.modulate = Color.BLACK
+			# Don't modulate - let BBCode colors show through
 			desc_node.fit_content = true
 		elif desc_node is Label:
 			desc_node.text = description_text

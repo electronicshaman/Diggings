@@ -87,7 +87,6 @@ vertical_alignment = 1
 [node name="Description" type="RichTextLabel" parent="CardInfo/CardInfoContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
 text = "Card effect description goes here"
 fit_content = true

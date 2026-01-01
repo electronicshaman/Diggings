@@ -174,19 +174,54 @@ func trigger_curio_effects(event_type: String, context: Dictionary = {}) -> void
 # Calculate cumulative stat modifiers from all curios
 func get_stat_modifier(stat_name: String) -> float:
 	var total_modifier = 0.0
-	
+
 	for curio in active_curios:
 		# Get stack multiplier
 		var curio_name = curio.curio_name if curio.curio_name else ""
 		var stack_mult = curio_stacks.get(curio_name, 1)
-		
+
 		# Each curio effect can contribute to stat modifiers
 		var effects = curio.effects if curio.effects != null else []
 		for effect in effects:
 			if effect and effect.has_method("get_stat_modifier"):
 				total_modifier += effect.get_stat_modifier(stat_name) * stack_mult
-	
+
 	return total_modifier
+
+## Calculate card modifications from all active curios for preview/application
+## Returns dictionary with modification values: {damage: int, defense: int, cost: int, draw: int}
+func calculate_card_modifications(card_data: CardData) -> Dictionary:
+	var modifications = {
+		"damage": 0,
+		"defense": 0,
+		"cost": 0,
+		"draw": 0
+	}
+
+	if not card_data:
+		return modifications
+
+	# Iterate through all active curios
+	for curio in active_curios:
+		var curio_name = curio.curio_name if curio.curio_name else ""
+		var stack_mult = curio_stacks.get(curio_name, 1)
+
+		# Check each effect to see if it's a CardModifier that applies to this card
+		var effects = curio.effects if curio.effects != null else []
+		for effect in effects:
+			# Check if this is a CardModifier effect
+			if effect and effect.has_method("_matches_target"):
+				# Check if the effect targets this card
+				if effect._matches_target(card_data):
+					# Get modification type and value
+					var mod_type = effect.modification_type if "modification_type" in effect else ""
+					var mod_value = effect.modification_value if "modification_value" in effect else 0
+
+					# Accumulate the modification with stack multiplier
+					if modifications.has(mod_type):
+						modifications[mod_type] += mod_value * stack_mult
+
+	return modifications
 
 # Event handlers
 func _on_combat_started(_enemy_data: Resource) -> void:
