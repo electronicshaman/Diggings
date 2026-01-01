@@ -1,5 +1,5 @@
 extends EncounterOutcome
-class_name StatModifier
+class_name StatModifierOutcome
 
 const OUTCOME_NAME := "StatModifier"
 
