@@ -294,4 +294,3 @@ func update_energy_status(current_energy: int) -> void:
 			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color.LIME)
 		else:
 			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color(0, 0.5, 1, 1))
-
