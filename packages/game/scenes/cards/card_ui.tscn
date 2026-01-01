@@ -1,0 +1,81 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyh6pqpkwxtx0"]
+
+[ext_resource type="Script" uid="uid://bta0lvshc2tej" path="res://scripts/cards/card_ui.gd" id="1_card_ui_script"]
+
+[node name="CardUI" type="Control"]
+custom_minimum_size = Vector2(300, 420)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 300.0
+offset_bottom = 420.0
+script = ExtResource("1_card_ui_script")
+
+[node name="CardBackground" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CardBorder" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.831, 0.686, 0.216, 1)
+
+[node name="CardInner" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 20.0
+offset_right = -10.0
+offset_bottom = -20.0
+color = Color(0.95, 0.93, 0.9, 1)
+
+[node name="TypeSymbol" type="Label" parent="."]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 10.0
+offset_right = 290.0
+offset_bottom = 78.0
+horizontal_alignment = 2
+
+[node name="CardInfo" type="Control" parent="."]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CardName" type="Label" parent="CardInfo"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 30.0
+offset_right = 290.0
+offset_bottom = 80.0
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="CardInfoContainer" type="VBoxContainer" parent="CardInfo"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 112.0
+offset_right = 280.0
+offset_bottom = 360.0
+
+[node name="CardHandling" type="Label" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
+
+[node name="Description" type="RichTextLabel" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+
+[node name="SanityCost" type="Label" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
+
+[node name="EnergyCost" type="Label" parent="CardInfo/CardInfoContainer"]
+layout_mode = 2
+
+[node name="ClickButton" type="Button" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+flat = true

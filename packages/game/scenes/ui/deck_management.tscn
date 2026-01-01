@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://dx0uect5c0lud"]
 
-[ext_resource type="Script" path="res://scripts/ui/deck_management.gd" id="1"]
+[ext_resource type="Script" uid="uid://68qdej3yfb0a" path="res://scripts/ui/deck_management.gd" id="1"]
 
 [node name="DeckManagement" type="Control"]
 layout_mode = 3
@@ -20,40 +20,392 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.619608, 0.486275, 0.172549, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MainContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 100
-theme_override_constants/margin_top = 100
-theme_override_constants/margin_right = 100
-theme_override_constants/margin_bottom = 100
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="ContentVBox" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 20
 
-[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="HeaderSection" type="HBoxContainer" parent="MainContainer/ContentVBox"]
 layout_mode = 2
-text = "DECK MANAGEMENT"
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ContentVBox/HeaderSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Deck Management"
+
+[node name="Spacer" type="Control" parent="MainContainer/ContentVBox/HeaderSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ModeIndicator" type="Label" parent="MainContainer/ContentVBox/HeaderSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "In Run"
+
+[node name="CloseButton" type="Button" parent="MainContainer/ContentVBox/HeaderSection"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "×"
+
+[node name="StatsAndFiltersPanel" type="HBoxContainer" parent="MainContainer/ContentVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="StatsPanel" type="PanelContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="StatsVBox" type="VBoxContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="DeckSizeLabel" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Deck: 0 cards"
+
+[node name="TypeDistributionContainer" type="VBoxContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="TypeDistTitle" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Card Types:"
+
+[node name="AttackBar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+show_percentage = false
+
+[node name="AttackLabel" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer/AttackBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Attack: 0 (0%)"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="PlaceholderLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="SkillBar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
-text = "Coming Soon
+show_percentage = false
 
-Deck building and editing features will allow you to:
-- View and organize your deck
-- Add/remove cards
-- Create custom test decks
-- Save deck configurations"
+[node name="SkillLabel" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer/SkillBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Skill: 0 (0%)"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(150, 50)
+[node name="PowerBar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
-size_flags_horizontal = 4
+show_percentage = false
+
+[node name="PowerLabel" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer/PowerBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Power: 0 (0%)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FortuneBar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+show_percentage = false
+
+[node name="FortuneLabel" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/TypeDistributionContainer/FortuneBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Fortune: 0 (0%)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnergyCurveContainer" type="VBoxContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="EnergyCurveTitle" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Energy Cost Distribution:"
+
+[node name="Cost0Bar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+show_percentage = false
+
+[node name="Cost0Label" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer/Cost0Bar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "0 cost: 0 (0%)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Cost1Bar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+show_percentage = false
+
+[node name="Cost1Label" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer/Cost1Bar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "1 cost: 0 (0%)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Cost2Bar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+show_percentage = false
+
+[node name="Cost2Label" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer/Cost2Bar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "2 cost: 0 (0%)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Cost3Bar" type="ProgressBar" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+show_percentage = false
+
+[node name="Cost3Label" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox/EnergyCurveContainer/Cost3Bar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "3+ cost: 0 (0%)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ValidationWarnings" type="VBoxContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/StatsPanel/StatsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="FiltersPanel" type="VBoxContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="FilterTitle" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Filters & Sort"
+
+[node name="FilterButtonsHBox" type="HBoxContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="FilterAllButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/FilterButtonsHBox"]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "All"
+
+[node name="FilterAttackButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/FilterButtonsHBox"]
+layout_mode = 2
+toggle_mode = true
+text = "Attack"
+
+[node name="FilterSkillButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/FilterButtonsHBox"]
+layout_mode = 2
+toggle_mode = true
+text = "Skill"
+
+[node name="FilterPowerButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/FilterButtonsHBox"]
+layout_mode = 2
+toggle_mode = true
+text = "Power"
+
+[node name="FilterFortuneButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/FilterButtonsHBox"]
+layout_mode = 2
+toggle_mode = true
+text = "Fortune"
+
+[node name="SortOptionsHBox" type="HBoxContainer" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SortLabel" type="Label" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/SortOptionsHBox"]
+layout_mode = 2
+text = "Sort by:"
+vertical_alignment = 1
+
+[node name="SortNameButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/SortOptionsHBox"]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "Name"
+
+[node name="SortCostButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/SortOptionsHBox"]
+layout_mode = 2
+toggle_mode = true
+text = "Cost"
+
+[node name="SortTypeButton" type="Button" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel/SortOptionsHBox"]
+layout_mode = 2
+toggle_mode = true
+text = "Type"
+
+[node name="SearchBox" type="LineEdit" parent="MainContainer/ContentVBox/StatsAndFiltersPanel/FiltersPanel"]
+layout_mode = 2
+placeholder_text = "Search cards..."
+
+[node name="CardGridScrollContainer" type="ScrollContainer" parent="MainContainer/ContentVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardGrid" type="GridContainer" parent="MainContainer/ContentVBox/CardGridScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 5
+
+[node name="BottomActionsPanel" type="HBoxContainer" parent="MainContainer/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LeftActions" type="HBoxContainer" parent="MainContainer/ContentVBox/BottomActionsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="AddCardButton" type="Button" parent="MainContainer/ContentVBox/BottomActionsPanel/LeftActions"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Add Card"
+
+[node name="RemoveSelectedButton" type="Button" parent="MainContainer/ContentVBox/BottomActionsPanel/LeftActions"]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "Remove Selected"
+
+[node name="CenterSpacer" type="Control" parent="MainContainer/ContentVBox/BottomActionsPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightActions" type="HBoxContainer" parent="MainContainer/ContentVBox/BottomActionsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ResetButton" type="Button" parent="MainContainer/ContentVBox/BottomActionsPanel/RightActions"]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "Reset to Default"
+
+[node name="BackButton" type="Button" parent="MainContainer/ContentVBox/BottomActionsPanel/RightActions"]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
 text = "Back"
+
+[node name="AddCardModal" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModalOverlay" type="ColorRect" parent="AddCardModal"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="ModalPanel" type="PanelContainer" parent="AddCardModal/ModalOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -350.0
+offset_right = 500.0
+offset_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AddCardContent" type="VBoxContainer" parent="AddCardModal/ModalOverlay/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="AddCardTitle" type="Label" parent="AddCardModal/ModalOverlay/ModalPanel/AddCardContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Add Card to Deck"
+horizontal_alignment = 1
+
+[node name="AddCardSearch" type="LineEdit" parent="AddCardModal/ModalOverlay/ModalPanel/AddCardContent"]
+layout_mode = 2
+placeholder_text = "Search available cards..."
+
+[node name="AvailableCardsScroll" type="ScrollContainer" parent="AddCardModal/ModalOverlay/ModalPanel/AddCardContent"]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AvailableCardsGrid" type="GridContainer" parent="AddCardModal/ModalOverlay/ModalPanel/AddCardContent/AvailableCardsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 5
+
+[node name="AddCardButtons" type="HBoxContainer" parent="AddCardModal/ModalOverlay/ModalPanel/AddCardContent"]
+layout_mode = 2
+alignment = 1
+
+[node name="CancelAddButton" type="Button" parent="AddCardModal/ModalOverlay/ModalPanel/AddCardContent/AddCardButtons"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Cancel"

@@ -5,6 +5,7 @@ class_name MainMenuController
 @onready var use_previous_seed_button = $MenuContainer/UsePreviousSeed
 @onready var continue_button = $MenuContainer/ContinueButton
 @onready var settings_button = $MenuContainer/SettingsButton
+@onready var deck_builder_button = $MenuContainer/DeckBuilderButton
 @onready var test_duel_button = $MenuContainer/TestDuelButton
 @onready var quit_button = $MenuContainer/QuitButton
 
@@ -18,6 +19,7 @@ func setup_button_connections():
 	use_previous_seed_button.pressed.connect(_on_use_previous_seed_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
+	deck_builder_button.pressed.connect(_on_deck_builder_pressed)
 	test_duel_button.pressed.connect(_on_test_duel_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 
@@ -64,6 +66,11 @@ func _on_continue_pressed():
 func _on_settings_pressed():
 	GLog.info("Settings button pressed")
 	SceneManager.load_scene_by_name("settings")
+
+func _on_deck_builder_pressed():
+	GLog.info("Deck Builder button pressed")
+	GameManager.game_data["deck_management_mode"] = "sandbox"
+	SceneManager.load_scene_by_name("deck_management")
 
 func _on_use_previous_seed_pressed():
 	GLog.info("Use Previous Seed button pressed")
