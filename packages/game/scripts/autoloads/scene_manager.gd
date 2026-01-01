@@ -28,7 +28,8 @@ const SCENE_PATHS: Dictionary = {
 	"game_over": "res://scenes/ui/game_over.tscn",
 	"victory": "res://scenes/ui/victory.tscn",
 	"settings": "res://scenes/ui/settings.tscn",
-	"deck_viewer": "res://scenes/ui/deck_viewer.tscn"
+	"deck_viewer": "res://scenes/ui/deck_viewer.tscn",
+	"deck_management": "res://scenes/ui/deck_management.tscn"
 }
 
 var transition_overlay: ColorRect
