@@ -73,10 +73,35 @@ func _get_player_data(game_state: Node):
 	# Try to get player data from various sources
 	if game_state.has_method("get_player_data"):
 		return game_state.get_player_data()
-	elif game_state.has_node("/root/GameManager"):
+	
+	# Try to locate a DuelManager in the active scene tree
+	var dm = _find_duel_manager(game_state)
+	if dm and dm.has_method("get_player_data"):
+		return dm.get_player_data()
+		
+	# Fallback: check if GameManager stores a player reference (legacy)
+	if game_state.has_node("/root/GameManager"):
 		var gm = game_state.get_node("/root/GameManager")
 		if gm.game_data.has("player"):
 			return gm.game_data["player"]
+	return null
+
+func _find_duel_manager(game_state: Node):
+	if not game_state or not game_state.get_tree():
+		return null
+	var root = game_state.get_tree().get_root()
+	if not root:
+		return null
+	# Breadth-first search for a node of type DuelManager
+	var queue: Array = [root]
+	while not queue.is_empty():
+		var node = queue.pop_front()
+		# Direct type check using class_name
+		if node is DuelManager:
+			return node
+		for child in node.get_children():
+			if child is Node:
+				queue.append(child)
 	return null
 
 func get_formatted_description() -> String:

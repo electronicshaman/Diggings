@@ -31,6 +31,15 @@ func apply_effect(context):
 		final_amount = randi_range(final_min, final_max)
 	else:
 		final_amount = resolve_conditional_value("amount", amount, context)
+
+	# Apply curio damage bonus from context (only for player cards)
+	# Player attack cards target enemy_data, enemy attack cards target player_data
+	var is_player_card = context and context.primary_target == context.enemy_data
+	if is_player_card:
+		var curio_damage_bonus = _get_curio_bonus(context, "damage")
+		if curio_damage_bonus > 0:
+			final_amount += curio_damage_bonus
+
 	var final_hits = resolve_conditional_value("hits", hits, context)
 	var final_ignores_defense = _resolve_conditional_bool("ignores_defense", ignores_defense, context)
 	
@@ -63,16 +72,27 @@ func _resolve_conditional_bool(property_name: String, base_value: bool, context:
 
 func get_preview_text(context: Resource) -> String:
 	var base_text: String
+	var curio_bonus = _get_curio_bonus(context, "damage")
+
 	if random_range:
 		var final_min = resolve_conditional_value("min_amount", min_amount, context) if context else min_amount
 		var final_max = resolve_conditional_value("max_amount", max_amount, context) if context else max_amount
 		if final_min == final_max:
-			base_text = "Deal %d damage" % final_min
+			if curio_bonus > 0:
+				base_text = "Deal %s damage" % _format_value_with_bonus(final_min, curio_bonus, "")
+			else:
+				base_text = "Deal %d damage" % final_min
 		else:
-			base_text = "Deal %d-%d damage" % [final_min, final_max]
+			if curio_bonus > 0:
+				base_text = "Deal %d-%d [color=gold](+%d)[/color] damage" % [final_min, final_max, curio_bonus]
+			else:
+				base_text = "Deal %d-%d damage" % [final_min, final_max]
 	else:
 		var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
-		base_text = "Deal %d damage" % final_amount
+		if curio_bonus > 0:
+			base_text = "Deal %s damage" % _format_value_with_bonus(final_amount, curio_bonus, "")
+		else:
+			base_text = "Deal %d damage" % final_amount
 
 	var final_ignores_defense = _resolve_conditional_bool("ignores_defense", ignores_defense, context) if context else ignores_defense
 	if final_ignores_defense:

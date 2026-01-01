@@ -1,16 +1,12 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://cm65g4nhclh54"]
 
-[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
+[ext_resource type="Script" uid="uid://diotvmyurqkbx" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://xanin6lft6g2" path="res://scripts/effects/types/damage_effect.gd" id="2"]
+[ext_resource type="Script" uid="uid://bxvsehxk3ktf8" path="res://scripts/effects/core/conditional_value.gd" id="3"]
+[ext_resource type="Script" uid="uid://clloo7ofe88c2" path="res://scripts/effects/core/effect_condition.gd" id="4"]
 
 [sub_resource type="Resource" id="FirstCardCondition_1"]
 script = ExtResource("4")
-condition_type = 0
-comparison_value = 0
-comparison_operator = "equal"
-invert = false
 
 [sub_resource type="Resource" id="AmbushConditionalValue_1"]
 script = ExtResource("3")
@@ -18,29 +14,17 @@ property_name = "amount"
 condition = SubResource("FirstCardCondition_1")
 value_if_true = 15
 value_if_false = 6
-applies_to_base_value = false
 
 [sub_resource type="Resource" id="AmbushDamage_1"]
 script = ExtResource("2")
 amount = 6
-ignores_defense = false
-multi_hit = false
-hits = 1
-random_target = false
-conditional_values = Array[ConditionalValue]([SubResource("AmbushConditionalValue_1")])
+conditional_values = Array[ExtResource("3")]([SubResource("AmbushConditionalValue_1")])
 
 [resource]
 script = ExtResource("1")
 card_name = "Ambush"
 energy_cost = 2
-card_type = "Gold"
-card_icon = null
 flavor_text = "Strike first, strike hard, no mercy."
-effects = Array[GameEffect]([SubResource("AmbushDamage_1")])
-sanity_cost = 0
-card_handling = "Standard"
-volatile_bonus = false
-luck_modifier = 0.0
+effects = [SubResource("AmbushDamage_1")]
 class_affinity = Array[String](["Bushranger"])
 accessibility_tier = "Class"
-mechanical_category = "Attack"

@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "50% chance to gain 1 defense when taking damage"
+trigger_event = "damage_taken"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 0.5
+resource_type = "defense"
+amount = 1
+random_range = false
+condition = ""
+
+[resource]
+script = ExtResource("1")
+curio_name = "Rabbit's Foot"
+description = "50% chance to gain 1 defense when taking damage"
+icon = null
+flavor_text = "A traditional charm against the bad luck of the goldfields."
+mechanical_category = "Triggered"
+rarity = "Common"
+stackable = true
+max_stacks = 4
+effects = [SubResource("SubResource_1")]
+gold_cost = 50
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.1
+prospector_synergy = 1.0
+tracker_synergy = 1.0
+publican_synergy = 1.2
+glow_color = Color(0.2, 0.8, 0.5, 1.0)

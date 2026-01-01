@@ -382,7 +382,7 @@ func _on_turn_started(is_player_turn: bool) -> void:
 		if is_instance_valid(current_duel_state) and _has_prop(current_duel_state, "current_turn"):
 			current_turn = current_duel_state.current_turn
 		
-		EventBus.turn_started.emit(current_turn)
+		EventBus.turn_started.emit(current_turn, is_player_turn)
 	
 	game_state_updated.emit()
 

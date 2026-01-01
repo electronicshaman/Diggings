@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/card_modifier.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="3"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "+5 damage to all attacks"
+trigger_event = "card_played"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+target_card_type = "attack"
+modification_type = "damage"
+modification_value = 5
+only_specific_card = ""
+
+[sub_resource type="Resource" id="SubResource_2"]
+script = ExtResource("3")
+description = "Lose 1 sanity per attack"
+trigger_event = "card_played"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+resource_type = "sanity"
+amount = -1
+random_range = false
+condition = "if_attack_card"
+
+[resource]
+script = ExtResource("1")
+curio_name = "Cursed Pickaxe"
+description = "+5 damage to all attacks, but lose 1 sanity per attack"
+icon = null
+flavor_text = "Digs too deep and finds things better left buried."
+mechanical_category = "Triggered"
+rarity = "Corrupted"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1"), SubResource("SubResource_2")]
+gold_cost = 175
+corruption_cost = 2
+unlock_requirement = ""
+bushranger_synergy = 1.6
+prospector_synergy = 0.7
+tracker_synergy = 1.4
+publican_synergy = 0.6
+glow_color = Color(0.3, 0.0, 0.5, 1.0)

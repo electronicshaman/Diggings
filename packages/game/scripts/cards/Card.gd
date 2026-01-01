@@ -9,6 +9,8 @@ var is_selected: bool = false
 var is_hovering: bool = false
 var original_scale: Vector2
 var original_z_index: int = 0  # Store original z-index for hand positioning
+var is_quick_draw_highlighted: bool = false
+var original_border_color: Color = Color.WHITE
 
 # Signals
 signal card_played(card)
@@ -37,6 +39,12 @@ func set_card(card) -> void:
 func get_card_instance_or_null():
 	return card_instance if card_instance else null
 
+# Determine if this is a player card (for curio effect application)
+func _is_player_card() -> bool:
+	if card_instance:
+		return card_instance.owner == CardInstance.Owner.PLAYER
+	return true  # Default for preview/shop cards
+
 func setup_card_visuals():
 	if not card_data:
 		return
@@ -45,7 +53,25 @@ func setup_card_visuals():
 	if has_node("CardInfo/CardName"):
 		$CardInfo/CardName.text = card_data.card_name
 	if has_node("CardInfo/CardInfoContainer/EnergyCost"):
-		$CardInfo/CardInfoContainer/EnergyCost.text = str(card_data.energy_cost)
+		# Check for curio cost modifications
+		var base_cost = card_data.energy_cost
+		var display_cost = base_cost
+		var cost_modified = false
+
+		if CurioManager:
+			var mods = CurioManager.calculate_card_modifications(card_data, _is_player_card())
+			var cost_reduction = mods.get("cost", 0)
+			if cost_reduction != 0:
+				display_cost = max(0, base_cost + cost_reduction)
+				cost_modified = true
+
+		# Display cost with green color if modified by curios
+		$CardInfo/CardInfoContainer/EnergyCost.text = str(display_cost)
+		if cost_modified:
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color.LIME)
+		else:
+			# Reset to default blue color for energy cost
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color(0, 0.5, 1, 1))
 	if has_node("CardInfo/CardInfoContainer/Description"):
 		var desc_node = $CardInfo/CardInfoContainer/Description
 		var description_text = format_description()
@@ -54,7 +80,7 @@ func setup_card_visuals():
 		if desc_node is RichTextLabel:
 			desc_node.text = description_text
 			desc_node.visible = true
-			desc_node.modulate = Color.BLACK
+			# Don't modulate - let BBCode colors show through
 			desc_node.fit_content = true
 		elif desc_node is Label:
 			desc_node.text = description_text
@@ -72,6 +98,7 @@ func setup_card_visuals():
 	var type_color = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_color(card_data.card_type)
 	if has_node("CardBorder"):
 		$CardBorder.color = type_color
+		original_border_color = type_color
 	if has_node("CardBackground"):
 		$CardBackground.color = Color.WHITE
 	
@@ -201,6 +228,27 @@ func update_visual_state():
 		$CardBackground.color = base_color
 		position.y += 10 if position.y < 500 else 0  # Reset position if lifted
 
+func set_quick_draw_highlight(enabled: bool) -> void:
+	"""Highlight or unhighlight this card for quick draw/first turn bonus"""
+	if not has_node("CardBorder"):
+		return
+
+	var border = $CardBorder
+
+	if enabled:
+		# Store original color if not already highlighted
+		if not is_quick_draw_highlighted:
+			original_border_color = border.color
+		# Apply bright gold highlight
+		border.color = Color(1.0, 0.85, 0.0)
+		is_quick_draw_highlighted = true
+	else:
+		# Restore original type-based border color
+		if card_data:
+			var type_color = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_color(card_data.card_type)
+			border.color = type_color
+		is_quick_draw_highlighted = false
+
 func show_as_card_back():
 	"""Display this card as a card back (hide information)"""
 	# Hide card info
@@ -218,3 +266,32 @@ func show_as_card_back():
 	if has_node("TypeSymbol"):
 		$TypeSymbol.text = "?"
 		$TypeSymbol.visible = true
+
+func update_energy_status(current_energy: int) -> void:
+	if not has_node("CardInfo/CardInfoContainer/EnergyCost") or not card_data:
+		return
+		
+	var base_cost = card_data.energy_cost
+	var display_cost = base_cost
+	var cost_modified = false
+
+	if CurioManager:
+		var mods = CurioManager.calculate_card_modifications(card_data, _is_player_card())
+		var cost_reduction = mods.get("cost", 0)
+		if cost_reduction != 0:
+			display_cost = max(0, base_cost + cost_reduction)
+			cost_modified = true
+			
+	# Update text just in case
+	$CardInfo/CardInfoContainer/EnergyCost.text = str(display_cost)
+
+	if current_energy < display_cost:
+		$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color.DARK_RED)
+		modulate = Color(0.6, 0.6, 0.6, 1)
+	else:
+		modulate = Color.WHITE
+		if cost_modified:
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color.LIME)
+		else:
+			$CardInfo/CardInfoContainer/EnergyCost.add_theme_color_override("font_color", Color(0, 0.5, 1, 1))
+

@@ -371,13 +371,13 @@ func generate_nickname(backstory_chain: Array) -> String:
 func select_starting_curio(character_class: String, backstory_chain: Array) -> Resource:
 	"""Select starting curio based on class and backstory"""
 	if not generation_rules.has("starting_curios"):
-		return load("res://data/curios/starting/lucky_nugget.tres")
+		return load("res://data/curios/common/lucky_nugget.tres")
 	
 	var curio_weights = generation_rules.starting_curios
 	var class_key = character_class.to_lower()
 	
 	if not curio_weights.has(class_key):
-		return load("res://data/curios/starting/lucky_nugget.tres")
+		return load("res://data/curios/common/lucky_nugget.tres")
 	
 	var weights = curio_weights[class_key]
 	
@@ -402,10 +402,10 @@ func select_starting_curio(character_class: String, backstory_chain: Array) -> R
 	for curio_name in modified_weights:
 		current_weight += modified_weights[curio_name]
 		if roll <= current_weight:
-			var curio_path = "res://data/curios/starting/" + curio_name + ".tres"
+			var curio_path = "res://data/curios/common/" + curio_name + ".tres"
 			return load(curio_path)
 	
-	return load("res://data/curios/starting/lucky_nugget.tres")
+	return load("res://data/curios/common/lucky_nugget.tres")
 
 func calculate_stat_modifiers(backstory_chain: Array) -> Dictionary:
 	"""Calculate combined stat modifiers from backstory elements"""
@@ -472,10 +472,10 @@ func generate_simple_nickname() -> String:
 
 func load_random_starting_curio() -> Resource:
 	var curios = [
-		"res://data/curios/starting/lucky_nugget.tres",
-		"res://data/curios/starting/thick_leather.tres", 
-		"res://data/curios/starting/old_compass.tres",
-		"res://data/curios/starting/worn_boots.tres"
+		"res://data/curios/common/lucky_nugget.tres",
+		"res://data/curios/common/thick_leather.tres", 
+		"res://data/curios/common/old_compass.tres",
+		"res://data/curios/common/worn_boots.tres"
 	]
 	var curio_path = curios[SeedManager.get_character_random_int(0, curios.size() - 1)]
 	return load(curio_path)
@@ -489,6 +489,6 @@ func _get_curio_id_from_resource(curio_resource: Resource) -> String:
 	if resource_path == "":
 		return ""
 	
-	# Extract filename without extension from path like "res://data/curios/starting/lucky_nugget.tres"
+	# Extract filename without extension from path like "res://data/curios/common/lucky_nugget.tres"
 	var filename = resource_path.get_file().get_basename()
 	return filename

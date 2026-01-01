@@ -136,3 +136,30 @@ func get_display_description(prefer_generated: bool = true, separator: String = 
 	if description and description.strip_edges() != "":
 		return description
 	return get_effect_descriptions(separator)
+
+func has_first_card_played_condition() -> bool:
+	"""Check if this card has quick draw/first turn mechanics (FIRST_CARD_PLAYED condition)"""
+	if not (effects is Array) or effects.is_empty():
+		return false
+
+	for effect in effects:
+		if not is_instance_valid(effect):
+			continue
+
+		# Check direct activation_condition on effect
+		if "activation_condition" in effect and effect.activation_condition:
+			var condition = effect.activation_condition
+			if "condition_type" in condition:
+				if condition.condition_type == 0:  # ConditionType.FIRST_CARD_PLAYED
+					return true
+
+		# Check conditional_values array for conditional damage/draw amounts
+		if "conditional_values" in effect and effect.conditional_values is Array:
+			for conditional_value in effect.conditional_values:
+				if "condition" in conditional_value and conditional_value.condition:
+					var condition = conditional_value.condition
+					if "condition_type" in condition:
+						if condition.condition_type == 0:  # ConditionType.FIRST_CARD_PLAYED
+							return true
+
+	return false

@@ -3,10 +3,10 @@ class_name ResourceGain
 
 const EFFECT_NAME := "Resource Gain"
 
-@export var resource_type: String = "gold"  # gold, energy, sanity, health, cards
+@export var resource_type: String = "gold"  # gold, energy, sanity, health, cards, corruption
 @export var amount: int = 1
 @export var random_range: bool = false  # If true, amount is max and we roll 1-amount
-@export var condition: String = ""  # Optional condition like "if_perfect_turn"
+@export var condition: String = ""  # Optional condition like "if_perfect_turn", "if_power_card", "if_high_cost"
 
 func _init() -> void:
 	pass
@@ -40,6 +40,8 @@ func apply_effect(game_state: Node, _curio_data: Resource, context: Dictionary) 
 			_draw_cards(game_state, actual_amount)
 		"block", "defense":
 			_add_defense(game_state, actual_amount)
+		"corruption":
+			_add_corruption(game_state, actual_amount)
 		_:
 			GLog.warn("Unknown resource type '%s' in ResourceGain" % resource_type)
 
@@ -54,8 +56,22 @@ func _check_condition(game_state: Node, context: Dictionary) -> bool:
 		"if_low_health":
 			var player = _get_player_data(game_state)
 			return player and player.get_health_percentage() < 0.3
+		"if_low_sanity":
+			var player = _get_player_data(game_state)
+			return player and player.get_sanity_percentage() < 0.25
 		"if_first_turn":
 			return context.get("turn_number", 0) == 1
+		"if_player_turn":
+			return context.get("is_player_turn", true)
+		"if_power_card":
+			var card_data = context.get("card_data", null)
+			return card_data and card_data.mechanical_category.to_lower() == "power"
+		"if_attack_card":
+			var card_data = context.get("card_data", null)
+			return card_data and card_data.mechanical_category.to_lower() == "attack"
+		"if_high_cost":
+			var card_data = context.get("card_data", null)
+			return card_data and card_data.energy_cost >= 2
 		_:
 			return true
 
@@ -94,12 +110,18 @@ func _add_defense(game_state: Node, value: int) -> void:
 	if player:
 		player.gain_defense(value)
 
+func _add_corruption(game_state: Node, value: int) -> void:
+	var player = _get_player_data(game_state)
+	if player and player.stats:
+		player.stats.gain_corruption(value)
+	if game_state.has_node("/root/EventBus"):
+		game_state.get_node("/root/EventBus").corruption_changed.emit(value)
+
 func _draw_cards(game_state: Node, value: int) -> void:
 	# This would need to interact with the duel manager
-	if game_state.has_node("/root/DuelManager"):
-		var dm = game_state.get_node("/root/DuelManager")
-		if dm.has_method("draw_cards"):
-			dm.draw_cards(value)
+	var dm = _find_duel_manager(game_state)
+	if dm and dm.duel_state:
+		dm.duel_state.draw_cards(value)
 
 func _get_player_data(game_state: Node):
 	# If the caller provides a direct accessor (e.g., DuelManager), use it

@@ -310,7 +310,7 @@ func _get_current_game_state() -> Dictionary:
 	
 	return state
 
-func _on_turn_started(_turn_number: int) -> void:
+func _on_turn_started(_turn_number: int, _is_player_turn: bool) -> void:
 	var outcomes_to_apply = []
 	var i = delayed_outcomes.size() - 1
 	

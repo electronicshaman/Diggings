@@ -43,7 +43,7 @@ func setup_event_connections() -> void:
 	
 	# Damage events
 	event_bus.connect_safe("damage_dealt", _on_damage_dealt)
-	# Note: damage_taken signal doesn't exist in EventBus yet
+	event_bus.connect_safe("damage_taken", _on_damage_taken)
 	
 	# Enemy events
 	event_bus.connect_safe("enemy_defeated", _on_enemy_defeated)
@@ -174,19 +174,59 @@ func trigger_curio_effects(event_type: String, context: Dictionary = {}) -> void
 # Calculate cumulative stat modifiers from all curios
 func get_stat_modifier(stat_name: String) -> float:
 	var total_modifier = 0.0
-	
+
 	for curio in active_curios:
 		# Get stack multiplier
 		var curio_name = curio.curio_name if curio.curio_name else ""
 		var stack_mult = curio_stacks.get(curio_name, 1)
-		
+
 		# Each curio effect can contribute to stat modifiers
 		var effects = curio.effects if curio.effects != null else []
 		for effect in effects:
 			if effect and effect.has_method("get_stat_modifier"):
 				total_modifier += effect.get_stat_modifier(stat_name) * stack_mult
-	
+
 	return total_modifier
+
+## Calculate card modifications from all active curios for preview/application
+## Returns dictionary with modification values: {damage: int, defense: int, cost: int, draw: int}
+## @param is_player_card: Only apply modifications if this is a player card (default: true)
+func calculate_card_modifications(card_data: CardData, is_player_card: bool = true) -> Dictionary:
+	var modifications = {
+		"damage": 0,
+		"defense": 0,
+		"cost": 0,
+		"draw": 0
+	}
+
+	if not card_data:
+		return modifications
+
+	# Player curios should only affect player cards
+	if not is_player_card:
+		return modifications
+
+	# Iterate through all active curios
+	for curio in active_curios:
+		var curio_name = curio.curio_name if curio.curio_name else ""
+		var stack_mult = curio_stacks.get(curio_name, 1)
+
+		# Check each effect to see if it's a CardModifier that applies to this card
+		var effects = curio.effects if curio.effects != null else []
+		for effect in effects:
+			# Check if this is a CardModifier effect
+			if effect and effect.has_method("_matches_target"):
+				# Check if the effect targets this card
+				if effect._matches_target(card_data):
+					# Get modification type and value
+					var mod_type = effect.modification_type if "modification_type" in effect else ""
+					var mod_value = effect.modification_value if "modification_value" in effect else 0
+
+					# Accumulate the modification with stack multiplier
+					if modifications.has(mod_type):
+						modifications[mod_type] += mod_value * stack_mult
+
+	return modifications
 
 # Event handlers
 func _on_combat_started(_enemy_data: Resource) -> void:
@@ -203,7 +243,7 @@ func _on_combat_started(_enemy_data: Resource) -> void:
 func _on_combat_ended(victory: bool) -> void:
 	trigger_curio_effects("combat_end", {"victory": victory})
 
-func _on_turn_started(turn_number: int) -> void:
+func _on_turn_started(turn_number: int, is_player_turn: bool) -> void:
 	# Reset turn tracking for all effects
 	for curio in active_curios:
 		var effects = curio.effects if curio.effects != null else []
@@ -212,7 +252,7 @@ func _on_turn_started(turn_number: int) -> void:
 				effect.reset_turn_tracking()
 	
 	# Trigger turn start effects
-	trigger_curio_effects("turn_start", {"turn_number": turn_number})
+	trigger_curio_effects("turn_start", {"turn_number": turn_number, "is_player_turn": is_player_turn})
 
 func _on_turn_ended(turn_number: int) -> void:
 	trigger_curio_effects("turn_end", {"turn_number": turn_number})
@@ -231,9 +271,11 @@ func _on_damage_dealt(target: Node, amount: int, source: Node) -> void:
 		"source": source
 	})
 
-# Note: damage_taken not implemented yet
-# func _on_damage_taken(target: Node, amount: int) -> void:
-#	trigger_curio_effects("damage_taken", {"amount": amount})
+func _on_damage_taken(target: Object, amount: int) -> void:
+	trigger_curio_effects("damage_taken", {
+		"target": target,
+		"amount": amount
+	})
 
 func _on_enemy_defeated(enemy: Node) -> void:
 	trigger_curio_effects("enemy_defeated", {"enemy": enemy})
@@ -372,6 +414,12 @@ func get_weighted_curio_selection(character_class: String, count: int = 3) -> Ar
 
 	GLog.debug("Selected %d curios with class weighting" % selected.size())
 	return selected
+
+## Clear all active curios and their stacks
+func clear_curios() -> void:
+	active_curios.clear()
+	curio_stacks.clear()
+	GLog.debug("Cleared all active curios")
 
 ## Reset curio tracking at run start
 func reset_run_curios() -> void:

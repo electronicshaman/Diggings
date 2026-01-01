@@ -11,6 +11,10 @@ const DEBUG_ENABLED = true
 # Reference to the immutable card template
 @export var card_data: CardData
 
+# Card ownership tracking
+enum Owner { PLAYER, ENEMY, NEUTRAL }
+@export var owner: Owner = Owner.PLAYER
+
 # Runtime instance state
 @export var turns_held: int = 0
 @export var instance_id: String = ""  # Unique identifier for this instance
@@ -22,12 +26,13 @@ const DEBUG_ENABLED = true
 var _dynamic_description: String = ""
 var _dynamic_card_handling: String = ""
 
-func _init(data: CardData = null) -> void:
+func _init(data: CardData = null, card_owner: Owner = Owner.PLAYER) -> void:
 	if data:
 		card_data = data
+		owner = card_owner
 		instance_id = _generate_instance_id()
 		current_durability = data.base_durability
-		GLog.debug("Created CardInstance for '%s' with ID: %s, durability: %d" % [card_data.card_name, instance_id, current_durability])
+		GLog.debug("Created CardInstance for '%s' with ID: %s, owner: %s, durability: %d" % [card_data.card_name, instance_id, "PLAYER" if owner == Owner.PLAYER else ("ENEMY" if owner == Owner.ENEMY else "NEUTRAL"), current_durability])
 
 func _generate_instance_id() -> String:
 	return "%s_%d_%d" % [card_data.resource_path.get_file().get_basename(), Time.get_unix_time_from_system(), randi()]
@@ -273,24 +278,48 @@ func _generate_conditional_description(effect: Resource) -> String:
 	var conditional_values = effect.get("conditional_values")
 	if not conditional_values or conditional_values.size() == 0:
 		return _get_standard_description(effect)
-	
+
+	# Get curio bonuses if available
+	# Note: CardInstance descriptions are typically for player cards (hand, deck, shop, etc.)
+	# Enemy cards rarely show full descriptions, so defaulting to true is safe
+	var curio_damage_bonus = 0
+	var curio_defense_bonus = 0
+	if CurioManager and card_data:
+		var mods = CurioManager.calculate_card_modifications(card_data, true)
+		curio_damage_bonus = mods.get("damage", 0)
+		curio_defense_bonus = mods.get("defense", 0)
+
 	# Get the base description for the effect type
 	var base_text = _get_effect_base_description(effect)
-	
+
 	# Find conditional values for important properties
 	for cv in conditional_values:
 		if cv.property_name == "amount":
 			var condition_desc = cv.condition.get_description() if cv.condition else "unknown condition"
-			
+
 			# Generate conditional text based on effect type
 			if effect.get_script().get_global_name() == "DamageEffect":
-				return "Deal %d damage if %s, otherwise deal %d damage" % [
-					cv.value_if_true, condition_desc, cv.value_if_false
-				]
+				var val_true = cv.value_if_true
+				var val_false = cv.value_if_false
+				if curio_damage_bonus > 0:
+					return "Deal %d [color=gold](+%d)[/color] damage if %s, otherwise deal %d [color=gold](+%d)[/color] damage" % [
+						val_true, curio_damage_bonus, condition_desc, val_false, curio_damage_bonus
+					]
+				else:
+					return "Deal %d damage if %s, otherwise deal %d damage" % [
+						val_true, condition_desc, val_false
+					]
 			elif effect.get_script().get_global_name() == "DefenseEffect":
-				return "Gain %d block if %s, otherwise gain %d block" % [
-					cv.value_if_true, condition_desc, cv.value_if_false
-				]
+				var val_true = cv.value_if_true
+				var val_false = cv.value_if_false
+				if curio_defense_bonus > 0:
+					return "Gain %d [color=gold](+%d)[/color] block if %s, otherwise gain %d [color=gold](+%d)[/color] block" % [
+						val_true, curio_defense_bonus, condition_desc, val_false, curio_defense_bonus
+					]
+				else:
+					return "Gain %d block if %s, otherwise gain %d block" % [
+						val_true, condition_desc, val_false
+					]
 			elif effect.get_script().get_global_name() == "CardManipulationEffect":
 				var action = effect.get("action") if effect.get("action") else "draw"
 				if cv.value_if_false == 0:
@@ -300,16 +329,27 @@ func _generate_conditional_description(effect: Resource) -> String:
 						action.capitalize(), cv.value_if_true, condition_desc,
 						action, cv.value_if_false
 					]
-	
+
 	# Fallback to standard description if we can't handle the conditional
 	return _get_standard_description(effect)
 
 func _get_standard_description(effect: Resource) -> String:
 	"""Get standard description for an effect"""
+	# Create context with curio modifications ONCE for all paths
+	var preview_context = EffectContext.new() if EffectContext else null
+	if preview_context and card_data:
+		preview_context.source_type = "card"
+		preview_context.source_object = card_data
+		# Populate curio modifications for preview
+		# Note: CardInstance descriptions are typically for player cards (hand, deck, shop, etc.)
+		if CurioManager:
+			preview_context.curio_modifications = CurioManager.calculate_card_modifications(card_data, true)
+
+	# Use the context for all description methods
 	if effect.has_method("get_formatted_description"):
-		return effect.get_formatted_description()
+		return effect.get_formatted_description(preview_context)
 	elif effect.has_method("get_preview_text"):
-		return effect.get_preview_text(null)
+		return effect.get_preview_text(preview_context)
 	elif "description" in effect:
 		return str(effect.description)
 	else:

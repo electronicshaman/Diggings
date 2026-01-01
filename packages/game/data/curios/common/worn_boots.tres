@@ -1,25 +1,38 @@
-[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3 uid="uid://8l42xwpxabvr"]
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
 
-[ext_resource type="Script" uid="uid://7qh5hm4q71y5" path="res://scripts/data/curio_data.gd" id="1"]
-[ext_resource type="Script" uid="uid://cndcwrym6cpqg" path="res://scripts/curios/effects/stat_modifier.gd" id="2"]
-[ext_resource type="Texture2D" uid="uid://bammwylebm52u" path="res://assets/textures/curios/Icon3.png" id="3"]
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/stat_modifier.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon3.png" id="3"]
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
-modifier_value = 5.0
-apply_immediately = true
-description = "Increase max health by 5"
+description = "Increase max health by 8"
+trigger_event = "passive"
+only_first_per_combat = false
+only_first_per_turn = false
+chance_to_trigger = 1.0
+stat_name = "max_health"
+modifier_value = 8
+modifier_type = "flat"
+condition = ""
 
 [resource]
 script = ExtResource("1")
 curio_name = "Worn Boots"
-description = "+5 max health"
+description = "+8 max health"
 icon = ExtResource("3")
-flavor_text = "These boots have walked a thousand miles through the bush. They'll walk a thousand more."
+flavor_text = "These boots have walked a thousand miles and have a thousand more to go."
+mechanical_category = "Passive"
+rarity = "Common"
 stackable = true
 max_stacks = 2
-effects = Array[Resource]([SubResource("SubResource_1")])
-gold_cost = 80
-bushranger_synergy = 1.2
-tracker_synergy = 1.3
-glow_color = Color(0.5, 0.3, 0.2, 1)
+effects = [SubResource("SubResource_1")]
+gold_cost = 75
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.0
+prospector_synergy = 1.1
+tracker_synergy = 1.2
+publican_synergy = 1.0
+glow_color = Color(0.5, 0.3, 0.2, 1.0)
+trigger_particle = null

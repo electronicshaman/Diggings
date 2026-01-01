@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/card_modifier.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "The first card played each turn returns to your hand"
+trigger_event = "card_played"
+only_first_per_combat = false
+only_first_per_turn = true
+chance_to_trigger = 1.0
+target_card_type = "all"
+modification_type = "return_to_hand"
+modification_value = 1
+only_specific_card = ""
+
+[resource]
+script = ExtResource("1")
+curio_name = "Temporal Pocket Watch"
+description = "The first card played each turn returns to your hand"
+icon = null
+flavor_text = "Time seems to bend around this strange device."
+mechanical_category = "Modifier"
+rarity = "Rare"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1")]
+gold_cost = 300
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.2
+prospector_synergy = 1.5
+tracker_synergy = 1.3
+publican_synergy = 1.1
+glow_color = Color(0.2, 0.6, 0.8, 1.0)

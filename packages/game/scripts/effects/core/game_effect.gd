@@ -60,10 +60,10 @@ func resolve_conditional_value(property_name: String, base_value: int, context: 
 # Get description including conditions
 func get_full_description(context: Resource = null) -> String:
 	var base_desc = description
-	
+
 	if activation_condition:
 		base_desc += " (if " + activation_condition.get_description() + ")"
-	
+
 	if conditional_values.size() > 0:
 		base_desc += " ["
 		for i in range(conditional_values.size()):
@@ -71,5 +71,31 @@ func get_full_description(context: Resource = null) -> String:
 				base_desc += ", "
 			base_desc += conditional_values[i].get_description()
 		base_desc += "]"
-	
+
 	return base_desc
+
+## Helper to get curio bonus from context
+## Returns the curio modification value for the given bonus type (damage, defense, cost, draw)
+func _get_curio_bonus(context: Resource, bonus_type: String) -> int:
+	if not context:
+		return 0
+	if not "curio_modifications" in context:
+		return 0
+	var mods = context.curio_modifications
+	if not mods or not mods.has(bonus_type):
+		return 0
+	return mods.get(bonus_type, 0)
+
+## Helper to format value with curio bonus for display
+## Returns formatted text like "8 [color=gold](+3)[/color]" or just "8" if no bonus
+func _format_value_with_bonus(base_value: int, bonus: int, label: String = "") -> String:
+	if bonus > 0:
+		if label.is_empty():
+			return "%d [color=gold](+%d)[/color]" % [base_value, bonus]
+		else:
+			return "%d [color=gold](+%d)[/color] %s" % [base_value, bonus, label]
+	else:
+		if label.is_empty():
+			return "%d" % base_value
+		else:
+			return "%d %s" % [base_value, label]

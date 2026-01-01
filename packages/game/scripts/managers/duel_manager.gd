@@ -633,9 +633,8 @@ func resolve_battlefield():
 		# Execute card effects
 		var results = card_effects_processor.apply_card_instance_effects(self, card_instance)
 		
-		# For now, assume cards in player's deck are player cards
-		# In the future, we may need proper card ownership tracking
-		var is_player_card = _is_player_card(card_instance.card_data)
+		# Check card ownership via explicit owner field
+		var is_player_card = card_instance.owner == CardInstance.Owner.PLAYER
 		
 		if is_player_card:
 			apply_card_results(results)
@@ -661,22 +660,6 @@ func resolve_battlefield():
 				enemy.enemy_discard.add_card_data(card_instance.card_data)
 			
 			GLog.debug("Resolved enemy card: %s" % card_instance.get_card_name())
-
-func _is_player_card(card_data: CardData) -> bool:
-	"""Determine if a card belongs to the player (simple heuristic for now)"""
-	# Check if card is in player's original deck (this is a temporary solution)
-	for player_card in duel_state.deck.cards:
-		# player_card is a CardInstance
-		if is_instance_valid(player_card) and player_card.get_card_name() == card_data.card_name:
-			return true
-
-	for player_card in duel_state.discard_pile.cards:
-		# player_card is a CardInstance
-		if is_instance_valid(player_card) and player_card.get_card_name() == card_data.card_name:
-			return true
-	
-	# If not found in player piles, assume it's an enemy card
-	return false
 
 func resolve_enemy_battlefield():
 	"""Enemy cards are now processed in the main resolve_battlefield() function"""

@@ -13,7 +13,7 @@ signal scene_loaded(scene: Node)
 
 signal duel_started(enemy_data: Resource)
 signal duel_ended(victory: bool)
-signal turn_started(turn_number: int)
+signal turn_started(turn_number: int, is_player_turn: bool)
 signal turn_ended(turn_number: int)
 signal phase_changed(phase: String)
 
@@ -28,6 +28,7 @@ signal hand_changed(hand: Array)
 signal deck_shuffled()
 
 signal damage_dealt(target: Node, amount: int, source: Node)
+signal damage_taken(target: Object, amount: int)
 signal damage_blocked(target: Node, amount: int)
 signal healing_received(target: Node, amount: int)
 signal status_applied(target: Node, status: String, stacks: int)
