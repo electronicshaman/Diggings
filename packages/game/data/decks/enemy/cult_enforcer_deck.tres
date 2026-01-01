@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://cm9nx7qp4w8vd"]
+
+[ext_resource type="Script" uid="uid://d1f3tqu7uyhl3" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Fanatical Devotion"
+description = "A cult enforcer's unwavering assault. Pure offense fueled by eldritch faith, overwhelming opponents with relentless high-damage attacks."
+deck_theme = "eldritch_fanatic"
+difficulty_level = 5
+card_paths = Array[String](["res://data/cards/attack/desperados_gambit.tres", "res://data/cards/attack/desperados_gambit.tres", "res://data/cards/power/pub_brawl.tres", "res://data/cards/power/pub_brawl.tres", "res://data/cards/attack/enfield_rifle.tres", "res://data/cards/attack/enfield_rifle.tres", "res://data/cards/attack/pepperbox_pistol.tres", "res://data/cards/attack/pepperbox_pistol.tres", "res://data/cards/attack/bounty_shot.tres", "res://data/cards/attack/bounty_shot.tres", "res://data/cards/attack/wild_shot.tres", "res://data/cards/attack/wild_shot.tres"])
+min_deck_size = 10
+max_deck_size = 15
+preferred_strategy = "aggressive"
+priority_card_types = Array[String](["Lead", "Power"])

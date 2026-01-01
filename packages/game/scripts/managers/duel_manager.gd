@@ -473,6 +473,19 @@ func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
 	duel_state.end_duel(winner)
 
+	# Check if this is a test duel
+	var is_test_duel: bool = GameManager.game_data.get("is_test_duel", false)
+
+	if is_test_duel:
+		# Test duel: return to test setup immediately
+		GLog.info("Test duel ended, returning to test setup", "duel_manager")
+		await get_tree().create_timer(0.5).timeout  # Brief pause
+		SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+		# Clear test flag
+		GameManager.game_data["is_test_duel"] = false
+		duel_ended.emit(winner)
+		return
+
 	if winner == "player":
 		# Check if this enemy should offer curio reward (boss/elite only)
 		var should_offer_curio = _should_offer_curio_reward()

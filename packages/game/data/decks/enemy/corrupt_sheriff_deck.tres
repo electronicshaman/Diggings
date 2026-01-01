@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://dlp7nx2qm8vtb"]
+
+[ext_resource type="Script" uid="uid://d1f3tqu7uyhl3" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Iron Law"
+description = "A corrupt lawman's arsenal of intimidation and control. Outlasts opponents through superior defense and relentless pressure."
+deck_theme = "lawman_defensive"
+difficulty_level = 3
+card_paths = Array[String](["res://data/cards/skill/outlaws_intuition.tres", "res://data/cards/skill/outlaws_intuition.tres", "res://data/cards/skill/bush_survival.tres", "res://data/cards/skill/bush_survival.tres", "res://data/cards/power/pub_brawl.tres", "res://data/cards/power/pub_brawl.tres", "res://data/cards/attack/enfield_rifle.tres", "res://data/cards/attack/enfield_rifle.tres", "res://data/cards/attack/navy_colt.tres", "res://data/cards/attack/navy_colt.tres"])
+min_deck_size = 8
+max_deck_size = 15
+preferred_strategy = "defensive"
+priority_card_types = Array[String](["Leather", "Power", "Lead"])

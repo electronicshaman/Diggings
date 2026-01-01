@@ -169,6 +169,13 @@ func _initialize_duel() -> void:
 			# Start the duel via DuelStateManager
 			duel_state_manager.start_duel(player_deck, enemy_data)
 
+			# Check if this is a test duel and set flag
+			if duel_config.get_modifier("test_duel", false):
+				GameManager.game_data["is_test_duel"] = true
+				GLog.info("Test duel mode activated", "duel_scene_controller")
+			else:
+				GameManager.game_data["is_test_duel"] = false
+
 			# Clear the config after using it
 			GameManager.clear_pending_duel_config()
 			return
