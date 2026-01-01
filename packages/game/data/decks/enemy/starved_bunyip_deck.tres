@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://c8qm5vx2np9wa"]
+
+[ext_resource type="Script" uid="uid://d1f3tqu7uyhl3" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Primordial Hunger"
+description = "An ancient bunyip's savage arsenal. Tears through prey with devastating force when healthy, retreats to survivalist tactics when wounded."
+deck_theme = "mythical_adaptive"
+difficulty_level = 5
+card_paths = Array[String](["res://data/cards/attack/desperados_gambit.tres", "res://data/cards/attack/desperados_gambit.tres", "res://data/cards/power/pub_brawl.tres", "res://data/cards/power/pub_brawl.tres", "res://data/cards/attack/enfield_rifle.tres", "res://data/cards/attack/enfield_rifle.tres", "res://data/cards/attack/pepperbox_pistol.tres", "res://data/cards/attack/pepperbox_pistol.tres", "res://data/cards/skill/outlaws_intuition.tres", "res://data/cards/skill/outlaws_intuition.tres", "res://data/cards/skill/bush_survival.tres", "res://data/cards/skill/bush_survival.tres", "res://data/cards/attack/bounty_shot.tres", "res://data/cards/attack/wild_shot.tres"])
+min_deck_size = 10
+max_deck_size = 18
+preferred_strategy = "balanced"
+priority_card_types = Array[String](["Lead", "Power", "Leather"])

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="EnemyState" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/stats.gd" id="2"]
+[ext_resource type="Resource" uid="uid://cm9nx7qp4w8vd" path="res://data/decks/enemy/cult_enforcer_deck.tres" id="3_cult_enforcer_deck"]
+
+[sub_resource type="Resource" id="Stats_1"]
+script = ExtResource("2")
+current_health = 62
+max_health = 62
+current_energy = 5
+max_energy = 5
+current_sanity = 100
+max_sanity = 100
+defense = 0
+
+[resource]
+script = ExtResource("1")
+stats = SubResource("Stats_1")
+enemy_name = "Cult Enforcer"
+description = "A zealous enforcer of eldritch will. Channels dark power into devastating attacks, caring nothing for defense or self-preservation."
+is_boss = false
+is_elite = true
+stun_turns_remaining = 0
+current_pattern_index = 0
+turns_alive = 0
+damage_modifier = 1.25
+defense_modifier = 1.0
+enemy_deck_data = ExtResource("3_cult_enforcer_deck")
+ai_type = "aggressive"
+hand_size_limit = 7
+cards_per_turn = 5
+player_pattern_memory_size = 3

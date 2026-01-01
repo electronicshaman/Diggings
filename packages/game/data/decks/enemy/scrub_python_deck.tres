@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://ck2m8nx5vw7qa"]
+
+[ext_resource type="Script" uid="uid://d1f3tqu7uyhl3" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Venomous Strike"
+description = "A scrub python's lightning-fast multi-strike attacks. Low endurance but deadly while it lasts."
+deck_theme = "wildlife_aggressive"
+difficulty_level = 1
+card_paths = Array[String](["res://data/cards/attack/pepperbox_pistol.tres", "res://data/cards/attack/pepperbox_pistol.tres", "res://data/cards/attack/navy_colt.tres", "res://data/cards/attack/navy_colt.tres", "res://data/cards/attack/bowie_knife.tres", "res://data/cards/attack/bowie_knife.tres"])
+min_deck_size = 6
+max_deck_size = 10
+preferred_strategy = "aggressive"
+priority_card_types = Array[String](["Lead", "Steel"])
