@@ -728,10 +728,8 @@ func _update_discard_pile_visual() -> void:
 
 	var discard_pile = duel_state_res.get_discard_pile()
 	if not discard_pile or discard_pile.is_empty():
-		# Show card_back if discard is empty (already configured to show as card back)
-		discard_card_instance = CARD_BACK_SCENE.instantiate()
-		discard_icon.add_child(discard_card_instance)
-		discard_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
+		# Don't show anything when discard is empty
+		return
 	else:
 		# Show the last discarded card
 		var last_card = discard_pile.cards[-1]
@@ -751,7 +749,17 @@ func _update_removed_pile_visual() -> void:
 	# Clear existing card instance
 	_clear_pile_card(removed_icon, removed_card_instance)
 
-	# Create new card_back instance (already configured to show as card back)
+	# Get removed pile from DuelState
+	var duel_state_res = _get_duel_state()
+	if not duel_state_res:
+		return
+
+	var removed_pile = duel_state_res.get_removed_pile()
+	if not removed_pile or removed_pile.is_empty():
+		# Don't show card back when removed pile is empty
+		return
+
+	# Show card_back only when cards are in removed pile
 	removed_card_instance = CARD_BACK_SCENE.instantiate()
 	removed_icon.add_child(removed_card_instance)
 	removed_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
