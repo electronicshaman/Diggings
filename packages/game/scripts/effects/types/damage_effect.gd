@@ -84,7 +84,7 @@ func get_preview_text(context: Resource) -> String:
 				base_text = "Deal %d damage" % final_min
 		else:
 			if curio_bonus > 0:
-				base_text = "Deal %d-%d [color=gold](+%d)[/color] damage" % [final_min, final_max, curio_bonus]
+				base_text = "Deal %d-%d [color=purple](+%d)[/color] damage" % [final_min, final_max, curio_bonus]
 			else:
 				base_text = "Deal %d-%d damage" % [final_min, final_max]
 	else:

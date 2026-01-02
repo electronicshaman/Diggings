@@ -302,7 +302,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 				var val_true = cv.value_if_true
 				var val_false = cv.value_if_false
 				if curio_damage_bonus > 0:
-					return "Deal %d [color=gold](+%d)[/color] damage if %s, otherwise deal %d [color=gold](+%d)[/color] damage" % [
+					return "Deal %d [color=purple](+%d)[/color] damage if %s, otherwise deal %d [color=purple](+%d)[/color] damage" % [
 						val_true, curio_damage_bonus, condition_desc, val_false, curio_damage_bonus
 					]
 				else:
@@ -313,7 +313,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 				var val_true = cv.value_if_true
 				var val_false = cv.value_if_false
 				if curio_defense_bonus > 0:
-					return "Gain %d [color=gold](+%d)[/color] defense if %s, otherwise gain %d [color=gold](+%d)[/color] defense" % [
+					return "Gain %d [color=purple](+%d)[/color] defense if %s, otherwise gain %d [color=purple](+%d)[/color] defense" % [
 						val_true, curio_defense_bonus, condition_desc, val_false, curio_defense_bonus
 					]
 				else:

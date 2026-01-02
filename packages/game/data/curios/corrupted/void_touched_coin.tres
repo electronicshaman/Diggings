@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/curios/effects/enemy_modifier.gd" id="3"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon43.png" id="4"]
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
@@ -31,7 +32,7 @@ apply_to_all = true
 script = ExtResource("1")
 curio_name = "Void-Touched Coin"
 description = "+10 gold per combat, but enemies have +2 strength"
-icon = null
+icon = ExtResource("4")
 flavor_text = "A gold sovereign that exists partially in another dimension."
 mechanical_category = "Resource"
 rarity = "Corrupted"

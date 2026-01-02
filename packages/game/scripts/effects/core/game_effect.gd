@@ -94,13 +94,13 @@ func _get_curio_bonus(context: Resource, bonus_type: String) -> int:
 	return mods.get(bonus_type, 0)
 
 ## Helper to format value with curio bonus for display
-## Returns formatted text like "8 [color=gold](+3)[/color]" or just "8" if no bonus
+## Returns formatted text like "8 [color=purple](+3)[/color]" or just "8" if no bonus
 func _format_value_with_bonus(base_value: int, bonus: int, label: String = "") -> String:
 	if bonus > 0:
 		if label.is_empty():
-			return "%d [color=gold](+%d)[/color]" % [base_value, bonus]
+			return "%d [color=purple](+%d)[/color]" % [base_value, bonus]
 		else:
-			return "%d [color=gold](+%d)[/color] %s" % [base_value, bonus, label]
+			return "%d [color=purple](+%d)[/color] %s" % [base_value, bonus, label]
 	else:
 		if label.is_empty():
 			return "%d" % base_value
