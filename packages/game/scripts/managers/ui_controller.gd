@@ -21,9 +21,12 @@ var enemy_name_label: Label
 var enemy_health_label: Label
 var enemy_defense_label: Label
 var enemy_status_container: VBoxContainer
-var deck_label: Label
-var discard_label: Label
-var removed_label: Label
+var deck_count_label: Label
+var deck_icon: Node
+var discard_count_label: Label
+var discard_icon: Node
+var removed_count_label: Label
+var removed_icon: Node
 var turn_label: Label
 var phase_label: Label
 var seed_label: Label
@@ -33,6 +36,18 @@ var debug_panel: Control
 var hand_area: Node2D
 var hand_cards: Array[Node] = []
 var card_scene: PackedScene
+
+# Pile card scene references
+const CARD_BACK_SCENE = preload("res://scenes/cards/card_back.tscn")
+const CARD_SCENE = preload("res://scenes/cards/card.tscn")
+
+# Pile card instances (dynamically created)
+var deck_card_instance: Node = null
+var discard_card_instance: Node = null
+var removed_card_instance: Node = null
+
+# Pile icon scale for card scenes (300x420 -> ~90x90)
+const PILE_CARD_SCALE: float = 0.30  # 300 * 0.3 = 90px width
 
 # Battlefield system - visual areas
 var enemy_hand_area: Node2D
@@ -77,9 +92,12 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	enemy_health_label = ui_references.get("enemy_health")
 	enemy_defense_label = ui_references.get("enemy_defense")
 	enemy_status_container = ui_references.get("enemy_status_container")
-	deck_label = ui_references.get("deck")
-	discard_label = ui_references.get("discard")
-	removed_label = ui_references.get("removed")
+	deck_count_label = ui_references.get("deck_count")
+	deck_icon = ui_references.get("deck_icon")
+	discard_count_label = ui_references.get("discard_count")
+	discard_icon = ui_references.get("discard_icon")
+	removed_count_label = ui_references.get("removed_count")
+	removed_icon = ui_references.get("removed_icon")
 	turn_label = ui_references.get("turn")
 	phase_label = ui_references.get("phase")
 	seed_label = ui_references.get("seed")
@@ -245,27 +263,30 @@ func _update_enemy_status_display(enemy: EnemyState) -> void:
 func update_pile_ui() -> void:
 	if not game_controller:
 		return
-	
-	# Get DuelStateManager from the scene controller
+
 	var duel_state_manager = game_controller.get_duel_state_manager()
 	if not duel_state_manager:
 		GLog.debug("duel_state_manager not available - cannot update pile UI")
 		return
-	
-	if deck_label:
-		deck_label.text = "Deck: %d" % duel_state_manager.get_deck_count()
-	else:
-		GLog.debug("deck_label is null - UI element missing")
-		
-	if discard_label:
-		discard_label.text = "Discard: %d" % duel_state_manager.get_discard_count()
-	else:
-		GLog.debug("discard_label is null - UI element missing")
 
-	if removed_label:
-		removed_label.text = "Removed: %d" % duel_state_manager.get_removed_count()
-	else:
-		GLog.debug("removed_label is null - UI element missing")
+	# Update pile counts
+	if deck_count_label:
+		deck_count_label.text = "%d" % duel_state_manager.get_deck_count()
+
+	if discard_count_label:
+		discard_count_label.text = "%d" % duel_state_manager.get_discard_count()
+
+	if removed_count_label:
+		removed_count_label.text = "%d" % duel_state_manager.get_removed_count()
+
+	# Update deck icon with card_back
+	_update_deck_pile_visual()
+
+	# Update discard icon with last card or card_back
+	_update_discard_pile_visual()
+
+	# Update removed icon with card_back
+	_update_removed_pile_visual()
 
 func update_turn_ui() -> void:
 	if not duel_state:
@@ -678,3 +699,80 @@ func _on_curio_removed(_curio: Resource) -> void:
 func _on_curio_stack_changed(_curio: Resource, _new_count: int) -> void:
 	"""Handle when a curio's stack count changes"""
 	update_curios_display()
+
+## Update deck pile visual with card_back scene
+func _update_deck_pile_visual() -> void:
+	if not is_instance_valid(deck_icon):
+		return
+
+	# Clear existing card instance
+	_clear_pile_card(deck_icon, deck_card_instance)
+
+	# Create new card_back instance (already configured to show as card back)
+	deck_card_instance = CARD_BACK_SCENE.instantiate()
+	deck_icon.add_child(deck_card_instance)
+	deck_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
+
+## Update discard pile visual with last card or card_back
+func _update_discard_pile_visual() -> void:
+	if not is_instance_valid(discard_icon):
+		return
+
+	# Clear existing card instance
+	_clear_pile_card(discard_icon, discard_card_instance)
+
+	# Get discard pile from DuelState
+	var duel_state_res = _get_duel_state()
+	if not duel_state_res:
+		return
+
+	var discard_pile = duel_state_res.get_discard_pile()
+	if not discard_pile or discard_pile.is_empty():
+		# Show card_back if discard is empty (already configured to show as card back)
+		discard_card_instance = CARD_BACK_SCENE.instantiate()
+		discard_icon.add_child(discard_card_instance)
+		discard_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
+	else:
+		# Show the last discarded card
+		var last_card = discard_pile.cards[-1]
+		discard_card_instance = CARD_SCENE.instantiate()
+		discard_icon.add_child(discard_card_instance)
+		discard_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
+
+		# Set the card data
+		if discard_card_instance.has_method("set_card"):
+			discard_card_instance.set_card(last_card)
+
+## Update removed pile visual with card_back scene
+func _update_removed_pile_visual() -> void:
+	if not is_instance_valid(removed_icon):
+		return
+
+	# Clear existing card instance
+	_clear_pile_card(removed_icon, removed_card_instance)
+
+	# Create new card_back instance (already configured to show as card back)
+	removed_card_instance = CARD_BACK_SCENE.instantiate()
+	removed_icon.add_child(removed_card_instance)
+	removed_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
+
+## Clear a pile card instance from its container
+func _clear_pile_card(container: Node, card_instance: Node) -> void:
+	if is_instance_valid(card_instance):
+		card_instance.queue_free()
+		card_instance = null
+
+	# Clear all children from container (cleanup any orphaned nodes)
+	for child in container.get_children():
+		child.queue_free()
+
+## Get DuelState safely from game_controller
+func _get_duel_state() -> Resource:
+	if not game_controller:
+		return null
+
+	var duel_manager = game_controller.get_duel_manager()
+	if not duel_manager or not "duel_state" in duel_manager:
+		return null
+
+	return duel_manager.duel_state

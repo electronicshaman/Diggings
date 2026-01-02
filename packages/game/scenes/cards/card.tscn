@@ -6,111 +6,31 @@
 size = Vector2(300, 420)
 
 [node name="Card" type="Area2D"]
+input_pickable = true
 script = ExtResource("1_card_script")
 
 [node name="CardBackground" type="ColorRect" parent="."]
-offset_left = -150.0
-offset_top = -210.0
-offset_right = 150.0
-offset_bottom = 210.0
+mouse_filter = 2
+offset_right = 300.0
+offset_bottom = 420.0
 
 [node name="CardBorder" type="ColorRect" parent="."]
-offset_left = -150.0
-offset_top = -210.0
-offset_right = 150.0
-offset_bottom = 210.0
+mouse_filter = 2
+offset_right = 300.0
+offset_bottom = 420.0
 color = Color(0.831, 0.686, 0.216, 1)
 
 [node name="CardInner" type="ColorRect" parent="."]
-offset_left = -140.0
-offset_top = -199.0
-offset_right = 140.0
-offset_bottom = 199.0
-color = Color(0.95, 0.93, 0.9, 1)
-
-[node name="TypeSymbol" type="Label" parent="."]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 6.0
-offset_top = -180.0
-offset_right = 126.0
-offset_bottom = -112.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 48
-text = "⛏"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="CardInfo" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -150.0
-offset_top = -210.0
-offset_right = 150.0
-offset_bottom = 210.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="CardName" type="Label" parent="CardInfo"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -134.0
-offset_top = 20.0
-offset_right = 106.0
-offset_bottom = 70.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 28
-text = "Card Name"
-vertical_alignment = 1
-autowrap_mode = 2
-
-[node name="CardInfoContainer" type="VBoxContainer" parent="CardInfo"]
-layout_mode = 0
+mouse_filter = 2
 offset_left = 10.0
-offset_top = 102.0
+offset_top = 10.0
 offset_right = 290.0
-offset_bottom = 400.0
-
-[node name="CardHandling" type="Label" parent="CardInfo/CardInfoContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.5, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "Handling"
-vertical_alignment = 1
-
-[node name="Description" type="RichTextLabel" parent="CardInfo/CardInfoContainer"]
-layout_mode = 2
-theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/normal_font_size = 24
-bbcode_enabled = true
-text = "Card effect description goes here"
-fit_content = true
-
-[node name="Control" type="Control" parent="CardInfo/CardInfoContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="SanityCost" type="Label" parent="CardInfo/CardInfoContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.5, 0, 0.5, 1)
-theme_override_font_sizes/font_size = 20
-text = "Sanity: 5"
-
-[node name="EnergyCost" type="Label" parent="CardInfo/CardInfoContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.5, 1, 1)
-theme_override_font_sizes/font_size = 36
-text = "1"
-horizontal_alignment = 1
+offset_bottom = 408.0
+color = Color(0.95, 0.93, 0.9, 1)
 
 [node name="CardImage" type="ColorRect" parent="."]
 visible = false
+mouse_filter = 2
 offset_left = -50.0
 offset_top = -30.0
 offset_right = 50.0
@@ -118,5 +38,83 @@ offset_bottom = 30.0
 color = Color(0.8, 0.8, 0.8, 0.2)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(150, 210)
 visible = false
 shape = SubResource("RectangleShape2D_45qsb")
+
+[node name="CardContent" type="VBoxContainer" parent="."]
+mouse_filter = 2
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 280.0
+offset_bottom = 400.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Header" type="HBoxContainer" parent="CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="CardName" type="Label" parent="CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 28
+text = "Card Name"
+
+[node name="Control" type="Control" parent="CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TypeSymbol" type="Label" parent="CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_font_sizes/font_size = 48
+text = "⛏"
+vertical_alignment = 1
+
+[node name="Control" type="Control" parent="CardContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardInfo" type="VBoxContainer" parent="CardContent"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="CardHandling" type="Label" parent="CardContent/CardInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Handling"
+
+[node name="Description" type="RichTextLabel" parent="CardContent/CardInfo"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+text = "Card effect description goes here"
+fit_content = true
+
+[node name="Control" type="Control" parent="CardContent/CardInfo"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CardContent/CardInfo"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EnergyCost" type="Label" parent="CardContent/CardInfo/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.5, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "1"
+
+[node name="Control" type="Control" parent="CardContent/CardInfo/HBoxContainer"]
+layout_mode = 2
+
+[node name="SanityCost" type="Label" parent="CardContent/CardInfo/HBoxContainer"]
+layout_direction = 3
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "Sanity: 5"

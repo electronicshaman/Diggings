@@ -41,8 +41,8 @@ func _initialize_ui_manager() -> Error:
 		return result
 	
 	# Cache critical buttons for direct access
-	win_duel_button = get_node_or_null("UI/Control/TurnInfo/WinDuel")
-	lose_duel_button = get_node_or_null("UI/Control/TurnInfo/LoseDuel")
+	win_duel_button = get_node_or_null("UI/Control/DebugPanel/DebugButtons/WinDuel")
+	lose_duel_button = get_node_or_null("UI/Control/DebugPanel/DebugButtons/LoseDuel")
 	
 	if not is_instance_valid(win_duel_button):
 		push_warning("DuelSceneController: Win duel button not found")

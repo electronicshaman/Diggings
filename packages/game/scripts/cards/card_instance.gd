@@ -47,6 +47,25 @@ func get_energy_cost() -> int:
 func get_sanity_cost() -> int:
 	return card_data.sanity_cost if card_data else 0
 
+func get_display_energy_cost() -> Dictionary:
+	"""Get energy cost with curio modifications. Returns {cost: int, modified: bool}"""
+	if not card_data:
+		return {"cost": 0, "modified": false}
+
+	var base_cost: int = card_data.energy_cost
+	var display_cost: int = base_cost
+	var cost_modified: bool = false
+
+	# Use existing curio infrastructure (same pattern as _get_standard_description)
+	if CurioManager and owner == Owner.PLAYER:
+		var mods: Dictionary = CurioManager.calculate_card_modifications(card_data, true)
+		var cost_reduction: int = mods.get("cost", 0)
+		if cost_reduction != 0:
+			display_cost = max(0, base_cost + cost_reduction)
+			cost_modified = true
+
+	return {"cost": display_cost, "modified": cost_modified}
+
 func get_card_type() -> String:
 	return card_data.card_type if card_data else ""
 
