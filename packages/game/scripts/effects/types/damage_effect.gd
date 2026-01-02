@@ -50,7 +50,7 @@ func apply_effect(context):
 	# aggregated results pipeline applied it again, causing double damage.
 	var times = final_hits if multi_hit else 1
 	applied = final_amount * times
-	result.values_applied["damage"] = applied
+	result.values_applied["damage"] = final_amount
 	if final_ignores_defense:
 		result.values_applied["ignores_defense"] = true
 	if multi_hit and times > 1:
