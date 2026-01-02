@@ -24,8 +24,20 @@ var pending_curio_reward: bool = false
 var offered_curios: Array = []
 var curio_phase_active: bool = false
 
+# Test sequence preview mode
+var is_test_sequence_preview: bool = false
+
 func _ready():
 	GLog.info("Victory reward screen loaded")
+
+	# Check for test sequence preview mode
+	if GameManager:
+		is_test_sequence_preview = GameManager.game_data.get("test_sequence_preview", false)
+		if is_test_sequence_preview:
+			GameManager.game_data["test_sequence_preview"] = false  # Clear the flag
+			GLog.info("Victory reward in PREVIEW mode - deck unchanged", "victory_reward")
+			if title_label:
+				title_label.text = "Victory! (Preview - Deck Unchanged)"
 
 	# Check if curio reward is pending (boss/elite defeated)
 	if GameManager:
@@ -143,14 +155,20 @@ func _on_card_selected(card_node: Node, card_data: CardData):
 
 func _add_card_to_deck(card_data: CardData):
 	"""Add the selected card to the player's deck"""
+	# Preview mode: show selection but don't add to deck
+	if is_test_sequence_preview:
+		GLog.info("PREVIEW: Card '%s' selected but NOT added to deck" % card_data.card_name, "victory_reward")
+		EventBus.emit_ui_notification("Preview: %s (not added)" % card_data.card_name, "info")
+		return
+
 	# Store the card path in game_data for persistence
 	if not GameManager.game_data.has("player_deck"):
 		GameManager.game_data["player_deck"] = []
-	
+
 	# Add the card's resource path to the deck
 	GameManager.game_data["player_deck"].append(card_data.resource_path)
 	GLog.info("Added %s to player deck" % card_data.card_name)
-	
+
 	# Emit event for other systems to react
 	if EventBus.has_signal("card_added_to_deck"):
 		EventBus.emit_signal("card_added_to_deck", card_data)
@@ -168,15 +186,17 @@ func _complete_card_reward():
 	"""Complete the card reward phase"""
 	GLog.info("Card reward phase complete")
 
-	# Add gold if any
-	if gold_reward > 0:
+	# Add gold if any (skip in preview mode)
+	if gold_reward > 0 and not is_test_sequence_preview:
 		if not GameManager.game_data.has("gold"):
 			GameManager.game_data["gold"] = 0
 		GameManager.game_data["gold"] += gold_reward
 		GLog.info("Added %d gold to player (total: %d)" % [gold_reward, GameManager.game_data["gold"]])
+	elif gold_reward > 0 and is_test_sequence_preview:
+		GLog.info("PREVIEW: Gold reward %d shown but not added" % gold_reward, "victory_reward")
 
-	# Check if curio reward is pending
-	if pending_curio_reward:
+	# Check if curio reward is pending (skip in preview mode)
+	if pending_curio_reward and not is_test_sequence_preview:
 		_show_curio_selection()
 	else:
 		_finish_and_return_to_map()
@@ -299,9 +319,13 @@ func _on_curio_unhover(button: Button):
 	tween.tween_property(button, "scale", Vector2(1.0, 1.0), 0.1)
 
 func _finish_and_return_to_map():
-	"""Complete all rewards and return to map"""
-	GLog.info("Victory reward complete - returning to map")
-	SceneManager.load_scene_by_name("map")
+	"""Complete all rewards and return to map (or test setup in preview mode)"""
+	if is_test_sequence_preview:
+		GLog.info("Victory reward preview complete - returning to test setup", "victory_reward")
+		SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+	else:
+		GLog.info("Victory reward complete - returning to map")
+		SceneManager.load_scene_by_name("map")
 
 func _display_gold_reward():
 	"""Display gold earned from the victory"""

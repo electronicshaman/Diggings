@@ -50,12 +50,19 @@ func on_removed(_context: Resource) -> void:
 	pass
 
 # Helper method to resolve conditional values for a given property
+# Processes ALL conditional values with the matching property name, accumulating their effects
 func resolve_conditional_value(property_name: String, base_value: int, context: Resource) -> int:
+	var resolved_value = base_value
+	var found_any = false
+	
 	for conditional_value in conditional_values:
 		if conditional_value.property_name == property_name:
-			return conditional_value.resolve_value(context, base_value)
+			found_any = true
+			# Use resolve_value which handles both applies_to_base_value cases correctly
+			# Pass resolved_value (not base_value) so modifications accumulate if multiple conditional values exist
+			resolved_value = conditional_value.resolve_value(context, resolved_value)
 	
-	return base_value
+	return resolved_value if found_any else base_value
 
 # Get description including conditions
 func get_full_description(context: Resource = null) -> String:
@@ -87,13 +94,13 @@ func _get_curio_bonus(context: Resource, bonus_type: String) -> int:
 	return mods.get(bonus_type, 0)
 
 ## Helper to format value with curio bonus for display
-## Returns formatted text like "8 [color=gold](+3)[/color]" or just "8" if no bonus
+## Returns formatted text like "8 [color=purple](+3)[/color]" or just "8" if no bonus
 func _format_value_with_bonus(base_value: int, bonus: int, label: String = "") -> String:
 	if bonus > 0:
 		if label.is_empty():
-			return "%d [color=gold](+%d)[/color]" % [base_value, bonus]
+			return "%d [color=purple](+%d)[/color]" % [base_value, bonus]
 		else:
-			return "%d [color=gold](+%d)[/color] %s" % [base_value, bonus, label]
+			return "%d [color=purple](+%d)[/color] %s" % [base_value, bonus, label]
 	else:
 		if label.is_empty():
 			return "%d" % base_value

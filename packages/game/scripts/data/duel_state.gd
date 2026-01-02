@@ -282,16 +282,37 @@ func resolve_battlefield():
 				# Hold cards return to hand instead of being discarded
 				hand.add_card(card_instance)
 				GLog.debug("Card '%s' returned to hand (Hold)" % card_instance.get_card_name())
-			"Oneshot":
-				# Oneshot cards are removed from the game
+			"Oneshot", "Exhaust":
+				# Oneshot/Exhaust cards are removed from the game
 				removed_pile.add_card(card_instance)
-				GLog.debug("Card '%s' resolved and removed from game (Oneshot)" % card_instance.get_card_name())
+				GLog.debug("Card '%s' resolved and removed from game (%s)" % [card_instance.get_card_name(), card_instance.get_card_handling()])
+				EventBus.card_exhausted.emit(card_instance)
 			_:
 				# Default behavior is to discard
 				discard_pile.add_card(card_instance)
 				GLog.warn("Unknown card handling '%s' for card '%s', defaulting to discard" % [card_instance.get_card_handling(), card_instance.get_card_name()])
 	
 	GLog.info("Battlefield resolved, %d cards processed" % cards_to_resolve.size())
+
+func exhaust_card(card_instance: CardInstance) -> bool:
+	"""Move card from hand (or deck/discard) to removed pile"""
+	# Try to remove from hand first
+	if hand.remove_card(card_instance):
+		removed_pile.add_card(card_instance)
+		EventBus.card_exhausted.emit(card_instance)
+		return true
+	# Check other piles if needed, but usually we exhaust from hand
+	return false
+
+func exhaust_random_cards(count: int) -> Array[CardInstance]:
+	var exhausted: Array[CardInstance] = []
+	for i in range(count):
+		if hand.is_empty():
+			break
+		var card = hand.cards.pick_random()
+		if exhaust_card(card):
+			exhausted.append(card)
+	return exhausted
 
 func discard_card(card_instance: CardInstance):
 	"""Move card from hand to discard pile"""

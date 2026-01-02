@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Tracker Starter Deck"
+description = "Aboriginal guide and frontier scout deck specializing in preparation, survival skills, and information gathering. Uses setup mechanics and pathfinding to gain advantage."
+deck_theme = "preparation"
+difficulty_level = 4
+card_paths = Array[String](["res://data/cards/attack/boomerang_throw.tres", "res://data/cards/attack/fowling_piece.tres", "res://data/cards/attack/nulla_nulla.tres", "res://data/cards/attack/spear_thrust.tres", "res://data/cards/skill/bark_shield.tres", "res://data/cards/skill/parrying_shield.tres", "res://data/cards/skill/possum_skin_cloak.tres"])
+min_deck_size = 7
+max_deck_size = 15
+preferred_strategy = "setup"
+priority_card_types = Array[String](["Grit"])
+

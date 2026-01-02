@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/curios/effects/card_modifier.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="3"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon2.png" id="4"]
 
 [sub_resource type="Resource" id="SubResource_1"]
 script = ExtResource("2")
@@ -32,7 +33,7 @@ condition = "if_attack_card"
 script = ExtResource("1")
 curio_name = "Cursed Pickaxe"
 description = "+5 damage to all attacks, but lose 1 sanity per attack"
-icon = null
+icon = ExtResource("4")
 flavor_text = "Digs too deep and finds things better left buried."
 mechanical_category = "Triggered"
 rarity = "Corrupted"

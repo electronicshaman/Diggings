@@ -39,6 +39,9 @@ var run_start_time: float = 0.0
 # Duel system
 var pending_duel_config: DuelConfig = null
 
+# Test mode sequence state (typed as Resource to avoid autoload dependency issues)
+var test_sequence_state = null  # Will be TestSequenceState instance
+
 func _ready() -> void:
 	GLog.debug("GameManager initialized - The cosmic game engine awakens")
 	session_start_time = Time.get_ticks_msec() / 1000.0

@@ -79,9 +79,12 @@ custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Enemy:"
 
-[node name="EnemyDropdown" type="OptionButton" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/EnemyRow"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 0)
+[node name="EnemyScroll" type="ScrollContainer" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/EnemyRow"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="EnemyContainer" type="VBoxContainer" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/EnemyRow/EnemyScroll"]
 layout_mode = 2
 
 [node name="CurioRow" type="HBoxContainer" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection"]
@@ -147,6 +150,23 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 text = "3"
+
+[node name="RewardsRow" type="HBoxContainer" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection"]
+layout_mode = 2
+
+[node name="RewardsLabel" type="Label" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/RewardsRow"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="RewardsCheckbox" type="CheckBox" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/RewardsRow"]
+layout_mode = 2
+
+[node name="ProgressRow" type="HBoxContainer" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection"]
+visible = false
+layout_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/ProgressRow"]
+layout_mode = 2
 
 [node name="ButtonRow" type="HBoxContainer" parent="MarginContainer/MainHBox/VBoxContainer"]
 layout_mode = 2

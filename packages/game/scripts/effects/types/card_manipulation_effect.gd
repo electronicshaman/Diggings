@@ -32,6 +32,11 @@ func apply_effect(context):
 		"shuffle":
 			result.values_applied["shuffle_deck"] = true
 			result.success = true
+		"exhaust":
+			result.values_applied["exhaust_random"] = final_amount
+			if card_filter != "":
+				result.values_applied["exhaust_filter"] = card_filter
+			result.success = true
 		_:
 			result.success = false
 			result.prevented_by = "unsupported_action"
@@ -53,5 +58,10 @@ func get_preview_text(context: Resource) -> String:
 				return "Discard %d cards" % final_amount
 		"shuffle":
 			return "Shuffle deck"
+		"exhaust":
+			if final_amount == 1:
+				return "Exhaust 1 card"
+			else:
+				return "Exhaust %d cards" % final_amount
 		_:
 			return "%s %d cards" % [action.capitalize(), final_amount]

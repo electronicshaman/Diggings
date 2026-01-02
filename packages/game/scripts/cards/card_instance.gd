@@ -302,7 +302,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 				var val_true = cv.value_if_true
 				var val_false = cv.value_if_false
 				if curio_damage_bonus > 0:
-					return "Deal %d [color=gold](+%d)[/color] damage if %s, otherwise deal %d [color=gold](+%d)[/color] damage" % [
+					return "Deal %d [color=purple](+%d)[/color] damage if %s, otherwise deal %d [color=purple](+%d)[/color] damage" % [
 						val_true, curio_damage_bonus, condition_desc, val_false, curio_damage_bonus
 					]
 				else:
@@ -313,11 +313,11 @@ func _generate_conditional_description(effect: Resource) -> String:
 				var val_true = cv.value_if_true
 				var val_false = cv.value_if_false
 				if curio_defense_bonus > 0:
-					return "Gain %d [color=gold](+%d)[/color] block if %s, otherwise gain %d [color=gold](+%d)[/color] block" % [
+					return "Gain %d [color=purple](+%d)[/color] defense if %s, otherwise gain %d [color=purple](+%d)[/color] defense" % [
 						val_true, curio_defense_bonus, condition_desc, val_false, curio_defense_bonus
 					]
 				else:
-					return "Gain %d block if %s, otherwise gain %d block" % [
+					return "Gain %d defense if %s, otherwise gain %d defense" % [
 						val_true, condition_desc, val_false
 					]
 			elif effect.get_script().get_global_name() == "CardManipulationEffect":
@@ -328,6 +328,25 @@ func _generate_conditional_description(effect: Resource) -> String:
 					return "%s %d card(s) if %s, otherwise %s %d card(s)" % [
 						action.capitalize(), cv.value_if_true, condition_desc,
 						action, cv.value_if_false
+					]
+			elif effect.get_script().get_global_name() == "HealthEffect":
+				var base_amount = effect.amount
+				# Check if this is an additive conditional (applies_to_base_value) or replacement
+				if cv.applies_to_base_value:
+					# Additive: show base + conditional modifier
+					var total_if_true = base_amount + cv.value_if_true
+					var total_if_false = base_amount + cv.value_if_false
+					if cv.value_if_false == 0 and cv.value_if_true > 0:
+						# Special case: only adds when condition is met
+						return "Heal %d health. If %s, heal +%d more." % [base_amount, condition_desc, cv.value_if_true]
+					else:
+						return "Heal %d health. If %s, heal %d health total, otherwise heal %d health total." % [
+							base_amount, condition_desc, total_if_true, total_if_false
+						]
+				else:
+					# Replacement: show conditional values directly
+					return "Heal %d health if %s, otherwise heal %d health" % [
+						cv.value_if_true, condition_desc, cv.value_if_false
 					]
 
 	# Fallback to standard description if we can't handle the conditional

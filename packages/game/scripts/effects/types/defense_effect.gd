@@ -51,9 +51,9 @@ func get_preview_text(context: Resource) -> String:
 
 	var text: String
 	if curio_bonus > 0:
-		text = "Gain %s block" % _format_value_with_bonus(final_amount, curio_bonus, "")
+		text = "Gain %s defense" % _format_value_with_bonus(final_amount, curio_bonus, "")
 	else:
-		text = "Gain %d block" % final_amount
+		text = "Gain %d defense" % final_amount
 
 	if delayed:
 		text = "Next turn: " + text

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Prospector Starter Deck"
+description = "Independent gold seeker and fortune hunter deck specializing in high-risk gambling mechanics and resource speculation. Builds wealth through fortune cards and risk-taking."
+deck_theme = "gambling"
+difficulty_level = 3
+card_paths = Array[String](["res://data/cards/attack/crowbar_swing.tres", "res://data/cards/attack/gold_pan_bash.tres", "res://data/cards/attack/mining_hammer.tres", "res://data/cards/attack/pickaxe_strike.tres", "res://data/cards/attack/shovel_smack.tres", "res://data/cards/attack/sledgehammer_blow.tres", "res://data/cards/fortune/claim_jumping.tres", "res://data/cards/fortune/double_or_nothing.tres", "res://data/cards/fortune/lucky_nugget.tres", "res://data/cards/fortune/miners_luck.tres", "res://data/cards/fortune/pan_for_gold.tres", "res://data/cards/fortune/prospectors_instinct.tres", "res://data/cards/fortune/strike_it_rich.tres", "res://data/cards/skill/bush_telegraph.tres", "res://data/cards/skill/campfire_rest.tres", "res://data/cards/skill/canvas_overalls.tres", "res://data/cards/skill/claim_stake.tres", "res://data/cards/skill/gold_pan_shield.tres", "res://data/cards/skill/miners_leather_boots.tres", "res://data/cards/skill/oilskin_coat.tres", "res://data/cards/skill/steady_hands.tres", "res://data/cards/skill/swagmans_wisdom.tres", "res://data/cards/skill/tool_maintenance.tres", "res://data/cards/skill/wheelbarrow_cover.tres"])
+min_deck_size = 20
+max_deck_size = 25
+preferred_strategy = "combo"
+priority_card_types = Array[String](["Gamble", "Fortune"])
+

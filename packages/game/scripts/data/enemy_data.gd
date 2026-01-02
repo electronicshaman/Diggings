@@ -183,7 +183,6 @@ func get_pattern_index() -> int:
 func start_turn():
 	"""Called at the start of enemy turn"""
 	turns_alive += 1
-	reduce_stun()
 	_emit_change("turn_started", turns_alive - 1, turns_alive)
 
 func end_turn():

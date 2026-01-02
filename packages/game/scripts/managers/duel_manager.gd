@@ -418,9 +418,20 @@ func apply_card_results(results: Dictionary):
 		var drawn = duel_state.draw_cards(results.draw)
 		GLog.debug("Drew %d cards" % drawn.size())
 	
+	if results.has("exhaust_random") and results.exhaust_random > 0:
+		var exhausted = duel_state.exhaust_random_cards(results.exhaust_random)
+		GLog.debug("Exhausted %d cards" % exhausted.size())
+	
 	if results.has("energy_restore") and results.energy_restore > 0:
 		player.restore_energy(results.energy_restore)
 		GLog.debug("Restored %d energy" % results.energy_restore)
+	
+	if results.has("gold") and results.gold != 0:
+		if player.stats:
+			player.stats.gain_gold(results.gold)
+			GLog.debug("Gained %d gold" % results.gold)
+			if has_node("/root/EventBus"):
+				EventBus.gold_changed.emit(results.gold)
 	
 	if results.has("stun_enemy") and results.stun_enemy > 0:
 		enemy.apply_stun(results.stun_enemy)
@@ -471,20 +482,71 @@ func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
 
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
-	duel_state.end_duel(winner)
 
 	# Check if this is a test duel
 	var is_test_duel: bool = GameManager.game_data.get("is_test_duel", false)
 
 	if is_test_duel:
-		# Test duel: return to test setup immediately
-		GLog.info("Test duel ended, returning to test setup", "duel_manager")
-		await get_tree().create_timer(0.5).timeout  # Brief pause
-		SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+		var seq_state = GameManager.test_sequence_state
+
+		# Check for active sequence
+		if seq_state and seq_state.is_active:
+			if winner == "player":
+				# VICTORY in sequence - persist state
+				GLog.info("Sequence battle won! Persisting state...", "duel_manager")
+				seq_state.persistent_health = duel_state.player_data.current_health
+				seq_state.persistent_energy = duel_state.player_data.max_energy
+				seq_state.advance_to_next_enemy()
+
+				# Route based on sequence completion and rewards setting
+				if seq_state.is_sequence_complete():
+					# Sequence complete - call state cleanup then return to test config
+					duel_state.end_duel(winner)
+					GLog.info("Sequence complete! Returning to test setup", "duel_manager")
+					await get_tree().create_timer(0.5).timeout
+					SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+				elif seq_state.show_rewards:
+					# More battles remain, show rewards in preview mode
+					duel_state.end_duel(winner)
+					GLog.info("Showing victory rewards (preview mode)", "duel_manager")
+					GameManager.game_data["test_sequence_preview"] = true
+					await get_tree().create_timer(0.5).timeout
+					SceneManager.load_scene("res://scenes/ui/victory_reward.tscn")
+				else:
+					# More battles remain, no rewards - start next battle directly
+					# Skip duel_state.end_duel() to avoid signal emission during scene transition
+					GLog.info("Starting next battle directly (no state cleanup)", "duel_manager")
+					await get_tree().create_timer(0.5).timeout
+					_start_next_sequence_battle()
+					return  # Don't emit signals or clear flags - scene is loading
+			else:
+				# DEFEAT in sequence - cleanup and return
+				duel_state.end_duel(winner)
+				var battle_num = seq_state.current_enemy_index + 1
+				GLog.warn("Defeated on battle %d/%d" % [battle_num, seq_state.total_enemies], "duel_manager")
+				EventBus.emit_ui_notification("Defeated on battle %d/%d" % [battle_num, seq_state.total_enemies], "error")
+
+				# Cleanup
+				CurioManager.clear_curios()
+				seq_state.reset()
+				seq_state.is_active = false
+
+				await get_tree().create_timer(1.0).timeout
+				SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+		else:
+			# Single test duel (no sequence) - existing behavior
+			duel_state.end_duel(winner)
+			GLog.info("Test duel ended, returning to test setup", "duel_manager")
+			await get_tree().create_timer(0.5).timeout
+			SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+
 		# Clear test flag
 		GameManager.game_data["is_test_duel"] = false
 		duel_ended.emit(winner)
 		return
+
+	# Normal (non-test) duel - do state cleanup
+	duel_state.end_duel(winner)
 
 	if winner == "player":
 		# Check if this enemy should offer curio reward (boss/elite only)
@@ -524,6 +586,50 @@ func _should_offer_curio_reward() -> bool:
 		return true
 
 	return false
+
+func _start_next_sequence_battle() -> void:
+	"""Start the next battle in a test sequence without returning to config"""
+	var seq_state = GameManager.test_sequence_state
+	if not seq_state or not seq_state.is_active:
+		GLog.warn("Cannot start next sequence battle - no active sequence", "duel_manager")
+		return
+
+	var enemy = seq_state.get_next_enemy()
+	if not enemy:
+		GLog.error("No enemy for next sequence battle", "duel_manager")
+		return
+
+	GLog.info("Starting next sequence battle: %d/%d vs %s" % [
+		seq_state.current_enemy_index + 1,
+		seq_state.total_enemies,
+		enemy.get("enemy_name") if enemy.get("enemy_name") else "Unknown"
+	], "duel_manager")
+
+	# Convert deck to Array[CardData]
+	var player_deck: Array[CardData] = []
+	if seq_state.selected_deck and seq_state.selected_deck.has_method("get"):
+		for card_path in seq_state.selected_deck.card_paths:
+			var card = load(card_path) as CardData
+			if card:
+				player_deck.append(card)
+
+	if player_deck.is_empty():
+		GLog.error("Failed to load deck for sequence - aborting", "duel_manager")
+		SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+		return
+
+	# Create DuelConfig with persistent health/energy
+	var modifiers = {
+		"test_duel": true,
+		"health_override": seq_state.persistent_health,
+		"energy_override": seq_state.persistent_energy
+	}
+
+	var duel_config = DuelConfig.new(player_deck, enemy, "test_duel", modifiers)
+	GameManager.pending_duel_config = duel_config
+
+	# Load the duel scene (using SceneManager for proper cleanup)
+	SceneManager.load_scene("res://scenes/game/duel.tscn")
 
 func get_hand_cards() -> Array[CardInstance]:
 	return duel_state.hand.cards if duel_state.hand else []
@@ -604,8 +710,9 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 				duel_state.discard_pile.add_card(card_instance)
 			"Hold":
 				duel_state.hand.add_card(card_instance)
-			"Oneshot":
+			"Oneshot", "Exhaust":
 				duel_state.removed_pile.add_card(card_instance)
+				EventBus.card_exhausted.emit(card_instance)
 			_:
 				duel_state.discard_pile.add_card(card_instance)
 		
@@ -658,8 +765,9 @@ func resolve_battlefield():
 					duel_state.discard_pile.add_card(card_instance)
 				"Hold":
 					duel_state.hand.add_card(card_instance)
-				"Oneshot":
+				"Oneshot", "Exhaust":
 					duel_state.removed_pile.add_card(card_instance)
+					EventBus.card_exhausted.emit(card_instance)
 				_:
 					duel_state.discard_pile.add_card(card_instance)
 			

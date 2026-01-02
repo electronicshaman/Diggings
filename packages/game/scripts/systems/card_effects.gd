@@ -122,7 +122,8 @@ func _create_default_results() -> Dictionary:
 		"ignores_defense": false,
 		"discard_random": 0,
 		"add_curse": 0,
-		"sanity_restore": 0
+		"sanity_restore": 0,
+		"exhaust_random": 0
 	}
 
 ## Validate inputs for card effect application
@@ -200,7 +201,7 @@ func _apply_single_effect(effect: Resource, duel_manager: DuelManager, card_inst
 	# Apply GameEffect
 	if effect.has_method("apply_effect"):
 		var effect_result = effect.apply_effect(context)
-		if effect_result and effect_result.has_method("get") and effect_result.get("success"):
+		if effect_result and effect_result is EffectResult and effect_result.success:
 			_merge_effect_result_into_results(effect_result, results)
 			result.success = true
 		else:
@@ -418,7 +419,7 @@ func _apply_single_effect_with_context(effect: Resource, duel_manager: DuelManag
 	# Apply GameEffect
 	if effect.has_method("apply_effect"):
 		var effect_result = effect.apply_effect(context)
-		if effect_result and effect_result.has_method("get") and effect_result.get("success"):
+		if effect_result and effect_result is EffectResult and effect_result.success:
 			_merge_effect_result_into_results(effect_result, results)
 			result.success = true
 		else:
@@ -430,10 +431,10 @@ func _apply_single_effect_with_context(effect: Resource, duel_manager: DuelManag
 
 ## Helper to merge GameEffect results into results dictionary
 func _merge_effect_result_into_results(effect_result: Resource, results: Dictionary) -> void:
-	if not effect_result or not effect_result.has_method("get"):
+	if not effect_result or not effect_result is EffectResult:
 		return
 
-	var values_applied = effect_result.get("values_applied")
+	var values_applied = effect_result.values_applied
 	if not values_applied is Dictionary:
 		return
 
@@ -462,6 +463,9 @@ func _merge_effect_result_into_results(effect_result: Resource, results: Diction
 			"discard_random":
 				if values_applied[key] > 0:
 					results.discard_random += values_applied[key]
+			"exhaust_random":
+				if values_applied[key] > 0:
+					results.exhaust_random += values_applied[key]
 			"shuffle_deck":
 				results.shuffle_deck = values_applied[key]
 			"ignores_defense":
