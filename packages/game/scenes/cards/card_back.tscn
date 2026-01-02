@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://nxm0r6f2867a"]
+
+[ext_resource type="Script" uid="uid://clflmmjdgf4vm" path="res://scripts/cards/card.gd" id="1_vp0qx"]
+[ext_resource type="Texture2D" uid="uid://cw73m1dlvkp6q" path="res://assets/textures/card_backs/first card back attempt.png" id="2_rhbud"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_45qsb"]
+size = Vector2(300, 420)
+
+[node name="Card" type="Area2D"]
+input_pickable = true
+script = ExtResource("1_vp0qx")
+
+[node name="CardBackground" type="ColorRect" parent="."]
+mouse_filter = 2
+offset_right = 300.0
+offset_bottom = 420.0
+
+[node name="CardBorder" type="ColorRect" parent="."]
+mouse_filter = 2
+offset_right = 300.0
+offset_bottom = 420.0
+color = Color(0.831, 0.686, 0.216, 1)
+
+[node name="CardInner" type="TextureRect" parent="."]
+mouse_filter = 2
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 290.0
+offset_bottom = 408.0
+texture = ExtResource("2_rhbud")
+expand_mode = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(150, 210)
+visible = false
+shape = SubResource("RectangleShape2D_45qsb")

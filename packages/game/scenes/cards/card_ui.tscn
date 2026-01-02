@@ -66,6 +66,7 @@ layout_mode = 2
 [node name="Description" type="RichTextLabel" parent="CardInfo/CardInfoContainer"]
 layout_mode = 2
 bbcode_enabled = true
+text = "Card description"
 fit_content = true
 
 [node name="SanityCost" type="Label" parent="CardInfo/CardInfoContainer"]
