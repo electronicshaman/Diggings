@@ -151,7 +151,7 @@ func update_duel_state(new_state: Resource) -> void:
 func update_all_ui() -> void:
 	update_player_ui()
 	update_enemy_ui()
-	update_pile_ui()
+	# Pile UI updates moved to debounced timer to prevent use-after-free bugs
 	update_turn_ui()
 	update_seed_ui()
 	update_curios_display()
@@ -401,6 +401,7 @@ func _on_ui_refresh_timer_timeout() -> void:
 	refresh_hand_display()
 	refresh_enemy_hand_display()
 	refresh_battlefield_display()
+	update_pile_ui()  # Update pile visuals after card nodes have settled
 	ui_refresh_requested.emit()
 
 func clear_hand_display() -> void:
@@ -766,13 +767,16 @@ func _update_removed_pile_visual() -> void:
 
 ## Clear a pile card instance from its container
 func _clear_pile_card(container: Node, card_instance: Node) -> void:
-	if is_instance_valid(card_instance):
+	# Check if card_instance is valid AND not already queued for deletion
+	if is_instance_valid(card_instance) and not card_instance.is_queued_for_deletion():
 		card_instance.queue_free()
 		card_instance = null
 
 	# Clear all children from container (cleanup any orphaned nodes)
 	for child in container.get_children():
-		child.queue_free()
+		# Only free children that aren't already queued for deletion
+		if is_instance_valid(child) and not child.is_queued_for_deletion():
+			child.queue_free()
 
 ## Get DuelState safely from game_controller
 func _get_duel_state() -> Resource:
