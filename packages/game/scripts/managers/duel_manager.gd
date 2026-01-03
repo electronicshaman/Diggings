@@ -375,13 +375,24 @@ func play_card(card_instance: CardInstance):
 	var player = duel_state.player_data
 	var actual_cost = player.get_actual_energy_cost(card_instance.get_energy_cost(), card_instance.get_card_type())
 
-	# Pay costs upfront (energy, sanity, Faith)
+	# Pay all costs upfront to ensure consistent state
+	# If card passed can_play_card() check, all costs are guaranteed affordable
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_instance.get_sanity_cost())
-
-	# Pay Faith cost if any (Faith costs are handled as negative Faith effects)
-	# Note: Faith is NOT paid here - it's handled by FaithEffect during resolution
-	# This is because Faith costs may be conditional or modified by effects
+	
+	# Pay Faith costs upfront (extracted from card effects)
+	var faith_cost = _get_faith_cost_from_card(card_instance.card_data)
+	if faith_cost > 0:
+		player.spend_faith(faith_cost)
+		GLog.debug("Paid %d Faith cost upfront (current: %d/%d)" % [faith_cost, player.faith, player.max_faith])
+	
+	# Pay custom resource costs upfront
+	var custom_costs = _get_custom_resource_costs_from_card(card_instance.card_data)
+	for resource_name in custom_costs:
+		var cost = custom_costs[resource_name]
+		if cost > 0:
+			player.modify_custom_resource(resource_name, -cost)
+			GLog.debug("Paid %d %s cost upfront (current: %d)" % [cost, resource_name, player.get_custom_resource(resource_name)])
 	
 	# Capture timing context BEFORE incrementing counter
 	var cards_played_before = player.cards_played_this_turn
@@ -848,7 +859,7 @@ func _get_faith_cost_from_card(card_data: CardData) -> int:
 	return total_faith_cost
 
 func _get_custom_resource_costs_from_card(card_data: CardData) -> Dictionary:
-	"""Extract custom resource costs from card effects (negative amounts)"""
+	"""Extract custom resource costs from card effects (negative amounts are costs)"""
 	if not card_data or not card_data.effects:
 		return {}
 
@@ -858,10 +869,12 @@ func _get_custom_resource_costs_from_card(card_data: CardData) -> Dictionary:
 		if effect is ResourceEffect:
 			var res_effect = effect as ResourceEffect
 			# Check if it's a custom resource (not standard)
-			if res_effect.resource_type not in ["gold", "energy", "sanity", "faith"]:
-				if res_effect.amount < 0:
+			# Note: Faith is excluded from standard resources—use FaithEffect instead
+			if res_effect.resource_type not in ["gold", "energy", "sanity"]:
+				# Both negative and positive amounts; negative = cost, positive = gain
+				if res_effect.amount != 0:
 					var current_cost = costs.get(res_effect.resource_type, 0)
-					costs[res_effect.resource_type] = current_cost + (-res_effect.amount)
+					costs[res_effect.resource_type] = current_cost + res_effect.amount
 	
 	return costs
 
@@ -875,6 +888,10 @@ func _setup_preacher_passive_abilities():
 	# Temptation: Choice when reaching max Faith
 	if EventBus.has_signal("faith_gained"):
 		EventBus.connect_safe("faith_gained", _on_faith_gained_temptation_check)
+	
+	# Holy Conviction: Improve Fortune card success chance based on Faith
+	if EventBus.has_signal("gambling_modifier_query"):
+		EventBus.connect_safe("gambling_modifier_query", _on_gambling_modifier_query_holy_conviction)
 
 func _on_faith_gained_fervent_faith(player_data, amount: int):
 	"""Fervent Faith passive: Gain +1 defense when gaining Faith"""
@@ -918,6 +935,37 @@ func _is_preacher() -> bool:
 	"""Check if player is playing as Preacher class"""
 	if not duel_state or not duel_state.player_data:
 		return false
+	
+	var player = duel_state.player_data
+	
+	# Check character_class resource first
+	if player.has("character_class") and player.character_class:
+		if player.character_class.has("character_class_name"):
+			return player.character_class.character_class_name == "Preacher"
+	
+	# Fallback to character_class_name property
+	if player.has("character_class_name"):
+		return player.character_class_name == "Preacher"
+	
+	return false
+
+func _on_gambling_modifier_query_holy_conviction(player_data: Object, context: Dictionary):
+	"""Holy Conviction passive: +10% Fortune card success chance when Faith >= 5"""
+	if not _is_preacher():
+		return
+	
+	if player_data != duel_state.player_data:
+		return
+	
+	# Check if player has Faith >= 5
+	if player_data.has("faith") and player_data.faith >= 5:
+		# Modify success_chance in the context
+		if context.has("success_chance"):
+			var current_chance: float = context.success_chance
+			context.success_chance = min(1.0, current_chance + 0.1)  # Cap at 100%
+			GLog.debug("Holy Conviction active! Fortune success chance: %.0f%% -> %.0f%%" % [
+				current_chance * 100, context.success_chance * 100
+			])
 
 	var player = duel_state.player_data
 	if player.character_class and player.character_class.character_class_name == "Preacher":

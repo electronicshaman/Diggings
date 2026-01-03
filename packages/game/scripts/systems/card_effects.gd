@@ -248,13 +248,13 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 		if DEBUG_ENABLED:
 			GLog.debug("Gambling active! Multiplier: %.1fx" % multiplier)
 
-		# Base 50% chance for gambling success
-		# Holy Conviction (Preacher passive): +10% if Faith >= 5
-		var success_chance = 0.5
-		if _is_preacher_with_high_faith(player_data):
-			success_chance = 0.6
-			if DEBUG_ENABLED:
-				GLog.debug("Holy Conviction active! Fortune success chance: 60%")
+		# Query EventBus for gambling modifiers (e.g., Holy Conviction passive)
+		var context = {
+			"success_chance": 0.5,  # Base 50% chance
+			"player_data": player_data
+		}
+		EventBus.gambling_modifier_query.emit(player_data, context)
+		var success_chance = context.get("success_chance", 0.5)
 
 		if randf() < success_chance:
 			# Apply multiplier to relevant results
@@ -272,27 +272,6 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 			results.heal = 0
 			if DEBUG_ENABLED:
 				GLog.debug("Gambling FAILED! All effects negated")
-
-func _is_preacher_with_high_faith(player_data) -> bool:
-	"""Check if player is Preacher with Faith >= 5 (for Holy Conviction passive)"""
-	if not player_data:
-		return false
-
-	# Check if Preacher
-	var is_preacher = false
-	if player_data.character_class and player_data.character_class.character_class_name == "Preacher":
-		is_preacher = true
-	elif player_data.character_class_name == "Preacher":
-		is_preacher = true
-
-	if not is_preacher:
-		return false
-
-	# Check if Faith >= 5
-	if player_data.has("faith") and player_data.faith >= 5:
-		return true
-
-	return false
 
 func get_card_value_estimate(card_data: CardData) -> int:
 	# Input validation

@@ -201,9 +201,7 @@ func spend_faith(amount: int) -> bool:
 		_emit_change("faith_spent", old_faith, faith)
 
 		# Emit faith_spent signal via EventBus
-		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
-		if event_bus and event_bus.has_signal("faith_spent"):
-			event_bus.faith_spent.emit(self, amount)
+		EventBus.faith_spent.emit(self, amount)
 
 		return true
 	return false

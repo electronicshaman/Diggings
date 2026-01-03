@@ -42,6 +42,7 @@ signal health_changed(current: int, max: int)
 signal faith_gained(player: Object, amount: int)
 signal faith_spent(player: Object, amount: int)
 signal faith_changed(current: int, max: int)
+signal gambling_modifier_query(player_data: Object, context: Dictionary)
 
 signal enemy_intent_revealed(intent: String)
 signal enemy_action_performed(action: String)

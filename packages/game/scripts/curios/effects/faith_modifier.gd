@@ -58,7 +58,8 @@ func _add_faith(player_data, value: int) -> void:
 	if player_data and player_data.has_method("gain_faith"):
 		player_data.gain_faith(value)
 		if DEBUG_ENABLED:
-			GLog.debug("FaithModifier: Added %d Faith (current: %d/%d)" % [value, player_data.faith, player_data.max_faith])
+			if player_data.has("faith") and player_data.has("max_faith"):
+				GLog.debug("FaithModifier: Added %d Faith (current: %d/%d)" % [value, player_data.faith, player_data.max_faith])
 
 func _get_player_data(game_state: Node):
 	"""Get player data from game state"""

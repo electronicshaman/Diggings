@@ -425,6 +425,7 @@ func clear_hand_display() -> void:
 	for card_node in hand_cards:
 		if is_instance_valid(card_node):
 			card_node.queue_free()
+			card_node = null
 	hand_cards.clear()
 
 func clear_quick_draw_highlights() -> void:
