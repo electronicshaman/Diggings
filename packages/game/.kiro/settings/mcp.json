@@ -4,7 +4,7 @@
       "command": "uv",
       "args": [
         "run",
-        "/Users/rob/Projects/dmh1/addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"
+        "addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"
       ],
       "autoApprove": [
         "search_files",
