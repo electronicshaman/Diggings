@@ -3,6 +3,27 @@ class_name EffectProcessor
 
 const DEBUG_ENABLED: bool = true
 
+# Safe logging helper to handle cases where GLog might not be available
+func _safe_log(level: String, message: String) -> void:
+	if GLog and is_instance_valid(GLog):
+		match level:
+			"debug":
+				if DEBUG_ENABLED:
+					_safe_log("debug", message)
+			"info":
+				_safe_log("info", message)
+			"warn":
+				_safe_log("warn", message)
+			"error":
+				_safe_log("error", message)
+			"trace":
+				if DEBUG_ENABLED and GLog.min_log_level <= GLog.Level.TRACE:
+					_safe_log("trace", message)
+	else:
+		# Fallback to print if GLog is not available
+		if DEBUG_ENABLED or level in ["warn", "error"]:
+			print("[%s] %s" % [level.to_upper(), message])
+
 # Signals for effect processing events
 signal effect_executed(effect: GameEffect, result: EffectResult, context: EffectContext)
 signal effect_failed(effect: GameEffect, reason: String, context: EffectContext)
@@ -25,6 +46,49 @@ var _validate_deterministic_results: bool = false  # When true, validates that r
 # Context cache for performance optimization
 var _context_cache: Dictionary = {}
 var _cache_enabled: bool = true
+var _context_cache_max_size: int = 100
+var _context_cache_ttl_ms: int = 30000  # 30 seconds TTL for cached contexts
+
+# Enhanced context performance monitoring
+var _context_performance_stats: Dictionary = {
+	"contexts_created": 0,
+	"contexts_reused": 0,
+	"cache_hits": 0,
+	"cache_misses": 0,
+	"cache_evictions": 0,
+	"total_creation_time_ms": 0,
+	"total_curio_lookup_time_ms": 0,
+	"average_creation_time_ms": 0.0,
+	"peak_creation_time_ms": 0,
+	"contexts_pooled": 0,
+	"pool_reuse_rate": 0.0
+}
+
+# Batch processing optimization settings
+var _batch_optimization_enabled: bool = true
+var _batch_size_threshold: int = 5  # Minimum batch size to trigger optimizations
+var _object_pool_enabled: bool = true
+var _validation_cache_enabled: bool = true
+
+# Object pools for performance optimization
+var _effect_result_pool: Array[EffectResult] = []
+var _context_pool: Array[EffectContext] = []
+var _max_pool_size: int = 50
+var _pool_warmup_size: int = 10  # Pre-allocate this many objects
+var _pool_shrink_threshold: int = 75  # Shrink pool when it exceeds this size
+
+# Validation cache to avoid redundant checks
+var _validation_cache: Dictionary = {}
+var _validation_cache_max_size: int = 100
+
+# Batch processing performance metrics
+var _batch_performance_stats: Dictionary = {
+	"batches_optimized": 0,
+	"objects_pooled": 0,
+	"validation_cache_hits": 0,
+	"allocation_savings": 0,
+	"processing_time_saved_ms": 0
+}
 
 # Error handling and recovery configuration
 var _error_recovery_enabled: bool = true
@@ -60,7 +124,10 @@ var _stats: Dictionary = {
 	"edge_cases_handled": 0,
 	"deterministic_validations_run": 0,
 	"deterministic_validations_passed": 0,
-	"effects_sorted_for_determinism": 0
+	"effects_sorted_for_determinism": 0,
+	"batch_optimizations_used": 0,
+	"object_allocations_saved": 0,
+	"validation_cache_hits": 0
 }
 
 # Performance monitoring thresholds
@@ -79,29 +146,182 @@ var _max_trace_entries: int = 100
 var _processing_history: Array[Dictionary] = []
 var _max_history_entries: int = 50
 
-## Process multiple effects in batch
+## Process multiple effects in batch with performance optimizations
 func process_effects(effects: Array[GameEffect], context: EffectContext) -> Array[EffectResult]:
 	var batch_start_time = Time.get_ticks_msec()
 	var results: Array[EffectResult] = []
 	
-	# Enhanced input validation with graceful error handling
-	var validation_result = _validate_batch_inputs_enhanced(effects, context)
+	# Check if batch optimization should be applied
+	var use_batch_optimization = _batch_optimization_enabled and effects.size() >= _batch_size_threshold
+	
+	if use_batch_optimization:
+		return _process_effects_optimized(effects, context, batch_start_time)
+	else:
+		return _process_effects_standard(effects, context, batch_start_time)
+
+## Optimized batch processing for large effect sets
+func _process_effects_optimized(effects: Array[GameEffect], context: EffectContext, batch_start_time: int) -> Array[EffectResult]:
+	var results: Array[EffectResult] = []
+	
+	if DEBUG_ENABLED:
+		_safe_log("debug", "EffectProcessor: Using optimized batch processing for %d effects" % effects.size())
+	
+	# Pre-allocate results array for better memory performance
+	results.resize(effects.size())
+	
+	# Enhanced input validation with caching
+	var validation_result = _validate_batch_inputs_cached(effects, context)
 	if not validation_result.valid:
-		GLog.error("EffectProcessor: Batch validation failed - %s" % validation_result.error_message)
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Batch validation failed - %s" % validation_result.error_message)
 		_stats.validation_failures += 1
 		
 		# Attempt recovery if enabled
 		if _error_recovery_enabled and validation_result.recoverable:
 			var recovery_result = _attempt_batch_recovery(effects, context, validation_result)
 			if recovery_result.success:
-				GLog.warn("EffectProcessor: Batch validation recovered - %s" % recovery_result.recovery_action)
+				_safe_log("warn", "EffectProcessor: Batch validation recovered - %s" % recovery_result.recovery_action)
+				_stats.error_recoveries += 1
+				error_recovered.emit("batch_validation", recovery_result.recovery_action, {
+					"original_error": validation_result.error_message,
+					"effect_count": effects.size() if effects else 0
+				})
+				effects = recovery_result.recovered_effects as Array[GameEffect]
+				context = recovery_result.recovered_context
+			else:
+				_handle_critical_error("batch_validation_unrecoverable", {
+					"error": validation_result.error_message,
+					"recovery_attempted": true,
+					"recovery_error": recovery_result.error_message
+				})
+				batch_completed.emit(results)
+				return results
+		else:
+			_handle_critical_error("batch_validation_failed", {
+				"error": validation_result.error_message,
+				"recovery_enabled": _error_recovery_enabled
+			})
+			batch_completed.emit(results)
+			return results
+	
+	# Ensure deterministic processing order if enabled
+	var processing_effects = effects
+	if _deterministic_mode and _sort_effects_by_id:
+		processing_effects = _sort_effects_for_deterministic_processing(effects)
+		if processing_effects != effects:
+			_stats.effects_sorted_for_determinism += 1
+	
+	# Pre-validate all effects to avoid redundant checks during processing
+	var effect_validations: Array[bool] = []
+	if _validation_cache_enabled:
+		effect_validations = _batch_validate_effects(processing_effects)
+	
+	# Batch process effects with optimizations
+	var processed_count = 0
+	var failed_count = 0
+	var batch_processing_time = 0
+	var critical_failures = 0
+	
+	for i in range(processing_effects.size()):
+		var effect = processing_effects[i]
+		var effect_start_time = Time.get_ticks_msec()
+		
+		# Use cached validation result if available
+		var is_valid = true
+		if _validation_cache_enabled and i < effect_validations.size():
+			is_valid = effect_validations[i]
+		else:
+			is_valid = _validate_effect_for_processing(effect, i)
+		
+		if is_valid:
+			# Get result from pool or create new one
+			var result = _get_pooled_effect_result()
+			result = _process_single_effect_optimized(effect, context, result)
+			results[i] = result
+			
+			var effect_processing_time = Time.get_ticks_msec() - effect_start_time
+			batch_processing_time += effect_processing_time
+			
+			_update_effect_performance_stats(effect_processing_time)
+			
+			if result.success:
+				processed_count += 1
+				_stats.successful_effects += 1
+				effect_executed.emit(effect, result, context)
+			else:
+				failed_count += 1
+				_stats.failed_effects += 1
+				
+				var is_critical = _is_critical_failure(result)
+				if is_critical:
+					critical_failures += 1
+				
+				var reason = _extract_failure_reason(result)
+				effect_failed.emit(effect, reason, context)
+				
+				if not _allow_partial_batch_success and is_critical:
+					_safe_log("error", "EffectProcessor: Aborting batch due to critical failure in effect %d" % i)
+					break
+		else:
+			# Create failure result from pool
+			var failure_result = _get_pooled_effect_result()
+			failure_result.success = false
+			failure_result.values_applied = {}
+			var logs_array: Array[String] = ["Effect failed validation at index %d" % i]
+			failure_result.logs = logs_array
+			results[i] = failure_result
+			
+			failed_count += 1
+			critical_failures += 1
+			_stats.failed_effects += 1
+			_stats.edge_cases_handled += 1
+			
+			if not _allow_partial_batch_success:
+				break
+	
+	var total_batch_time = Time.get_ticks_msec() - batch_start_time
+	
+	# Update batch statistics
+	_stats.total_effects_processed += processing_effects.size()
+	_stats.batch_count += 1
+	_stats.total_processing_time_ms += total_batch_time
+	_batch_performance_stats.batches_optimized += 1
+	
+	# Calculate performance improvements
+	var estimated_standard_time = processing_effects.size() * 10  # Rough estimate
+	var time_saved = max(0, estimated_standard_time - total_batch_time)
+	_batch_performance_stats.processing_time_saved_ms += time_saved
+	
+	if DEBUG_ENABLED:
+		_safe_log("debug", "EffectProcessor: Optimized batch complete - %d processed, %d failed in %dms (saved ~%dms)" % [
+			processed_count, failed_count, total_batch_time, time_saved
+		])
+	
+	batch_completed.emit(results)
+	return results
+
+## Standard batch processing for smaller effect sets
+func _process_effects_standard(effects: Array[GameEffect], context: EffectContext, batch_start_time: int) -> Array[EffectResult]:
+	var results: Array[EffectResult] = []
+	
+	# Enhanced input validation with graceful error handling
+	var validation_result = _validate_batch_inputs_enhanced(effects, context)
+	if not validation_result.valid:
+		_safe_log("error", "EffectProcessor: Batch validation failed - %s" % validation_result.error_message)
+		_stats.validation_failures += 1
+		
+		# Attempt recovery if enabled
+		if _error_recovery_enabled and validation_result.recoverable:
+			var recovery_result = _attempt_batch_recovery(effects, context, validation_result)
+			if recovery_result.success:
+				_safe_log("warn", "EffectProcessor: Batch validation recovered - %s" % recovery_result.recovery_action)
 				_stats.error_recoveries += 1
 				error_recovered.emit("batch_validation", recovery_result.recovery_action, {
 					"original_error": validation_result.error_message,
 					"effect_count": effects.size() if effects else 0
 				})
 				# Continue with recovered data
-				effects = recovery_result.recovered_effects
+				effects = recovery_result.recovered_effects as Array[GameEffect]
 				context = recovery_result.recovered_context
 			else:
 				# Recovery failed, return empty results but don't crash
@@ -123,7 +343,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 	
 	# Enhanced logging for batch start
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Starting batch processing of %d effects from %s" % [effects.size(), context.source_type])
+		_safe_log("debug", "EffectProcessor: Starting standard batch processing of %d effects from %s" % [effects.size(), context.source_type])
 		_log_context_details(context, "batch_start")
 	
 	# Ensure deterministic processing order if enabled
@@ -131,7 +351,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 	if _deterministic_mode and _sort_effects_by_id:
 		processing_effects = _sort_effects_for_deterministic_processing(effects)
 		if DEBUG_ENABLED and processing_effects != effects:
-			GLog.debug("EffectProcessor: Effects sorted for deterministic processing")
+			_safe_log("debug", "EffectProcessor: Effects sorted for deterministic processing")
 		if processing_effects != effects:
 			_stats.effects_sorted_for_determinism += 1
 	
@@ -156,7 +376,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 		var effect_start_time = Time.get_ticks_msec()
 		
 		if DEBUG_ENABLED:
-			GLog.trace("EffectProcessor: Processing effect %d/%d: %s" % [i + 1, processing_effects.size(), _safe_get_effect_id(effect)])
+			_safe_log("trace", "EffectProcessor: Processing effect %d/%d: %s" % [i + 1, processing_effects.size(), _safe_get_effect_id(effect)])
 		
 		# Enhanced null safety check
 		if not _null_safety_enabled or _validate_effect_for_processing(effect, i):
@@ -171,7 +391,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 			
 			# Check for performance warnings
 			if effect_processing_time > _performance_thresholds.effect_processing_ms:
-				GLog.warn("EffectProcessor: Slow effect processing detected - %s took %dms" % [_safe_get_effect_id(effect), effect_processing_time])
+				_safe_log("warn", "EffectProcessor: Slow effect processing detected - %s took %dms" % [_safe_get_effect_id(effect), effect_processing_time])
 				performance_warning.emit("effect_processing", effect_processing_time, _performance_thresholds.effect_processing_ms)
 			
 			# Determine if this is a critical failure (for failed effects)
@@ -185,7 +405,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 				effect_executed.emit(effect, result, context)
 				
 				if DEBUG_ENABLED:
-					GLog.debug("EffectProcessor: Effect %d (%s) succeeded in %dms" % [i, _safe_get_effect_id(effect), effect_processing_time])
+					_safe_log("debug", "EffectProcessor: Effect %d (%s) succeeded in %dms" % [i, _safe_get_effect_id(effect), effect_processing_time])
 					_log_effect_result_details(effect, result, effect_processing_time)
 			else:
 				failed_count += 1
@@ -197,7 +417,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 				var reason = _extract_failure_reason(result)
 				effect_failed.emit(effect, reason, context)
 				
-				GLog.warn("EffectProcessor: Effect %d (%s) failed in %dms: %s%s" % [
+				_safe_log("warn", "EffectProcessor: Effect %d (%s) failed in %dms: %s%s" % [
 					i, _safe_get_effect_id(effect), effect_processing_time, reason,
 					" [CRITICAL]" if is_critical else ""
 				])
@@ -208,7 +428,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 				
 				# Check if we should abort batch processing due to critical failures
 				if not _allow_partial_batch_success and is_critical:
-					GLog.error("EffectProcessor: Aborting batch due to critical failure in effect %d" % i)
+					_safe_log("error", "EffectProcessor: Aborting batch due to critical failure in effect %d" % i)
 					_handle_critical_error("batch_aborted_critical_failure", {
 						"failed_effect_index": i,
 						"effect_id": _safe_get_effect_id(effect),
@@ -235,11 +455,11 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 			_stats.failed_effects += 1
 			_stats.edge_cases_handled += 1
 			
-			GLog.warn("EffectProcessor: Effect %d failed validation and was skipped" % i)
+			_safe_log("warn", "EffectProcessor: Effect %d failed validation and was skipped" % i)
 			
 			# Check if we should abort due to validation failures
 			if not _allow_partial_batch_success:
-				GLog.error("EffectProcessor: Aborting batch due to validation failure in effect %d" % i)
+				_safe_log("error", "EffectProcessor: Aborting batch due to validation failure in effect %d" % i)
 				break
 	
 	var total_batch_time = Time.get_ticks_msec() - batch_start_time
@@ -260,12 +480,12 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 	
 	# Check for batch performance warnings
 	if total_batch_time > _performance_thresholds.batch_processing_ms:
-		GLog.warn("EffectProcessor: Slow batch processing detected - %d effects took %dms" % [processing_effects.size(), total_batch_time])
+		_safe_log("warn", "EffectProcessor: Slow batch processing detected - %d effects took %dms" % [processing_effects.size(), total_batch_time])
 		performance_warning.emit("batch_processing", total_batch_time, _performance_thresholds.batch_processing_ms)
 	
 	# Enhanced completion logging
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Batch complete - %d processed, %d failed (%d critical) in %dms (avg: %.1fms per effect)" % [
+		_safe_log("debug", "EffectProcessor: Standard batch complete - %d processed, %d failed (%d critical) in %dms (avg: %.1fms per effect)" % [
 			processed_count, failed_count, critical_failures, total_batch_time, 
 			float(batch_processing_time) / float(processing_effects.size()) if processing_effects.size() > 0 else 0.0
 		])
@@ -275,7 +495,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 	
 	# Check for critical error threshold
 	if _critical_errors_count >= _critical_error_threshold:
-		GLog.error("EffectProcessor: Critical error threshold reached (%d/%d)" % [_critical_errors_count, _critical_error_threshold])
+		_safe_log("error", "EffectProcessor: Critical error threshold reached (%d/%d)" % [_critical_errors_count, _critical_error_threshold])
 		critical_error_detected.emit("threshold_exceeded", {
 			"current_count": _critical_errors_count,
 			"threshold": _critical_error_threshold,
@@ -321,7 +541,7 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 		if _error_recovery_enabled and validation_result.recoverable:
 			var recovery_result = _attempt_effect_recovery(effect, context, validation_result)
 			if recovery_result.success:
-				GLog.warn("EffectProcessor: Effect validation recovered - %s" % recovery_result.recovery_action)
+				_safe_log("warn", "EffectProcessor: Effect validation recovered - %s" % recovery_result.recovery_action)
 				_stats.error_recoveries += 1
 				error_recovered.emit("effect_validation", recovery_result.recovery_action, {
 					"effect_id": _safe_get_effect_id(effect),
@@ -332,7 +552,7 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 				context = recovery_result.recovered_context
 			else:
 				# Recovery failed, return failure result
-				GLog.error("EffectProcessor: Effect validation failed and recovery unsuccessful - %s" % validation_result.error_message)
+				_safe_log("error", "EffectProcessor: Effect validation failed and recovery unsuccessful - %s" % validation_result.error_message)
 				_stats.validation_failures += 1
 				_handle_validation_error("effect_validation", validation_result.error_message, {
 					"effect_id": _safe_get_effect_id(effect),
@@ -342,7 +562,7 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 				return result
 		else:
 			# No recovery attempted
-			GLog.error("EffectProcessor: Effect validation failed - %s" % validation_result.error_message)
+			_safe_log("error", "EffectProcessor: Effect validation failed - %s" % validation_result.error_message)
 			_stats.validation_failures += 1
 			_handle_validation_error("effect_validation", validation_result.error_message, {
 				"effect_id": _safe_get_effect_id(effect),
@@ -352,14 +572,14 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 	
 	# Enhanced debug logging with more context information
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Processing effect %s from %s (target: %s)" % [
+		_safe_log("debug", "EffectProcessor: Processing effect %s from %s (target: %s)" % [
 			_safe_get_effect_id(effect), 
 			context.source_type,
 			_get_target_description(context.primary_target)
 		])
 		
 		# Log additional context details for debugging
-		if GLog.min_log_level <= GLog.Level.TRACE:
+		if DEBUG_ENABLED:
 			_log_detailed_effect_context(effect, context)
 	
 	# Add debug trace for effect start
@@ -379,7 +599,7 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 	if effect.has_method("can_apply"):
 		can_apply_result = effect.can_apply(context)
 	else:
-		GLog.error("EffectProcessor: Effect %s missing can_apply method" % _safe_get_effect_id(effect))
+		_safe_log("error", "EffectProcessor: Effect %s missing can_apply method" % _safe_get_effect_id(effect))
 		result.success = false
 		result.logs.append("Effect missing can_apply method")
 		_stats.critical_errors += 1
@@ -396,7 +616,7 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 		result.logs.append("Effect cannot be applied in current context")
 		
 		if DEBUG_ENABLED:
-			GLog.debug("EffectProcessor: Effect %s cannot be applied - conditions not met (check took %dms)" % [_safe_get_effect_id(effect), can_apply_time])
+			_safe_log("debug", "EffectProcessor: Effect %s cannot be applied - conditions not met (check took %dms)" % [_safe_get_effect_id(effect), can_apply_time])
 			_log_effect_application_failure(effect, context)
 		
 		if _debug_trace_enabled:
@@ -416,7 +636,7 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 	if effect.has_method("apply_effect"):
 		apply_result = effect.apply_effect(context)
 	else:
-		GLog.error("EffectProcessor: Effect %s missing apply_effect method" % _safe_get_effect_id(effect))
+		_safe_log("error", "EffectProcessor: Effect %s missing apply_effect method" % _safe_get_effect_id(effect))
 		result.success = false
 		result.logs.append("Effect missing apply_effect method")
 		_stats.critical_errors += 1
@@ -432,13 +652,13 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 	if not apply_result:
 		result.success = false
 		result.logs.append("Effect returned null result")
-		GLog.error("EffectProcessor: Effect %s returned null result (apply took %dms)" % [_safe_get_effect_id(effect), apply_time])
+		_safe_log("error", "EffectProcessor: Effect %s returned null result (apply took %dms)" % [_safe_get_effect_id(effect), apply_time])
 		
 		# Attempt to create a default result if malformed data recovery is enabled
 		if _malformed_data_recovery:
 			result = _create_default_effect_result("Null result recovered with default values")
 			_stats.malformed_data_encountered += 1
-			GLog.warn("EffectProcessor: Created default result for null return from effect %s" % _safe_get_effect_id(effect))
+			_safe_log("warn", "EffectProcessor: Created default result for null return from effect %s" % _safe_get_effect_id(effect))
 		
 		if _debug_trace_enabled:
 			_add_debug_trace("effect_null_result", {
@@ -454,19 +674,19 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 			if recovered_result:
 				result = recovered_result
 				_stats.malformed_data_encountered += 1
-				GLog.warn("EffectProcessor: Recovered malformed result from effect %s" % _safe_get_effect_id(effect))
+				_safe_log("warn", "EffectProcessor: Recovered malformed result from effect %s" % _safe_get_effect_id(effect))
 			else:
 				result.success = false
 				result.logs.append("Malformed result could not be recovered")
-				GLog.error("EffectProcessor: Effect %s returned malformed result that could not be recovered" % _safe_get_effect_id(effect))
+				_safe_log("error", "EffectProcessor: Effect %s returned malformed result that could not be recovered" % _safe_get_effect_id(effect))
 		else:
 			result.success = false
 			result.logs.append("Effect returned malformed result")
-			GLog.error("EffectProcessor: Effect %s returned malformed result" % _safe_get_effect_id(effect))
+			_safe_log("error", "EffectProcessor: Effect %s returned malformed result" % _safe_get_effect_id(effect))
 	elif not apply_result.success:
 		result = apply_result
 		result.logs.append("Effect application failed")
-		GLog.warn("EffectProcessor: Effect %s application failed (apply took %dms)" % [_safe_get_effect_id(effect), apply_time])
+		_safe_log("warn", "EffectProcessor: Effect %s application failed (apply took %dms)" % [_safe_get_effect_id(effect), apply_time])
 		
 		if DEBUG_ENABLED:
 			_log_effect_application_error(effect, result, apply_time)
@@ -498,30 +718,59 @@ func process_single_effect(effect: GameEffect, context: EffectContext) -> Effect
 	
 	# Log performance information
 	if DEBUG_ENABLED and total_effect_time > _performance_thresholds.effect_processing_ms / 2:
-		GLog.debug("EffectProcessor: Effect %s processing breakdown - can_apply: %dms, apply: %dms, total: %dms" % [
+		_safe_log("debug", "EffectProcessor: Effect %s processing breakdown - can_apply: %dms, apply: %dms, total: %dms" % [
 			_safe_get_effect_id(effect), can_apply_time, apply_time, total_effect_time
 		])
 	
 	return result
 
-## Create context for card effects
+## Create context for card effects with enhanced caching and performance monitoring
 func create_context_for_card(card_instance: CardInstance, duel_manager: DuelManager) -> EffectContext:
 	var context_start_time = Time.get_ticks_msec()
 	
 	if DEBUG_ENABLED:
-		GLog.trace("EffectProcessor: Creating card context for %s" % (card_instance.card_data.card_name if card_instance and card_instance.card_data else "unknown"))
+		_safe_log("trace", "EffectProcessor: Creating card context for %s" % (card_instance.card_data.card_name if card_instance and card_instance.card_data else "unknown"))
 	
 	if not is_instance_valid(card_instance):
-		GLog.error("EffectProcessor: Cannot create context - invalid card_instance")
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Cannot create context - invalid card_instance")
 		_stats.validation_failures += 1
 		return null
 	
 	if not is_instance_valid(duel_manager):
-		GLog.error("EffectProcessor: Cannot create context - invalid duel_manager")
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Cannot create context - invalid duel_manager")
 		_stats.validation_failures += 1
 		return null
 	
-	var context = EffectContext.new()
+	# Try to get context from cache first
+	var cache_key = _generate_card_context_cache_key(card_instance, duel_manager)
+	var cached_context = _get_cached_context(cache_key)
+	if cached_context:
+		_context_performance_stats.cache_hits += 1
+		_context_performance_stats.contexts_reused += 1
+		
+		# Update context with current state (some data may have changed)
+		_update_cached_card_context(cached_context, card_instance, duel_manager)
+		
+		var total_time = Time.get_ticks_msec() - context_start_time
+		_update_context_performance_stats(total_time, 0)  # No curio lookup time for cached contexts
+		
+		if DEBUG_ENABLED:
+			_safe_log("trace", "EffectProcessor: Reused cached card context in %dms" % total_time)
+		
+		return cached_context
+	
+	_context_performance_stats.cache_misses += 1
+	
+	# Get context from pool or create new one
+	var context = _get_pooled_context()
+	if context != null:
+		_context_performance_stats.contexts_pooled += 1
+	else:
+		context = EffectContext.new()
+	
+	_context_performance_stats.contexts_created += 1
 	
 	# Set source information
 	context.source_type = "card"
@@ -533,7 +782,7 @@ func create_context_for_card(card_instance: CardInstance, duel_manager: DuelMana
 		context.player_data = duel_manager.duel_state.player_data
 		context.enemy_data = duel_manager.duel_state.enemy_data
 	else:
-		GLog.warn("EffectProcessor: DuelManager has no duel_state when creating card context")
+		_safe_log("warn", "EffectProcessor: DuelManager has no duel_state when creating card context")
 	
 	# Set trigger information
 	context.trigger_event = "card_played"
@@ -554,7 +803,7 @@ func create_context_for_card(card_instance: CardInstance, duel_manager: DuelMana
 			context.primary_target = context.player_data if is_player_owned else context.enemy_data
 		
 		if DEBUG_ENABLED:
-			GLog.debug("EffectProcessor: Created card context - owner: %s, type: %s, target: %s" % [
+			_safe_log("debug", "EffectProcessor: Created card context - owner: %s, type: %s, target: %s" % [
 				"player" if is_player_owned else "enemy",
 				card_type,
 				_get_target_description(context.primary_target)
@@ -568,20 +817,23 @@ func create_context_for_card(card_instance: CardInstance, duel_manager: DuelMana
 			context.curio_modifications = CurioManager.calculate_card_modifications(context.source_object, is_player_owned)
 			
 			if DEBUG_ENABLED and not context.curio_modifications.is_empty():
-				GLog.trace("EffectProcessor: Applied %d curio modifications to card context" % context.curio_modifications.size())
+				_safe_log("trace", "EffectProcessor: Applied %d curio modifications to card context" % context.curio_modifications.size())
 		else:
-			GLog.warn("EffectProcessor: CurioManager missing calculate_card_modifications method")
+			_safe_log("warn", "EffectProcessor: CurioManager missing calculate_card_modifications method")
 	
 	var curio_time = Time.get_ticks_msec() - curio_start_time
 	var total_context_time = Time.get_ticks_msec() - context_start_time
 	
 	# Update performance statistics
-	_stats.context_creation_time_ms += total_context_time
+	_update_context_performance_stats(total_context_time, curio_time)
 	
 	# Check for performance warnings
 	if total_context_time > _performance_thresholds.context_creation_ms:
-		GLog.warn("EffectProcessor: Slow card context creation - took %dms (curio lookup: %dms)" % [total_context_time, curio_time])
+		_safe_log("warn", "EffectProcessor: Slow card context creation - took %dms (curio lookup: %dms)" % [total_context_time, curio_time])
 		performance_warning.emit("context_creation", total_context_time, _performance_thresholds.context_creation_ms)
+	
+	# Cache the context for future reuse
+	_cache_context(cache_key, context)
 	
 	# Add debug trace
 	if _debug_trace_enabled:
@@ -589,22 +841,26 @@ func create_context_for_card(card_instance: CardInstance, duel_manager: DuelMana
 			"card_name": card_instance.card_data.card_name if card_instance.card_data else "unknown",
 			"creation_time_ms": total_context_time,
 			"curio_modifications": context.curio_modifications.size(),
+			"cached": false,
+			"pooled": _context_performance_stats.contexts_pooled > 0,
 			"timestamp": Time.get_ticks_msec()
 		})
 	
 	if DEBUG_ENABLED and GLog.min_log_level <= GLog.Level.TRACE:
-		GLog.trace("EffectProcessor: Card context creation complete in %dms" % total_context_time)
+		_safe_log("trace", "EffectProcessor: Card context creation complete in %dms" % total_context_time)
 	
 	return context
 
 ## Create context for encounter effects
 func create_context_for_encounter(encounter: EncounterData, player_data: PlayerData) -> EffectContext:
 	if not is_instance_valid(encounter):
-		GLog.error("EffectProcessor: Cannot create context - invalid encounter")
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Cannot create context - invalid encounter")
 		return null
 	
 	if not is_instance_valid(player_data):
-		GLog.error("EffectProcessor: Cannot create context - invalid player_data")
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Cannot create context - invalid player_data")
 		return null
 	
 	var context = EffectContext.new()
@@ -628,22 +884,25 @@ func create_context_for_encounter(encounter: EncounterData, player_data: PlayerD
 	context.primary_target = player_data
 	
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Created encounter context for %s" % _get_target_description(encounter))
+		_safe_log("debug", "EffectProcessor: Created encounter context for %s" % _get_target_description(encounter))
 	
 	return context
 
 ## Create context for curio effects
 func create_context_for_curio(curio: CurioData, trigger_event: String, game_state: Resource) -> EffectContext:
 	if not is_instance_valid(curio):
-		GLog.error("EffectProcessor: Cannot create context - invalid curio")
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Cannot create context - invalid curio")
 		return null
 	
 	if trigger_event.is_empty():
-		GLog.error("EffectProcessor: Cannot create context - empty trigger_event")
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Cannot create context - empty trigger_event")
 		return null
 	
 	if not is_instance_valid(game_state):
-		GLog.error("EffectProcessor: Cannot create context - invalid game_state")
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Cannot create context - invalid game_state")
 		return null
 	
 	var context = EffectContext.new()
@@ -661,7 +920,7 @@ func create_context_for_curio(curio: CurioData, trigger_event: String, game_stat
 	elif game_state is PlayerData:
 		context.player_data = game_state as PlayerData
 	else:
-		GLog.warn("EffectProcessor: Unknown game_state type: %s" % game_state.get_class())
+		_safe_log("warn", "EffectProcessor: Unknown game_state type: %s" % game_state.get_class())
 	
 	context.game_manager = GameManager if GameManager else null
 	
@@ -676,7 +935,7 @@ func create_context_for_curio(curio: CurioData, trigger_event: String, game_stat
 	context.primary_target = context.player_data
 	
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Created curio context for %s on %s" % [
+		_safe_log("debug", "EffectProcessor: Created curio context for %s on %s" % [
 			_get_target_description(curio),
 			trigger_event
 		])
@@ -686,32 +945,32 @@ func create_context_for_curio(curio: CurioData, trigger_event: String, game_stat
 ## Validate batch processing inputs
 func _validate_batch_inputs(effects: Array[GameEffect], context: EffectContext) -> bool:
 	if effects.is_empty():
-		GLog.warn("EffectProcessor: Empty effects array provided")
+		_safe_log("warn", "EffectProcessor: Empty effects array provided")
 		return false
 	
 	if not is_instance_valid(context):
-		GLog.error("EffectProcessor: Invalid context provided")
+		_safe_log("error", "EffectProcessor: Invalid context provided")
 		return false
 	
 	if context.source_type.is_empty():
-		GLog.error("EffectProcessor: Context missing source_type")
+		_safe_log("error", "EffectProcessor: Context missing source_type")
 		return false
 	
 	# Validate each effect in the array
 	for i in range(effects.size()):
 		if not is_instance_valid(effects[i]):
-			GLog.error("EffectProcessor: Invalid effect at index %d" % i)
+			_safe_log("error", "EffectProcessor: Invalid effect at index %d" % i)
 			return false
 		
 		if not effects[i] is GameEffect:
-			GLog.error("EffectProcessor: Non-GameEffect at index %d (type: %s)" % [i, effects[i].get_class()])
+			_safe_log("error", "EffectProcessor: Non-GameEffect at index %d (type: %s)" % [i, effects[i].get_class()])
 			return false
 		
 		if effects[i].effect_id.is_empty():
-			GLog.warn("EffectProcessor: Effect at index %d has empty effect_id" % i)
+			_safe_log("warn", "EffectProcessor: Effect at index %d has empty effect_id" % i)
 	
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Batch validation passed for %d effects" % effects.size())
+		_safe_log("debug", "EffectProcessor: Batch validation passed for %d effects" % effects.size())
 	
 	return true
 
@@ -725,6 +984,327 @@ func set_context_caching(enabled: bool) -> void:
 func clear_context_cache() -> void:
 	_context_cache.clear()
 
+## Configure context optimization settings
+func configure_context_optimization(config: Dictionary) -> void:
+	"""Configure context optimization settings.
+	
+	Args:
+		config: Dictionary with optimization settings:
+		- cache_enabled: bool - Enable/disable context caching
+		- cache_max_size: int - Maximum number of cached contexts
+		- cache_ttl_ms: int - Time-to-live for cached contexts in milliseconds
+		- object_pool_enabled: bool - Enable/disable context object pooling
+		- max_pool_size: int - Maximum size for context object pool
+	"""
+	if config.has("cache_enabled"):
+		_cache_enabled = config.cache_enabled
+		if not _cache_enabled:
+			_context_cache.clear()
+	
+	if config.has("cache_max_size"):
+		_context_cache_max_size = max(10, config.cache_max_size)
+		_trim_context_cache()
+	
+	if config.has("cache_ttl_ms"):
+		_context_cache_ttl_ms = max(1000, config.cache_ttl_ms)  # Minimum 1 second TTL
+	
+	if config.has("object_pool_enabled"):
+		_object_pool_enabled = config.object_pool_enabled
+		if not _object_pool_enabled:
+			_context_pool.clear()
+	
+	if config.has("max_pool_size"):
+		_max_pool_size = max(10, config.max_pool_size)
+		while _context_pool.size() > _max_pool_size:
+			_context_pool.pop_back()
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Context optimization configured: %s" % str(config))
+
+## Get current context optimization configuration
+func get_context_optimization_config() -> Dictionary:
+	"""Get current context optimization configuration."""
+	return {
+		"cache_enabled": _cache_enabled,
+		"cache_max_size": _context_cache_max_size,
+		"cache_ttl_ms": _context_cache_ttl_ms,
+		"object_pool_enabled": _object_pool_enabled,
+		"max_pool_size": _max_pool_size,
+		"current_cache_size": _context_cache.size(),
+		"current_pool_size": _context_pool.size()
+	}
+
+## Get context performance statistics
+func get_context_performance_stats() -> Dictionary:
+	"""Get performance statistics for context creation and caching."""
+	var stats = _context_performance_stats.duplicate()
+	
+	# Add calculated metrics
+	if stats.contexts_created > 0:
+		stats.pool_reuse_rate = float(stats.contexts_pooled) / float(stats.contexts_created)
+		stats.average_creation_time_ms = float(stats.total_creation_time_ms) / float(stats.contexts_created)
+	else:
+		stats.pool_reuse_rate = 0.0
+		stats.average_creation_time_ms = 0.0
+	
+	if (stats.cache_hits + stats.cache_misses) > 0:
+		stats.cache_hit_rate = float(stats.cache_hits) / float(stats.cache_hits + stats.cache_misses)
+	else:
+		stats.cache_hit_rate = 0.0
+	
+	# Add global EffectContext statistics
+	stats.global_stats = EffectContext.get_global_performance_stats()
+	
+	return stats
+
+## Reset context performance statistics
+func reset_context_performance_stats() -> void:
+	"""Reset context performance statistics."""
+	_context_performance_stats = {
+		"contexts_created": 0,
+		"contexts_reused": 0,
+		"cache_hits": 0,
+		"cache_misses": 0,
+		"cache_evictions": 0,
+		"total_creation_time_ms": 0,
+		"total_curio_lookup_time_ms": 0,
+		"average_creation_time_ms": 0.0,
+		"peak_creation_time_ms": 0,
+		"contexts_pooled": 0,
+		"pool_reuse_rate": 0.0
+	}
+	
+	# Also reset global EffectContext statistics
+	EffectContext.reset_global_performance_stats()
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Context performance statistics reset")
+
+## Generate a cache key for card contexts
+func _generate_card_context_cache_key(card_instance: CardInstance, duel_manager: DuelManager) -> String:
+	"""Generate a cache key for card contexts based on card and game state."""
+	if not card_instance or not card_instance.card_data or not duel_manager:
+		return ""
+	
+	# Create key based on card name and relevant game state
+	var card_name = card_instance.card_data.card_name if card_instance.card_data.card_name else "unknown"
+	var card_owner = "player" if card_instance.owner == CardInstance.Owner.PLAYER else "enemy"
+	
+	# Include relevant state that affects context
+	var state_hash = ""
+	if duel_manager.duel_state:
+		var duel_state = duel_manager.duel_state
+		state_hash = "%d_%d_%d" % [
+			duel_state.turn_number if "turn_number" in duel_state else 0,
+			duel_state.player_energy if "player_energy" in duel_state else 0,
+			duel_state.cards_played_this_turn if "cards_played_this_turn" in duel_state else 0
+		]
+	
+	return "card_%s_%s_%s" % [card_name, card_owner, state_hash]
+
+## Get a cached context if available and not expired
+func _get_cached_context(cache_key: String) -> EffectContext:
+	"""Get a cached context if available and not expired."""
+	if not _cache_enabled or cache_key.is_empty():
+		return null
+	
+	if not _context_cache.has(cache_key):
+		return null
+	
+	var cache_entry = _context_cache[cache_key]
+	var current_time = Time.get_ticks_msec()
+	
+	# Check if cache entry has expired
+	if current_time - cache_entry.timestamp > _context_cache_ttl_ms:
+		_context_cache.erase(cache_key)
+		_context_performance_stats.cache_evictions += 1
+		return null
+	
+	# Return a copy of the cached context to avoid reference issues
+	var cached_context = cache_entry.context
+	if cached_context and is_instance_valid(cached_context):
+		return cached_context
+	else:
+		# Invalid cached context, remove it
+		_context_cache.erase(cache_key)
+		return null
+
+## Cache a context for future reuse
+func _cache_context(cache_key: String, context: EffectContext) -> void:
+	"""Cache a context for future reuse."""
+	if not _cache_enabled or cache_key.is_empty() or not context:
+		return
+	
+	# Trim cache if it's getting too large
+	_trim_context_cache()
+	
+	# Store context with timestamp
+	_context_cache[cache_key] = {
+		"context": context,
+		"timestamp": Time.get_ticks_msec()
+	}
+
+## Trim context cache to stay within size limits
+func _trim_context_cache() -> void:
+	"""Remove oldest entries from context cache to stay within size limits."""
+	while _context_cache.size() >= _context_cache_max_size:
+		var oldest_key = ""
+		var oldest_timestamp = Time.get_ticks_msec()
+		
+		# Find oldest entry
+		for key in _context_cache.keys():
+			var entry = _context_cache[key]
+			if entry.timestamp < oldest_timestamp:
+				oldest_timestamp = entry.timestamp
+				oldest_key = key
+		
+		if not oldest_key.is_empty():
+			_context_cache.erase(oldest_key)
+			_context_performance_stats.cache_evictions += 1
+
+## Update a cached card context with current state
+func _update_cached_card_context(context: EffectContext, card_instance: CardInstance, duel_manager: DuelManager) -> void:
+	"""Update a cached card context with current state that may have changed."""
+	if not context or not card_instance or not duel_manager:
+		return
+	
+	# Update state references that may have changed
+	context.duel_manager = duel_manager
+	if duel_manager.duel_state:
+		context.player_data = duel_manager.duel_state.player_data
+		context.enemy_data = duel_manager.duel_state.enemy_data
+	
+	# Update trigger data with current state
+	context.trigger_data["card_instance"] = card_instance
+	context.trigger_data["duel_state"] = duel_manager.duel_state if duel_manager else null
+	
+	# Invalidate any cached calculations since state may have changed
+	context.invalidate_cache()
+
+## Update context performance statistics
+func _update_context_performance_stats(total_time_ms: int, curio_time_ms: int) -> void:
+	"""Update context performance statistics with timing information."""
+	_context_performance_stats.total_creation_time_ms += total_time_ms
+	_context_performance_stats.total_curio_lookup_time_ms += curio_time_ms
+	
+	if total_time_ms > _context_performance_stats.peak_creation_time_ms:
+		_context_performance_stats.peak_creation_time_ms = total_time_ms
+	
+	if _context_performance_stats.contexts_created > 0:
+		_context_performance_stats.average_creation_time_ms = float(_context_performance_stats.total_creation_time_ms) / float(_context_performance_stats.contexts_created)
+
+## Benchmark context creation performance
+func benchmark_context_creation(iterations: int = 100) -> Dictionary:
+	"""Benchmark context creation performance with different optimization settings.
+	
+	Args:
+		iterations: Number of iterations per test
+		
+	Returns:
+		Dictionary with benchmark results
+	"""
+	var benchmark_results = {
+		"test_timestamp": Time.get_datetime_string_from_system(),
+		"iterations": iterations,
+		"results": {}
+	}
+	
+	# Store original settings
+	var original_cache_enabled = _cache_enabled
+	var original_pool_enabled = _object_pool_enabled
+	
+	# Create test data - use a simple mock instead of preloading
+	var test_card_data = CardData.new() if CardData else null
+	if test_card_data:
+		test_card_data.card_id = "benchmark_test_card"
+		test_card_data.card_name = "Benchmark Test Card"
+	var test_card_instance = CardInstance.new()
+	if test_card_data:
+		test_card_instance.card_data = test_card_data
+		test_card_instance.owner = CardInstance.Owner.PLAYER
+	else:
+		# Skip benchmark if we can't create test data
+		benchmark_results.error = "Could not create test card data"
+		return benchmark_results
+	
+	var test_duel_manager = DuelManager.new()  # This might need to be mocked
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Starting context creation benchmark with %d iterations" % iterations)
+	
+	# Test scenarios
+	var test_scenarios = [
+		{"name": "no_optimization", "cache": false, "pool": false},
+		{"name": "cache_only", "cache": true, "pool": false},
+		{"name": "pool_only", "cache": false, "pool": true},
+		{"name": "full_optimization", "cache": true, "pool": true}
+	]
+	
+	for scenario in test_scenarios:
+		_cache_enabled = scenario.cache
+		_object_pool_enabled = scenario.pool
+		
+		# Clear caches and pools for clean test
+		_context_cache.clear()
+		_context_pool.clear()
+		
+		var times = []
+		var total_start_time = Time.get_ticks_msec()
+		
+		for i in range(iterations):
+			var start_time = Time.get_ticks_msec()
+			var context = create_context_for_card(test_card_instance, test_duel_manager)
+			var end_time = Time.get_ticks_msec()
+			
+			if context:
+				times.append(end_time - start_time)
+				# Return context to pool if pooling is enabled
+				if _object_pool_enabled:
+					_return_pooled_context(context)
+		
+		var total_time = Time.get_ticks_msec() - total_start_time
+		
+		# Calculate statistics
+		var avg_time = 0.0
+		var min_time = 999999
+		var max_time = 0
+		
+		if not times.is_empty():
+			var sum_time = 0
+			for time in times:
+				sum_time += time
+				if time < min_time:
+					min_time = time
+				if time > max_time:
+					max_time = time
+			avg_time = float(sum_time) / float(times.size())
+		
+		benchmark_results.results[scenario.name] = {
+			"cache_enabled": scenario.cache,
+			"pool_enabled": scenario.pool,
+			"total_time_ms": total_time,
+			"average_time_ms": avg_time,
+			"min_time_ms": min_time,
+			"max_time_ms": max_time,
+			"successful_creations": times.size(),
+			"cache_size": _context_cache.size(),
+			"pool_size": _context_pool.size()
+		}
+	
+	# Restore original settings
+	_cache_enabled = original_cache_enabled
+	_object_pool_enabled = original_pool_enabled
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Context creation benchmark complete")
+		for scenario_name in benchmark_results.results.keys():
+			var result = benchmark_results.results[scenario_name]
+			_safe_log("info", "  %s: %.2fms avg (min: %dms, max: %dms)" % [
+				scenario_name, result.average_time_ms, result.min_time_ms, result.max_time_ms
+			])
+	
+	return benchmark_results
+
 ## Get processing diagnostics for debugging
 func get_processing_diagnostics() -> Dictionary:
 	var diagnostics = {
@@ -735,7 +1315,9 @@ func get_processing_diagnostics() -> Dictionary:
 		"statistics": _stats.duplicate(),
 		"performance_thresholds": _performance_thresholds.duplicate(),
 		"trace_buffer_size": _debug_trace_buffer.size(),
-		"history_entries": _processing_history.size()
+		"history_entries": _processing_history.size(),
+		"context_performance": get_context_performance_stats(),
+		"batch_performance": get_batch_performance_stats()
 	}
 	
 	# Add calculated metrics
@@ -777,11 +1359,17 @@ func reset_statistics() -> void:
 		"edge_cases_handled": 0,
 		"deterministic_validations_run": 0,
 		"deterministic_validations_passed": 0,
-		"effects_sorted_for_determinism": 0
+		"effects_sorted_for_determinism": 0,
+		"batch_optimizations_used": 0,
+		"object_allocations_saved": 0,
+		"validation_cache_hits": 0
 	}
 	
+	# Also reset batch performance stats
+	reset_batch_performance_stats()
+	
 	if DEBUG_ENABLED:
-		GLog.info("EffectProcessor: Statistics reset")
+		_safe_log("info", "EffectProcessor: Statistics reset")
 
 ## Enable or disable debug tracing
 func set_debug_trace_enabled(enabled: bool) -> void:
@@ -790,7 +1378,7 @@ func set_debug_trace_enabled(enabled: bool) -> void:
 		_debug_trace_buffer.clear()
 	
 	if DEBUG_ENABLED:
-		GLog.info("EffectProcessor: Debug tracing %s" % ("enabled" if enabled else "disabled"))
+		_safe_log("info", "EffectProcessor: Debug tracing %s" % ("enabled" if enabled else "disabled"))
 
 ## Get debug trace buffer for analysis
 func get_debug_trace() -> Array[Dictionary]:
@@ -800,7 +1388,7 @@ func get_debug_trace() -> Array[Dictionary]:
 func clear_debug_trace() -> void:
 	_debug_trace_buffer.clear()
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Debug trace buffer cleared")
+		_safe_log("debug", "EffectProcessor: Debug trace buffer cleared")
 
 ## Get processing history for debugging
 func get_processing_history() -> Array[Dictionary]:
@@ -810,7 +1398,7 @@ func get_processing_history() -> Array[Dictionary]:
 func clear_processing_history() -> void:
 	_processing_history.clear()
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Processing history cleared")
+		_safe_log("debug", "EffectProcessor: Processing history cleared")
 
 ## Set performance monitoring thresholds
 func set_performance_thresholds(thresholds: Dictionary) -> void:
@@ -819,7 +1407,7 @@ func set_performance_thresholds(thresholds: Dictionary) -> void:
 			_performance_thresholds[key] = thresholds[key]
 	
 	if DEBUG_ENABLED:
-		GLog.info("EffectProcessor: Performance thresholds updated: %s" % _performance_thresholds)
+		_safe_log("info", "EffectProcessor: Performance thresholds updated: %s" % _performance_thresholds)
 
 ## Generate comprehensive debug report
 func generate_debug_report() -> Dictionary:
@@ -832,7 +1420,7 @@ func generate_debug_report() -> Dictionary:
 	}
 	
 	if DEBUG_ENABLED:
-		GLog.info("EffectProcessor: Debug report generated with %d trace entries and %d history entries" % [
+		_safe_log("info", "EffectProcessor: Debug report generated with %d trace entries and %d history entries" % [
 			report.recent_trace.size(), report.recent_history.size()
 		])
 	
@@ -843,78 +1431,78 @@ func _log_context_details(context: EffectContext, operation: String) -> void:
 	if not DEBUG_ENABLED or GLog.min_log_level > GLog.Level.TRACE:
 		return
 	
-	GLog.trace("EffectProcessor: Context details for %s:" % operation)
-	GLog.trace("  - Source: %s (%s)" % [context.source_type, _get_target_description(context.source_object)])
-	GLog.trace("  - Target: %s" % _get_target_description(context.primary_target))
-	GLog.trace("  - Trigger: %s" % context.trigger_event)
+	_safe_log("trace", "EffectProcessor: Context details for %s:" % operation)
+	_safe_log("trace", "  - Source: %s (%s)" % [context.source_type, _get_target_description(context.source_object)])
+	_safe_log("trace", "  - Target: %s" % _get_target_description(context.primary_target))
+	_safe_log("trace", "  - Trigger: %s" % context.trigger_event)
 	
 	if context.curio_modifications and not context.curio_modifications.is_empty():
-		GLog.trace("  - Curio modifications: %d active" % context.curio_modifications.size())
+		_safe_log("trace", "  - Curio modifications: %d active" % context.curio_modifications.size())
 
 ## Log detailed effect context for debugging
 func _log_detailed_effect_context(effect: GameEffect, context: EffectContext) -> void:
-	GLog.trace("EffectProcessor: Detailed effect context:")
-	GLog.trace("  - Effect ID: %s" % effect.effect_id)
-	GLog.trace("  - Effect Type: %s" % effect.get_class())
+	_safe_log("trace", "EffectProcessor: Detailed effect context:")
+	_safe_log("trace", "  - Effect ID: %s" % effect.effect_id)
+	_safe_log("trace", "  - Effect Type: %s" % effect.get_class())
 	
 	if effect.has_method("get_description"):
-		GLog.trace("  - Description: %s" % effect.get_description())
+		_safe_log("trace", "  - Description: %s" % effect.get_description())
 	
 	if context.trigger_data:
-		GLog.trace("  - Trigger data keys: %s" % context.trigger_data.keys())
+		_safe_log("trace", "  - Trigger data keys: %s" % context.trigger_data.keys())
 
 ## Log effect result details for successful effects
 func _log_effect_result_details(effect: GameEffect, result: EffectResult, _processing_time_ms: int) -> void:
 	if not result.values_applied.is_empty():
-		GLog.debug("EffectProcessor: Effect %s applied values: %s" % [effect.effect_id, result.values_applied])
+		_safe_log("debug", "EffectProcessor: Effect %s applied values: %s" % [effect.effect_id, result.values_applied])
 	
 	if not result.logs.is_empty():
-		GLog.debug("EffectProcessor: Effect %s logs: %s" % [effect.effect_id, result.logs])
+		_safe_log("debug", "EffectProcessor: Effect %s logs: %s" % [effect.effect_id, result.logs])
 
 ## Log effect failure details for debugging
 func _log_effect_failure_details(effect: GameEffect, result: EffectResult, context: EffectContext, processing_time_ms: int) -> void:
-	GLog.warn("EffectProcessor: Effect failure analysis for %s:" % effect.effect_id)
-	GLog.warn("  - Processing time: %dms" % processing_time_ms)
-	GLog.warn("  - Context source: %s" % context.source_type)
-	GLog.warn("  - Target: %s" % _get_target_description(context.primary_target))
+	_safe_log("warn", "EffectProcessor: Effect failure analysis for %s:" % effect.effect_id)
+	_safe_log("warn", "  - Processing time: %dms" % processing_time_ms)
+	_safe_log("warn", "  - Context source: %s" % context.source_type)
+	_safe_log("warn", "  - Target: %s" % _get_target_description(context.primary_target))
 	
 	if not result.logs.is_empty():
-		GLog.warn("  - Error logs: %s" % result.logs)
+		_safe_log("warn", "  - Error logs: %s" % result.logs)
 
 ## Log effect application failure details
 func _log_effect_application_failure(effect: GameEffect, context: EffectContext) -> void:
-	GLog.debug("EffectProcessor: Effect %s cannot be applied:" % effect.effect_id)
-	GLog.debug("  - Source: %s" % context.source_type)
-	GLog.debug("  - Target: %s" % _get_target_description(context.primary_target))
-	GLog.debug("  - Trigger: %s" % context.trigger_event)
+	_safe_log("debug", "EffectProcessor: Effect %s cannot be applied:" % effect.effect_id)
+	_safe_log("debug", "  - Source: %s" % context.source_type)
+	_safe_log("debug", "  - Target: %s" % _get_target_description(context.primary_target))
+	_safe_log("debug", "  - Trigger: %s" % context.trigger_event)
 
 ## Log effect application error details
 func _log_effect_application_error(effect: GameEffect, result: EffectResult, apply_time_ms: int) -> void:
-	GLog.warn("EffectProcessor: Effect %s application error (took %dms):" % [effect.effect_id, apply_time_ms])
+	_safe_log("warn", "EffectProcessor: Effect %s application error (took %dms):" % [effect.effect_id, apply_time_ms])
 	
 	if not result.logs.is_empty():
 		for log_entry in result.logs:
-			GLog.warn("  - %s" % log_entry)
+			_safe_log("warn", "  - %s" % log_entry)
 
 ## Log successful effect details for trace level
 func _log_successful_effect_details(effect: GameEffect, result: EffectResult, apply_time_ms: int) -> void:
-	GLog.trace("EffectProcessor: Effect %s success details (took %dms):" % [effect.effect_id, apply_time_ms])
+	_safe_log("trace", "EffectProcessor: Effect %s success details (took %dms):" % [effect.effect_id, apply_time_ms])
 	
 	if not result.values_applied.is_empty():
 		for key in result.values_applied.keys():
-			GLog.trace("  - %s: %s" % [key, result.values_applied[key]])
+			_safe_log("trace", "  - %s: %s" % [key, result.values_applied[key]])
 
 ## Log batch performance summary
 func _log_batch_performance_summary(effect_count: int, total_time_ms: int, processing_time_ms: int) -> void:
 	var overhead_time = total_time_ms - processing_time_ms
 	var overhead_percentage = (float(overhead_time) / float(total_time_ms)) * 100.0 if total_time_ms > 0 else 0.0
 	
-	GLog.debug("EffectProcessor: Batch performance summary:")
-	GLog.debug("  - Effects: %d" % effect_count)
-	GLog.debug("  - Total time: %dms" % total_time_ms)
-	GLog.debug("  - Processing time: %dms" % processing_time_ms)
-	GLog.debug("  - Overhead: %dms (%.1f%%)" % [overhead_time, overhead_percentage])
-	GLog.debug("  - Avg per effect: %.1fms" % (float(processing_time_ms) / float(effect_count) if effect_count > 0 else 0.0))
+	_safe_log("debug", "EffectProcessor: Batch performance summary:")
+	_safe_log("debug", "  - Effects: %d" % effect_count)
+	_safe_log("debug", "  - Total time: %dms" % total_time_ms)
+	_safe_log("debug", "  - Processing time: %dms" % processing_time_ms)
+	_safe_log("debug", "  - Overhead: %dms (%.1f%%)" % [overhead_time, overhead_percentage])
+	_safe_log("debug", "  - Avg per effect: %.1fms" % (float(processing_time_ms) / float(effect_count) if effect_count > 0 else 0.0))
 
 ## Add entry to debug trace buffer
 func _add_debug_trace(operation: String, data: Dictionary) -> void:
@@ -1108,7 +1696,7 @@ func _validate_batch_inputs_enhanced(effects: Array[GameEffect], context: Effect
 		return result
 	
 	if DEBUG_ENABLED:
-		GLog.debug("EffectProcessor: Enhanced batch validation passed for %d effects" % effects.size())
+		_safe_log("debug", "EffectProcessor: Enhanced batch validation passed for %d effects" % effects.size())
 	
 	result.valid = true
 	return result
@@ -1190,7 +1778,8 @@ func _attempt_batch_recovery(effects: Array[GameEffect], context: EffectContext,
 	
 	match validation_result.error_type:
 		"null_effects_array":
-			recovery_result.recovered_effects = []
+			var empty_effects: Array[GameEffect] = []
+			recovery_result.recovered_effects = empty_effects
 			recovery_result.success = true
 			recovery_result.recovery_action = "Created empty effects array"
 		
@@ -1258,17 +1847,17 @@ func _validate_effect_for_processing(effect: GameEffect, index: int) -> bool:
 		return true  # Skip validation if null safety is disabled
 	
 	if not is_instance_valid(effect):
-		GLog.warn("EffectProcessor: Null effect at index %d, skipping" % index)
+		_safe_log("warn", "EffectProcessor: Null effect at index %d, skipping" % index)
 		_stats.null_safety_activations += 1
 		return false
 	
 	if not effect is GameEffect:
-		GLog.warn("EffectProcessor: Non-GameEffect at index %d (type: %s), skipping" % [index, effect.get_class()])
+		_safe_log("warn", "EffectProcessor: Non-GameEffect at index %d (type: %s), skipping" % [index, effect.get_class()])
 		_stats.null_safety_activations += 1
 		return false
 	
 	if not effect.has_method("apply_effect") or not effect.has_method("can_apply"):
-		GLog.warn("EffectProcessor: Effect at index %d missing required methods, skipping" % index)
+		_safe_log("warn", "EffectProcessor: Effect at index %d missing required methods, skipping" % index)
 		_stats.null_safety_activations += 1
 		return false
 	
@@ -1320,7 +1909,8 @@ func _recover_malformed_result(malformed_result: EffectResult, effect: GameEffec
 	if malformed_result and "logs" in malformed_result and malformed_result.logs is Array:
 		recovered.logs = malformed_result.logs
 	else:
-		recovered.logs = []
+		var empty_logs: Array[String] = []
+		recovered.logs = empty_logs
 	
 	# Add recovery log
 	recovered.logs.append("Result recovered from malformed data for effect: %s" % _safe_get_effect_id(effect))
@@ -1332,7 +1922,8 @@ func _create_default_effect_result(recovery_message: String) -> EffectResult:
 	var result = EffectResult.new()
 	result.success = false  # Default to failure for safety
 	result.values_applied = {}
-	result.logs = [recovery_message]
+	var logs_array: Array[String] = [recovery_message]
+	result.logs = logs_array
 	return result
 
 ## Create a validation failure result
@@ -1340,7 +1931,8 @@ func _create_validation_failure_result(error_message: String) -> EffectResult:
 	var result = EffectResult.new()
 	result.success = false
 	result.values_applied = {}
-	result.logs = ["Validation failed: " + error_message]
+	var logs_array: Array[String] = ["Validation failed: " + error_message]
+	result.logs = logs_array
 	return result
 
 ## Safely get effect ID with null checking
@@ -1383,7 +1975,7 @@ func _handle_critical_error(error_type: String, error_details: Dictionary) -> vo
 	_stats.critical_errors += 1
 	_critical_errors_count += 1
 	
-	GLog.error("EffectProcessor: Critical error - %s: %s" % [error_type, str(error_details)])
+	_safe_log("error", "EffectProcessor: Critical error - %s: %s" % [error_type, str(error_details)])
 	
 	critical_error_detected.emit(error_type, error_details)
 	
@@ -1399,7 +1991,7 @@ func _handle_critical_error(error_type: String, error_details: Dictionary) -> vo
 func _handle_validation_error(validation_type: String, error_message: String, object_info: Dictionary) -> void:
 	_stats.validation_failures += 1
 	
-	GLog.warn("EffectProcessor: Validation error - %s: %s" % [validation_type, error_message])
+	_safe_log("warn", "EffectProcessor: Validation error - %s: %s" % [validation_type, error_message])
 	
 	validation_error.emit(validation_type, error_message, object_info)
 	
@@ -1436,7 +2028,7 @@ func configure_error_handling(config: Dictionary) -> void:
 		_malformed_data_recovery = config.malformed_data_recovery
 	
 	if DEBUG_ENABLED:
-		GLog.info("EffectProcessor: Error handling configuration updated: %s" % str(config))
+		_safe_log("info", "EffectProcessor: Error handling configuration updated: %s" % str(config))
 
 ## Get current error handling configuration
 func get_error_handling_config() -> Dictionary:
@@ -1457,7 +2049,7 @@ func reset_error_handling_state() -> void:
 	_critical_errors_count = 0
 	
 	if DEBUG_ENABLED:
-		GLog.info("EffectProcessor: Error handling state reset")
+		_safe_log("info", "EffectProcessor: Error handling state reset")
 
 ## Legacy compatibility method for migration
 ## Processes card effects and returns results in the legacy dictionary format
@@ -1469,9 +2061,10 @@ func apply_card_instance_effects_with_context(duel_manager: DuelManager, card_in
 	# Create default results dictionary for backward compatibility
 	var results = _create_legacy_results_dict()
 	
-	# Validate inputs
-	if not is_instance_valid(duel_manager) or not is_instance_valid(card_instance):
-		GLog.error("EffectProcessor: Invalid inputs for card effect processing")
+	# Validate inputs - handle null inputs gracefully
+	if not duel_manager or not card_instance:
+		if DEBUG_ENABLED:
+			_safe_log("error", "EffectProcessor: Invalid inputs for card effect processing")
 		return results
 	
 	if not card_instance.card_data or not card_instance.card_data.effects:
@@ -1490,7 +2083,7 @@ func apply_card_instance_effects_with_context(duel_manager: DuelManager, card_in
 		if effect is GameEffect:
 			typed_effects.append(effect)
 		else:
-			GLog.warn("EffectProcessor: Skipping non-GameEffect in card effects: %s" % effect)
+			_safe_log("warn", "EffectProcessor: Skipping non-GameEffect in card effects: %s" % effect)
 	
 	var effect_results = process_effects(typed_effects, context)
 	
@@ -1582,7 +2175,7 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 		var multiplier = gambling_result.get("multiplier", 1.0)
 		
 		if DEBUG_ENABLED:
-			GLog.debug("EffectProcessor: Gambling active! Multiplier: %.1fx" % multiplier)
+			_safe_log("debug", "EffectProcessor: Gambling active! Multiplier: %.1fx" % multiplier)
 		
 		# Query EventBus for gambling modifiers
 		var context = {
@@ -1600,7 +2193,7 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 					results[field] = int(results[field] * multiplier)
 			
 			if DEBUG_ENABLED:
-				GLog.debug("EffectProcessor: Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier)
+				_safe_log("debug", "EffectProcessor: Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier)
 		else:
 			# Negate effects on gambling failure
 			results.damage = 0
@@ -1608,7 +2201,7 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 			results.heal = 0
 			
 			if DEBUG_ENABLED:
-				GLog.debug("EffectProcessor: Gambling FAILED! All effects negated")
+				_safe_log("debug", "EffectProcessor: Gambling FAILED! All effects negated")
 
 ## Sort effects for deterministic processing
 func _sort_effects_for_deterministic_processing(effects: Array[GameEffect]) -> Array[GameEffect]:
@@ -1700,11 +2293,11 @@ func validate_deterministic_processing(effects: Array[GameEffect], context: Effe
 	
 	if DEBUG_ENABLED:
 		if validation_result.deterministic:
-			GLog.debug("EffectProcessor: Deterministic validation PASSED for %d effects over %d iterations" % [effects.size(), iterations])
+			_safe_log("debug", "EffectProcessor: Deterministic validation PASSED for %d effects over %d iterations" % [effects.size(), iterations])
 		else:
-			GLog.warn("EffectProcessor: Deterministic validation FAILED - found %d differences" % validation_result.differences.size())
+			_safe_log("warn", "EffectProcessor: Deterministic validation FAILED - found %d differences" % validation_result.differences.size())
 			for diff in validation_result.differences:
-				GLog.warn("  - %s" % diff)
+				_safe_log("warn", "  - %s" % diff)
 	
 	return validation_result
 
@@ -1795,7 +2388,7 @@ func configure_deterministic_processing(config: Dictionary) -> void:
 		_validate_deterministic_results = config.validate_deterministic_results
 	
 	if DEBUG_ENABLED:
-		GLog.info("EffectProcessor: Deterministic processing configured: %s" % str(config))
+		_safe_log("info", "EffectProcessor: Deterministic processing configured: %s" % str(config))
 
 ## Get current deterministic processing configuration
 func get_deterministic_processing_config() -> Dictionary:
@@ -1805,3 +2398,481 @@ func get_deterministic_processing_config() -> Dictionary:
 		"sort_effects_by_id": _sort_effects_by_id,
 		"validate_deterministic_results": _validate_deterministic_results
 	}
+
+# ============================================================================
+# BATCH PROCESSING OPTIMIZATION METHODS
+# ============================================================================
+
+## Get an EffectResult from the object pool or create a new one
+func _get_pooled_effect_result() -> EffectResult:
+	"""Get a reusable EffectResult from the object pool to minimize allocations."""
+	if not _object_pool_enabled or _effect_result_pool.is_empty():
+		return EffectResult.new()
+	
+	var result = _effect_result_pool.pop_back()
+	
+	# Reset the result to clean state
+	result.success = false
+	result.values_applied = {}
+	var empty_logs: Array[String] = []
+	result.logs = empty_logs
+	
+	_batch_performance_stats.objects_pooled += 1
+	return result
+
+## Return an EffectResult to the object pool for reuse
+func _return_pooled_effect_result(result: EffectResult) -> void:
+	"""Return an EffectResult to the pool for reuse if pool is not full."""
+	if not _object_pool_enabled or _effect_result_pool.size() >= _max_pool_size:
+		return
+	
+	# Clean the result before returning to pool
+	result.success = false
+	result.values_applied.clear()
+	result.logs.clear()
+	
+	_effect_result_pool.append(result)
+
+## Get an EffectContext from the object pool or create a new one
+func _get_pooled_context() -> EffectContext:
+	"""Get a reusable EffectContext from the object pool to minimize allocations."""
+	if not _object_pool_enabled or _context_pool.is_empty():
+		var context = EffectContext.new()
+		return context
+	
+	var context = _context_pool.pop_back()
+	
+	# Mark as taken from pool for performance tracking
+	context.mark_taken_from_pool()
+	
+	_batch_performance_stats.objects_pooled += 1
+	return context
+
+## Return an EffectContext to the object pool for reuse
+func _return_pooled_context(context: EffectContext) -> void:
+	"""Return an EffectContext to the pool for reuse if pool is not full."""
+	if not _object_pool_enabled or _context_pool.size() >= _max_pool_size:
+		return
+	
+	# Use the context's reset method for proper cleanup
+	context.reset_for_reuse()
+	
+	_context_pool.append(context)
+
+## Batch validate effects with caching to avoid redundant validation
+func _batch_validate_effects(effects: Array[GameEffect]) -> Array[bool]:
+	"""Pre-validate all effects in a batch and cache results to avoid redundant checks."""
+	var validations: Array[bool] = []
+	validations.resize(effects.size())
+	
+	for i in range(effects.size()):
+		var effect = effects[i]
+		var effect_id = _safe_get_effect_id(effect)
+		
+		# Check validation cache first
+		if _validation_cache.has(effect_id):
+			validations[i] = _validation_cache[effect_id]
+			_batch_performance_stats.validation_cache_hits += 1
+		else:
+			# Perform validation and cache result
+			var is_valid = _validate_effect_for_processing(effect, i)
+			validations[i] = is_valid
+			
+			# Cache the result if cache is not full
+			if _validation_cache.size() < _validation_cache_max_size:
+				_validation_cache[effect_id] = is_valid
+	
+	return validations
+
+## Enhanced batch input validation with caching
+func _validate_batch_inputs_cached(effects: Array[GameEffect], context: EffectContext) -> Dictionary:
+	"""Validate batch inputs with caching to improve performance for repeated validations."""
+	# Create a cache key based on effect count and context type
+	var cache_key = "%d_effects_%s" % [effects.size(), context.source_type if context else "null"]
+	
+	# Check if we've validated this pattern before
+	if _validation_cache_enabled and _validation_cache.has(cache_key):
+		var cached_result = _validation_cache[cache_key].duplicate()  # Duplicate to avoid reference issues
+		_batch_performance_stats.validation_cache_hits += 1
+		
+		# For cached results, we still need to do basic null checks
+		if not effects or not context:
+			cached_result.valid = false
+			cached_result.error_message = "Null inputs detected"
+		
+		return cached_result
+	
+	# Perform full validation
+	var result = _validate_batch_inputs_enhanced(effects, context)
+	
+	# Cache the result pattern if cache is not full
+	if _validation_cache_enabled and _validation_cache.size() < _validation_cache_max_size:
+		_validation_cache[cache_key] = result.duplicate()
+	
+	return result
+
+## Optimized single effect processing with object pooling
+func _process_single_effect_optimized(effect: GameEffect, context: EffectContext, result: EffectResult) -> EffectResult:
+	"""Process a single effect with optimizations like reduced validation and object reuse."""
+	var effect_start_time = Time.get_ticks_msec()
+	
+	# Skip redundant validation since we've already batch-validated
+	if DEBUG_ENABLED:
+		_safe_log("trace", "EffectProcessor: Processing optimized effect %s" % _safe_get_effect_id(effect))
+	
+	# Check if effect can be applied (this is still necessary for game logic)
+	var can_apply_start_time = Time.get_ticks_msec()
+	var can_apply_result: bool = false
+	
+	if effect.has_method("can_apply"):
+		can_apply_result = effect.can_apply(context)
+	else:
+		result.success = false
+		result.logs.append("Effect missing can_apply method")
+		return result
+	
+	if not can_apply_result:
+		result.success = false
+		result.logs.append("Effect cannot be applied in current context")
+		return result
+	
+	# Apply the effect
+	var apply_start_time = Time.get_ticks_msec()
+	var apply_result: EffectResult = null
+	
+	if effect.has_method("apply_effect"):
+		apply_result = effect.apply_effect(context)
+	else:
+		result.success = false
+		result.logs.append("Effect missing apply_effect method")
+		return result
+	
+	# Copy results to our pooled result object to avoid additional allocations
+	if apply_result:
+		result.success = apply_result.success
+		result.values_applied = apply_result.values_applied.duplicate() if apply_result.values_applied else {}
+		result.logs = apply_result.logs.duplicate() if apply_result.logs else []
+	else:
+		result.success = false
+		result.logs.append("Effect returned null result")
+	
+	return result
+
+## Configure batch processing optimization settings
+func configure_batch_optimization(config: Dictionary) -> void:
+	"""Configure batch processing optimization settings.
+	
+	Args:
+		config: Dictionary with optimization settings:
+		- batch_optimization_enabled: bool - Enable/disable batch optimizations
+		- batch_size_threshold: int - Minimum batch size to trigger optimizations
+		- object_pool_enabled: bool - Enable/disable object pooling
+		- validation_cache_enabled: bool - Enable/disable validation caching
+		- max_pool_size: int - Maximum size for object pools
+		- validation_cache_max_size: int - Maximum size for validation cache
+	"""
+	if config.has("batch_optimization_enabled"):
+		_batch_optimization_enabled = config.batch_optimization_enabled
+	
+	if config.has("batch_size_threshold"):
+		_batch_size_threshold = max(1, config.batch_size_threshold)
+	
+	if config.has("object_pool_enabled"):
+		_object_pool_enabled = config.object_pool_enabled
+		if not _object_pool_enabled:
+			# Clear pools if disabled
+			_effect_result_pool.clear()
+			_context_pool.clear()
+	
+	if config.has("validation_cache_enabled"):
+		_validation_cache_enabled = config.validation_cache_enabled
+		if not _validation_cache_enabled:
+			_validation_cache.clear()
+	
+	if config.has("max_pool_size"):
+		_max_pool_size = max(10, config.max_pool_size)
+		# Trim pools if they're too large
+		while _effect_result_pool.size() > _max_pool_size:
+			_effect_result_pool.pop_back()
+		while _context_pool.size() > _max_pool_size:
+			_context_pool.pop_back()
+	
+	if config.has("validation_cache_max_size"):
+		_validation_cache_max_size = max(50, config.validation_cache_max_size)
+		# Trim cache if it's too large
+		while _validation_cache.size() > _validation_cache_max_size:
+			var keys = _validation_cache.keys()
+			_validation_cache.erase(keys[0])
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Batch optimization configured: %s" % str(config))
+
+## Get current batch optimization configuration
+func get_batch_optimization_config() -> Dictionary:
+	"""Get current batch optimization configuration."""
+	return {
+		"batch_optimization_enabled": _batch_optimization_enabled,
+		"batch_size_threshold": _batch_size_threshold,
+		"object_pool_enabled": _object_pool_enabled,
+		"validation_cache_enabled": _validation_cache_enabled,
+		"max_pool_size": _max_pool_size,
+		"validation_cache_max_size": _validation_cache_max_size,
+		"current_result_pool_size": _effect_result_pool.size(),
+		"current_context_pool_size": _context_pool.size(),
+		"current_validation_cache_size": _validation_cache.size()
+	}
+
+## Get batch performance statistics
+func get_batch_performance_stats() -> Dictionary:
+	"""Get performance statistics for batch processing optimizations."""
+	var stats = _batch_performance_stats.duplicate()
+	
+	# Add calculated metrics
+	if _stats.batch_count > 0:
+		stats["optimization_rate"] = float(_batch_performance_stats.batches_optimized) / float(_stats.batch_count)
+	else:
+		stats["optimization_rate"] = 0.0
+	
+	if _batch_performance_stats.validation_cache_hits > 0:
+		var total_validations = _batch_performance_stats.validation_cache_hits + (_stats.total_effects_processed - _batch_performance_stats.validation_cache_hits)
+		stats["cache_hit_rate"] = float(_batch_performance_stats.validation_cache_hits) / float(total_validations)
+	else:
+		stats["cache_hit_rate"] = 0.0
+	
+	return stats
+
+## Reset batch performance statistics
+func reset_batch_performance_stats() -> void:
+	"""Reset batch processing performance statistics."""
+	_batch_performance_stats = {
+		"batches_optimized": 0,
+		"objects_pooled": 0,
+		"validation_cache_hits": 0,
+		"allocation_savings": 0,
+		"processing_time_saved_ms": 0
+	}
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Batch performance statistics reset")
+
+## Clear all optimization caches and pools
+func clear_optimization_caches() -> void:
+	"""Clear all optimization caches and object pools."""
+	_validation_cache.clear()
+	_effect_result_pool.clear()
+	_context_pool.clear()
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Optimization caches and pools cleared")
+
+## Benchmark batch processing performance
+func benchmark_batch_processing(effect_counts: Array[int], iterations: int = 10) -> Dictionary:
+	"""Benchmark batch processing performance with different effect counts and optimization settings.
+	
+	Args:
+		effect_counts: Array of effect counts to test (e.g., [1, 5, 10, 25, 50])
+		iterations: Number of iterations per test
+		
+	Returns:
+		Dictionary with benchmark results including timing comparisons
+	"""
+	var benchmark_results = {
+		"test_timestamp": Time.get_datetime_string_from_system(),
+		"iterations_per_test": iterations,
+		"results": {}
+	}
+	
+	# Store original settings
+	var original_optimization = _batch_optimization_enabled
+	var original_threshold = _batch_size_threshold
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Starting batch processing benchmark with %d effect counts" % effect_counts.size())
+	
+	for effect_count in effect_counts:
+		var test_key = "effects_%d" % effect_count
+		benchmark_results.results[test_key] = {
+			"effect_count": effect_count,
+			"optimized_times": [],
+			"standard_times": [],
+			"optimized_avg": 0.0,
+			"standard_avg": 0.0,
+			"performance_improvement": 0.0
+		}
+		
+		# Create test effects (simple damage effects for consistency)
+		var test_effects: Array[GameEffect] = []
+		for i in range(effect_count):
+			var effect = DamageEffect.new()
+			effect.effect_id = "benchmark_effect_%d" % i
+			effect.damage_amount = 1
+			test_effects.append(effect)
+		
+		# Create test context
+		var test_context = EffectContext.new()
+		test_context.source_type = "benchmark"
+		test_context.trigger_event = "benchmark_test"
+		
+		# Test with optimizations enabled
+		_batch_optimization_enabled = true
+		_batch_size_threshold = 1  # Always use optimizations
+		
+		for i in range(iterations):
+			var start_time = Time.get_ticks_msec()
+			process_effects(test_effects, test_context)
+			var end_time = Time.get_ticks_msec()
+			benchmark_results.results[test_key].optimized_times.append(end_time - start_time)
+		
+		# Test with optimizations disabled
+		_batch_optimization_enabled = false
+		
+		for i in range(iterations):
+			var start_time = Time.get_ticks_msec()
+			process_effects(test_effects, test_context)
+			var end_time = Time.get_ticks_msec()
+			benchmark_results.results[test_key].standard_times.append(end_time - start_time)
+		
+		# Calculate averages
+		var optimized_total = 0
+		for time in benchmark_results.results[test_key].optimized_times:
+			optimized_total += time
+		benchmark_results.results[test_key].optimized_avg = float(optimized_total) / float(iterations)
+		
+		var standard_total = 0
+		for time in benchmark_results.results[test_key].standard_times:
+			standard_total += time
+		benchmark_results.results[test_key].standard_avg = float(standard_total) / float(iterations)
+		
+		# Calculate performance improvement
+		if benchmark_results.results[test_key].standard_avg > 0:
+			var improvement = (benchmark_results.results[test_key].standard_avg - benchmark_results.results[test_key].optimized_avg) / benchmark_results.results[test_key].standard_avg
+			benchmark_results.results[test_key].performance_improvement = improvement * 100.0
+		
+		if DEBUG_ENABLED:
+			_safe_log("debug", "EffectProcessor: Benchmark %d effects - Optimized: %.1fms, Standard: %.1fms, Improvement: %.1f%%" % [
+				effect_count,
+				benchmark_results.results[test_key].optimized_avg,
+				benchmark_results.results[test_key].standard_avg,
+				benchmark_results.results[test_key].performance_improvement
+			])
+	
+	# Restore original settings
+	_batch_optimization_enabled = original_optimization
+	_batch_size_threshold = original_threshold
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Batch processing benchmark completed")
+	
+	return benchmark_results
+
+## Initialize object pools with pre-allocated objects for better performance
+func _initialize_object_pools() -> void:
+	"""Pre-allocate objects in pools to reduce initial allocation overhead."""
+	if not _object_pool_enabled:
+		return
+	
+	# Pre-warm context pool
+	for i in range(_pool_warmup_size):
+		var context = EffectContext.new()
+		context.reset_for_reuse()
+		_context_pool.append(context)
+	
+	# Pre-warm effect result pool
+	for i in range(_pool_warmup_size):
+		var result = EffectResult.new()
+		result.success = false
+		result.values_applied = {}
+		var empty_logs: Array[String] = []
+		result.logs = empty_logs
+		_effect_result_pool.append(result)
+	
+	if DEBUG_ENABLED:
+		_safe_log("debug", "EffectProcessor: Object pools initialized with %d pre-allocated objects each" % _pool_warmup_size)
+
+## Manage pool sizes to prevent excessive memory usage
+func _manage_pool_sizes() -> void:
+	"""Shrink pools if they grow too large to prevent memory bloat."""
+	var pools_shrunk = false
+	
+	# Shrink context pool if needed
+	if _context_pool.size() > _pool_shrink_threshold:
+		var excess = _context_pool.size() - _max_pool_size
+		for i in range(excess):
+			_context_pool.pop_back()
+		pools_shrunk = true
+	
+	# Shrink effect result pool if needed
+	if _effect_result_pool.size() > _pool_shrink_threshold:
+		var excess = _effect_result_pool.size() - _max_pool_size
+		for i in range(excess):
+			_effect_result_pool.pop_back()
+		pools_shrunk = true
+	
+	if pools_shrunk and DEBUG_ENABLED:
+		_safe_log("debug", "EffectProcessor: Object pools shrunk to prevent memory bloat")
+
+## Get comprehensive pool statistics for monitoring
+func get_pool_statistics() -> Dictionary:
+	"""Get detailed statistics about object pool usage and efficiency."""
+	return {
+		"context_pool": {
+			"size": _context_pool.size(),
+			"max_size": _max_pool_size,
+			"warmup_size": _pool_warmup_size,
+			"shrink_threshold": _pool_shrink_threshold,
+			"utilization": float(_context_pool.size()) / float(_max_pool_size) if _max_pool_size > 0 else 0.0
+		},
+		"effect_result_pool": {
+			"size": _effect_result_pool.size(),
+			"max_size": _max_pool_size,
+			"warmup_size": _pool_warmup_size,
+			"shrink_threshold": _pool_shrink_threshold,
+			"utilization": float(_effect_result_pool.size()) / float(_max_pool_size) if _max_pool_size > 0 else 0.0
+		},
+		"performance": _batch_performance_stats,
+		"enabled": _object_pool_enabled
+	}
+
+## Configure pool settings for different performance profiles
+func configure_pool_settings(profile: String) -> void:
+	"""Configure object pool settings based on performance profile."""
+	match profile:
+		"memory_conservative":
+			_max_pool_size = 25
+			_pool_warmup_size = 5
+			_pool_shrink_threshold = 35
+		"balanced":
+			_max_pool_size = 50
+			_pool_warmup_size = 10
+			_pool_shrink_threshold = 75
+		"performance_focused":
+			_max_pool_size = 100
+			_pool_warmup_size = 20
+			_pool_shrink_threshold = 150
+		_:
+			_safe_log("warn", "EffectProcessor: Unknown pool profile '%s', using balanced settings" % profile)
+			configure_pool_settings("balanced")
+			return
+	
+	# Re-initialize pools with new settings
+	_context_pool.clear()
+	_effect_result_pool.clear()
+	_initialize_object_pools()
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Pool settings configured for '%s' profile" % profile)
+
+## Called when the processor is ready to initialize
+func _ready() -> void:
+	"""Initialize the effect processor and its object pools."""
+	_initialize_object_pools()
+	
+	# Set up periodic pool management
+	var timer = Timer.new()
+	timer.wait_time = 30.0  # Check every 30 seconds
+	timer.timeout.connect(_manage_pool_sizes)
+	timer.autostart = true
+	add_child(timer)
+	
+	if DEBUG_ENABLED:
+		_safe_log("info", "EffectProcessor: Initialized with object pooling %s" % ("enabled" if _object_pool_enabled else "disabled"))

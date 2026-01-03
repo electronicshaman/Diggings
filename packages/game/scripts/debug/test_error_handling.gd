@@ -197,7 +197,8 @@ class FailingMockEffect extends GameEffect:
 	func apply_effect(_context: Resource) -> Resource:
 		var result = EffectResult.new()
 		result.success = false
-		result.logs = ["Critical test failure"]
+		var logs_array: Array[String] = ["Critical test failure"]
+		result.logs = logs_array
 		return result
 	
 	func can_apply(_context: Resource) -> bool:

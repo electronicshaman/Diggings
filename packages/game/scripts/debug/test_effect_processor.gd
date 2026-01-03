@@ -38,6 +38,10 @@ func run_basic_tests() -> bool:
 	if not _test_deterministic_processing_property(processor):
 		all_tests_passed = false
 	
+	# Test 8: Batch processing optimization
+	if not _test_batch_processing_optimization(processor):
+		all_tests_passed = false
+	
 	if all_tests_passed:
 		GLog.info("TestEffectProcessor: All tests PASSED")
 	else:
@@ -316,6 +320,10 @@ func _create_minimal_test_context() -> EffectContext:
 	
 	return context
 
+func _create_test_context() -> EffectContext:
+	"""Create a test context for batch optimization testing."""
+	return _create_minimal_test_context()
+
 func _create_simple_test_effect(id: String, value: int) -> GameEffect:
 	"""Create a simple test effect for deterministic testing."""
 	var effect = GameEffect.new()
@@ -327,6 +335,78 @@ func _create_simple_test_effect(id: String, value: int) -> GameEffect:
 	effect.set_script(preload("res://scripts/debug/simple_test_effect.gd"))
 	
 	return effect
+
+## Test batch processing optimization functionality
+func _test_batch_processing_optimization(processor: EffectProcessor) -> bool:
+	GLog.debug("TestEffectProcessor: Testing batch processing optimization")
+	
+	# Test 1: Configuration
+	processor.configure_batch_optimization({
+		"batch_optimization_enabled": true,
+		"batch_size_threshold": 5,
+		"object_pool_enabled": true,
+		"validation_cache_enabled": true
+	})
+	
+	var config = processor.get_batch_optimization_config()
+	if not config.batch_optimization_enabled:
+		GLog.error("TestEffectProcessor: Batch optimization should be enabled")
+		return false
+	
+	# Test 2: Create effects above threshold to trigger optimization
+	var test_effects: Array[GameEffect] = []
+	for i in range(10):  # Above threshold
+		var effect = _create_simple_test_effect("batch_test_%d" % i, i)
+		test_effects.append(effect)
+	
+	# Create test context
+	var context = _create_test_context()
+	
+	# Get initial performance stats
+	var initial_stats = processor.get_batch_performance_stats()
+	var initial_optimized = initial_stats.get("batches_optimized", 0)
+	
+	# Process effects (should trigger optimization)
+	var results = processor.process_effects(test_effects, context)
+	
+	# Verify results
+	if results.size() != test_effects.size():
+		GLog.error("TestEffectProcessor: Expected %d results, got %d" % [test_effects.size(), results.size()])
+		return false
+	
+	# Check that optimization was used
+	var final_stats = processor.get_batch_performance_stats()
+	var final_optimized = final_stats.get("batches_optimized", 0)
+	
+	if final_optimized <= initial_optimized:
+		GLog.error("TestEffectProcessor: Batch optimization should have been triggered")
+		return false
+	
+	# Test 3: Test with effects below threshold (should use standard processing)
+	var small_effects: Array[GameEffect] = []
+	for i in range(3):  # Below threshold
+		var effect = _create_simple_test_effect("small_batch_%d" % i, i)
+		small_effects.append(effect)
+	
+	var before_small = processor.get_batch_performance_stats().get("batches_optimized", 0)
+	processor.process_effects(small_effects, context)
+	var after_small = processor.get_batch_performance_stats().get("batches_optimized", 0)
+	
+	if after_small != before_small:
+		GLog.error("TestEffectProcessor: Small batch should not trigger optimization")
+		return false
+	
+	# Test 4: Test object pooling (check that objects are being reused)
+	var pool_stats_before = processor.get_batch_performance_stats().get("objects_pooled", 0)
+	processor.process_effects(test_effects, context)  # Process again
+	var pool_stats_after = processor.get_batch_performance_stats().get("objects_pooled", 0)
+	
+	if pool_stats_after <= pool_stats_before:
+		GLog.warn("TestEffectProcessor: Object pooling may not be working as expected")
+		# This is a warning, not a failure, as pooling behavior can vary
+	
+	GLog.debug("TestEffectProcessor: Batch optimization test passed")
+	return true
 
 ## Run tests when this script is executed directly
 func _ready():

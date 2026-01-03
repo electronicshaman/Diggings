@@ -19,7 +19,10 @@
         "clear_output_logs",
         "execute_editor_script",
         "get_filesystem_tree",
-        "view_script"
+        "view_script",
+        "get_scene_file_content",
+        "create_scene",
+        "attach_script"
       ]
     },
     "Context7": {

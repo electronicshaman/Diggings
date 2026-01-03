@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://4bkyudi7wxry"]
+
+[ext_resource type="Script" uid="uid://dg5p48bchxxlv" path="res://scripts/debug/test_integration_validation.gd" id="1_ji33s"]
+
+[node name="ComprehensiveIntegrationTest" type="Node"]
+script = ExtResource("1_ji33s")
