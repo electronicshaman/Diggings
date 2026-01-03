@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/faith_modifier.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon32.png" id="3"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "Gain 1 Faith at combat start"
+trigger_event = "combat_start"
+amount = 1
+
+[resource]
+script = ExtResource("1")
+curio_name = "Worn Bible"
+description = "Gain 1 Faith at combat start"
+icon = ExtResource("3")
+flavor_text = "Pages worn from constant reading."
+mechanical_category = "Triggered"
+rarity = "Common"
+stackable = true
+max_stacks = 3
+effects = [SubResource("SubResource_1")]
+gold_cost = 90
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 0.8
+prospector_synergy = 1.0
+tracker_synergy = 1.1
+publican_synergy = 1.0
+glow_color = Color(0.8, 0.7, 0.4, 1.0)

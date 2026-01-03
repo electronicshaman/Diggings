@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/effects/types/faith_effect.gd" id="2"]
+
+[sub_resource type="Resource" id="FaithEffect_1"]
+script = ExtResource("2")
+amount = 1
+
+[resource]
+script = ExtResource("1")
+card_name = "Tent Revival"
+energy_cost = 0
+card_type = "Faith"
+description = "Gain 1 Faith. If Faith is 0, gain 2 Faith instead."
+flavor_text = "Gather 'round, sinners. Salvation starts here."
+effects = Array[GameEffect]([SubResource("FaithEffect_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Preacher"])
+accessibility_tier = "Starting"
+mechanical_category = "Fortune"

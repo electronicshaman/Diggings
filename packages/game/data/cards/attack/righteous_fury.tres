@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/faith_effect.gd" id="3"]
+
+[sub_resource type="Resource" id="DamageEffect_1"]
+script = ExtResource("2")
+amount = 20
+ignores_defense = true
+
+[sub_resource type="Resource" id="FaithEffect_1"]
+script = ExtResource("3")
+amount = -4
+
+[resource]
+script = ExtResource("1")
+card_name = "Righteous Fury"
+energy_cost = 2
+card_type = "Faith"
+description = "Deal 20 damage (ignores defense). Spend 4 Faith."
+flavor_text = "Divine wrath knows no mercy!"
+effects = Array[GameEffect]([SubResource("DamageEffect_1"), SubResource("FaithEffect_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Preacher"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"

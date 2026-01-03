@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/sanity_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/faith_effect.gd" id="4"]
+
+[sub_resource type="Resource" id="DamageEffect_1"]
+script = ExtResource("2")
+amount = 6
+
+[sub_resource type="Resource" id="SanityEffect_1"]
+script = ExtResource("3")
+target_type = "enemy"
+amount = -3
+
+[sub_resource type="Resource" id="FaithEffect_1"]
+script = ExtResource("4")
+amount = 1
+
+[resource]
+script = ExtResource("1")
+card_name = "Eldritch Sermon"
+energy_cost = 1
+card_type = "Faith"
+description = "Deal 6 damage. Enemy loses 3 sanity. Gain 1 Faith."
+flavor_text = "Witness truths that break the mind!"
+effects = Array[GameEffect]([SubResource("DamageEffect_1"), SubResource("SanityEffect_1"), SubResource("FaithEffect_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Preacher"])
+accessibility_tier = "Class"
+mechanical_category = "Attack"

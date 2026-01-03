@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/faith_modifier.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/curios/effects/stat_modifier.gd" id="3"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon32.png" id="4"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "Gain 5 Faith at combat start"
+trigger_event = "combat_start"
+amount = 5
+
+[sub_resource type="Resource" id="SubResource_2"]
+script = ExtResource("3")
+description = "Lose 1 max sanity permanently each combat"
+trigger_event = "combat_start"
+stat_name = "max_sanity"
+modification_type = "permanent"
+amount = -1
+
+[resource]
+script = ExtResource("1")
+curio_name = "Cursed Idol"
+description = "Gain 5 Faith at combat start. Lose 1 max sanity permanently each combat"
+icon = ExtResource("4")
+flavor_text = "Ancient power demands sacrifice."
+mechanical_category = "Triggered"
+rarity = "Corrupted"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1"), SubResource("SubResource_2")]
+gold_cost = 150
+corruption_cost = 3
+unlock_requirement = ""
+bushranger_synergy = 0.6
+prospector_synergy = 0.9
+tracker_synergy = 0.7
+publican_synergy = 0.8
+glow_color = Color(0.6, 0.2, 0.8, 1.0)

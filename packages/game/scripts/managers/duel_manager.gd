@@ -25,14 +25,17 @@ var card_effects_processor: CardEffects
 
 func _ready():
 	GLog.info("DuelManager initializing...")
-	
+
 	if not duel_state:
 		duel_state = DuelState.new()
 		GLog.info("Created new DuelState")
-	
+
 	card_effects_processor = CardEffects.new()
-	
+
 	duel_state.add_change_listener(_on_duel_state_changed)
+
+	# Connect Preacher passive abilities to EventBus
+	_setup_preacher_passive_abilities()
 
 func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 	GLog.debug("DuelState changed: %s" % change_type)
@@ -340,25 +343,38 @@ func end_enemy_turn():
 func can_play_card(card_data: CardData) -> bool:
 	if not duel_state.can_play_cards():
 		return false
-	
+
 	var player = duel_state.player_data
 	var actual_cost = player.get_actual_energy_cost(card_data.energy_cost, card_data.card_type)
-	
-	return player.can_afford_card(actual_cost, card_data.sanity_cost)
+
+	# Check energy and sanity costs
+	if not player.can_afford_card(actual_cost, card_data.sanity_cost):
+		return false
+
+	# Check Faith costs (if any) - look for negative Faith effects
+	var faith_cost = _get_faith_cost_from_card(card_data)
+	if faith_cost > 0 and not player.can_afford_faith(faith_cost):
+		return false
+
+	return true
 
 func play_card(card_instance: CardInstance):
 	if not can_play_card(card_instance.card_data):
 		GLog.warn("Cannot play card: %s" % card_instance.get_card_name())
 		return
-	
+
 	GLog.info("Playing card: %s" % card_instance.get_card_name())
-	
+
 	var player = duel_state.player_data
 	var actual_cost = player.get_actual_energy_cost(card_instance.get_energy_cost(), card_instance.get_card_type())
-	
-	# Pay costs upfront
+
+	# Pay costs upfront (energy, sanity, Faith)
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_instance.get_sanity_cost())
+
+	# Pay Faith cost if any (Faith costs are handled as negative Faith effects)
+	# Note: Faith is NOT paid here - it's handled by FaithEffect during resolution
+	# This is because Faith costs may be conditional or modified by effects
 	
 	# Capture timing context BEFORE incrementing counter
 	var cards_played_before = player.cards_played_this_turn
@@ -440,6 +456,16 @@ func apply_card_results(results: Dictionary):
 	if results.has("delayed_damage") and results.delayed_damage > 0:
 		player.delayed_damage += results.delayed_damage
 		GLog.debug("Added %d delayed damage (total: %d)" % [results.delayed_damage, player.delayed_damage])
+
+	# Handle Faith effects
+	if results.has("faith"):
+		var faith_amount = results.faith
+		if faith_amount > 0:
+			player.gain_faith(faith_amount)
+			GLog.debug("Gained %d Faith (current: %d/%d)" % [faith_amount, player.faith, player.max_faith])
+		elif faith_amount < 0:
+			player.spend_faith(-faith_amount)
+			GLog.debug("Spent %d Faith (current: %d/%d)" % [-faith_amount, player.faith, player.max_faith])
 
 func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
 	"""Apply card results when enemy plays a card (reversed targets)"""
@@ -785,3 +811,81 @@ func resolve_battlefield():
 func resolve_enemy_battlefield():
 	"""Enemy cards are now processed in the main resolve_battlefield() function"""
 	GLog.debug("Enemy cards resolved through main battlefield resolution")
+
+# Helper function to get Faith cost from card effects
+func _get_faith_cost_from_card(card_data: CardData) -> int:
+	"""Extract Faith cost from card effects (negative Faith amounts)"""
+	if not card_data or not card_data.effects:
+		return 0
+
+	var total_faith_cost = 0
+
+	for effect in card_data.effects:
+		if effect is FaithEffect:
+			var faith_effect = effect as FaithEffect
+			# Negative amounts are costs that must be paid
+			if faith_effect.amount < 0:
+				total_faith_cost += -faith_effect.amount
+
+	return total_faith_cost
+
+# Setup Preacher passive abilities
+func _setup_preacher_passive_abilities():
+	"""Connect EventBus signals for Preacher passive abilities"""
+	# Fervent Faith: Gain +1 defense when gaining Faith
+	if EventBus.has_signal("faith_gained"):
+		EventBus.connect_safe("faith_gained", _on_faith_gained_fervent_faith)
+
+	# Temptation: Choice when reaching max Faith
+	if EventBus.has_signal("faith_gained"):
+		EventBus.connect_safe("faith_gained", _on_faith_gained_temptation_check)
+
+func _on_faith_gained_fervent_faith(player_data, amount: int):
+	"""Fervent Faith passive: Gain +1 defense when gaining Faith"""
+	if not _is_preacher():
+		return
+
+	if amount > 0 and player_data == duel_state.player_data:
+		player_data.gain_defense(1)
+		GLog.debug("Fervent Faith: Gained 1 defense from Faith gain")
+
+func _on_faith_gained_temptation_check(player_data, _amount: int):
+	"""Temptation passive: Trigger choice when reaching max Faith"""
+	if not _is_preacher():
+		return
+
+	if player_data != duel_state.player_data:
+		return
+
+	# Check if player reached max Faith
+	if player_data.faith >= player_data.max_faith:
+		_trigger_temptation_choice()
+
+func _trigger_temptation_choice():
+	"""Trigger the Temptation choice: gold vs corruption"""
+	# TODO: This needs a modal dialog UI
+	# For now, auto-choose gold (safer option)
+	var player = duel_state.player_data
+	GLog.info("Temptation triggered! Max Faith reached (%d/%d)" % [player.faith, player.max_faith])
+
+	# Auto-choose gold for now (25 gold, lose all Faith)
+	if player.stats:
+		player.stats.gain_gold(25)
+		player.reset_faith()
+		GLog.info("Temptation: Chose gold. Gained 25 gold, lost all Faith")
+
+	# Alternative: gain 3 Corruption and keep Faith
+	# player.stats.gain_corruption(3)
+	# GLog.info("Temptation: Chose corruption. Gained 3 corruption, kept Faith")
+
+func _is_preacher() -> bool:
+	"""Check if player is playing as Preacher class"""
+	if not duel_state or not duel_state.player_data:
+		return false
+
+	var player = duel_state.player_data
+	if player.character_class and player.character_class.character_class_name == "Preacher":
+		return true
+
+	# Fallback: check character_class_name string
+	return player.character_class_name == "Preacher"
