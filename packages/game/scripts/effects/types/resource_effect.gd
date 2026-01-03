@@ -29,7 +29,16 @@ func apply_effect(context):
 	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual mutations.
-	result.values_applied[resource_type] = apply_amt
+	
+	# Standard resources are handled directly by key
+	if resource_type in ["gold", "energy", "sanity", "faith"]:
+		result.values_applied[resource_type] = apply_amt
+	else:
+		# Custom resources are grouped
+		if not result.values_applied.has("custom_resources"):
+			result.values_applied["custom_resources"] = {}
+		result.values_applied["custom_resources"][resource_type] = apply_amt
+
 	result.values_applied["can_go_negative"] = can_go_negative
 	result.success = true
 	return result

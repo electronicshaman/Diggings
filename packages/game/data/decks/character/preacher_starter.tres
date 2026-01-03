@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/deck_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+deck_name = "Preacher Starter Deck"
+description = "A deck of faith and fire. Balances divine protection with eldritch power, using fortune to manipulate fate."
+deck_theme = "faith"
+difficulty_level = 4
+card_paths = Array[String](["res://data/cards/attack/tent_stake.tres", "res://data/cards/attack/tent_stake.tres", "res://data/cards/attack/tent_stake.tres", "res://data/cards/attack/tent_stake.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/attack/fire_and_brimstone.tres", "res://data/cards/skill/psalm_of_protection.tres", "res://data/cards/fortune/tent_revival.tres", "res://data/cards/skill/holy_water.tres"])
+min_deck_size = 12
+max_deck_size = 12
+preferred_strategy = "control"
+priority_card_types = Array[String](["Skill", "Fortune"])

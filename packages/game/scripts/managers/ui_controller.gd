@@ -16,6 +16,7 @@ var player_energy_label: Label
 var player_defense_label: Label
 var player_sanity_label: Label
 var player_gold_label: Label
+var class_resource_label: Label
 var character_name_label: Label
 var enemy_name_label: Label
 var enemy_health_label: Label
@@ -87,6 +88,7 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	player_defense_label = ui_references.get("player_defense")
 	player_sanity_label = ui_references.get("player_sanity")
 	player_gold_label = ui_references.get("player_gold")
+	class_resource_label = ui_references.get("class_resource")
 	character_name_label = ui_references.get("character_name")
 	enemy_name_label = ui_references.get("enemy_name")
 	enemy_health_label = ui_references.get("enemy_health")
@@ -190,6 +192,21 @@ func update_player_ui() -> void:
 	# Optional UI elements (gracefully handle missing)
 	if player_gold_label and p.stats:
 		player_gold_label.text = "Gold: %d" % p.stats.current_gold
+		
+	if class_resource_label:
+		var resource_text = ""
+		# Check for Faith (Preacher)
+		if "faith" in p and p.max_faith > 0:
+			resource_text = "Faith: %d/%d" % [p.faith, p.max_faith]
+		# Check for custom resources
+		elif "custom_resources" in p and not p.custom_resources.is_empty():
+			for res_name in p.custom_resources:
+				if resource_text != "":
+					resource_text += ", "
+				resource_text += "%s: %d" % [res_name.capitalize(), p.custom_resources[res_name]]
+		
+		class_resource_label.text = resource_text
+		class_resource_label.visible = not resource_text.is_empty()
 		
 	if character_name_label:
 		character_name_label.text = p.get_display_name()
@@ -766,11 +783,10 @@ func _update_removed_pile_visual() -> void:
 	removed_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
 
 ## Clear a pile card instance from its container
-func _clear_pile_card(container: Node, card_instance: Node) -> void:
+func _clear_pile_card(container: Node, card_instance) -> void:
 	# Check if card_instance is valid AND not already queued for deletion
 	if is_instance_valid(card_instance) and not card_instance.is_queued_for_deletion():
 		card_instance.queue_free()
-		card_instance = null
 
 	# Clear all children from container (cleanup any orphaned nodes)
 	for child in container.get_children():

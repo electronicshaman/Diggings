@@ -41,6 +41,9 @@ const DEBUG_ENABLED: bool = true
 @export var faith: int = 0
 @export var max_faith: int = 10
 
+# Custom class resources (Ammo, Brew, etc.)
+@export var custom_resources: Dictionary = {} # resource_name -> amount
+
 # HOLD card persistence (cards that persist between turns)
 @export var hold_cards: Array[CardData] = []
 
@@ -91,6 +94,23 @@ func _emit_change(change_type: String, old_value = null, new_value = null):
 func _forward_stats_change(change_type: String, old_value, new_value):
 	"""Forward stats changes to our listeners"""
 	_emit_change(change_type, old_value, new_value)
+
+# Custom Resource Management
+func set_custom_resource(resource_name: String, amount: int):
+	"""Set a custom resource value"""
+	var old_value = custom_resources.get(resource_name, 0)
+	custom_resources[resource_name] = amount
+	# We pass resource_name as old_value and amount as new_value for this specific event type
+	_emit_change("custom_resource_changed", resource_name, amount)
+
+func modify_custom_resource(resource_name: String, amount: int):
+	"""Modify a custom resource value"""
+	var current = custom_resources.get(resource_name, 0)
+	set_custom_resource(resource_name, current + amount)
+
+func get_custom_resource(resource_name: String) -> int:
+	"""Get a custom resource value"""
+	return custom_resources.get(resource_name, 0)
 
 # Character class methods
 func set_character_class(new_class: CharacterClass):

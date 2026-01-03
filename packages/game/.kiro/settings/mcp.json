@@ -1,4 +1,22 @@
 {
   "mcpServers": {
+    "godot-mcp": {
+      "command": "uv",
+      "args": [
+        "run",
+        "/Users/rob/Projects/dmh1/addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"
+      ],
+      "autoApprove": [
+        "search_files",
+        "get_scene_tree",
+        "open_scene",
+        "play_scene",
+        "get_running_scene_screenshot",
+        "simulate_input",
+        "get_input_map",
+        "get_godot_errors",
+        "stop_running_scene"
+      ]
+    }
   }
 }

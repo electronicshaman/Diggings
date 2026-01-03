@@ -356,6 +356,13 @@ func can_play_card(card_data: CardData) -> bool:
 	if faith_cost > 0 and not player.can_afford_faith(faith_cost):
 		return false
 
+	# Check Custom Resource costs
+	var custom_costs = _get_custom_resource_costs_from_card(card_data)
+	for resource_name in custom_costs:
+		var cost = custom_costs[resource_name]
+		if player.get_custom_resource(resource_name) < cost:
+			return false
+
 	return true
 
 func play_card(card_instance: CardInstance):
@@ -466,6 +473,17 @@ func apply_card_results(results: Dictionary):
 		elif faith_amount < 0:
 			player.spend_faith(-faith_amount)
 			GLog.debug("Spent %d Faith (current: %d/%d)" % [-faith_amount, player.faith, player.max_faith])
+
+	# Handle Custom Resources (Ammo, Brew, etc.)
+	if results.has("custom_resources"):
+		for resource_name in results.custom_resources:
+			var amount = results.custom_resources[resource_name]
+			player.modify_custom_resource(resource_name, amount)
+			var current = player.get_custom_resource(resource_name)
+			if amount > 0:
+				GLog.debug("Gained %d %s (total: %d)" % [amount, resource_name, current])
+			else:
+				GLog.debug("Spent %d %s (total: %d)" % [-amount, resource_name, current])
 
 func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
 	"""Apply card results when enemy plays a card (reversed targets)"""
@@ -828,6 +846,24 @@ func _get_faith_cost_from_card(card_data: CardData) -> int:
 				total_faith_cost += -faith_effect.amount
 
 	return total_faith_cost
+
+func _get_custom_resource_costs_from_card(card_data: CardData) -> Dictionary:
+	"""Extract custom resource costs from card effects (negative amounts)"""
+	if not card_data or not card_data.effects:
+		return {}
+
+	var costs = {}
+
+	for effect in card_data.effects:
+		if effect is ResourceEffect:
+			var res_effect = effect as ResourceEffect
+			# Check if it's a custom resource (not standard)
+			if res_effect.resource_type not in ["gold", "energy", "sanity", "faith"]:
+				if res_effect.amount < 0:
+					var current_cost = costs.get(res_effect.resource_type, 0)
+					costs[res_effect.resource_type] = current_cost + (-res_effect.amount)
+	
+	return costs
 
 # Setup Preacher passive abilities
 func _setup_preacher_passive_abilities():
