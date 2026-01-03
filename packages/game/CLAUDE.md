@@ -12,7 +12,7 @@ A roguelite card battler prototype built in Godot 4.5.x featuring Australian gol
 
 The game follows strict MVC separation with specific responsibilities:
 
-- MainGameController (`scripts/combat/MainGameController.gd`) – orchestrates combat scene controllers
+- DuelSceneController (`scripts/combat/duel_scene_controller.gd`) – orchestrates combat scene controllers
 - GameController (`scripts/managers/game_controller.gd`) – model/game state façade over DuelManager/DuelState
 - UIController (`scripts/managers/ui_controller.gd`) – view updates and UI wiring
 - InputController (`scripts/managers/input_controller.gd`) – input routing
@@ -29,14 +29,20 @@ SaveSystem          # Persistence
 ResourceManager     # Asset management
 ThemeManager        # Theme loading
 SeedManager         # Procedural generation seeds (map RNG etc.)
+HexmapState         # Persistent map state across scenes
 GLog                # Logging system
 GameManager         # High-level game state and stats
+DeckManager         # Deck management and manipulation
+ModalManager        # Modal dialog queue and management
 SceneManager        # Scene transitions and preloading
 GDAIMCPRuntime      # MCP runtime for Godot editor control (dev only)
-MapNodeRegistry     # Map node type registration + factory
+MapNodeRegistry     # Legacy stub (disabled - old map system removed)
 CurioManager        # Curio acquisition, stacks, and signals
+EncounterManager    # Encounter/event system management
 CharacterGenerator  # Procedural character generation
 RunHistoryManager   # Run history and metrics
+DebugHUD            # Debug panel overlay (scene autoload)
+EffectRegistry      # Effect type registration and management
 ```
 
 ### Event-driven communication
@@ -82,29 +88,29 @@ mcp__godot-mcp__get_running_scene_screenshot()
 ### Card system
 
 - CardData resources in `data/cards/` organized by type (attack/skill/power/fortune)
-- Modular effects under `scripts/cards/effects/` (each effect is its own script)
-- Effect resolver at `scripts/systems/card_effects.gd`
+- Effects stored as data arrays in CardData resources (data-driven design)
+- Centralized effect resolver at `scripts/systems/card_effects.gd`
+- Generic effect system in `scripts/effects/` (used by curios, encounters, etc.)
 - Cards use theme-agnostic mechanical categories
 
 ### Map generation
 
 Hexmap-based exploration system:
 
-- HexmapMapController (`scripts/hexmap/MapController.gd`) – hexmap scene controller
-- HexGrid (`scripts/hexmap/hex_system/HexGrid.gd`) – hex grid logic and pathfinding
-- HexRenderer (`scripts/hexmap/hex_system/HexRenderer.gd`) – hex rendering
-- TerrainGenerator (`scripts/hexmap/terrain_generation/TerrainGenerator.gd`) – procedural terrain
-- MapNodeRegistry autoload – node creation/config selection
+- MapController (`scripts/hexmap/map_controller.gd`) – hexmap scene controller
+- HexGrid (`scripts/hexmap/hex_system/hex_grid.gd`) – hex grid logic and pathfinding
+- HexRenderer (`scripts/hexmap/hex_system/hex_renderer.gd`) – hex rendering
+- TerrainGenerator (`scripts/hexmap/terrain_generation/terrain_generator.gd`) – procedural terrain
 - HexmapState autoload – persistent map state across scenes
 
 ### Character classes
 
 Four implemented classes with unique mechanics:
 
-- Bushranger: attack specialist (HP ~55), ammo mechanics
-- Prospector: fortune/risk specialist (HP ~45), luck mechanics
-- Tracker: skill specialist (HP ~50), setup/counter
-- Publican: power specialist (HP ~50), brew tokens
+- Bushranger: Gold cards / attack specialist (HP 55), ammo mechanics
+- Prospector: Gamble cards / fortune specialist (HP 45), luck mechanics
+- Tracker: Grit cards / skill specialist (HP 50), setup/counter mechanics
+- Publican: Grog cards / power specialist (HP 50), energy generation and hold effects
 
 ## File Organization
 
@@ -120,7 +126,7 @@ data/
 scripts/
   autoloads/       # Singletons (EventBus, GLog, SceneManager, etc.)
   cards/           # Card system, CardData, effects
-  combat/          # Controllers for duel scenes (e.g., MainGameController)
+  combat/          # Controllers for duel scenes (e.g., DuelSceneController)
   hexmap/          # Hexmap system (grid, rendering, terrain generation)
   managers/        # MVC controllers (game/ui/input/duel)
   systems/         # Cross-cutting systems (e.g., card_effects.gd)
@@ -145,7 +151,6 @@ scenes/
 
 ### Known issues
 
-- Some UI node paths in `MainGameController.gd` may need verification
 - EventBus declares extra signals by design; unused ones are for upcoming features
 
 ## Code Conventions
@@ -179,13 +184,9 @@ All content as Godot Resources for hot-reloading:
 - Effects as data descriptions, not behavior
 - Centralized effect resolution in CardEffects system
 
-### Node type registration
+### Legacy map system
 
-Map nodes are created via MapNodeRegistry:
-
-- Each node type in `data/map_nodes/` categorized by folder
-- Dynamic/resource-driven creation (factory methods)
-- Extensible by adding new resources/configs
+Note: The old MapNodeRegistry-based map system has been removed and replaced with the hexmap exploration system. MapNodeRegistry remains in the codebase as a disabled stub to prevent parser errors in legacy code.
 
 ## Quick links
 

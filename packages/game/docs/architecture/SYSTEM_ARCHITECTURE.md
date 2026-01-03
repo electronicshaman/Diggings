@@ -1,6 +1,6 @@
 # System Architecture
 
-Last verified: 2025-08-18
+Last verified: 2026-01-03
 
 ## Autoloads (from `project.godot`)
 
@@ -15,15 +15,17 @@ These are loaded at startup and available as singletons:
 - HexmapState — `res://scripts/autoloads/hexmap_state.gd`
 - GLog — `res://scripts/autoloads/glog.gd`
 - GameManager — `res://scripts/autoloads/game_manager.gd`
+- DeckManager — `res://scripts/autoloads/deck_manager.gd`
 - ModalManager — `res://scripts/autoloads/modal_manager.gd`
 - SceneManager — `res://scripts/autoloads/scene_manager.gd`
 - GDAIMCPRuntime — `res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd`
-- MapNodeRegistry — `res://scripts/autoloads/map_node_registry.gd`
+- MapNodeRegistry — `res://scripts/autoloads/map_node_registry.gd` (legacy stub - disabled)
 - CurioManager — `res://scripts/autoloads/curio_manager.gd`
 - EncounterManager — `res://scripts/autoloads/encounter_manager.gd`
 - CharacterGenerator — `res://scripts/autoloads/character_generator.gd`
 - RunHistoryManager — `res://scripts/autoloads/run_history_manager.gd`
 - DebugHUD (scene) — `res://scenes/debug/debug_hud.tscn`
+- EffectRegistry — `res://scripts/effects/registry/effect_registry.gd`
 
 ## Core Managers (scenes/managers)
 
@@ -63,7 +65,7 @@ Event-driven architecture. Key signals include:
 
 - Main menu: `res://scenes/ui/main_menu.tscn` (run/main_scene)
 - Class selection → Map selection → City/Hexmap → Encounter/Combat scenes
-- During combat: `scripts/combat/main_game_controller.gd` references `$DuelManager`
+- During combat: `scripts/combat/duel_scene_controller.gd` orchestrates duel managers
 - Global state transitions via `GameManager` and `SceneManager` with EventBus notifications
 
 ## Notes
@@ -179,9 +181,9 @@ SceneManager="*res://scripts/autoloads/scene_manager.gd"    # 8. Scene transitio
 ### Combat System
 
 ```text
-MainGameController
+DuelSceneController
     GameController      # Game state and logic
-    UIController        # Display updates  
+    UIController        # Display updates
     InputController     # Player input
     DuelManager         # Combat mechanics
 ```

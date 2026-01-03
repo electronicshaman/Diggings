@@ -1,6 +1,6 @@
 # High-Level Summary: Gold Rush Lovecraft Game Design
 
-Last verified: 2025-08-18
+Last verified: 2026-01-03
 
 ## Core Game Identity
 
@@ -62,8 +62,8 @@ Last verified: 2025-08-18
 Each specializes in one card type:
 
 - **Prospector** (Gamble cards) - Risk/reward gameplay
-- **Bushranger** (Guns cards) - Aggressive damage
-- **Tracker** (Grit cards) - Defense and survival  
+- **Bushranger** (Gold cards) - Aggressive damage
+- **Tracker** (Grit cards) - Defense and survival
 - **Publican** (Grog cards) - Healing and sanity management
 
 ## Eldritch Curios
