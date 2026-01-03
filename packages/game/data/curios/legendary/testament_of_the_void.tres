@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/card_modifier.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="3"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon32.png" id="4"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "+3 damage to all cards per point of Corruption"
+trigger_event = "passive"
+modification_type = "damage"
+modification_value = 3
+
+[sub_resource type="Resource" id="SubResource_2"]
+script = ExtResource("3")
+description = "Gain 1 Corruption at combat start"
+trigger_event = "combat_start"
+resource_type = "corruption"
+amount = 1
+
+[resource]
+script = ExtResource("1")
+curio_name = "Testament of the Void"
+description = "+3 damage to all cards for each point of Corruption you have. Gain 1 Corruption at combat start"
+icon = ExtResource("4")
+flavor_text = "Forbidden knowledge cuts both ways."
+mechanical_category = "Modifier"
+rarity = "Legendary"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1"), SubResource("SubResource_2")]
+gold_cost = 380
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 1.4
+prospector_synergy = 1.2
+tracker_synergy = 0.9
+publican_synergy = 0.8
+glow_color = Color(1.0, 0.8, 0.2, 1.0)

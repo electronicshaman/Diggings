@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="2"]
+
+[sub_resource type="Resource" id="ResourceEffect_Gold"]
+script = ExtResource("2")
+resource_type = "gold"
+amount = 3
+
+[sub_resource type="Resource" id="ResourceEffect_Sanity"]
+script = ExtResource("2")
+resource_type = "sanity"
+amount = -2
+
+[resource]
+script = ExtResource("1")
+card_name = "Snake Oil"
+energy_cost = 0
+card_type = "Faith"
+description = "50% chance: Gain 3 gold. 50% chance: Lose 2 sanity."
+flavor_text = "Cures what ails ya! Results may vary."
+effects = Array[GameEffect]([SubResource("ResourceEffect_Gold"), SubResource("ResourceEffect_Sanity")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.5
+class_affinity = Array[String](["Preacher"])
+accessibility_tier = "Starting"
+mechanical_category = "Fortune"

@@ -93,6 +93,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Gold: 0"
 
+[node name="ClassResourceLabel" type="Label" parent="UI/Control/PlayerArea/PlayerStats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Ammo: 0"
+
 [node name="EnemyArea" type="Panel" parent="UI/Control"]
 modulate = Color(0.30, 0.40, 0.38, 1)
 layout_mode = 1

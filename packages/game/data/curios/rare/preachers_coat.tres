@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/faith_modifier.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon32.png" id="3"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "+10 max Faith, start each combat with 3 Faith"
+trigger_event = "combat_start"
+faith_max_bonus = 10
+amount = 3
+
+[resource]
+script = ExtResource("1")
+curio_name = "Preacher's Coat"
+description = "+10 max Faith. Start each combat with 3 Faith"
+icon = ExtResource("3")
+flavor_text = "Authority recognized by all."
+mechanical_category = "Passive"
+rarity = "Rare"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1")]
+gold_cost = 275
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 0.6
+prospector_synergy = 0.7
+tracker_synergy = 0.8
+publican_synergy = 0.9
+glow_color = Color(0.2, 0.8, 0.9, 1.0)

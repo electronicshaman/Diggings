@@ -37,6 +37,13 @@ const DEBUG_ENABLED: bool = true
 @export var damage_dealt_this_turn: int = 0
 @export var damage_taken_this_turn: int = 0
 
+# Faith system (Preacher class unique resource)
+@export var faith: int = 0
+@export var max_faith: int = 10
+
+# Custom class resources (Ammo, Brew, etc.)
+@export var custom_resources: Dictionary = {} # resource_name -> amount
+
 # HOLD card persistence (cards that persist between turns)
 @export var hold_cards: Array[CardData] = []
 
@@ -87,6 +94,23 @@ func _emit_change(change_type: String, old_value = null, new_value = null):
 func _forward_stats_change(change_type: String, old_value, new_value):
 	"""Forward stats changes to our listeners"""
 	_emit_change(change_type, old_value, new_value)
+
+# Custom Resource Management
+func set_custom_resource(resource_name: String, amount: int):
+	"""Set a custom resource value"""
+	var old_value = custom_resources.get(resource_name, 0)
+	custom_resources[resource_name] = amount
+	# We pass resource_name as old_value and amount as new_value for this specific event type
+	_emit_change("custom_resource_changed", resource_name, amount)
+
+func modify_custom_resource(resource_name: String, amount: int):
+	"""Modify a custom resource value"""
+	var current = custom_resources.get(resource_name, 0)
+	set_custom_resource(resource_name, current + amount)
+
+func get_custom_resource(resource_name: String) -> int:
+	"""Get a custom resource value"""
+	return custom_resources.get(resource_name, 0)
 
 # Character class methods
 func set_character_class(new_class: CharacterClass):
@@ -151,6 +175,47 @@ func lose_sanity(amount: int):
 
 func restore_sanity(amount: int):
 	stats.restore_sanity(amount)
+
+# Faith management methods
+func gain_faith(amount: int) -> int:
+	"""Gain Faith points, respecting max_faith cap"""
+	var old_faith = faith
+	faith = clamp(faith + amount, 0, max_faith)
+	var actual_gain = faith - old_faith
+
+	if actual_gain > 0:
+		_emit_change("faith_gained", old_faith, faith)
+
+		# Emit faith_gained signal via EventBus for passive abilities and curios
+		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
+		if event_bus and event_bus.has_signal("faith_gained"):
+			event_bus.faith_gained.emit(self, actual_gain)
+
+	return actual_gain
+
+func spend_faith(amount: int) -> bool:
+	"""Spend Faith points if available, return success"""
+	if faith >= amount:
+		var old_faith = faith
+		faith -= amount
+		_emit_change("faith_spent", old_faith, faith)
+
+		# Emit faith_spent signal via EventBus
+		EventBus.faith_spent.emit(self, amount)
+
+		return true
+	return false
+
+func can_afford_faith(amount: int) -> bool:
+	"""Check if player has enough Faith"""
+	return faith >= amount
+
+func reset_faith():
+	"""Reset Faith to 0 (called at combat start/end)"""
+	var old_faith = faith
+	faith = 0
+	if old_faith != 0:
+		_emit_change("faith_reset", old_faith, 0)
 
 func pay_energy(amount: int):
 	"""Pay energy cost (doesn't check if affordable)"""
@@ -320,6 +385,8 @@ func reset_duel_tracking():
 	gamble_cost_reduction_duration = 0
 	all_cost_reduction = 0
 	all_cost_reduction_duration = 0
+	# Reset Faith (Preacher resource)
+	reset_faith()
 	hold_cards.clear()
 
 # HOLD card management
@@ -444,6 +511,8 @@ func get_save_data() -> Dictionary:
 		"cards_played_this_turn": cards_played_this_turn,
 		"damage_dealt_this_turn": damage_dealt_this_turn,
 		"damage_taken_this_turn": damage_taken_this_turn,
+		"faith": faith,
+		"max_faith": max_faith,
 		"curio_stacks": curio_stacks.duplicate(),
 		"moral_karma": moral_karma,
 		"karma_categories": karma_categories.duplicate(),
@@ -490,6 +559,8 @@ func load_from_data(data: Dictionary):
 	cards_played_this_turn = data.get("cards_played_this_turn", 0)
 	damage_dealt_this_turn = data.get("damage_dealt_this_turn", 0)
 	damage_taken_this_turn = data.get("damage_taken_this_turn", 0)
+	faith = data.get("faith", 0)
+	max_faith = data.get("max_faith", 10)
 	
 	# Load HOLD cards
 	hold_cards.clear()

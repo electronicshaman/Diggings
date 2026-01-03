@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/card_modifier.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon32.png" id="3"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "Fortune cards cost 1 less energy"
+trigger_event = "passive"
+target_card_type = "fortune"
+modification_type = "cost"
+modification_value = -1
+
+[resource]
+script = ExtResource("1")
+curio_name = "Sermon Notes"
+description = "Fortune cards cost 1 less energy (minimum 0)"
+icon = ExtResource("3")
+flavor_text = "Prepared words carry more weight."
+mechanical_category = "Modifier"
+rarity = "Common"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1")]
+gold_cost = 100
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 0.7
+prospector_synergy = 1.4
+tracker_synergy = 0.9
+publican_synergy = 1.0
+glow_color = Color(0.8, 0.7, 0.4, 1.0)

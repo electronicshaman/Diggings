@@ -8,9 +8,9 @@ deck_name = "Tracker Starter Deck"
 description = "Aboriginal guide and frontier scout deck specializing in preparation, survival skills, and information gathering. Uses setup mechanics and pathfinding to gain advantage."
 deck_theme = "preparation"
 difficulty_level = 4
-card_paths = Array[String](["res://data/cards/attack/boomerang_throw.tres", "res://data/cards/attack/fowling_piece.tres", "res://data/cards/attack/nulla_nulla.tres", "res://data/cards/attack/spear_thrust.tres", "res://data/cards/skill/bark_shield.tres", "res://data/cards/skill/parrying_shield.tres", "res://data/cards/skill/possum_skin_cloak.tres"])
-min_deck_size = 7
-max_deck_size = 15
+card_paths = Array[String](["res://data/cards/attack/tent_stake.tres", "res://data/cards/attack/tent_stake.tres", "res://data/cards/attack/tent_stake.tres", "res://data/cards/attack/tent_stake.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/skill/flour_sack_barrier.tres", "res://data/cards/attack/boomerang_throw.tres", "res://data/cards/skill/bark_shield.tres", "res://data/cards/attack/spear_thrust.tres", "res://data/cards/skill/possum_skin_cloak.tres"])
+min_deck_size = 12
+max_deck_size = 12
 preferred_strategy = "setup"
 priority_card_types = Array[String](["Grit"])
 

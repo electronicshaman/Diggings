@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/faith_modifier.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/curios/effects/card_modifier.gd" id="3"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon32.png" id="4"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "Faith cannot go below 2"
+trigger_event = "passive"
+faith_minimum = 2
+
+[sub_resource type="Resource" id="SubResource_2"]
+script = ExtResource("3")
+description = "All Faith cards cost 1 less energy"
+trigger_event = "passive"
+target_card_type = "faith"
+modification_type = "cost"
+modification_value = -1
+
+[resource]
+script = ExtResource("1")
+curio_name = "Reliquary"
+description = "Your Faith cannot go below 2. All Faith cards cost 1 less energy"
+icon = ExtResource("4")
+flavor_text = "Contains fragments of something sacred. Or cursed."
+mechanical_category = "Modifier"
+rarity = "Rare"
+stackable = false
+max_stacks = 1
+effects = [SubResource("SubResource_1"), SubResource("SubResource_2")]
+gold_cost = 290
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 0.7
+prospector_synergy = 0.8
+tracker_synergy = 0.9
+publican_synergy = 0.9
+glow_color = Color(0.2, 0.8, 0.9, 1.0)

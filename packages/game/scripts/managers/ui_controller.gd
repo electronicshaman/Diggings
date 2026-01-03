@@ -16,6 +16,7 @@ var player_energy_label: Label
 var player_defense_label: Label
 var player_sanity_label: Label
 var player_gold_label: Label
+var class_resource_label: Label
 var character_name_label: Label
 var enemy_name_label: Label
 var enemy_health_label: Label
@@ -87,6 +88,7 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	player_defense_label = ui_references.get("player_defense")
 	player_sanity_label = ui_references.get("player_sanity")
 	player_gold_label = ui_references.get("player_gold")
+	class_resource_label = ui_references.get("class_resource")
 	character_name_label = ui_references.get("character_name")
 	enemy_name_label = ui_references.get("enemy_name")
 	enemy_health_label = ui_references.get("enemy_health")
@@ -151,7 +153,7 @@ func update_duel_state(new_state: Resource) -> void:
 func update_all_ui() -> void:
 	update_player_ui()
 	update_enemy_ui()
-	update_pile_ui()
+	# Pile UI updates moved to debounced timer to prevent use-after-free bugs
 	update_turn_ui()
 	update_seed_ui()
 	update_curios_display()
@@ -190,6 +192,21 @@ func update_player_ui() -> void:
 	# Optional UI elements (gracefully handle missing)
 	if player_gold_label and p.stats:
 		player_gold_label.text = "Gold: %d" % p.stats.current_gold
+		
+	if class_resource_label:
+		var resource_text = ""
+		# Check for Faith (Preacher)
+		if "faith" in p and p.max_faith > 0:
+			resource_text = "Faith: %d/%d" % [p.faith, p.max_faith]
+		# Check for custom resources
+		elif "custom_resources" in p and not p.custom_resources.is_empty():
+			for res_name in p.custom_resources:
+				if resource_text != "":
+					resource_text += ", "
+				resource_text += "%s: %d" % [res_name.capitalize(), p.custom_resources[res_name]]
+		
+		class_resource_label.text = resource_text
+		class_resource_label.visible = not resource_text.is_empty()
 		
 	if character_name_label:
 		character_name_label.text = p.get_display_name()
@@ -401,12 +418,14 @@ func _on_ui_refresh_timer_timeout() -> void:
 	refresh_hand_display()
 	refresh_enemy_hand_display()
 	refresh_battlefield_display()
+	update_pile_ui()  # Update pile visuals after card nodes have settled
 	ui_refresh_requested.emit()
 
 func clear_hand_display() -> void:
 	for card_node in hand_cards:
 		if is_instance_valid(card_node):
 			card_node.queue_free()
+			card_node = null
 	hand_cards.clear()
 
 func clear_quick_draw_highlights() -> void:
@@ -728,10 +747,8 @@ func _update_discard_pile_visual() -> void:
 
 	var discard_pile = duel_state_res.get_discard_pile()
 	if not discard_pile or discard_pile.is_empty():
-		# Show card_back if discard is empty (already configured to show as card back)
-		discard_card_instance = CARD_BACK_SCENE.instantiate()
-		discard_icon.add_child(discard_card_instance)
-		discard_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
+		# Don't show anything when discard is empty
+		return
 	else:
 		# Show the last discarded card
 		var last_card = discard_pile.cards[-1]
@@ -751,20 +768,32 @@ func _update_removed_pile_visual() -> void:
 	# Clear existing card instance
 	_clear_pile_card(removed_icon, removed_card_instance)
 
-	# Create new card_back instance (already configured to show as card back)
+	# Get removed pile from DuelState
+	var duel_state_res = _get_duel_state()
+	if not duel_state_res:
+		return
+
+	var removed_pile = duel_state_res.get_removed_pile()
+	if not removed_pile or removed_pile.is_empty():
+		# Don't show card back when removed pile is empty
+		return
+
+	# Show card_back only when cards are in removed pile
 	removed_card_instance = CARD_BACK_SCENE.instantiate()
 	removed_icon.add_child(removed_card_instance)
 	removed_card_instance.scale = Vector2(PILE_CARD_SCALE, PILE_CARD_SCALE)
 
 ## Clear a pile card instance from its container
-func _clear_pile_card(container: Node, card_instance: Node) -> void:
-	if is_instance_valid(card_instance):
+func _clear_pile_card(container: Node, card_instance) -> void:
+	# Check if card_instance is valid AND not already queued for deletion
+	if is_instance_valid(card_instance) and not card_instance.is_queued_for_deletion():
 		card_instance.queue_free()
-		card_instance = null
 
 	# Clear all children from container (cleanup any orphaned nodes)
 	for child in container.get_children():
-		child.queue_free()
+		# Only free children that aren't already queued for deletion
+		if is_instance_valid(child) and not child.is_queued_for_deletion():
+			child.queue_free()
 
 ## Get DuelState safely from game_controller
 func _get_duel_state() -> Resource:

@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/faith_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="4"]
+
+[sub_resource type="Resource" id="ResourceEffect_1"]
+script = ExtResource("2")
+resource_type = "gold"
+amount = 8
+
+[sub_resource type="Resource" id="FaithEffect_1"]
+script = ExtResource("3")
+amount = 2
+
+[sub_resource type="Resource" id="DefenseEffect_1"]
+script = ExtResource("4")
+target_type = "enemy"
+amount = 5
+
+[resource]
+script = ExtResource("1")
+card_name = "False Prophet"
+energy_cost = 1
+card_type = "Faith"
+description = "70% chance: Gain 8 gold and 2 Faith. 30% chance: Enemy gains 5 defense."
+flavor_text = "Believe what you want to believe."
+effects = Array[GameEffect]([SubResource("ResourceEffect_1"), SubResource("FaithEffect_1"), SubResource("DefenseEffect_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = true
+luck_modifier = 0.7
+class_affinity = Array[String](["Preacher"])
+accessibility_tier = "Class"
+mechanical_category = "Fortune"

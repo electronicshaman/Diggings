@@ -247,9 +247,16 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 		var multiplier = gambling_result.get("multiplier", 1.0)
 		if DEBUG_ENABLED:
 			GLog.debug("Gambling active! Multiplier: %.1fx" % multiplier)
-		
-		# 50% chance for gambling success
-		if randf() < 0.5:
+
+		# Query EventBus for gambling modifiers (e.g., Holy Conviction passive)
+		var context = {
+			"success_chance": 0.5,  # Base 50% chance
+			"player_data": player_data
+		}
+		EventBus.gambling_modifier_query.emit(player_data, context)
+		var success_chance = context.get("success_chance", 0.5)
+
+		if randf() < success_chance:
 			# Apply multiplier to relevant results
 			var multiplied_fields = ["damage", "defense", "heal"]
 			for field in multiplied_fields:

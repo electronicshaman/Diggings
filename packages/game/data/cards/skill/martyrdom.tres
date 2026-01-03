@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/effects/types/health_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/faith_effect.gd" id="5"]
+
+[sub_resource type="Resource" id="HealthEffect_1"]
+script = ExtResource("2")
+amount = -10
+
+[sub_resource type="Resource" id="DefenseEffect_1"]
+script = ExtResource("3")
+amount = 15
+
+[sub_resource type="Resource" id="ResourceEffect_1"]
+script = ExtResource("4")
+resource_type = "energy"
+amount = 2
+delayed = true
+
+[sub_resource type="Resource" id="FaithEffect_1"]
+script = ExtResource("5")
+amount = -5
+
+[resource]
+script = ExtResource("1")
+card_name = "Martyrdom"
+energy_cost = 2
+card_type = "Faith"
+description = "Take 10 damage. Gain 15 Defense. Next turn, gain +2 energy. Spend 5 Faith."
+flavor_text = "Through suffering comes salvation."
+effects = Array[GameEffect]([SubResource("HealthEffect_1"), SubResource("DefenseEffect_1"), SubResource("ResourceEffect_1"), SubResource("FaithEffect_1")])
+sanity_cost = 0
+card_handling = "Standard"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String](["Preacher"])
+accessibility_tier = "Class"
+mechanical_category = "Skill"

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="CurioData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/curio_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/curios/effects/resource_gain.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/curios/Icon32.png" id="3"]
+
+[sub_resource type="Resource" id="SubResource_1"]
+script = ExtResource("2")
+description = "+2 defense at turn start if Faith >= 5"
+trigger_event = "turn_start"
+resource_type = "defense"
+amount = 2
+condition = "if_high_faith"
+
+[resource]
+script = ExtResource("1")
+curio_name = "Wooden Cross"
+description = "+2 Defense when you have 5+ Faith"
+icon = ExtResource("3")
+flavor_text = "Simple symbol, profound protection."
+mechanical_category = "Triggered"
+rarity = "Common"
+stackable = true
+max_stacks = 2
+effects = [SubResource("SubResource_1")]
+gold_cost = 85
+corruption_cost = 0
+unlock_requirement = ""
+bushranger_synergy = 0.8
+prospector_synergy = 0.9
+tracker_synergy = 1.1
+publican_synergy = 1.2
+glow_color = Color(0.8, 0.7, 0.4, 1.0)
