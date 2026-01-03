@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "godot-mcp": {
-      "command": "uv",
+      "command": "/opt/homebrew/bin/uv",
       "args": [
         "run",
         "addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"
@@ -15,8 +15,24 @@
         "simulate_input",
         "get_input_map",
         "get_godot_errors",
-        "stop_running_scene"
+        "stop_running_scene",
+        "clear_output_logs",
+        "execute_editor_script",
+        "get_filesystem_tree",
+        "view_script"
       ]
+    },
+    "Context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "YOUR_API_KEY"
+      ],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
     }
   }
 }

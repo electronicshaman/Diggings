@@ -21,7 +21,7 @@ signal card_played(card)
 signal duel_ended(winner: String)
 signal enemy_card_played(card: CardData)
 
-var card_effects_processor: CardEffects
+var effect_processor: EffectProcessor
 
 func _ready():
 	GLog.info("DuelManager initializing...")
@@ -30,7 +30,7 @@ func _ready():
 		duel_state = DuelState.new()
 		GLog.info("Created new DuelState")
 
-	card_effects_processor = CardEffects.new()
+	effect_processor = EffectProcessor.new()
 
 	duel_state.add_change_listener(_on_duel_state_changed)
 
@@ -751,7 +751,7 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 	GLog.info("Resolving card: %s" % card_instance.get_card_name())
 	
 	# Execute card effects WHILE card is still on battlefield - pass the CardInstance to the effects processor with context
-	var results = card_effects_processor.apply_card_instance_effects_with_context(
+	var results = effect_processor.apply_card_instance_effects_with_context(
 		self, card_instance, cards_played_before, hand_size_before
 	)
 	
@@ -784,7 +784,7 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 		
 		GLog.debug("Resolved enemy card: %s" % card_instance.get_card_name())
 
-# Minimal getters expected by CardEffects validation
+# Minimal getters expected by EffectProcessor validation
 func get_player_data():
 	return duel_state.player_data if duel_state else null
 
@@ -806,7 +806,7 @@ func resolve_battlefield():
 		duel_state.battlefield.remove_card(card_instance)
 		
 		# Execute card effects
-		var results = card_effects_processor.apply_card_instance_effects(self, card_instance)
+		var results = effect_processor.apply_card_instance_effects(self, card_instance)
 		
 		# Check card ownership via explicit owner field
 		var is_player_card = card_instance.owner == CardInstance.Owner.PLAYER

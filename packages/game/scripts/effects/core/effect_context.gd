@@ -15,7 +15,7 @@ var duel_manager: Node = null # May be null outside combat
 @export var trigger_event: String = "" # "card_played", "turn_start", "enemy_defeated", etc.
 @export var trigger_data: Dictionary = {} # Event-specific data
 
-# Curio modifications (populated by CardEffects when resolving card effects)
+# Curio modifications (populated by EffectProcessor when resolving card effects)
 @export var curio_modifications: Dictionary = {} # {damage: int, defense: int, cost: int, draw: int}
 
 # Targeting
