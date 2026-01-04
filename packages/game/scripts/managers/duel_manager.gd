@@ -230,7 +230,7 @@ func select_card_by_ai_type(enemy: EnemyState, playable_cards: Array[CardData]) 
 		"aggressive":
 			# Prioritize attack cards
 			for card in playable_cards:
-				if card.mechanical_category == "Attack":
+				if card.card_type == "Attack":
 					return card
 			# Fall back to any card
 			return playable_cards[0]
@@ -238,7 +238,7 @@ func select_card_by_ai_type(enemy: EnemyState, playable_cards: Array[CardData]) 
 		"defensive":
 			# Prioritize skill/defense cards
 			for card in playable_cards:
-				if card.mechanical_category == "Skill":
+				if card.card_type == "Skill":
 					return card
 			# Fall back to cheapest card
 			var cheapest = playable_cards[0]
@@ -255,12 +255,12 @@ func select_card_by_ai_type(enemy: EnemyState, playable_cards: Array[CardData]) 
 			if enemy_health_ratio < 0.3:
 				# Low health, play defensively
 				for card in playable_cards:
-					if card.mechanical_category == "Skill":
+					if card.card_type == "Skill":
 						return card
 			elif player_health_ratio < 0.3:
 				# Player low health, be aggressive
 				for card in playable_cards:
-					if card.mechanical_category == "Attack":
+					if card.card_type == "Attack":
 						return card
 			
 			# Default: play highest cost card we can afford
@@ -278,12 +278,12 @@ func select_card_by_ai_type(enemy: EnemyState, playable_cards: Array[CardData]) 
 			if "Strike" in most_played or "Attack" in most_played:
 				# Player plays lots of attacks, prioritize defense
 				for card in playable_cards:
-					if card.mechanical_category == "Skill":
+					if card.card_type == "Skill":
 						return card
 			elif "Block" in most_played or "Defend" in most_played:
 				# Player plays defensively, be aggressive
 				for card in playable_cards:
-					if card.mechanical_category == "Attack":
+					if card.card_type == "Attack":
 						return card
 			
 			# Default: random selection for unpredictability

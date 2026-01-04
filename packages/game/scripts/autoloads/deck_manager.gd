@@ -239,7 +239,7 @@ func get_cards_by_category(category: String) -> Array[CardData]:
 		return cards
 	
 	for card in current_deck_state.master_deck:
-		if is_instance_valid(card) and card.mechanical_category == category:
+		if is_instance_valid(card) and card.card_type == category:
 			cards.append(card)
 	
 	return cards

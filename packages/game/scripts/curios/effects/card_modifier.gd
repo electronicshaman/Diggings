@@ -45,7 +45,7 @@ func _matches_target(card_data: CardData) -> bool:
 		return true
 	
 	# Check mechanical category
-	var category = card_data.get("mechanical_category") if card_data else ""
+	var category = card_data.get("card_type") if card_data else ""
 	if not category:
 		category = ""
 	return category.to_lower() == target_card_type.to_lower()

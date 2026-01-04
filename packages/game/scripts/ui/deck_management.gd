@@ -68,6 +68,7 @@ var sandbox_deck: Array[CardData] = []
 
 func _ready() -> void:
 	_connect_signals()
+	_setup_filter_button_text()
 	_detect_mode_from_context()
 	_setup_ui_for_mode()
 	_load_deck_for_mode()
@@ -106,6 +107,14 @@ func _connect_signals() -> void:
 	# Modal
 	cancel_add_button.pressed.connect(_on_cancel_add_pressed)
 	add_card_search.text_changed.connect(_on_modal_search_changed)
+
+func _setup_filter_button_text() -> void:
+	"""Set filter button text to use themed display names"""
+	filter_all_button.text = "All"
+	filter_attack_button.text = ThemeManager.get_card_display_name("Attack")
+	filter_skill_button.text = ThemeManager.get_card_display_name("Skill")
+	filter_power_button.text = ThemeManager.get_card_display_name("Power")
+	filter_fortune_button.text = ThemeManager.get_card_display_name("Fortune")
 
 func _detect_mode_from_context() -> void:
 	"""Detect mode based on GameManager.game_data flags"""
@@ -465,8 +474,8 @@ func _get_filtered_sorted_deck() -> Array[CardData]:
 	for card in current_deck:
 		# Apply type filter
 		if active_filter != "All":
-			var card_mechanical_category = card.mechanical_category if "mechanical_category" in card else ""
-			if card_mechanical_category != active_filter:
+			var card_type = card.card_type if "card_type" in card else ""
+			if card_type != active_filter:
 				continue
 
 		# Apply search filter
@@ -484,8 +493,8 @@ func _get_filtered_sorted_deck() -> Array[CardData]:
 			filtered.sort_custom(func(a, b): return a.energy_cost < b.energy_cost)
 		"Type":
 			filtered.sort_custom(func(a, b):
-				var type_a = a.mechanical_category if "mechanical_category" in a else ""
-				var type_b = b.mechanical_category if "mechanical_category" in b else ""
+				var type_a = a.card_type if "card_type" in a else ""
+				var type_b = b.card_type if "card_type" in b else ""
 				return type_a < type_b
 			)
 
@@ -495,8 +504,10 @@ func _get_deck_composition() -> Dictionary:
 	"""Get card type composition"""
 	var composition = {}
 	for card in current_deck:
-		var type_name = card.mechanical_category if "mechanical_category" in card else "Unknown"
-		composition[type_name] = composition.get(type_name, 0) + 1
+		var type_name = card.card_type if "card_type" in card else "Unknown"
+		# Use themed display name for UI
+		var display_name = ThemeManager.get_card_display_name(type_name) if type_name != "Unknown" else "Unknown"
+		composition[display_name] = composition.get(display_name, 0) + 1
 	return composition
 
 func _get_energy_curve() -> Dictionary:

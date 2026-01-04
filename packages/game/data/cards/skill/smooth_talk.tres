@@ -27,4 +27,3 @@ volatile_bonus = false
 luck_modifier = 0.0
 class_affinity = Array[String](["Publican"])
 accessibility_tier = "Class"
-mechanical_category = "Skill"

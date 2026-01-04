@@ -96,7 +96,10 @@ func get_formatted_description() -> String:
 	if remove_card:
 		return "Remove a card from your deck"
 	elif random_cards:
-		var type_text = " %s" % card_type if card_type != "" else ""
+		var type_text = ""
+		if card_type != "":
+			var display_name = ThemeManager.get_card_display_name(card_type)
+			type_text = " %s" % display_name
 		return "Add %d random%s card(s) to your deck" % [card_count, type_text]
 	else:
 		if card_paths.size() == 1:

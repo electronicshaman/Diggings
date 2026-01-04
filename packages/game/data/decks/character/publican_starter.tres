@@ -12,5 +12,5 @@ card_paths = Array[String](["res://data/cards/attack/tent_stake.tres", "res://da
 min_deck_size = 12
 max_deck_size = 12
 preferred_strategy = "control"
-priority_card_types = Array[String](["Grog", "Power"])
+priority_card_types = Array[String](["Power"])
 

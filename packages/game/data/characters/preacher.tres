@@ -13,7 +13,6 @@
 script = ExtResource("1")
 character_class_name = "Preacher"
 description = "Frontier preacher wielding faith as both weapon and curse. Specializes in converting belief into power through prayers, miracles, and dark bargains."
-mechanical_specialization = "Fortune"
 difficulty_rating = 4
 base_health = 48
 base_sanity = 100
@@ -26,7 +25,7 @@ passive_abilities = Array[String](["Fervent Faith", "Holy Conviction", "Temptati
 active_abilities = Array[String](["Crisis of Faith"])
 unique_resources = Array[String](["Faith"])
 class_exclusive_cards = Array[String](["Tent Revival", "Fire and Brimstone", "Holy Water", "Snake Oil", "Laying on Hands", "Psalm of Protection", "Forbidden Tome", "Eldritch Sermon", "Martyrdom", "False Prophet", "Righteous Fury", "Dark Pact", "Missionary Zeal", "Testament", "Damnation"])
-preferred_card_types = Array[String](["Faith"])
+preferred_card_types = Array[String](["Fortune"])
 forbidden_card_types = Array[String]([])
 unlocked_by_default = false
 unlock_requirements = Array[String](["complete_run_with_prospector"])

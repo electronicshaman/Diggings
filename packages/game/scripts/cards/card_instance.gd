@@ -90,9 +90,6 @@ func get_class_affinity() -> Array[String]:
 func get_accessibility_tier() -> String:
 	return card_data.accessibility_tier if card_data else ""
 
-func get_mechanical_category() -> String:
-	return card_data.mechanical_category if card_data else ""
-
 # Durability methods
 func get_base_durability() -> int:
 	return card_data.base_durability if card_data else -1

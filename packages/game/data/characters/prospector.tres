@@ -9,7 +9,6 @@
 script = ExtResource("1")
 character_class_name = "Prospector"
 description = "Independent gold seeker and fortune hunter. Specializes in high-risk gambling mechanics and resource speculation."
-mechanical_specialization = "Fortune"
 difficulty_rating = 3
 base_health = 45
 base_sanity = 110
@@ -22,7 +21,7 @@ passive_abilities = Array[String](["Gold Rush", "Claim Bonus", "Prospector's Eye
 active_abilities = Array[String](["Risk Tolerance"])
 unique_resources = Array[String](["Fortune Streak"])
 class_exclusive_cards = Array[String](["Pan for Gold", "Strike It Rich", "Double or Nothing", "Prospector's Instinct", "Lucky Nugget", "Miner's Luck", "Claim Jumping", "Tool Maintenance", "Campfire Rest", "Bush Telegraph", "Swagman's Wisdom", "Claim Stake"])
-preferred_card_types = Array[String](["Gamble"])
+preferred_card_types = Array[String](["Fortune"])
 forbidden_card_types = Array[String]([])
 unlocked_by_default = true
 unlock_requirements = Array[String]([])

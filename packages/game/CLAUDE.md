@@ -103,15 +103,6 @@ Hexmap-based exploration system:
 - TerrainGenerator (`scripts/hexmap/terrain_generation/terrain_generator.gd`) – procedural terrain
 - HexmapState autoload – persistent map state across scenes
 
-### Character classes
-
-Four implemented classes with unique mechanics:
-
-- Bushranger: Gold cards / attack specialist (HP 55), ammo mechanics
-- Prospector: Gamble cards / fortune specialist (HP 45), luck mechanics
-- Tracker: Grit cards / skill specialist (HP 50), setup/counter mechanics
-- Publican: Grog cards / power specialist (HP 50), energy generation and hold effects
-
 ## File Organization
 
 ```

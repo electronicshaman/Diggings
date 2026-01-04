@@ -12,4 +12,4 @@ card_paths = Array[String](["res://data/cards/enemy/wildlife/venomous_bite.tres"
 min_deck_size = 6
 max_deck_size = 10
 preferred_strategy = "aggressive"
-priority_card_types = Array[String](["Lead", "Steel"])
+priority_card_types = Array[String](["Attack"])

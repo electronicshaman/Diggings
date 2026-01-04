@@ -111,12 +111,7 @@ const FILE_PATHS: Dictionary = {
 	"unlocks_file": "user://unlocks.dat"
 }
 
-const THEME_NAMES: Dictionary = {
-	"gold": "attack",
-	"grit": "skill", 
-	"grog": "power",
-	"gamble": "fortune"
-}
+
 
 const STATUS_EFFECTS: Array[String] = [
 	"poison",
@@ -154,16 +149,22 @@ static func get_card_type_name(card_type: CardType) -> String:
 		CardType.FORTUNE: return "Fortune"
 		_: return "Unknown"
 
+# Convert enum to string (alias for consistency)
+static func card_type_to_string(card_type: CardType) -> String:
+	return get_card_type_name(card_type)
+
+# Convert string to enum
+static func string_to_card_type(card_type_string: String) -> CardType:
+	match card_type_string:
+		"Attack": return CardType.ATTACK
+		"Skill": return CardType.SKILL
+		"Power": return CardType.POWER
+		"Fortune": return CardType.FORTUNE
+		_: return CardType.ATTACK
+
 static func get_themed_card_type_name(card_type: CardType, theme: String = "the_rush") -> String:
-	if theme == "the_rush":
-		match card_type:
-			CardType.ATTACK: return "Gold"
-			CardType.SKILL: return "Grit"
-			CardType.POWER: return "Grog"
-			CardType.FORTUNE: return "Gamble"
-			_: return "Unknown"
-	else:
-		return get_card_type_name(card_type)
+	var card_type_string = get_card_type_name(card_type)
+	return ThemeManager.get_card_display_name(card_type_string, theme)
 
 static func get_resource_color(resource_type: ResourceType) -> Color:
 	match resource_type:

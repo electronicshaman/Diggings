@@ -12,4 +12,4 @@ card_paths = Array[String](["res://data/cards/enemy/lawman/iron_discipline.tres"
 min_deck_size = 8
 max_deck_size = 15
 preferred_strategy = "defensive"
-priority_card_types = Array[String](["Leather", "Power", "Lead"])
+priority_card_types = Array[String](["Skill", "Power", "Attack"])

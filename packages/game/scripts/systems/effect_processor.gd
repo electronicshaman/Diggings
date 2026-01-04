@@ -9,16 +9,16 @@ func _safe_log(level: String, message: String) -> void:
 		match level:
 			"debug":
 				if DEBUG_ENABLED:
-					_safe_log("debug", message)
+					GLog.debug(message)
 			"info":
-				_safe_log("info", message)
+				GLog.info(message)
 			"warn":
-				_safe_log("warn", message)
+				GLog.warn(message)
 			"error":
-				_safe_log("error", message)
+				GLog.error(message)
 			"trace":
 				if DEBUG_ENABLED and GLog.min_log_level <= GLog.Level.TRACE:
-					_safe_log("trace", message)
+					GLog.trace(message)
 	else:
 		# Fallback to print if GLog is not available
 		if DEBUG_ENABLED or level in ["warn", "error"]:
@@ -794,7 +794,7 @@ func create_context_for_card(card_instance: CardInstance, duel_manager: DuelMana
 	# Set targeting based on card ownership and type
 	if card_instance and card_instance.card_data:
 		var is_player_owned = card_instance.owner == CardInstance.Owner.PLAYER
-		var card_type = card_instance.card_data.get_mechanical_category() if card_instance.card_data.has_method("get_mechanical_category") else ""
+		var card_type = card_instance.card_data.card_type if card_instance.card_data else ""
 		
 		# Attack cards target the opponent, other cards typically target self
 		if card_type == "Attack":
@@ -1216,8 +1216,8 @@ func benchmark_context_creation(iterations: int = 100) -> Dictionary:
 	# Create test data - use a simple mock instead of preloading
 	var test_card_data = CardData.new() if CardData else null
 	if test_card_data:
-		test_card_data.card_id = "benchmark_test_card"
 		test_card_data.card_name = "Benchmark Test Card"
+		test_card_data.card_type = "Attack"
 	var test_card_instance = CardInstance.new()
 	if test_card_data:
 		test_card_instance.card_data = test_card_data
