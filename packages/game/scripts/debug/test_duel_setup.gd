@@ -31,10 +31,23 @@ func _ready() -> void:
 	_setup_connections()
 	_update_slider_labels()
 
-	if deck_dropdown.item_count > 0:
-		if deck_dropdown.selected == -1:
-			deck_dropdown.selected = 0
-		_update_decklist(deck_dropdown.selected)
+	# Set default selections to bushranger
+	var bushranger_char_idx = _find_item_index(characters, "bushranger", "class_name")
+	var bushranger_deck_idx = _find_item_index(decks, "bushranger_starter", "deck_name")
+
+	if bushranger_char_idx >= 0:
+		character_dropdown.selected = bushranger_char_idx
+		_on_character_selected(bushranger_char_idx)
+
+	if bushranger_deck_idx >= 0:
+		deck_dropdown.selected = bushranger_deck_idx
+		_update_decklist(bushranger_deck_idx)
+	elif deck_dropdown.item_count > 0:
+		deck_dropdown.selected = 0
+		_update_decklist(0)
+
+	# Select first 3 enemies by default
+	_select_default_enemies(3)
 
 	# Check for active sequence and resume if needed
 	if GameManager.test_sequence_state and GameManager.test_sequence_state.is_active:
@@ -45,15 +58,18 @@ func _ready() -> void:
 func _scan_resources() -> void:
 	# Scan characters
 	characters = _scan_directory("res://data/characters/", "tres")
+	characters.sort_custom(_sort_by_name)
 	GLog.debug("Found %d characters" % characters.size())
 
 	# Scan decks (character + test directories)
 	decks = _scan_directory("res://data/decks/character/", "tres")
 	decks.append_array(_scan_directory("res://data/decks/test/", "tres"))
+	decks.sort_custom(_sort_by_name)
 	GLog.debug("Found %d decks" % decks.size())
 
 	# Scan enemies
 	enemies = _scan_directory("res://data/enemies/", "tres")
+	enemies.sort_custom(_sort_by_name)
 	GLog.debug("Found %d enemies" % enemies.size())
 
 	# Scan curios (all subdirectories)
@@ -78,6 +94,33 @@ func _scan_directory(path: String, extension: String) -> Array[Resource]:
 			file_name = dir.get_next()
 		dir.list_dir_end()
 	return result
+
+func _sort_by_name(a: Resource, b: Resource) -> bool:
+	var name_a = _get_resource_display_name(a)
+	var name_b = _get_resource_display_name(b)
+	return name_a.to_lower() < name_b.to_lower()
+
+func _get_resource_display_name(res: Resource) -> String:
+	if res.get("class_name"):
+		return res.get("class_name")
+	if res.get("deck_name"):
+		return res.get("deck_name")
+	return res.resource_path.get_file().get_basename()
+
+func _find_item_index(items: Array, search_name: String, property: String) -> int:
+	for i in range(items.size()):
+		var item = items[i]
+		var item_name = item.get(property) if item.get(property) else item.resource_path.get_file().get_basename()
+		if item_name.to_lower().contains(search_name.to_lower()):
+			return i
+	return -1
+
+func _select_default_enemies(count: int) -> void:
+	var selected = 0
+	for child in enemy_container.get_children():
+		if child is CheckBox and selected < count:
+			child.button_pressed = true
+			selected += 1
 
 func _populate_dropdowns() -> void:
 	# Characters
