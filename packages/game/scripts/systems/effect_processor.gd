@@ -9,16 +9,16 @@ func _safe_log(level: String, message: String) -> void:
 		match level:
 			"debug":
 				if DEBUG_ENABLED:
-					_safe_log("debug", message)
+					GLog.debug(message)
 			"info":
-				_safe_log("info", message)
+				GLog.info(message)
 			"warn":
-				_safe_log("warn", message)
+				GLog.warn(message)
 			"error":
-				_safe_log("error", message)
+				GLog.error(message)
 			"trace":
 				if DEBUG_ENABLED and GLog.min_log_level <= GLog.Level.TRACE:
-					_safe_log("trace", message)
+					GLog.trace(message)
 	else:
 		# Fallback to print if GLog is not available
 		if DEBUG_ENABLED or level in ["warn", "error"]:
