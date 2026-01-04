@@ -51,11 +51,11 @@ func setup_card_visuals() -> void:
 
 	# Set type symbol
 	if type_symbol:
-		var symbol = ThemeManager.get_card_symbol(card_data.card_type)
+		var symbol = CardTypeUtils.get_card_symbol(card_data.card_type)
 		type_symbol.text = symbol
 
 	# Set card colors based on type
-	var type_color = ThemeManager.get_card_color(card_data.card_type)
+	var type_color = CardTypeUtils.get_card_color(card_data.card_type)
 	if card_border:
 		card_border.color = type_color
 	if card_background:
@@ -98,8 +98,9 @@ func setup_card_visuals() -> void:
 
 func format_card_handling() -> String:
 	"""Format card handling text (Exhaust, Ethereal, etc.)"""
-	var handling_display = ThemeManager.get_card_handling_display_name(card_data.card_handling)
-	return handling_display if handling_display != "Standard" else ""
+	# Use handling string directly - no theme translation needed
+	var handling = card_data.card_handling
+	return handling if handling != "Standard" else ""
 
 func set_selected(selected: bool) -> void:
 	"""Update visual state based on selection"""

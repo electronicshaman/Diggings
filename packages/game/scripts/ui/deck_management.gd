@@ -109,12 +109,12 @@ func _connect_signals() -> void:
 	add_card_search.text_changed.connect(_on_modal_search_changed)
 
 func _setup_filter_button_text() -> void:
-	"""Set filter button text to use themed display names"""
+	"""Set filter button text to use direct card type names"""
 	filter_all_button.text = "All"
-	filter_attack_button.text = ThemeManager.get_card_display_name("Attack")
-	filter_skill_button.text = ThemeManager.get_card_display_name("Skill")
-	filter_power_button.text = ThemeManager.get_card_display_name("Power")
-	filter_fortune_button.text = ThemeManager.get_card_display_name("Fortune")
+	filter_attack_button.text = "Attack"
+	filter_skill_button.text = "Skill"
+	filter_power_button.text = "Power"
+	filter_fortune_button.text = "Fortune"
 
 func _detect_mode_from_context() -> void:
 	"""Detect mode based on GameManager.game_data flags"""
@@ -505,9 +505,8 @@ func _get_deck_composition() -> Dictionary:
 	var composition = {}
 	for card in current_deck:
 		var type_name = card.card_type if "card_type" in card else "Unknown"
-		# Use themed display name for UI
-		var display_name = ThemeManager.get_card_display_name(type_name) if type_name != "Unknown" else "Unknown"
-		composition[display_name] = composition.get(display_name, 0) + 1
+		# Use card type directly
+		composition[type_name] = composition.get(type_name, 0) + 1
 	return composition
 
 func _get_energy_curve() -> Dictionary:

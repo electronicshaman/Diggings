@@ -1,13 +1,12 @@
 # Product Overview
 
 ## Core Identity
-**Card Battler Prototype** is a roguelite card battler set in Australian gold rush meets Lovecraftian horror. The game features 1v1 card duels, hex-based exploration, and theme-agnostic core mechanics that can support multiple content themes.
+**Card Battler Prototype** is a roguelite card battler set in Australian gold rush meets Lovecraftian horror. The game features 1v1 card duels and hex-based exploration.
 
 ## Key Differentiators
 - **Open hex exploration** instead of linear paths - player-driven navigation across the outback
 - **1v1 duels only** - intimate strategic battles with visible enemy intents
 - **Seeded runs** with deterministic gameplay for debugging and reproducibility
-- **Theme-agnostic architecture** - core mechanics separate from Australian gold rush theme
 - **Digital-first card effects** - modifications like Evolving, Viral, Phasing impossible in physical games
 
 ## Core Game Loop
@@ -19,7 +18,7 @@ Explore map → Find encounters → 1v1 card duels → Manage resources → Prog
 - **Corruption** - persistent negative resource that accumulates
 - **Energy** - standard card-playing resource (resets each turn)
 
-## Card Categories (Theme-Agnostic)
+## Card Categories
 - **Attack** - Direct damage cards
 - **Skill** - Utility effects (defense, buffs, debuffs, card draw)
 - **Power** - Persistent combat upgrades (one per combat)
@@ -35,6 +34,5 @@ Explore map → Find encounters → 1v1 card duels → Manage resources → Prog
 ## Development Philosophy
 - **Start simple, iterate** - 100-line prototypes before complexity
 - **Data-driven design** - everything configurable via Resources
-- **Theme-agnostic core** - mechanics work with any content theme
 - **Fail fast** - rapid prototyping and immediate feedback
 - **Digital-first** - leverage video game capabilities over physical limitations

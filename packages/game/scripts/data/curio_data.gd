@@ -1,8 +1,7 @@
 extends Resource
 class_name CurioData
 
-# Theme-agnostic curio data resource
-# Curios are persistent modifiers that last throughout a run
+# Curio data resource - persistent modifiers that last throughout a run
 
 # Basic Information
 @export var curio_name: String = "Curio"

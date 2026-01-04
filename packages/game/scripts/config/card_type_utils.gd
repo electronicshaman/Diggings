@@ -1,28 +1,21 @@
-extends Node
+class_name CardTypeUtils
+extends RefCounted
+## Static utility class for card type validation and visual properties.
+## Replaces ThemeManager with direct mechanical card type handling.
 
-# Valid mechanical categories
+# Valid mechanical card categories
 const VALID_CARD_TYPES: Array[String] = ["Attack", "Skill", "Power", "Fortune"]
 
-# Validation helper
+# Valid card handling types
+const VALID_HANDLING_TYPES: Array[String] = ["Standard", "Equipped", "Flash", "Keep", "Hold", "Oneshot"]
+
+
+## Returns true if the given card type is valid (Attack/Skill/Power/Fortune)
 static func is_valid_card_type(card_type: String) -> bool:
 	return card_type in VALID_CARD_TYPES
 
-# Theme-specific display name mapping
-static func get_card_display_name(card_type: String, theme: String = "the_rush") -> String:
-	if theme == "the_rush":
-		match card_type:
-			"Attack":
-				return "Gold"
-			"Skill":
-				return "Grit"
-			"Power":
-				return "Grog"
-			"Fortune":
-				return "Gamble"
-	return card_type  # Fallback to mechanical name
 
-
-
+## Returns the color associated with a card type
 static func get_card_color(card_type: String) -> Color:
 	match card_type:
 		"Attack":
@@ -36,6 +29,8 @@ static func get_card_color(card_type: String) -> Color:
 		_:
 			return Color.WHITE
 
+
+## Returns the emoji symbol associated with a card type
 static func get_card_symbol(card_type: String) -> String:
 	match card_type:
 		"Attack":
@@ -49,23 +44,9 @@ static func get_card_symbol(card_type: String) -> String:
 		_:
 			return "?"
 
-static func get_card_handling_display_name(handling: String) -> String:
-	match handling:
-		"Standard":
-			return "Standard"
-		"Equipped":
-			return "Equipped"
-		"Flash":
-			return "Flash"
-		"Keep":
-			return "Keep"
-		"Hold":
-			return "Hold"
-		"Oneshot":
-			return "Oneshot"
-		_:
-			return handling
 
+## Returns a dictionary defining the behavior of a card handling type.
+## Keys: discards_after_use, discards_end_of_turn, starts_in_hand, removed_after_use, triggers_on_draw
 static func get_card_handling_definition(handling: String) -> Dictionary:
 	match handling:
 		"Standard":
@@ -117,6 +98,7 @@ static func get_card_handling_definition(handling: String) -> Dictionary:
 				"triggers_on_draw": false
 			}
 		_:
+			# Default to Standard behavior for unknown handling types
 			return {
 				"discards_after_use": true,
 				"discards_end_of_turn": false,
