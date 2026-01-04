@@ -91,7 +91,6 @@ mcp__godot-mcp__get_running_scene_screenshot()
 - Effects stored as data arrays in CardData resources (data-driven design)
 - Centralized effect resolver at `scripts/systems/card_effects.gd`
 - Generic effect system in `scripts/effects/` (used by curios, encounters, etc.)
-- Cards use theme-agnostic mechanical categories
 
 ### Map generation
 
@@ -151,7 +150,6 @@ scenes/
 - Add `const DEBUG_ENABLED: bool` per script; GLog respects per-file constants
 - Prefer Resources (.tres) for data definitions
 - Use EventBus for cross-system communication (with connect_safe)
-- Keep design theme-agnostic (mechanics over flavor)
 
 ### Testing approach
 

@@ -162,10 +162,6 @@ static func string_to_card_type(card_type_string: String) -> CardType:
 		"Fortune": return CardType.FORTUNE
 		_: return CardType.ATTACK
 
-static func get_themed_card_type_name(card_type: CardType, theme: String = "the_rush") -> String:
-	var card_type_string = get_card_type_name(card_type)
-	return ThemeManager.get_card_display_name(card_type_string, theme)
-
 static func get_resource_color(resource_type: ResourceType) -> Color:
 	match resource_type:
 		ResourceType.HEALTH: return Color.RED

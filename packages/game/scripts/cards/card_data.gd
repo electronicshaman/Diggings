@@ -1,7 +1,7 @@
 extends Resource
 class_name CardData
 
-# Theme-agnostic card data resource
+# Card data resource - defines card properties and effects
 
 @export var card_name: String = "Card"
 @export var energy_cost: int = 1
@@ -19,7 +19,7 @@ class_name CardData
 # Card durability - number of times card can be played before being removed
 @export var base_durability: int = -1  # -1 = infinite, 0+ = limited uses
 
-# Card handling behavior - theme-agnostic strings
+# Card handling behavior (Standard/Equipped/Flash/Keep/Hold/Oneshot)
 @export var card_handling: String = "Standard"
 
 # Type-specific properties
@@ -33,34 +33,24 @@ class_name CardData
 
 # Helper methods for mechanical behavior
 func discards_after_use() -> bool:
-	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
-	if handling_def.has("discards_after_use"):
-		return handling_def["discards_after_use"]
-	return true
+	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	return handling_def.get("discards_after_use", true)
 
 func discards_end_of_turn() -> bool:
-	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
-	if handling_def.has("discards_end_of_turn"):
-		return handling_def["discards_end_of_turn"]
-	return true
+	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	return handling_def.get("discards_end_of_turn", true)
 
 func starts_in_hand() -> bool:
-	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
-	if handling_def.has("starts_in_hand"):
-		return handling_def["starts_in_hand"]
-	return false
+	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	return handling_def.get("starts_in_hand", false)
 
 func removed_after_use() -> bool:
-	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
-	if handling_def.has("removed_after_use"):
-		return handling_def["removed_after_use"]
-	return false
+	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	return handling_def.get("removed_after_use", false)
 
 func triggers_on_draw() -> bool:
-	var handling_def: Dictionary = (load("res://scripts/autoloads/theme_manager.gd") as GDScript).get_card_handling_definition(card_handling)
-	if handling_def.has("triggers_on_draw"):
-		return handling_def["triggers_on_draw"]
-	return false
+	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	return handling_def.get("triggers_on_draw", false)
 
 # Class affinity helper methods
 func get_class_affinity() -> Array[String]:

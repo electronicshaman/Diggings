@@ -24,15 +24,14 @@
 2. **EventBus** - Global event communication
 3. **SaveSystem** - Save/load functionality
 4. **ResourceManager** - Asset loading and caching
-5. **ThemeManager** - Dynamic theme switching
-6. **SeedManager** - Deterministic run seeding
-7. **GLog** - Centralized logging system
-8. **GameManager** - High-level game state
-9. **SceneManager** - Scene transitions
-10. **DeckManager** - Card deck management
-11. **CurioManager** - Curio/relic system
-12. **EncounterManager** - Encounter system
-13. **CharacterGenerator** - Character creation
+5. **SeedManager** - Deterministic run seeding
+6. **GLog** - Centralized logging system
+7. **GameManager** - High-level game state
+8. **SceneManager** - Scene transitions
+9. **DeckManager** - Card deck management
+10. **CurioManager** - Curio/relic system
+11. **EncounterManager** - Encounter system
+12. **CharacterGenerator** - Character creation
 
 ## Development Tools
 - **GLog system** - Professional logging with per-file debug toggles

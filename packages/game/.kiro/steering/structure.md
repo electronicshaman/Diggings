@@ -106,7 +106,6 @@ Follow the established load order in project.godot:
 - All game data stored as Godot Resources (.tres files)
 - Hot-reloadable during development
 - Version-controlled and easily modifiable
-- Theme-agnostic core data with theme-specific overlays
 
 ### Event-Driven Communication
 - Use EventBus for all inter-system communication

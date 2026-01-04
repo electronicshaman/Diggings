@@ -19,6 +19,9 @@ class_name Card
 ## - EventBus integration for MVC compliance
 ## - Quick draw highlighting support
 
+# Preload CardTypeUtils for card type utilities
+const CardTypeUtils = preload("res://scripts/config/card_type_utils.gd")
+
 # Per-file debug control (GLog will check this)
 const DEBUG_ENABLED: bool = true
 
@@ -168,9 +171,9 @@ func _update_static_visuals() -> void:
 
 	# Type symbol and colors
 	if type_symbol:
-		type_symbol.text = ThemeManager.get_card_symbol(card_data.card_type)
+		type_symbol.text = CardTypeUtils.get_card_symbol(card_data.card_type)
 
-	var type_color: Color = ThemeManager.get_card_color(card_data.card_type)
+	var type_color: Color = CardTypeUtils.get_card_color(card_data.card_type)
 	if card_border:
 		card_border.color = type_color
 		original_border_color = type_color
@@ -337,8 +340,9 @@ func format_card_handling() -> String:
 	"""Format card handling text (Exhaust, Ethereal, etc.)"""
 	if not card_data:
 		return ""
-	var handling_display: String = ThemeManager.get_card_handling_display_name(card_data.card_handling)
-	return handling_display if handling_display != "Standard" else ""
+	# Use handling string directly - no theme translation needed
+	var handling: String = card_data.card_handling
+	return handling if handling != "Standard" else ""
 
 func set_selected(selected: bool) -> void:
 	"""Update selection state and visuals"""
@@ -350,7 +354,7 @@ func update_visual_state() -> void:
 	if not card_data or not card_background:
 		return
 
-	var base_color: Color = ThemeManager.get_card_color(card_data.card_type)
+	var base_color: Color = CardTypeUtils.get_card_color(card_data.card_type)
 	if is_selected:
 		# Highlight selected cards
 		card_background.color = base_color.lightened(0.3)
@@ -375,7 +379,7 @@ func set_quick_draw_highlight(enabled: bool) -> void:
 	else:
 		# Restore original type-based border color
 		if card_data:
-			var type_color: Color = ThemeManager.get_card_color(card_data.card_type)
+			var type_color: Color = CardTypeUtils.get_card_color(card_data.card_type)
 			card_border.color = type_color
 		is_quick_draw_highlighted = false
 
