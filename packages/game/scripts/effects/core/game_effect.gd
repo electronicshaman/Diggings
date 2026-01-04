@@ -26,6 +26,23 @@ class_name GameEffect
 @export var activation_condition: EffectCondition  # Optional condition for when effect applies
 @export var conditional_values: Array[ConditionalValue] = []  # Values that change based on conditions
 
+# Source-specific properties (migrated from wrapper classes)
+# Card-specific properties
+@export var energy_cost_modifier: int = 0
+@export var exhaust_on_use: bool = false
+@export var card_specific_conditions: Dictionary = {}
+
+# Curio-specific properties  
+@export var trigger_events: Array[String] = [] # Events that trigger this effect
+@export var stacks_with_duplicates: bool = false
+@export var chance_to_trigger: float = 1.0
+@export var max_stacks: int = 0
+
+# Encounter-specific properties
+@export var choice_requirements: Dictionary = {}
+@export var narrative_text: String = ""
+@export var karma_impact: int = 0
+
 func apply_effect(_context: Resource) -> Resource:
 	# Should return EffectResult
 	return null
@@ -35,6 +52,50 @@ func can_apply(_context: Resource) -> bool:
 	if activation_condition:
 		return activation_condition.evaluate(_context)
 	return true
+
+func can_trigger_for_event(event: String) -> bool:
+	"""Check if this effect can trigger for the given event (curio functionality)"""
+	if trigger_events.is_empty():
+		return true # No specific trigger events means it can trigger for any event
+	return event in trigger_events
+
+func should_trigger(context: Resource) -> bool:
+	"""Check if effect should trigger based on chance and conditions"""
+	if not can_apply(context):
+		return false
+	
+	# Check trigger event if context provides it
+	if context and "trigger_event" in context:
+		if not can_trigger_for_event(context.trigger_event):
+			return false
+	
+	# Check random chance
+	if chance_to_trigger < 1.0:
+		return randf() <= chance_to_trigger
+	
+	return true
+
+func meets_choice_requirements(choice_data: Dictionary) -> bool:
+	"""Check if choice requirements are met (encounter functionality)"""
+	if choice_requirements.is_empty():
+		return true
+	
+	for requirement_key in choice_requirements:
+		var required_value = choice_requirements[requirement_key]
+		if not choice_data.has(requirement_key):
+			return false
+		if choice_data[requirement_key] != required_value:
+			return false
+	
+	return true
+
+func get_energy_cost_modification() -> int:
+	"""Get the energy cost modifier for cards"""
+	return energy_cost_modifier
+
+func should_exhaust() -> bool:
+	"""Check if this effect causes the card to exhaust"""
+	return exhaust_on_use
 
 func get_preview_text(_context: Resource) -> String:
 	return description
@@ -65,8 +126,12 @@ func resolve_conditional_value(property_name: String, base_value: int, context: 
 	return resolved_value if found_any else base_value
 
 # Get description including conditions
-func get_full_description(context: Resource = null) -> String:
+func get_full_description(_context: Resource = null) -> String:
 	var base_desc = description
+	
+	# Add narrative text for encounters
+	if not narrative_text.is_empty():
+		base_desc = narrative_text + "\n" + base_desc
 
 	if activation_condition:
 		base_desc += " (if " + activation_condition.get_description() + ")"
@@ -78,6 +143,30 @@ func get_full_description(context: Resource = null) -> String:
 				base_desc += ", "
 			base_desc += conditional_values[i].get_description()
 		base_desc += "]"
+	
+	# Add source-specific modifiers
+	var modifiers = []
+	
+	if energy_cost_modifier != 0:
+		if energy_cost_modifier > 0:
+			modifiers.append("+" + str(energy_cost_modifier) + " energy cost")
+		else:
+			modifiers.append(str(energy_cost_modifier) + " energy cost")
+	
+	if exhaust_on_use:
+		modifiers.append("Exhaust")
+	
+	if chance_to_trigger < 1.0:
+		modifiers.append(str(int(chance_to_trigger * 100)) + "% chance")
+	
+	if karma_impact != 0:
+		if karma_impact > 0:
+			modifiers.append("+" + str(karma_impact) + " karma")
+		else:
+			modifiers.append(str(karma_impact) + " karma")
+	
+	if not modifiers.is_empty():
+		base_desc += " (" + ", ".join(modifiers) + ")"
 
 	return base_desc
 

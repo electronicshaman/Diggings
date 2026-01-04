@@ -6,7 +6,7 @@ This implementation plan systematically cleans up the effect system by removing 
 
 ## Tasks
 
-- [ ] 1. Create unified effect processor
+- [x] 1. Create unified effect processor
   - Create new EffectProcessor class to replace CardEffects
   - Implement methods for processing effects from all sources (cards, encounters, curios)
   - Add comprehensive logging and error handling
@@ -16,7 +16,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - **Property 2: Unified Processing Pipeline Usage**
   - **Validates: Requirements 1.2, 4.1, 4.2, 4.3**
 
-- [ ] 2. Implement context optimization system
+- [x] 2. Implement context optimization system
   - Enhance EffectContext with caching and reuse capabilities
   - Add performance monitoring for context creation
   - Implement object pooling for frequently used contexts
@@ -26,7 +26,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - **Property 5: Performance Optimization**
   - **Validates: Requirements 5.1, 5.2, 5.3, 5.4**
 
-- [ ] 3. Migrate DuelManager to use EffectProcessor
+- [x] 3. Migrate DuelManager to use EffectProcessor
   - Replace CardEffects usage with new EffectProcessor
   - Update all card effect processing calls
   - Maintain parallel operation during transition
@@ -39,7 +39,7 @@ This implementation plan systematically cleans up the effect system by removing 
 - [ ] 4. Checkpoint - Verify parallel operation
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Evaluate and remove redundant wrapper classes
+- [x] 5. Evaluate and remove redundant wrapper classes
   - Analyze CardEffectWrapper, CurioEffectWrapper, EncounterEffectWrapper usage
   - Migrate functionality to enhanced GameEffect base class
   - Remove wrapper classes that are no longer needed
@@ -53,7 +53,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - **Property 6: Wrapper Removal Equivalence**
   - **Validates: Requirements 2.2**
 
-- [ ] 6. Remove legacy adapter classes
+- [x] 6. Remove legacy adapter classes
   - Delete LegacyCurioAdapter and LegacyEncounterAdapter files
   - Remove any references to adapter classes
   - Verify no adapter code paths are executed
@@ -63,7 +63,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - **Property 4: Data Compatibility Preservation**
   - **Validates: Requirements 3.2, 6.1, 6.3**
 
-- [ ] 7. Remove legacy CardEffects system
+- [x] 7. Remove legacy CardEffects system
   - Delete CardEffects class file
   - Remove card_effects_processor from DuelManager
   - Update any remaining references to use EffectProcessor
@@ -73,7 +73,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - Test that CardEffects class is completely removed
   - Verify no legacy method calls remain in codebase
 
-- [ ] 8. Implement enhanced logging and debugging
+- [x] 8. Implement enhanced logging and debugging
   - Add comprehensive logging to EffectProcessor
   - Implement debugging capabilities for effect processing
   - Add performance monitoring and metrics
@@ -83,7 +83,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - **Property 7: Logging and Debugging Capability**
   - **Validates: Requirements 7.3**
 
-- [ ] 9. Add error handling and edge case management
+- [x] 9. Add error handling and edge case management
   - Implement graceful error handling for invalid effects
   - Add validation for edge cases and malformed data
   - Ensure system stability under error conditions
@@ -93,17 +93,17 @@ This implementation plan systematically cleans up the effect system by removing 
   - **Property 9: Graceful Error Handling**
   - **Validates: Requirements 8.3**
 
-- [ ] 10. Implement deterministic processing guarantees
+- [x] 10. Implement deterministic processing guarantees
   - Ensure consistent results for identical inputs
   - Add validation for deterministic behavior
   - Remove any sources of randomness in core processing
   - _Requirements: 8.2_
 
-- [ ]* 10.1 Write property test for deterministic processing
+- [x]* 10.1 Write property test for deterministic processing
   - **Property 8: Deterministic Processing**
   - **Validates: Requirements 8.2**
 
-- [ ] 11. Optimize batch processing performance
+- [x] 11. Optimize batch processing performance
   - Implement efficient batch processing for multiple effects
   - Add performance benchmarks and monitoring
   - Optimize memory allocation patterns
@@ -113,7 +113,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - Test batch processing efficiency and correctness
   - Verify performance improvements over individual processing
 
-- [ ] 12. Final integration and validation
+- [x] 12. Final integration and validation
   - Run comprehensive integration tests across all game systems
   - Verify backward compatibility with existing data files
   - Validate performance improvements and stability
@@ -124,7 +124,7 @@ This implementation plan systematically cleans up the effect system by removing 
   - Test encounter effects in exploration
   - Test curio effects across different game states
 
-- [ ] 13. Final checkpoint - Comprehensive validation
+- [x] 13. Final checkpoint - Comprehensive validation
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

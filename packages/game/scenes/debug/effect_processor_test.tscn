@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://effect_processor_test_scene"]
+
+[ext_resource type="Script" path="res://scripts/debug/test_effect_processor.gd" id="1"]
+
+[node name="EffectProcessorTest" type="Node"]
+script = ExtResource("1")

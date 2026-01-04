@@ -131,43 +131,39 @@ extends Resource
    - Replaces: `Draw`, `ForcedDiscard`, `DeckManipulation`
    - Parameters: action, amount, card_filter
 
-## Source-Specific Wrappers
+## Source-Specific Properties (Integrated into GameEffect)
 
-### For Cards
+The functionality previously provided by wrapper classes has been integrated directly into the GameEffect base class:
+
+### Card-Specific Properties
 
 ```gdscript
-class_name CardEffectWrapper
-extends Resource
-
-@export var base_effect: GameEffect
+# In GameEffect class:
 @export var energy_cost_modifier: int = 0
 @export var exhaust_on_use: bool = false
 @export var card_specific_conditions: Dictionary = {}
 ```
 
-### For Encounters
+### Encounter-Specific Properties
 
 ```gdscript
-class_name EncounterEffectWrapper
-extends Resource
-
-@export var base_effect: GameEffect
+# In GameEffect class:
 @export var choice_requirements: Dictionary = {}
 @export var narrative_text: String = ""
 @export var karma_impact: int = 0
 ```
 
-### For Curios
+### Curio-Specific Properties
 
 ```gdscript
-class_name CurioEffectWrapper
-extends Resource
-
-@export var base_effect: GameEffect
-@export var trigger_event: String = "passive"
+# In GameEffect class:
+@export var trigger_events: Array[String] = [] # Events that trigger this effect
 @export var stacks_with_duplicates: bool = false
 @export var chance_to_trigger: float = 1.0
 @export var max_stacks: int = 0
+```
+
+This eliminates the need for separate wrapper classes while maintaining all the source-specific functionality.
 ```
 
 ## Godot Project Wiring and Directory Layout
