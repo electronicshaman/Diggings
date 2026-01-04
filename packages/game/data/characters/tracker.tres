@@ -6,7 +6,6 @@
 script = ExtResource("1")
 character_class_name = "Tracker"
 description = "Aboriginal guide and frontier scout. Specializes in preparation, survival skills, and information gathering."
-mechanical_specialization = "Skill"
 difficulty_rating = 4
 base_health = 50
 base_sanity = 105
@@ -19,7 +18,7 @@ passive_abilities = Array[String](["Pathfinding", "Bush Medicine", "Sacred Knowl
 active_abilities = Array[String](["Dreamtime Vision"])
 unique_resources = Array[String](["Setup Counter"])
 class_exclusive_cards = Array[String](["Track Prey", "Read the Land", "Camouflage", "Prepare Strike", "Snare Trap", "Survival Kit", "Bushcraft", "Sacred Site", "Spirit Guide", "Ancestral Wisdom", "Dreamwalking", "Master Tracker"])
-preferred_card_types = Array[String](["Grit"])
+preferred_card_types = Array[String](["Skill"])
 forbidden_card_types = Array[String]([])
 unlocked_by_default = true
 unlock_requirements = Array[String]([])

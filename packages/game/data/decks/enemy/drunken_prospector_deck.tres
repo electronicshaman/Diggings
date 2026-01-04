@@ -12,4 +12,4 @@ card_paths = Array[String](["res://data/cards/enemy/mining/miners_fortitude.tres
 min_deck_size = 6
 max_deck_size = 12
 preferred_strategy = "defensive"
-priority_card_types = Array[String](["Leather", "Liquor"])
+priority_card_types = Array[String](["Skill", "Power"])

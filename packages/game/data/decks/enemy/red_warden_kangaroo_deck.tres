@@ -12,4 +12,4 @@ card_paths = Array[String](["res://data/cards/enemy/wildlife/feral_rage.tres", "
 min_deck_size = 7
 max_deck_size = 12
 preferred_strategy = "aggressive"
-priority_card_types = Array[String](["Lead", "Steel"])
+priority_card_types = Array[String](["Attack"])

@@ -14,7 +14,7 @@ ignores_defense = false
 script = ExtResource("1")
 card_name = "Fanatic Fury"
 energy_cost = 3
-card_type = "Gold"
+card_type = "Attack"
 flavor_text = "Blind rage channeled through unholy power."
 effects = Array[GameEffect]([SubResource("DamageEffect_1")])
 sanity_cost = 0
@@ -23,5 +23,4 @@ volatile_bonus = false
 luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
-mechanical_category = "Attack"
 

@@ -121,7 +121,7 @@ func get_deck_composition() -> Dictionary:
 	
 	for card in master_deck:
 		if is_instance_valid(card):
-			var category = card.mechanical_category
+			var category = card.card_type
 			if composition.has(category):
 				composition[category] += 1
 			else:

@@ -14,7 +14,6 @@ This specification addresses the need for a comprehensive review and consistency
 - **Card_Affinity**: Which cards are exclusive, preferred, or accessible to each class
 - **Passive_Ability**: Always-active class bonuses that don't require player activation
 - **Active_Ability**: Player-triggered class abilities with costs or limitations
-- **Theme_Agnostic_Core**: Mechanical categories (Attack/Skill/Fortune/Power) separate from theme types (Gold/Grit/Grog/Gamble)
 
 ## Requirements
 

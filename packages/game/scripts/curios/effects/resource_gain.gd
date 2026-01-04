@@ -65,10 +65,10 @@ func _check_condition(game_state: Node, context: Dictionary) -> bool:
 			return context.get("is_player_turn", true)
 		"if_power_card":
 			var card_data = context.get("card_data", null)
-			return card_data and card_data.mechanical_category.to_lower() == "power"
+			return card_data and card_data.card_type.to_lower() == "power"
 		"if_attack_card":
 			var card_data = context.get("card_data", null)
-			return card_data and card_data.mechanical_category.to_lower() == "attack"
+			return card_data and card_data.card_type.to_lower() == "attack"
 		"if_high_cost":
 			var card_data = context.get("card_data", null)
 			return card_data and card_data.energy_cost >= 2

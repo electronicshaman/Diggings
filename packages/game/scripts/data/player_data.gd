@@ -17,12 +17,12 @@ const DEBUG_ENABLED: bool = true
 @export var next_card_free: bool = false
 @export var attack_cost_reduction: int = 0
 @export var attack_cost_reduction_duration: int = 0
-@export var grit_cost_reduction: int = 0
-@export var grit_cost_reduction_duration: int = 0
-@export var grog_cost_reduction: int = 0
-@export var grog_cost_reduction_duration: int = 0
-@export var gamble_cost_reduction: int = 0
-@export var gamble_cost_reduction_duration: int = 0
+@export var skill_cost_reduction: int = 0
+@export var skill_cost_reduction_duration: int = 0
+@export var power_cost_reduction: int = 0
+@export var power_cost_reduction_duration: int = 0
+@export var fortune_cost_reduction: int = 0
+@export var fortune_cost_reduction_duration: int = 0
 @export var all_cost_reduction: int = 0
 @export var all_cost_reduction_duration: int = 0
 
@@ -244,17 +244,17 @@ func set_attack_cost_reduction(reduction: int, duration: int):
 	attack_cost_reduction = reduction
 	attack_cost_reduction_duration = duration
 
-func set_grit_cost_reduction(reduction: int, duration: int):
-	grit_cost_reduction = reduction
-	grit_cost_reduction_duration = duration
+func set_skill_cost_reduction(reduction: int, duration: int):
+	skill_cost_reduction = reduction
+	skill_cost_reduction_duration = duration
 
-func set_grog_cost_reduction(reduction: int, duration: int):
-	grog_cost_reduction = reduction
-	grog_cost_reduction_duration = duration
+func set_power_cost_reduction(reduction: int, duration: int):
+	power_cost_reduction = reduction
+	power_cost_reduction_duration = duration
 
-func set_gamble_cost_reduction(reduction: int, duration: int):
-	gamble_cost_reduction = reduction
-	gamble_cost_reduction_duration = duration
+func set_fortune_cost_reduction(reduction: int, duration: int):
+	fortune_cost_reduction = reduction
+	fortune_cost_reduction_duration = duration
 
 func set_all_cost_reduction(reduction: int, duration: int):
 	all_cost_reduction = reduction
@@ -273,18 +273,18 @@ func get_actual_energy_cost(base_cost: int, card_type: String) -> int:
 	
 	# Apply type-specific reductions
 	match card_type:
-		"Gold":
+		"Attack":
 			if attack_cost_reduction_duration > 0:
 				final_cost -= attack_cost_reduction
-		"Grit":
-			if grit_cost_reduction_duration > 0:
-				final_cost -= grit_cost_reduction
-		"Grog":
-			if grog_cost_reduction_duration > 0:
-				final_cost -= grog_cost_reduction
-		"Gamble":
-			if gamble_cost_reduction_duration > 0:
-				final_cost -= gamble_cost_reduction
+		"Skill":
+			if skill_cost_reduction_duration > 0:
+				final_cost -= skill_cost_reduction
+		"Power":
+			if power_cost_reduction_duration > 0:
+				final_cost -= power_cost_reduction
+		"Fortune":
+			if fortune_cost_reduction_duration > 0:
+				final_cost -= fortune_cost_reduction
 	
 	return max(0, final_cost)
 
@@ -308,20 +308,20 @@ func apply_card_cost_reductions():
 		if attack_cost_reduction_duration <= 0:
 			attack_cost_reduction = 0
 	
-	if grit_cost_reduction_duration > 0:
-		grit_cost_reduction_duration -= 1
-		if grit_cost_reduction_duration <= 0:
-			grit_cost_reduction = 0
+	if skill_cost_reduction_duration > 0:
+		skill_cost_reduction_duration -= 1
+		if skill_cost_reduction_duration <= 0:
+			skill_cost_reduction = 0
 	
-	if grog_cost_reduction_duration > 0:
-		grog_cost_reduction_duration -= 1
-		if grog_cost_reduction_duration <= 0:
-			grog_cost_reduction = 0
+	if power_cost_reduction_duration > 0:
+		power_cost_reduction_duration -= 1
+		if power_cost_reduction_duration <= 0:
+			power_cost_reduction = 0
 	
-	if gamble_cost_reduction_duration > 0:
-		gamble_cost_reduction_duration -= 1
-		if gamble_cost_reduction_duration <= 0:
-			gamble_cost_reduction = 0
+	if fortune_cost_reduction_duration > 0:
+		fortune_cost_reduction_duration -= 1
+		if fortune_cost_reduction_duration <= 0:
+			fortune_cost_reduction = 0
 
 # Gambling system
 func set_gambling_state(multiplier: float, duration: int):
@@ -377,12 +377,12 @@ func reset_duel_tracking():
 	# Reset all cost reductions
 	attack_cost_reduction = 0
 	attack_cost_reduction_duration = 0
-	grit_cost_reduction = 0
-	grit_cost_reduction_duration = 0
-	grog_cost_reduction = 0
-	grog_cost_reduction_duration = 0
-	gamble_cost_reduction = 0
-	gamble_cost_reduction_duration = 0
+	skill_cost_reduction = 0
+	skill_cost_reduction_duration = 0
+	power_cost_reduction = 0
+	power_cost_reduction_duration = 0
+	fortune_cost_reduction = 0
+	fortune_cost_reduction_duration = 0
 	all_cost_reduction = 0
 	all_cost_reduction_duration = 0
 	# Reset Faith (Preacher resource)
@@ -497,12 +497,12 @@ func get_save_data() -> Dictionary:
 		"next_card_free": next_card_free,
 		"attack_cost_reduction": attack_cost_reduction,
 		"attack_cost_reduction_duration": attack_cost_reduction_duration,
-		"grit_cost_reduction": grit_cost_reduction,
-		"grit_cost_reduction_duration": grit_cost_reduction_duration,
-		"grog_cost_reduction": grog_cost_reduction,
-		"grog_cost_reduction_duration": grog_cost_reduction_duration,
-		"gamble_cost_reduction": gamble_cost_reduction,
-		"gamble_cost_reduction_duration": gamble_cost_reduction_duration,
+		"skill_cost_reduction": skill_cost_reduction,
+		"skill_cost_reduction_duration": skill_cost_reduction_duration,
+		"power_cost_reduction": power_cost_reduction,
+		"power_cost_reduction_duration": power_cost_reduction_duration,
+		"fortune_cost_reduction": fortune_cost_reduction,
+		"fortune_cost_reduction_duration": fortune_cost_reduction_duration,
 		"all_cost_reduction": all_cost_reduction,
 		"all_cost_reduction_duration": all_cost_reduction_duration,
 		"gambling_active": gambling_active,
@@ -545,12 +545,12 @@ func load_from_data(data: Dictionary):
 	next_card_free = data.get("next_card_free", false)
 	attack_cost_reduction = data.get("attack_cost_reduction", 0)
 	attack_cost_reduction_duration = data.get("attack_cost_reduction_duration", 0)
-	grit_cost_reduction = data.get("grit_cost_reduction", 0)
-	grit_cost_reduction_duration = data.get("grit_cost_reduction_duration", 0)
-	grog_cost_reduction = data.get("grog_cost_reduction", 0)
-	grog_cost_reduction_duration = data.get("grog_cost_reduction_duration", 0)
-	gamble_cost_reduction = data.get("gamble_cost_reduction", 0)
-	gamble_cost_reduction_duration = data.get("gamble_cost_reduction_duration", 0)
+	skill_cost_reduction = data.get("skill_cost_reduction", 0)
+	skill_cost_reduction_duration = data.get("skill_cost_reduction_duration", 0)
+	power_cost_reduction = data.get("power_cost_reduction", 0)
+	power_cost_reduction_duration = data.get("power_cost_reduction_duration", 0)
+	fortune_cost_reduction = data.get("fortune_cost_reduction", 0)
+	fortune_cost_reduction_duration = data.get("fortune_cost_reduction_duration", 0)
 	all_cost_reduction = data.get("all_cost_reduction", 0)
 	all_cost_reduction_duration = data.get("all_cost_reduction_duration", 0)
 	gambling_active = data.get("gambling_active", false)

@@ -22,7 +22,8 @@
         "view_script",
         "get_scene_file_content",
         "create_scene",
-        "attach_script"
+        "attach_script",
+        "delete_scene"
       ]
     },
     "Context7": {

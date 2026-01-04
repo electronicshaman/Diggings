@@ -1,29 +1,50 @@
 extends Node
 
+# Valid mechanical categories
+const VALID_CARD_TYPES: Array[String] = ["Attack", "Skill", "Power", "Fortune"]
+
+# Validation helper
+static func is_valid_card_type(card_type: String) -> bool:
+	return card_type in VALID_CARD_TYPES
+
+# Theme-specific display name mapping
+static func get_card_display_name(card_type: String, theme: String = "the_rush") -> String:
+	if theme == "the_rush":
+		match card_type:
+			"Attack":
+				return "Gold"
+			"Skill":
+				return "Grit"
+			"Power":
+				return "Grog"
+			"Fortune":
+				return "Gamble"
+	return card_type  # Fallback to mechanical name
+
 
 
 static func get_card_color(card_type: String) -> Color:
 	match card_type:
-		"Gold":
-			return Color(0.831, 0.686, 0.216)
-		"Grit":
-			return Color(0.545, 0.271, 0.075)
-		"Grog":
-			return Color(0.722, 0.525, 0.043)
-		"Gamble":
-			return Color(0.133, 0.545, 0.133)
+		"Attack":
+			return Color(0.831, 0.686, 0.216)  # Gold
+		"Skill":
+			return Color(0.545, 0.271, 0.075)  # Brown
+		"Power":
+			return Color(0.722, 0.525, 0.043)  # Amber
+		"Fortune":
+			return Color(0.133, 0.545, 0.133)  # Green
 		_:
 			return Color.WHITE
 
 static func get_card_symbol(card_type: String) -> String:
 	match card_type:
-		"Gold":
+		"Attack":
 			return "🔫"
-		"Grit":
+		"Skill":
 			return "🛡"
-		"Grog":
+		"Power":
 			return "🍺"
-		"Gamble":
+		"Fortune":
 			return "🎲"
 		_:
 			return "?"

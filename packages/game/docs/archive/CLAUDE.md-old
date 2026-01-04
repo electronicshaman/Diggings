@@ -56,7 +56,6 @@ The core systems use **mechanical categories** independent of theme:
 - **Power** - Persistent combat upgrades (one per combat)
 - **Fortune** - Random/luck-based effects
 
-Theme-specific types (Gold, Grit, Grog, Gamble) are loaded dynamically via ThemeManager.
 
 ## Development Commands
 

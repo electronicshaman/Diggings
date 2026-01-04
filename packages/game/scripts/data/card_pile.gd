@@ -230,10 +230,10 @@ func sort_by_name() -> void:
 	GLog.debug("Pile sorted by name")
 	_emit_change("pile_sorted", {"sort_type": "name"})
 
-# Sort cards by type (Lead, Leather, Liquor, Luck)
+# Sort cards by type (Attack, Skill, Power, Fortune)
 func sort_by_type() -> void:
 	GLog.debug("sort_by_type() called for %s pile (size: %d)" % [pile_type, cards.size()])
-	var type_order: Dictionary = {"Lead": 0, "Leather": 1, "Liquor": 2, "Luck": 3}
+	var type_order: Dictionary = {"Attack": 0, "Skill": 1, "Power": 2, "Fortune": 3}
 	cards.sort_custom(func(a: CardInstance, b: CardInstance) -> bool: 
 		return type_order.get(a.get_card_type(), 99) < type_order.get(b.get_card_type(), 99)
 	)

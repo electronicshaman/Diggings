@@ -11,7 +11,7 @@ amount = 5
 script = ExtResource("1")
 card_name = "Fire and Brimstone"
 energy_cost = 1
-card_type = "Faith"
+card_type = "Attack"
 description = "Deal 5 damage. If Faith >= 3: Deal +3 damage."
 flavor_text = "The righteous burn eternal!"
 effects = Array[GameEffect]([SubResource("DamageEffect_1")])
@@ -21,4 +21,3 @@ volatile_bonus = false
 luck_modifier = 0.0
 class_affinity = Array[String](["Preacher"])
 accessibility_tier = "Starting"
-mechanical_category = "Attack"

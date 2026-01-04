@@ -6,7 +6,6 @@
 script = ExtResource("1")
 character_class_name = "Bushranger"
 description = "Australian outlaw and expert gunfighter. Specializes in aggressive combat and high-risk tactics."
-mechanical_specialization = "Attack"
 difficulty_rating = 2
 base_health = 55
 base_sanity = 90
@@ -18,7 +17,7 @@ passive_abilities = Array[String](["Outlaw's Edge", "Wanted Status"])
 active_abilities = Array[String](["Quick Draw"])
 unique_resources = Array[String](["Ammo"])
 class_exclusive_cards = Array[String](["Six-Shooter", "Fan the Hammer", "Ambush Strike", "Quick Shot", "Desperado's Gambit", "Bounty Shot", "Wild Shot", "Outlaw's Intuition", "Bush Survival", "Wanted Poster", "Bandit's Code", "Last Stand", "Bush Cover", "Take Cover", "Reload"])
-preferred_card_types = Array[String](["Gold"])
+preferred_card_types = Array[String](["Attack"])
 forbidden_card_types = Array[String]([])
 unlocked_by_default = true
 unlock_requirements = Array[String]([])

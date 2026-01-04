@@ -130,11 +130,6 @@ Main Scene
 - **Controller classes** - Scene-specific logic (DuelSceneController)
 - **UI classes** - Interface handling (CardUI, MainMenu)
 
-### Theme-Agnostic Design
-- Core mechanics independent of theme content
-- Theme-specific data loaded dynamically via ThemeManager
-- Mechanical categories (Attack/Skill/Power/Fortune) vs theme types (Gold/Grit/Grog/Gamble)
-
 ### Error Handling
 - Use GLog for all logging and error reporting
 - Validate inputs in all public methods

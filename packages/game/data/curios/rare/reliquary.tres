@@ -15,7 +15,7 @@ faith_minimum = 2
 script = ExtResource("3")
 description = "All Faith cards cost 1 less energy"
 trigger_event = "passive"
-target_card_type = "faith"
+target_card_type = "fortune"
 modification_type = "cost"
 modification_value = -1
 

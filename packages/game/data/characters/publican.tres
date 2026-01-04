@@ -6,7 +6,6 @@
 script = ExtResource("1")
 character_class_name = "Publican"
 description = "Pub owner and social hub manager. Specializes in defensive play, energy generation, and patient hold-based effects."
-mechanical_specialization = "Power"
 difficulty_rating = 3
 base_health = 50
 base_sanity = 95
@@ -19,7 +18,7 @@ passive_abilities = Array[String](["Social Hub", "House Advantage", "Community L
 active_abilities = Array[String]([])
 unique_resources = Array[String]([])
 class_exclusive_cards = Array[String](["Aged Whiskey", "Vintage Wine", "Homebrew", "Nightcap", "Bar Fortification", "Bouncer's Presence", "Last Call", "Smooth Talk", "Free Drinks", "Happy Hour", "Pub Brawl", "House Rules"])
-preferred_card_types = Array[String](["Grog"])
+preferred_card_types = Array[String](["Power"])
 forbidden_card_types = Array[String]([])
 unlocked_by_default = true
 unlock_requirements = Array[String]([])

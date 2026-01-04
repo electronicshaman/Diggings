@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxtqy1jgrfy0x"]
+
+[ext_resource type="Script" uid="uid://bmxfw5vencyeo" path="res://test_core_migration.gd" id="1_2ma28"]
+
+[node name="TestCoreMigration" type="Node"]
+script = ExtResource("1_2ma28")

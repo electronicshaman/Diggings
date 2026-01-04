@@ -6,7 +6,7 @@ class_name CardData
 @export var card_name: String = "Card"
 @export var energy_cost: int = 1
 @export var description: String = ""
-@export var card_type: String = "Gold"
+@export var card_type: String = "Attack"
 @export var card_icon: Texture2D
 @export var flavor_text: String = ""
 
@@ -30,7 +30,6 @@ class_name CardData
 @export_group("Class Accessibility")
 @export var class_affinity: Array[String] = []  # Empty = all classes can use, populated = restricted
 @export var accessibility_tier: String = "Neutral"  # Starting/Class/Neutral/Rare
-@export var mechanical_category: String = "Attack"  # Attack/Skill/Power/Fortune
 
 # Helper methods for mechanical behavior
 func discards_after_use() -> bool:
@@ -76,10 +75,6 @@ func is_available_to_class(character_class: String) -> bool:
 	# Otherwise check if class is in affinity list
 	return character_class in class_affinity
 
-func get_mechanical_category() -> String:
-	"""Get the theme-agnostic mechanical category"""
-	return mechanical_category
-
 func get_accessibility_tier() -> String:
 	"""Get the accessibility tier (Starting/Class/Neutral/Rare)"""
 	return accessibility_tier
@@ -95,6 +90,23 @@ func is_class_card() -> bool:
 func is_neutral_card() -> bool:
 	"""Check if this card is available to all classes"""
 	return accessibility_tier == "Neutral"
+
+# Card type helper methods
+func is_attack() -> bool:
+	"""Check if this card is an Attack type"""
+	return card_type == "Attack"
+
+func is_skill() -> bool:
+	"""Check if this card is a Skill type"""
+	return card_type == "Skill"
+
+func is_power() -> bool:
+	"""Check if this card is a Power type"""
+	return card_type == "Power"
+
+func is_fortune() -> bool:
+	"""Check if this card is a Fortune type"""
+	return card_type == "Fortune"
 
 # --- Description generation helpers ---
 # Prefer effect-provided descriptions as the source of truth. These helpers let

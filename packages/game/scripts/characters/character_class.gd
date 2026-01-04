@@ -5,7 +5,6 @@ class_name CharacterClass
 @export_group("Character Identity")
 @export var character_class_name: String = "Bushranger"
 @export var description: String = "An outlaw of the Australian bush"
-@export var mechanical_specialization: String = "Attack"  # Attack/Skill/Power/Fortune
 @export var difficulty_rating: int = 2  # 1=Easy, 2=Medium, 3=Hard, 4=Expert
 
 # Starting statistics
@@ -85,11 +84,6 @@ func get_card_preference_weight(card_data: CardData) -> float:
 	# Preferred types get bonus weight
 	if card_data.card_type in preferred_card_types:
 		return 2.0
-		
-	# Matching mechanical specialization gets moderate bonus
-	if card_data.has_method("get_mechanical_category"):
-		if card_data.get_mechanical_category() == mechanical_specialization:
-			return 1.5
 	
 	# Default neutral weight
 	return 1.0

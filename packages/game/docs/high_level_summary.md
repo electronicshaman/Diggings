@@ -57,15 +57,17 @@ Last verified: 2026-01-03
 - **Corruption** - Persistent negative resource that accumulates
 - **Energy** - Standard card-playing resource (resets each turn)
 
-## Character Classes (Start with 4)
+## Character Classes
 
-Each specializes in one card type:
+  | Class      | Resource | Max | Theme                   |
+  |------------|----------|-----|-------------------------|
+  | Bushranger | Ammo     | 6   | Tactical gunfighter     |
+  | Prospector | Fever    | 10  | Gold madness/corruption |
+  | Tracker    | Scent    | 5   | Primal hunting          |
+  | Publican   | Brew     | 8   | Hospitality/social hub  |
+  | Preacher   | Faith    | 10  | Religious fervor        |
 
-- **Prospector** (Gamble cards) - Risk/reward gameplay
-- **Bushranger** (Gold cards) - Aggressive damage
-- **Tracker** (Grit cards) - Defense and survival
-- **Publican** (Grog cards) - Healing and sanity management
-
+  
 ## Eldritch Curios
 
 Persistent run modifiers (like relics) with Australian gold rush + cosmic horror themes:
