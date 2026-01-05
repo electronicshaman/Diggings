@@ -25,6 +25,8 @@ class_name CharacterClass
 @export var passive_abilities: Array[String] = []  # Names of passive abilities
 @export var active_abilities: Array[String] = []   # Names of active abilities
 @export var unique_resources: Array[String] = []   # e.g., ["Ammo"] for Bushranger
+@export var unique_resource_defaults: Dictionary = {}  # e.g., {"Ammo": 6} - starting values
+@export var unique_resource_max: Dictionary = {}  # e.g., {"Faith": 10} - max values (0 = no max)
 
 # Card accessibility rules
 @export_group("Card Access")

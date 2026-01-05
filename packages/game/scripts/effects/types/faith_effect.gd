@@ -5,8 +5,6 @@ const DEBUG_ENABLED: bool = true
 
 @export var amount: int = 1  # Positive = gain, negative = spend
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
-
 func apply_effect(context):
 	var result = EffectResult.new()
 	if not context:
@@ -20,8 +18,12 @@ func apply_effect(context):
 	# NOTE: Like other effects, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual mutations.
-	# The DuelManager will respect the player's max_faith property when applying.
-	result.values_applied["faith"] = final_amount
+	# The DuelManager will respect the player's custom_resource_max when applying.
+	
+	# Use custom_resources format for consistency
+	if not result.values_applied.has("custom_resources"):
+		result.values_applied["custom_resources"] = {}
+	result.values_applied["custom_resources"]["Faith"] = final_amount
 	result.success = true
 
 	if DEBUG_ENABLED:

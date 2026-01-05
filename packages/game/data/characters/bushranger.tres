@@ -16,6 +16,7 @@ starting_deck_size = 12
 passive_abilities = Array[String](["Outlaw's Edge", "Wanted Status"])
 active_abilities = Array[String](["Quick Draw"])
 unique_resources = Array[String](["Ammo"])
+unique_resource_defaults = {"Ammo": 6}
 class_exclusive_cards = Array[String](["Six-Shooter", "Fan the Hammer", "Ambush Strike", "Quick Shot", "Desperado's Gambit", "Bounty Shot", "Wild Shot", "Outlaw's Intuition", "Bush Survival", "Wanted Poster", "Bandit's Code", "Last Stand", "Bush Cover", "Take Cover", "Reload"])
 preferred_card_types = Array[String](["Attack"])
 forbidden_card_types = Array[String]([])

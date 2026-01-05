@@ -69,7 +69,7 @@ const UI_REFRESH_DEBOUNCE_SEC := 0.05
 func _ready() -> void:
 	GLog.debug("UIController initialized - Managing the mortal interface")
 	card_scene = preload("res://scenes/cards/card.tscn")
-	
+
 	# Connect to UI notification events
 	EventBus.ui_notification.connect(_on_ui_notification)
 
@@ -79,6 +79,9 @@ func _ready() -> void:
 	_ui_refresh_timer.wait_time = UI_REFRESH_DEBOUNCE_SEC
 	add_child(_ui_refresh_timer)
 	_ui_refresh_timer.timeout.connect(_on_ui_refresh_timer_timeout)
+
+	# Connect viewport resize to re-center card areas
+	get_tree().root.size_changed.connect(_center_card_areas)
 
 func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 	game_controller = game_controller_ref
@@ -130,6 +133,32 @@ func initialize(ui_references: Dictionary, game_controller_ref: Node) -> void:
 		CurioManager.curio_stack_changed.connect(_on_curio_stack_changed)
 	
 	setup_debug_buttons(ui_references)
+
+	# Center card areas based on viewport width
+	_center_card_areas()
+
+func _center_card_areas() -> void:
+	"""Center card areas horizontally based on parent Control size."""
+	# Get center from parent Control which has correct logical size
+	var parent_control: Control = null
+	if hand_area:
+		parent_control = hand_area.get_parent() as Control
+	elif enemy_hand_area:
+		parent_control = enemy_hand_area.get_parent() as Control
+	elif battlefield_area:
+		parent_control = battlefield_area.get_parent() as Control
+
+	if not parent_control:
+		return
+
+	var center_x = parent_control.size.x / 2
+
+	if hand_area:
+		hand_area.position.x = center_x
+	if enemy_hand_area:
+		enemy_hand_area.position.x = center_x
+	if battlefield_area:
+		battlefield_area.position.x = center_x
 
 func setup_debug_buttons(ui_references: Dictionary) -> void:
 	var add_card_btn = ui_references.get("add_card_button")
@@ -195,16 +224,18 @@ func update_player_ui() -> void:
 		
 	if class_resource_label:
 		var resource_text = ""
-		# Check for Faith (Preacher)
-		if "faith" in p and p.max_faith > 0:
-			resource_text = "Faith: %d/%d" % [p.faith, p.max_faith]
-		# Check for custom resources
-		elif "custom_resources" in p and not p.custom_resources.is_empty():
+		# Display all class resources from unified custom_resources dictionary
+		if not p.custom_resources.is_empty():
 			for res_name in p.custom_resources:
 				if resource_text != "":
 					resource_text += ", "
-				resource_text += "%s: %d" % [res_name.capitalize(), p.custom_resources[res_name]]
-		
+				var current = p.custom_resources[res_name]
+				var max_val = p.custom_resource_max.get(res_name, 0)
+				if max_val > 0:
+					resource_text += "%s: %d/%d" % [res_name, current, max_val]
+				else:
+					resource_text += "%s: %d" % [res_name, current]
+
 		class_resource_label.text = resource_text
 		class_resource_label.visible = not resource_text.is_empty()
 		
@@ -377,8 +408,10 @@ func refresh_hand_display() -> void:
 		hand_cards.append(card_node)
 
 		var card_spacing = 160
+		var card_scale = 0.625
+		var card_width = 300 * card_scale
 		var total_width = (hand_data.size() - 1) * card_spacing
-		var start_x = -total_width / 2
+		var start_x = -total_width / 2 - card_width / 2
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
 		card_node.scale = Vector2(0.625, 0.625)  # Scale down from 300x420 to 187x262 (25% larger)
@@ -484,8 +517,10 @@ func refresh_enemy_hand_display() -> void:
 		enemy_hand_cards.append(card_instance)
 		
 		var card_spacing = 120
+		var card_scale = 0.4
+		var card_width = 300 * card_scale
 		var total_width = (enemy_hand_data.size() - 1) * card_spacing
-		var start_x = -total_width / 2
+		var start_x = -total_width / 2 - card_width / 2
 		card_instance.position.x = start_x + i * card_spacing
 		card_instance.position.y = 0
 		card_instance.scale = Vector2(0.4, 0.4)  # Smaller enemy cards (120x168)
@@ -514,8 +549,10 @@ func refresh_battlefield_display() -> void:
 		battlefield_cards.append(card_node)
 		
 		var card_spacing = 140
+		var card_scale = 0.45
+		var card_width = 300 * card_scale
 		var total_width = (battlefield_data.size() - 1) * card_spacing
-		var start_x = -total_width / 2
+		var start_x = -total_width / 2 - card_width / 2
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
 		card_node.scale = Vector2(0.45, 0.45)  # Slightly smaller battlefield cards (135x189)

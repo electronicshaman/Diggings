@@ -2051,24 +2051,20 @@ func reset_error_handling_state() -> void:
 	if DEBUG_ENABLED:
 		_safe_log("info", "EffectProcessor: Error handling state reset")
 
-## Legacy compatibility method for migration
-## Processes card effects and returns results in the legacy dictionary format
-func apply_card_instance_effects(duel_manager: DuelManager, card_instance: CardInstance) -> Dictionary:
+## Process card effects and return results directly as Array[EffectResult]
+func apply_card_instance_effects(duel_manager: DuelManager, card_instance: CardInstance) -> Array[EffectResult]:
 	return apply_card_instance_effects_with_context(duel_manager, card_instance, 0, 0)
 
-## Legacy compatibility method with context for migration
-func apply_card_instance_effects_with_context(duel_manager: DuelManager, card_instance: CardInstance, cards_played_before: int, hand_size_before: int) -> Dictionary:
-	# Create default results dictionary for backward compatibility
-	var results = _create_legacy_results_dict()
-	
+## Process card effects with context and return results directly as Array[EffectResult]
+func apply_card_instance_effects_with_context(duel_manager: DuelManager, card_instance: CardInstance, cards_played_before: int, hand_size_before: int) -> Array[EffectResult]:
 	# Validate inputs - handle null inputs gracefully
 	if not duel_manager or not card_instance:
 		if DEBUG_ENABLED:
 			_safe_log("error", "EffectProcessor: Invalid inputs for card effect processing")
-		return results
+		return []
 	
 	if not card_instance.card_data or not card_instance.card_data.effects:
-		return results
+		return []
 	
 	# Create context
 	var context = create_context_for_card(card_instance, duel_manager)
@@ -2087,74 +2083,73 @@ func apply_card_instance_effects_with_context(duel_manager: DuelManager, card_in
 	
 	var effect_results = process_effects(typed_effects, context)
 	
-	# Convert modern EffectResult array to legacy dictionary format
-	_merge_results_to_legacy_dict(effect_results, results)
+	# Apply gambling modifiers directly to results if applicable
+	_apply_gambling_modifiers_to_results(duel_manager, effect_results)
 	
-	# Apply gambling modifiers if applicable (legacy compatibility)
-	_apply_gambling_modifiers(duel_manager, results)
+	return effect_results
+
+## Apply gambling modifiers to Array[EffectResult] directly
+func _apply_gambling_modifiers_to_results(duel_manager: DuelManager, effect_results: Array[EffectResult]) -> void:
+	if not is_instance_valid(duel_manager) or not duel_manager.duel_state or not duel_manager.duel_state.player_data:
+		return
 	
-	return results
-
-## Create legacy results dictionary for backward compatibility
-func _create_legacy_results_dict() -> Dictionary:
-	return {
-		"damage": 0,
-		"defense": 0,
-		"heal": 0,
-		"draw": 0,
-		"energy_restore": 0,
-		"stun_enemy": 0,
-		"ignores_defense": false,
-		"discard_random": 0,
-		"add_curse": 0,
-		"sanity_restore": 0,
-		"exhaust_random": 0
-	}
-
-## Merge modern EffectResult array into legacy dictionary format
-func _merge_results_to_legacy_dict(effect_results: Array[EffectResult], results: Dictionary) -> void:
-	for effect_result in effect_results:
-		if not effect_result.success:
-			continue
+	var player_data = duel_manager.duel_state.player_data
+	
+	if not player_data.has_method("check_and_apply_gambling"):
+		return
+	
+	var gambling_result = player_data.check_and_apply_gambling()
+	
+	if not gambling_result is Dictionary or not gambling_result.has("active"):
+		return
+	
+	if gambling_result.active:
+		var multiplier = gambling_result.get("multiplier", 1.0)
 		
-		var values = effect_result.values_applied
-		if not values is Dictionary:
-			continue
+		if DEBUG_ENABLED:
+			_safe_log("debug", "EffectProcessor: Gambling active! Multiplier: %.1fx" % multiplier)
 		
-		# Map modern result values to legacy dictionary keys
-		for key in values.keys():
-			match key:
-				"damage":
-					if values[key] > 0:
-						results.damage += values[key]
-				"heal":
-					if values[key] > 0:
-						results.heal += values[key]
-				"defense":
-					if values[key] > 0:
-						results.defense += values[key]
-				"drawn":
-					if values[key] > 0:
-						results.draw += values[key]
-				"discard_random":
-					if values[key] > 0:
-						results.discard_random += values[key]
-				"exhaust_random":
-					if values[key] > 0:
-						results.exhaust_random += values[key]
-				"ignores_defense":
-					if values[key]:
-						results.ignores_defense = true
-				"stun_enemy":
-					if values[key] > 0:
-						results.stun_enemy += values[key]
-				"energy":
-					if values[key] != 0:
-						results.energy_restore += values[key]
-				"sanity":
-					if values[key] > 0:
-						results.sanity_restore += values[key]
-				# Add other mappings as needed
+		# Query EventBus for gambling modifiers
+		var context = {
+			"success_chance": 0.5,
+			"player_data": player_data
+		}
+		EventBus.gambling_modifier_query.emit(player_data, context)
+		var success_chance = context.get("success_chance", 0.5)
+		
+		if SeedManager.get_combat_random_float() < success_chance:
+			# Apply multiplier to relevant results
+			var multiplied_fields = ["damage", "defense", "heal"]
+			for result in effect_results:
+				if not result.success:
+					continue
+				
+				for field in multiplied_fields:
+					if result.values_applied.has(field) and result.values_applied[field] is int:
+						result.values_applied[field] = int(result.values_applied[field] * multiplier)
+			
+			if DEBUG_ENABLED:
+				_safe_log("debug", "EffectProcessor: Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier)
+		else:
+			# Negate effects on gambling failure
+			for result in effect_results:
+				if not result.success:
+					continue
+				
+				# Zero out damage, defense, and heal effects
+				if result.values_applied.has("damage"):
+					result.values_applied["damage"] = 0
+				if result.values_applied.has("defense"):
+					result.values_applied["defense"] = 0
+				if result.values_applied.has("heal"):
+					result.values_applied["heal"] = 0
+			
+			if DEBUG_ENABLED:
+				_safe_log("debug", "EffectProcessor: Gambling FAILED! All effects negated")
+
+
+
+
 
 ## Apply gambling modifiers for legacy compatibility
 func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -> void:

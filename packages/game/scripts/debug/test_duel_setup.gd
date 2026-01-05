@@ -460,11 +460,12 @@ func _start_test_duel(character: Resource, deck: Resource, enemy: Resource, sele
 		GLog.error("Failed to load deck cards")
 		return
 
-	# Create DuelConfig with modifiers for health/energy overrides
+	# Create DuelConfig with modifiers for health/energy overrides and character class
 	var modifiers = {
 		"test_duel": true,
 		"health_override": health,
-		"energy_override": energy
+		"energy_override": energy,
+		"character_class": character
 	}
 
 	var duel_config = DuelConfig.new(player_deck, enemy, "test_duel", modifiers)

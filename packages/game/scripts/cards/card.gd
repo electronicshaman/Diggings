@@ -273,6 +273,10 @@ func add_click_button() -> void:
 	add_child(button)
 	button.pressed.connect(_on_button_clicked)
 
+	# Connect button hover signals for z-index (more reliable than Area2D signals)
+	button.mouse_entered.connect(_on_mouse_entered)
+	button.mouse_exited.connect(_on_mouse_exited)
+
 func _on_button_clicked() -> void:
 	"""Handle button click"""
 	if not card_data:

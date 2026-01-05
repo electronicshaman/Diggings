@@ -51,15 +51,20 @@ func apply_effect(game_state: Node, _curio_data: Resource, context: Dictionary) 
 		"passive":
 			# Passive effects applied when curio is acquired
 			if faith_max_bonus > 0:
-				player.max_faith += faith_max_bonus
+				var current_max = player.get_resource_max("Faith")
+				player.custom_resource_max["Faith"] = current_max + faith_max_bonus
 
 func _add_faith(player_data, value: int) -> void:
-	"""Add Faith to player using the gain_faith method"""
-	if player_data and player_data.has_method("gain_faith"):
-		player_data.gain_faith(value)
+	"""Add Faith to player using the generic resource system"""
+	if player_data and player_data.has_method("gain_resource"):
+		player_data.gain_resource("Faith", value)
 		if DEBUG_ENABLED:
-			if player_data.has("faith") and player_data.has("max_faith"):
-				GLog.debug("FaithModifier: Added %d Faith (current: %d/%d)" % [value, player_data.faith, player_data.max_faith])
+			var current = player_data.get_resource("Faith")
+			var max_val = player_data.get_resource_max("Faith")
+			if max_val > 0:
+				GLog.debug("FaithModifier: Added %d Faith (current: %d/%d)" % [value, current, max_val])
+			else:
+				GLog.debug("FaithModifier: Added %d Faith (current: %d)" % [value, current])
 
 func _get_player_data(game_state: Node):
 	"""Get player data from game state"""
