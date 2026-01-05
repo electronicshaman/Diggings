@@ -192,6 +192,15 @@ func _initialize_duel() -> void:
 							ds.player_data.stats.max_energy = energy_override
 							ds.player_data.stats.current_energy = energy_override
 							GLog.info("Applied energy override: %d" % energy_override, "duel_scene_controller")
+
+				# Apply character class if present (initializes class-specific resources)
+				var char_class = duel_config.get_modifier("character_class", null)
+				if char_class:
+					if is_instance_valid(duel_manager) and "duel_state" in duel_manager and is_instance_valid(duel_manager.duel_state):
+						var ds = duel_manager.duel_state
+						if ds.player_data:
+							ds.player_data.set_character_class(char_class)
+							GLog.info("Applied character class: %s" % char_class.character_class_name, "duel_scene_controller")
 			else:
 				GameManager.game_data["is_test_duel"] = false
 

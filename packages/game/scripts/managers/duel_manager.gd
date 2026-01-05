@@ -351,12 +351,14 @@ func can_play_card(card_data: CardData) -> bool:
 	if not player.can_afford_card(actual_cost, card_data.sanity_cost):
 		return false
 
-	# Check Faith costs (if any) - look for negative Faith effects
-	var faith_cost = _get_faith_cost_from_card(card_data)
-	if faith_cost > 0 and not player.can_afford_faith(faith_cost):
-		return false
+	# Check resource costs (Faith and other custom resources)
+	var resource_costs = _get_resource_costs_from_card(card_data)
+	for resource_name in resource_costs:
+		var cost = resource_costs[resource_name]
+		if not player.can_afford_resource(resource_name, cost):
+			return false
 
-	# Check Custom Resource costs
+	# Check additional Custom Resource costs
 	var custom_costs = _get_custom_resource_costs_from_card(card_data)
 	for resource_name in custom_costs:
 		var cost = custom_costs[resource_name]
@@ -380,12 +382,14 @@ func play_card(card_instance: CardInstance):
 	player.pay_energy(actual_cost)
 	player.pay_sanity(card_instance.get_sanity_cost())
 	
-	# Pay Faith costs upfront (extracted from card effects)
-	var faith_cost = _get_faith_cost_from_card(card_instance.card_data)
-	if faith_cost > 0:
-		player.spend_faith(faith_cost)
-		GLog.debug("Paid %d Faith cost upfront (current: %d/%d)" % [faith_cost, player.faith, player.max_faith])
-	
+	# Pay resource costs upfront (Faith and other resources from effects)
+	var resource_costs = _get_resource_costs_from_card(card_instance.card_data)
+	for resource_name in resource_costs:
+		var cost = resource_costs[resource_name]
+		if cost > 0:
+			player.spend_resource(resource_name, cost)
+			GLog.debug("Paid %d %s cost upfront (current: %d)" % [cost, resource_name, player.get_resource(resource_name)])
+
 	# Pay custom resource costs upfront
 	var custom_costs = _get_custom_resource_costs_from_card(card_instance.card_data)
 	for resource_name in custom_costs:
@@ -422,118 +426,84 @@ func play_card(card_instance: CardInstance):
 		var winner = "player" if duel_state.enemy_data.is_dead() else "enemy"
 		end_duel(winner)
 
-func apply_card_results(results: Dictionary):
-	var player = duel_state.player_data
-	var enemy = duel_state.enemy_data
-
-	if results.has("damage") and results.damage > 0:
-		var ignore_defense = results.get("ignores_defense", false)
-		var hits: int = int(results.get("damage_hits", 1))
-		var total_actual = 0
-		var pre_hp = enemy.current_health
-		var pre_def = enemy.defense
-		GLog.debug("Applying player damage -> amount=%d, hits=%d, ignores_defense=%s | enemy before: %d HP, %d DEF" % [results.damage, max(1, hits), str(ignore_defense), pre_hp, pre_def])
+## Apply a single result's values to the appropriate game state
+## Maps each key to appropriate state mutation and handles source vs target correctly
+func _apply_single_result(values: Dictionary, source, target) -> void:
+	# Damage goes to target
+	if values.has("damage") and values.damage > 0:
+		var ignore_defense = values.get("ignores_defense", false)
+		var hits = int(values.get("damage_hits", 1))
 		for i in range(max(1, hits)):
-			var actual_damage = enemy.take_damage(results.damage, ignore_defense)
-			GLog.debug("  hit %d: actual=%d" % [i + 1, actual_damage])
-			total_actual += actual_damage
-		player.damage_dealt_this_turn += total_actual
-		GLog.info("Dealt %d damage to enemy | after: %d HP, %d DEF" % [total_actual, enemy.current_health, enemy.defense])
+			target.take_damage(values.damage, ignore_defense)
 	
-	if results.has("defense") and results.defense > 0:
-		player.gain_defense(results.defense)
-		GLog.debug("Gained %d defense" % results.defense)
+	# Defense goes to source
+	if values.has("defense") and values.defense > 0:
+		source.gain_defense(values.defense)
 	
-	if results.has("heal") and results.heal > 0:
-		player.heal(results.heal)
-		GLog.debug("Healed %d health" % results.heal)
+	# Heal goes to source
+	if values.has("heal") and values.heal > 0:
+		source.heal(values.heal)
 	
-	if results.has("draw") and results.draw > 0:
-		var drawn = duel_state.draw_cards(results.draw)
-		GLog.debug("Drew %d cards" % drawn.size())
+	# Draw cards (source's deck)
+	if values.has("drawn") and values.drawn > 0:
+		duel_state.draw_cards(values.drawn)
 	
-	if results.has("exhaust_random") and results.exhaust_random > 0:
-		var exhausted = duel_state.exhaust_random_cards(results.exhaust_random)
-		GLog.debug("Exhausted %d cards" % exhausted.size())
+	# Custom resources (Faith, Ammo, Brew, etc.) go to source
+	if values.has("custom_resources"):
+		for resource_name in values.custom_resources:
+			var amount = values.custom_resources[resource_name]
+			source.modify_resource(resource_name, amount)
 	
-	if results.has("energy_restore") and results.energy_restore > 0:
-		player.restore_energy(results.energy_restore)
-		GLog.debug("Restored %d energy" % results.energy_restore)
+	# Gold goes to source
+	if values.has("gold") and values.gold != 0:
+		if source.stats:
+			source.stats.gain_gold(values.gold)
 	
-	if results.has("gold") and results.gold != 0:
-		if player.stats:
-			player.stats.gain_gold(results.gold)
-			GLog.debug("Gained %d gold" % results.gold)
-			if has_node("/root/EventBus"):
-				EventBus.gold_changed.emit(results.gold)
+	# Status effects go to target
+	if values.has("stun_enemy") and values.stun_enemy > 0:
+		target.apply_stun(values.stun_enemy)
 	
-	if results.has("stun_enemy") and results.stun_enemy > 0:
-		enemy.apply_stun(results.stun_enemy)
-		GLog.info("Stunned enemy for %d turns" % results.stun_enemy)
+	# Delayed effects
+	if values.has("delayed_damage") and values.delayed_damage > 0:
+		source.delayed_damage += values.delayed_damage
 	
-	if results.has("delayed_damage") and results.delayed_damage > 0:
-		player.delayed_damage += results.delayed_damage
-		GLog.debug("Added %d delayed damage (total: %d)" % [results.delayed_damage, player.delayed_damage])
+	if values.has("delayed_defense") and values.delayed_defense > 0:
+		source.delayed_defense += values.delayed_defense
+	
+	# Energy restoration
+	if values.has("energy") and values.energy != 0:
+		source.restore_energy(values.energy)
+	
+	# Sanity restoration
+	if values.has("sanity") and values.sanity > 0:
+		source.restore_sanity(values.sanity)
+	
+	# Card manipulation
+	if values.has("discard_random") and values.discard_random > 0:
+		duel_state.discard_random_cards(values.discard_random)
+	
+	if values.has("exhaust_random") and values.exhaust_random > 0:
+		duel_state.exhaust_random_cards(values.exhaust_random)
+	
+	# Log warnings for unknown keys
+	for key in values.keys():
+		if key not in ["damage", "defense", "heal", "drawn", "custom_resources", "gold", 
+					   "stun_enemy", "delayed_damage", "delayed_defense", "energy", "sanity", 
+					   "discard_random", "exhaust_random", "ignores_defense", "damage_hits"]:
+			GLog.warn("Unknown effect key: %s" % key)
 
-	# Handle Faith effects
-	if results.has("faith"):
-		var faith_amount = results.faith
-		if faith_amount > 0:
-			player.gain_faith(faith_amount)
-			GLog.debug("Gained %d Faith (current: %d/%d)" % [faith_amount, player.faith, player.max_faith])
-		elif faith_amount < 0:
-			player.spend_faith(-faith_amount)
-			GLog.debug("Spent %d Faith (current: %d/%d)" % [-faith_amount, player.faith, player.max_faith])
+## Apply effect results from processed effects
+## source: The entity that played the card (gains defense, spends resources)
+## target: The entity receiving damage/debuffs
+func apply_effect_results(effect_results: Array[EffectResult], source, target) -> void:
+	for result in effect_results:
+		if not result.success:
+			continue
+		_apply_single_result(result.values_applied, source, target)
 
-	# Handle Custom Resources (Ammo, Brew, etc.)
-	if results.has("custom_resources"):
-		for resource_name in results.custom_resources:
-			var amount = results.custom_resources[resource_name]
-			player.modify_custom_resource(resource_name, amount)
-			var current = player.get_custom_resource(resource_name)
-			if amount > 0:
-				GLog.debug("Gained %d %s (total: %d)" % [amount, resource_name, current])
-			else:
-				GLog.debug("Spent %d %s (total: %d)" % [-amount, resource_name, current])
 
-func apply_enemy_card_results(results: Dictionary, enemy: EnemyState):
-	"""Apply card results when enemy plays a card (reversed targets)"""
-	var player = duel_state.player_data
 
-	if results.has("damage") and results.damage > 0:
-		var hits: int = int(results.get("damage_hits", 1))
-		var total_actual = 0
-		var pre_hp = player.current_health
-		var pre_def = player.defense
-		GLog.debug("Applying enemy damage -> amount=%d, hits=%d | player before: %d HP, %d DEF" % [results.damage, max(1, hits), pre_hp, pre_def])
-		for i in range(max(1, hits)):
-			var actual_damage = player.take_damage(results.damage)
-			GLog.debug("  hit %d: actual=%d" % [i + 1, actual_damage])
-			total_actual += actual_damage
-		GLog.info("Enemy dealt %d damage to player | after: %d HP, %d DEF" % [total_actual, player.current_health, player.defense])
-	
-	if results.has("defense") and results.defense > 0:
-		enemy.gain_defense(results.defense)
-		GLog.debug("Enemy gained %d defense" % results.defense)
-	
-	if results.has("heal") and results.heal > 0:
-		enemy.heal(results.heal)
-		GLog.debug("Enemy healed %d health" % results.heal)
-	
-	if results.has("draw") and results.draw > 0:
-		var drawn = enemy.draw_cards(results.draw)
-		GLog.debug("Enemy drew %d cards" % drawn.size())
-	
-	if results.has("energy_restore") and results.energy_restore > 0:
-		if enemy.stats:
-			enemy.stats.restore_energy(results.energy_restore)
-		GLog.debug("Enemy restored %d energy" % results.energy_restore)
-	
-	if results.has("stun_enemy") and results.stun_enemy > 0:
-		# Enemy cards that stun would stun the player
-		if player.has_method("apply_stun"):
-			player.apply_stun(results.stun_enemy)
-		GLog.info("Player stunned for %d turns" % results.stun_enemy)
+
 
 func end_duel(winner: String):
 	GLog.info("Duel ended! Winner: %s" % winner)
@@ -756,7 +726,7 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 	)
 	
 	if is_player_card:
-		apply_card_results(results)
+		apply_effect_results(results, duel_state.player_data, duel_state.enemy_data)
 		
 		# Now remove from battlefield and move to player's final destination
 		duel_state.battlefield.remove_card(card_instance)
@@ -775,7 +745,7 @@ func resolve_single_card_with_context(card_instance: CardInstance, is_player_car
 	else:
 		# Enemy card
 		var enemy = duel_state.enemy_data as EnemyState
-		apply_enemy_card_results(results, enemy)
+		apply_effect_results(results, enemy, duel_state.player_data)
 		
 		# Now remove from battlefield and move enemy card to discard
 		duel_state.battlefield.remove_card(card_instance)
@@ -812,7 +782,7 @@ func resolve_battlefield():
 		var is_player_card = card_instance.owner == CardInstance.Owner.PLAYER
 		
 		if is_player_card:
-			apply_card_results(results)
+			apply_effect_results(results, duel_state.player_data, duel_state.enemy_data)
 			
 			# Move to player's final destination
 			match card_instance.get_card_handling():
@@ -829,7 +799,7 @@ func resolve_battlefield():
 			GLog.debug("Resolved player card: %s" % card_instance.get_card_name())
 		else:
 			# Enemy card
-			apply_enemy_card_results(results, enemy)
+			apply_effect_results(results, enemy, duel_state.player_data)
 			
 			# Move to enemy discard pile
 			if enemy:
@@ -841,22 +811,32 @@ func resolve_enemy_battlefield():
 	"""Enemy cards are now processed in the main resolve_battlefield() function"""
 	GLog.debug("Enemy cards resolved through main battlefield resolution")
 
-# Helper function to get Faith cost from card effects
-func _get_faith_cost_from_card(card_data: CardData) -> int:
-	"""Extract Faith cost from card effects (negative Faith amounts)"""
+# Helper function to get all resource costs from card effects (Faith and custom resources)
+func _get_resource_costs_from_card(card_data: CardData) -> Dictionary:
+	"""Extract all resource costs from card effects (negative amounts are costs)"""
 	if not card_data or not card_data.effects:
-		return 0
+		return {}
 
-	var total_faith_cost = 0
+	var costs = {}
 
 	for effect in card_data.effects:
+		# Handle FaithEffect (now treated as a resource like others)
 		if effect is FaithEffect:
 			var faith_effect = effect as FaithEffect
 			# Negative amounts are costs that must be paid
 			if faith_effect.amount < 0:
-				total_faith_cost += -faith_effect.amount
+				var current_cost = costs.get("Faith", 0)
+				costs["Faith"] = current_cost + (-faith_effect.amount)
 
-	return total_faith_cost
+		# Handle ResourceEffect for custom resources
+		elif effect is ResourceEffect:
+			var res_effect = effect as ResourceEffect
+			if res_effect.resource_type not in ["gold", "energy", "sanity"]:
+				if res_effect.amount < 0:
+					var current_cost = costs.get(res_effect.resource_type, 0)
+					costs[res_effect.resource_type] = current_cost + (-res_effect.amount)
+
+	return costs
 
 func _get_custom_resource_costs_from_card(card_data: CardData) -> Dictionary:
 	"""Extract custom resource costs from card effects (negative amounts are costs)"""
@@ -882,19 +862,22 @@ func _get_custom_resource_costs_from_card(card_data: CardData) -> Dictionary:
 func _setup_preacher_passive_abilities():
 	"""Connect EventBus signals for Preacher passive abilities"""
 	# Fervent Faith: Gain +1 defense when gaining Faith
-	if EventBus.has_signal("faith_gained"):
-		EventBus.connect_safe("faith_gained", _on_faith_gained_fervent_faith)
+	if EventBus.has_signal("resource_gained"):
+		EventBus.connect_safe("resource_gained", _on_resource_gained_fervent_faith)
 
 	# Temptation: Choice when reaching max Faith
-	if EventBus.has_signal("faith_gained"):
-		EventBus.connect_safe("faith_gained", _on_faith_gained_temptation_check)
-	
+	if EventBus.has_signal("resource_gained"):
+		EventBus.connect_safe("resource_gained", _on_resource_gained_temptation_check)
+
 	# Holy Conviction: Improve Fortune card success chance based on Faith
 	if EventBus.has_signal("gambling_modifier_query"):
 		EventBus.connect_safe("gambling_modifier_query", _on_gambling_modifier_query_holy_conviction)
 
-func _on_faith_gained_fervent_faith(player_data, amount: int):
+func _on_resource_gained_fervent_faith(player_data, resource_name: String, amount: int):
 	"""Fervent Faith passive: Gain +1 defense when gaining Faith"""
+	if resource_name != "Faith":
+		return
+
 	if not _is_preacher():
 		return
 
@@ -902,8 +885,11 @@ func _on_faith_gained_fervent_faith(player_data, amount: int):
 		player_data.gain_defense(1)
 		GLog.debug("Fervent Faith: Gained 1 defense from Faith gain")
 
-func _on_faith_gained_temptation_check(player_data, _amount: int):
+func _on_resource_gained_temptation_check(player_data, resource_name: String, _amount: int):
 	"""Temptation passive: Trigger choice when reaching max Faith"""
+	if resource_name != "Faith":
+		return
+
 	if not _is_preacher():
 		return
 
@@ -911,7 +897,9 @@ func _on_faith_gained_temptation_check(player_data, _amount: int):
 		return
 
 	# Check if player reached max Faith
-	if player_data.faith >= player_data.max_faith:
+	var current_faith = player_data.get_resource("Faith")
+	var max_faith = player_data.get_resource_max("Faith")
+	if max_faith > 0 and current_faith >= max_faith:
 		_trigger_temptation_choice()
 
 func _trigger_temptation_choice():
@@ -919,12 +907,14 @@ func _trigger_temptation_choice():
 	# TODO: This needs a modal dialog UI
 	# For now, auto-choose gold (safer option)
 	var player = duel_state.player_data
-	GLog.info("Temptation triggered! Max Faith reached (%d/%d)" % [player.faith, player.max_faith])
+	var current_faith = player.get_resource("Faith")
+	var max_faith = player.get_resource_max("Faith")
+	GLog.info("Temptation triggered! Max Faith reached (%d/%d)" % [current_faith, max_faith])
 
 	# Auto-choose gold for now (25 gold, lose all Faith)
 	if player.stats:
 		player.stats.gain_gold(25)
-		player.reset_faith()
+		player.reset_resource("Faith")
 		GLog.info("Temptation: Chose gold. Gained 25 gold, lost all Faith")
 
 	# Alternative: gain 3 Corruption and keep Faith
@@ -958,7 +948,7 @@ func _on_gambling_modifier_query_holy_conviction(player_data: Object, context: D
 		return
 	
 	# Check if player has Faith >= 5
-	if player_data.has("faith") and player_data.faith >= 5:
+	if player_data.get_resource("Faith") >= 5:
 		# Modify success_chance in the context
 		if context.has("success_chance"):
 			var current_chance: float = context.success_chance

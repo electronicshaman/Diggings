@@ -8,8 +8,6 @@ class_name ResourceEffect
 @export var min_amount: int = 0
 @export var max_amount: int = 0
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
-
 func apply_effect(context):
 	var result = EffectResult.new()
 	if not context:
@@ -46,23 +44,23 @@ func apply_effect(context):
 
 func get_preview_text(context: Resource) -> String:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
-	var resource_name = resource_type.capitalize()
+	var display_name = resource_type.capitalize()
 
 	if random_range:
 		var lo = min(min_amount, max_amount)
 		var hi = max(min_amount, max_amount)
 		if lo == hi:
 			if final_amount >= 0:
-				return "Gain %d %s" % [lo, resource_name]
+				return "Gain %d %s" % [lo, display_name]
 			else:
-				return "Lose %d %s" % [-lo, resource_name]
+				return "Lose %d %s" % [-lo, display_name]
 		else:
 			if lo >= 0:
-				return "Gain %d-%d %s" % [lo, hi, resource_name]
+				return "Gain %d-%d %s" % [lo, hi, display_name]
 			else:
-				return "Lose %d-%d %s" % [-hi, -lo, resource_name]
+				return "Lose %d-%d %s" % [-hi, -lo, display_name]
 	else:
 		if final_amount >= 0:
-			return "Gain %d %s" % [final_amount, resource_name]
+			return "Gain %d %s" % [final_amount, display_name]
 		else:
-			return "Lose %d %s" % [-final_amount, resource_name]
+			return "Lose %d %s" % [-final_amount, display_name]
