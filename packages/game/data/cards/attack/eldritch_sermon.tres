@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/effects/types/sanity_effect.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/effects/types/faith_effect.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="4"]
 
 [sub_resource type="Resource" id="DamageEffect_1"]
 script = ExtResource("2")
@@ -14,8 +14,9 @@ script = ExtResource("3")
 target_type = "enemy"
 amount = -3
 
-[sub_resource type="Resource" id="FaithEffect_1"]
+[sub_resource type="Resource" id="ResourceEffect_Faith"]
 script = ExtResource("4")
+resource_type = "Faith"
 amount = 1
 
 [resource]
@@ -25,7 +26,7 @@ energy_cost = 1
 card_type = "Attack"
 description = "Deal 6 damage. Enemy loses 3 sanity. Gain 1 Faith."
 flavor_text = "Witness truths that break the mind!"
-effects = Array[GameEffect]([SubResource("DamageEffect_1"), SubResource("SanityEffect_1"), SubResource("FaithEffect_1")])
+effects = Array[GameEffect]([SubResource("DamageEffect_1"), SubResource("SanityEffect_1"), SubResource("ResourceEffect_Faith")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

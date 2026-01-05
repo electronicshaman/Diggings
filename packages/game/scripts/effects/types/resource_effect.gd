@@ -29,7 +29,6 @@ func apply_effect(context):
 	# DuelManager.apply_card_results() perform the actual mutations.
 	
 	# Standard resources are handled directly by key
-	# Note: Faith is intentionally excluded here—use FaithEffect for faith-specific logic
 	if resource_type in ["gold", "energy", "sanity"]:
 		result.values_applied[resource_type] = apply_amt
 	else:

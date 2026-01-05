@@ -2,15 +2,16 @@
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/effects/types/card_manipulation_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/faith_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
 
 [sub_resource type="Resource" id="CardManipulationEffect_1"]
 script = ExtResource("2")
 action = "draw"
 amount = 1
 
-[sub_resource type="Resource" id="FaithEffect_1"]
+[sub_resource type="Resource" id="ResourceEffect_Faith"]
 script = ExtResource("3")
+resource_type = "Faith"
 amount = 1
 
 [resource]
@@ -20,7 +21,7 @@ energy_cost = 1
 card_type = "Fortune"
 description = "Draw 1 card. Gain 1 Faith."
 flavor_text = "Spread the word with fervor!"
-effects = Array[GameEffect]([SubResource("CardManipulationEffect_1"), SubResource("FaithEffect_1")])
+effects = Array[GameEffect]([SubResource("CardManipulationEffect_1"), SubResource("ResourceEffect_Faith")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
