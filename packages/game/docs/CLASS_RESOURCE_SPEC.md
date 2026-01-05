@@ -169,8 +169,8 @@
 **Current Implementation (for reference):**
 - **Starting Value:** 0 Faith
 - **Max Value:** 10 Faith
-- **Storage:** Dedicated `faith` and `max_faith` properties in PlayerData
-- **Cards:** 10 cards use FaithEffect
+- **Storage:** Uses generic custom_resources dict (same as other class resources)
+- **Cards:** 10 cards use ResourceEffect with resource_type="Faith"
 - **Passives:**
   - "Fervent Faith": +1 defense when gaining Faith
   - "Holy Conviction": +gambling success chance based on Faith
@@ -202,24 +202,23 @@
 5. **Card data files** (multiple in `data/cards/`)
    - Add ResourceEffect with appropriate resource_type to Bushranger/Prospector/Tracker cards
 
-### New Effect Types (Future Implementation)
+### Effect Type for Class Resources
 
-When implementing, create dedicated effect types following the FaithEffect pattern:
+All class resources (Faith, Ammo, Fever, Scent, Brew) use the generic **ResourceEffect** with appropriate `resource_type`:
 
+```gdscript
+# Example: Faith gain in a card .tres file
+[sub_resource type="Resource" id="ResourceEffect_Faith"]
+script = ExtResource("resource_effect.gd")
+resource_type = "Faith"
+amount = 2
 ```
-scripts/effects/types/
-├── ammo_effect.gd    # AmmoEffect for Bushranger
-├── fever_effect.gd   # FeverEffect for Prospector
-├── scent_effect.gd   # ScentEffect for Tracker
-├── brew_effect.gd    # BrewEffect for Publican
-└── faith_effect.gd   # (existing) FaithEffect for Preacher
-```
 
-Each should:
-- Extend GameEffect base class
-- Handle max value capping
-- Emit appropriate EventBus signals for passive ability triggers
-- Support both gain and spend operations
+ResourceEffect handles:
+- Max value capping via PlayerData
+- EventBus signals for passive ability triggers (resource_gained)
+- Both gain (positive amount) and spend (negative amount) operations
+- Preview text with appropriate terminology ("Gain"/"Spend" for Faith, "Gain"/"Lose" for others)
 
 ---
 
@@ -227,4 +226,5 @@ Each should:
 
 **Type:** Reference Specification
 **Created:** 2025-01-04
-**Architecture Decision:** Dedicated effect types (AmmoEffect, etc.) preferred over generic ResourceEffect
+**Updated:** 2025-01-05
+**Architecture Decision:** Generic ResourceEffect preferred over dedicated effect types for class resources

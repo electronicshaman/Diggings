@@ -88,16 +88,8 @@ func _get_resource_costs(card_data: CardData) -> Dictionary:
 	var costs = {}
 	
 	for effect in card_data.effects:
-		# Handle FaithEffect (now treated as a resource like others)
-		if effect is FaithEffect:
-			var faith_effect = effect as FaithEffect
-			# Negative amounts are costs that must be paid
-			if faith_effect.amount < 0:
-				var current_cost = costs.get("Faith", 0)
-				costs["Faith"] = current_cost + (-faith_effect.amount)
-		
-		# Handle ResourceEffect for custom resources
-		elif effect is ResourceEffect:
+		# Handle ResourceEffect for custom resources (including Faith)
+		if effect is ResourceEffect:
 			var res_effect = effect as ResourceEffect
 			if res_effect.resource_type not in ["gold", "energy", "sanity"]:
 				if res_effect.amount < 0:
@@ -117,7 +109,6 @@ func _get_custom_resource_costs(card_data: CardData) -> Dictionary:
 		if effect is ResourceEffect:
 			var res_effect = effect as ResourceEffect
 			# Check if it's a custom resource (not standard)
-			# Note: Faith is excluded from standard resources—use FaithEffect instead
 			if res_effect.resource_type not in ["gold", "energy", "sanity"]:
 				# Both negative and positive amounts; negative = cost, positive = gain
 				if res_effect.amount < 0:  # Only costs (negative amounts)
