@@ -62,7 +62,4 @@ func get_preview_text(context: Resource) -> String:
 		if final_amount >= 0:
 			return "Gain %d %s" % [final_amount, display_name]
 		else:
-			if resource_type == "Faith":
-				return "Spend %d Faith" % -final_amount
-			else:
-				return "Lose %d %s" % [-final_amount, display_name]
+			return "Lose %d %s" % [-final_amount, display_name]
