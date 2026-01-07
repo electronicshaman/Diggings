@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3 uid="uid://c2rat5m8k4w7r"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/damage_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
@@ -14,7 +14,7 @@ card_name = "Sledgehammer Blow"
 energy_cost = 3
 card_type = "Attack"
 flavor_text = "Twenty-five pounds of crushing force."
-effects = Array[EffectHandler]([SubResource("DamageHandler_1")])
+effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

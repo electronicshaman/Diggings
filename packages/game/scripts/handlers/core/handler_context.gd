@@ -1,5 +1,5 @@
 extends Resource
-class_name EffectContext
+class_name HandlerContext
 
 # Source information
 @export var source_type: String = "" # "card", "encounter", "curio", "status", etc.
@@ -71,7 +71,7 @@ func get_curio_modifications() -> Dictionary:
 	
 	# Calculate curio modifications if not cached or dirty
 	if is_instance_valid(CurioManager) and source_object and source_type == "card":
-		var is_player_owned = true  # Default assumption, can be refined
+		var is_player_owned = true # Default assumption, can be refined
 		if source_object.has_method("get_owner"):
 			is_player_owned = source_object.get_owner() == "player"
 		elif "owner" in source_object:
@@ -88,7 +88,7 @@ func get_curio_modifications() -> Dictionary:
 	return _curio_modifications_cache
 
 ## Cache conditional values for an effect to avoid repeated calculations
-func cache_conditional_values(effect: EffectHandler) -> void:
+func cache_conditional_values(effect: HandlerBase) -> void:
 	if not effect:
 		return
 	
@@ -142,7 +142,7 @@ func cache_conditional_values(effect: EffectHandler) -> void:
 	_conditional_values_cache[effect_id] = cached_values
 
 ## Get cached conditional value for an effect
-func get_cached_conditional_value(effect: EffectHandler, value_key: String, default_value = null):
+func get_cached_conditional_value(effect: HandlerBase, value_key: String, default_value = null):
 	if not effect:
 		return default_value
 	

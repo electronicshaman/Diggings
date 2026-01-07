@@ -1,4 +1,4 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name StatusHandler
 
 # Status effects that modify target state (stun, debuff, etc.)
@@ -8,10 +8,10 @@ class_name StatusHandler
 @export var damage_modifier: int = 0  # For debuffs: reduce/increase damage
 @export var defense_modifier: int = 0  # For debuffs: reduce/increase defense
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-	var result = EffectResult.new()
+	var result = HandlerResult.new()
 	if not context:
 		result.success = false
 		result.prevented_by = "no_context"

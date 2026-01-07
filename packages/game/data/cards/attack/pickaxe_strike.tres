@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3 uid="uid://v8aqsn00s55y"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/handlers/types/resource_handler.gd" id="3"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
@@ -23,7 +23,7 @@ card_name = "Pickaxe Strike"
 energy_cost = 1
 card_type = "Attack"
 flavor_text = "Hard work pays off, but luck pays better."
-effects = Array[EffectHandler]([SubResource("DamageHandler_1"), SubResource("ResourceHandler_Fever")])
+effects = Array[HandlerBase]([SubResource("DamageHandler_1"), SubResource("ResourceHandler_Fever")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

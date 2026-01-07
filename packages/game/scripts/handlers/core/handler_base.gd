@@ -1,5 +1,5 @@
 extends Resource
-class_name EffectHandler
+class_name HandlerBase
 
 @export var effect_id: String = ""
 @export var effect_type: String = ""
@@ -23,8 +23,8 @@ class_name EffectHandler
 @export var tags: Array[String] = []
 
 # Conditional activation and values
-@export var activation_condition: EffectCondition  # Optional condition for when effect applies
-@export var conditional_values: Array[ConditionalValue] = []  # Values that change based on conditions
+@export var activation_condition: HandlerCondition # Optional condition for when effect applies
+@export var conditional_values: Array[ConditionalValue] = [] # Values that change based on conditions
 
 # Source-specific properties (migrated from wrapper classes)
 # Card-specific properties

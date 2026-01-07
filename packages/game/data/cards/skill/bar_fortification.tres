@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/defense_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/types/defense_handler.gd" id="2"]
 
 [sub_resource type="Resource" id="DefenseHandler_1"]
 script = ExtResource("2")
@@ -18,7 +18,7 @@ card_name = "Bar Fortification"
 energy_cost = 2
 description = "Gain 12 defense. Next turn: gain 6 defense."
 card_type = "Grog"
-effects = Array[EffectHandler]([SubResource("DefenseHandler_1"), SubResource("DefenseHandler_2")])
+effects = Array[HandlerBase]([SubResource("DefenseHandler_1"), SubResource("DefenseHandler_2")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

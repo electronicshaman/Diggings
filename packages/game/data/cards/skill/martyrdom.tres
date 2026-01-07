@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/health_handler.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/defense_handler.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/handlers/types/health_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/types/defense_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/handlers/types/resource_handler.gd" id="4"]
 
 [sub_resource type="Resource" id="HealthHandler_1"]
 script = ExtResource("2")
@@ -31,7 +31,7 @@ energy_cost = 2
 card_type = "Fortune"
 description = "Take 10 damage. Gain 15 Defense. Next turn, gain +2 energy. Spend 5 Faith."
 flavor_text = "Through suffering comes salvation."
-effects = Array[EffectHandler]([SubResource("HealthHandler_1"), SubResource("DefenseHandler_1"), SubResource("ResourceHandler_1"), SubResource("ResourceHandler_Faith")])
+effects = Array[HandlerBase]([SubResource("HealthHandler_1"), SubResource("DefenseHandler_1"), SubResource("ResourceHandler_1"), SubResource("ResourceHandler_Faith")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

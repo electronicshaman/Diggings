@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/types/resource_handler.gd" id="2"]
 
 [sub_resource type="Resource" id="ResourceHandler_Gold"]
 script = ExtResource("2")
@@ -20,7 +20,7 @@ energy_cost = 0
 card_type = "Fortune"
 description = "50% chance: Gain 3 gold. 50% chance: Lose 2 sanity."
 flavor_text = "Cures what ails ya! Results may vary."
-effects = Array[EffectHandler]([SubResource("ResourceHandler_Gold"), SubResource("ResourceHandler_Sanity")])
+effects = Array[HandlerBase]([SubResource("ResourceHandler_Gold"), SubResource("ResourceHandler_Sanity")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

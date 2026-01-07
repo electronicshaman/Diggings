@@ -1,5 +1,5 @@
 extends Resource
-class_name EffectResult
+class_name HandlerResult
 
 @export var success: bool = true
 @export var values_applied: Dictionary = {}

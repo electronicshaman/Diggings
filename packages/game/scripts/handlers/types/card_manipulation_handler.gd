@@ -1,14 +1,14 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name CardManipulationHandler
 
 @export var action: String = "draw" # draw, discard, shuffle, etc.
 @export var amount: int = 1
 @export var card_filter: String = "" # optional filter expression/tag
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-	var result = EffectResult.new()
+	var result = HandlerResult.new()
 	if not context:
 		result.success = false
 		result.prevented_by = "no_context"

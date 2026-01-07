@@ -8,8 +8,8 @@ class_name CardResolver
 const DEBUG_ENABLED: bool = true
 
 # Timing constants for card resolution
-const CARD_STAGE_DELAY: float = 0.5  # Time card sits on battlefield before resolving
-const ENEMY_CARD_PLAY_DELAY: float = 1.5  # Time between enemy card plays
+const CARD_STAGE_DELAY: float = 0.5 # Time card sits on battlefield before resolving
+const ENEMY_CARD_PLAY_DELAY: float = 1.5 # Time between enemy card plays
 
 # Signals for card resolution events
 signal card_played(card_instance: CardInstance)
@@ -111,7 +111,7 @@ func _get_custom_resource_costs(card_data: CardData) -> Dictionary:
 			# Check if it's a custom resource (not standard)
 			if res_effect.resource_type not in ["gold", "energy", "sanity"]:
 				# Both negative and positive amounts; negative = cost, positive = gain
-				if res_effect.amount < 0:  # Only costs (negative amounts)
+				if res_effect.amount < 0: # Only costs (negative amounts)
 					var current_cost = costs.get(res_effect.resource_type, 0)
 					costs[res_effect.resource_type] = current_cost + (-res_effect.amount)
 	
@@ -171,7 +171,7 @@ func play_player_card(card_instance: CardInstance) -> void:
 	
 	# Capture timing context BEFORE incrementing counter
 	var cards_played_before = player.cards_played_this_turn
-	var hand_size_before = duel_state.hand.size() - 1  # -1 because we're about to play this card
+	var hand_size_before = duel_state.hand.size() - 1 # -1 because we're about to play this card
 	
 	# Pay all costs upfront to ensure consistent state
 	_pay_all_costs(player, card_instance)
@@ -233,7 +233,7 @@ func resolve_card(card_instance: CardInstance, is_player: bool, cards_played_bef
 	GLog.info("CardResolver: Resolving card: %s" % card_instance.get_card_name())
 	
 	# Execute card effects WHILE card is still on battlefield
-	var results: Array[EffectResult]
+	var results: Array[HandlerResult]
 	if is_player:
 		# Use context for player cards (timing matters for some effects)
 		results = effect_processor.apply_card_instance_effects_with_context(
@@ -273,7 +273,7 @@ func resolve_card(card_instance: CardInstance, is_player: bool, cards_played_bef
 		
 		GLog.debug("CardResolver: Resolved enemy card: %s" % card_instance.get_card_name())
 
-func apply_effect_results(effect_results: Array[EffectResult], source, target) -> void:
+func apply_effect_results(effect_results: Array[HandlerResult], source, target) -> void:
 	"""Map effect results to appropriate state changes"""
 	for result in effect_results:
 		if not result.success:
@@ -352,8 +352,8 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 	
 	# Log warnings for unknown keys
 	for key in values.keys():
-		if key not in ["damage", "defense", "heal", "drawn", "custom_resources", "gold", 
-					   "stun_enemy", "delayed_damage", "delayed_defense", "energy", "sanity", 
+		if key not in ["damage", "defense", "heal", "drawn", "custom_resources", "gold",
+					   "stun_enemy", "delayed_damage", "delayed_defense", "energy", "sanity",
 					   "discard_random", "exhaust_random", "ignores_defense", "damage_hits"]:
 			GLog.warn("CardResolver: Unknown effect key: %s" % key)
 

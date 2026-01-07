@@ -12,15 +12,15 @@ const DEBUG_ENABLED = true
 @export var card_data: CardData
 
 # Card ownership tracking
-enum Owner { PLAYER, ENEMY, NEUTRAL }
+enum Owner {PLAYER, ENEMY, NEUTRAL}
 @export var owner: Owner = Owner.PLAYER
 
 # Runtime instance state
 @export var turns_held: int = 0
-@export var instance_id: String = ""  # Unique identifier for this instance
+@export var instance_id: String = "" # Unique identifier for this instance
 
 # Durability tracking
-@export var current_durability: int = -1  # Current durability, initialized from card_data.base_durability
+@export var current_durability: int = -1 # Current durability, initialized from card_data.base_durability
 
 # Dynamic properties that override CardData when set
 var _dynamic_description: String = ""
@@ -143,7 +143,7 @@ func get_card_handling() -> String:
 	if hold_bonus_effect and card_data.card_handling == "Hold":
 		var turns_required = hold_bonus_effect.get("turns_required", 2)
 		if turns_held >= turns_required:
-			return "Standard"  # Card is "charged up" and should be discarded after use
+			return "Standard" # Card is "charged up" and should be discarded after use
 	
 	return card_data.card_handling
 
@@ -240,8 +240,8 @@ func _update_dynamic_properties() -> void:
 	clear_dynamic_properties()
 	
 	# This will trigger recalculation of description and handling
-	get_description()  # Force calculation
-	get_card_handling()  # Force calculation
+	get_description() # Force calculation
+	get_card_handling() # Force calculation
 
 # Serialization support
 func get_save_data() -> Dictionary:
@@ -371,7 +371,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 func _get_standard_description(effect: Resource) -> String:
 	"""Get standard description for an effect"""
 	# Create context with curio modifications ONCE for all paths
-	var preview_context = EffectContext.new() if EffectContext else null
+	var preview_context = HandlerContext.new() if HandlerContext else null
 	if preview_context and card_data:
 		preview_context.source_type = "card"
 		preview_context.source_object = card_data

@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://e57c3uy3yrdr"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/defense_handler.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/handlers/types/defense_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/core/conditional_value.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/handlers/core/handler_condition.gd" id="4"]
 
 [sub_resource type="Resource" id="LowHealthCondition_1"]
 script = ExtResource("4")
@@ -31,7 +31,7 @@ card_name = "Lucky Charm"
 energy_cost = 1
 card_type = "Skill"
 flavor_text = "Faith and fortune protect the desperate."
-effects = Array[EffectHandler]([SubResource("DefenseHandler_1")])
+effects = Array[HandlerBase]([SubResource("DefenseHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

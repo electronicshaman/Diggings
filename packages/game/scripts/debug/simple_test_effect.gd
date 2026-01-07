@@ -1,11 +1,11 @@
-extends EffectHandler
+extends HandlerBase
 class_name SimpleTestEffect
 
 ## Simple test effect for deterministic testing
 ## Always returns a predictable result based on the test_value meta
 
 func apply_effect(context: Resource) -> Resource:
-	var result = EffectResult.new()
+	var result = HandlerResult.new()
 	result.success = true
 	
 	var test_value = get_meta("test_value", 0)

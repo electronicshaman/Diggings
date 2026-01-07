@@ -4,11 +4,11 @@ class_name ConditionalValue
 # Allows effect values to change based on conditions
 # Example: Ambush damage is 15 if first card, 6 otherwise
 
-@export var property_name: String = ""  # Which property this affects (e.g., "amount", "hits")
-@export var condition: EffectCondition
+@export var property_name: String = "" # Which property this affects (e.g., "amount", "hits")
+@export var condition: HandlerCondition
 @export var value_if_true: int = 0
 @export var value_if_false: int = 0
-@export var applies_to_base_value: bool = false  # If true, modifies base value; if false, replaces it
+@export var applies_to_base_value: bool = false # If true, modifies base value; if false, replaces it
 
 func resolve_value(context: Resource, base_value: int = 0) -> int:
 	if not condition:

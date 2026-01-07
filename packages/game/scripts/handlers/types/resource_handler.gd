@@ -1,4 +1,4 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name ResourceHandler
 
 @export var resource_type: String = "gold" # gold, energy, sanity, or custom (e.g. ammo, brew)
@@ -9,7 +9,7 @@ class_name ResourceHandler
 @export var max_amount: int = 0
 
 func apply_effect(context):
-	var result = EffectResult.new()
+	var result = HandlerResult.new()
 	if not context:
 		result.success = false
 		result.prevented_by = "no_context"

@@ -195,7 +195,7 @@ Autoload wiring (Godot 4): add to project.godot
 
 ```ini
 [autoload]
-EffectRegistry="*res://scripts/effects/registry/effect_registry.gd"
+EffectRegistry="*res://scripts/handlers/registry/effect_registry.gd"
 ```
 
 Minimal EffectRegistry API:
@@ -206,8 +206,8 @@ class_name EffectRegistry
 
 var _by_id: Dictionary = {}
 var _class_by_type: Dictionary = {
-      "health": preload("res://scripts/effects/types/health_effect.gd"),
-      "damage": preload("res://scripts/effects/types/damage_effect.gd"),
+      "health": preload("res://scripts/handlers/types/health_effect.gd"),
+      "damage": preload("res://scripts/handlers/types/damage_effect.gd"),
       # ... add more
 }
 

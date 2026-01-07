@@ -1,5 +1,5 @@
 extends Resource
-class_name EffectCondition
+class_name HandlerCondition
 
 # Condition types for when effects should activate
 enum ConditionType {

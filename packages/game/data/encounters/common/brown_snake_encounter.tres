@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://b1siq5ncsurb6" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://dxoc3qrjfduah" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/damage_handler.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/effects/types/sanity_handler.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/effects/types/karma_handler.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/handlers/types/sanity_handler.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/handlers/types/karma_handler.gd" id="5"]
 
 [sub_resource type="Resource" id="2"]
 script = ExtResource("3")

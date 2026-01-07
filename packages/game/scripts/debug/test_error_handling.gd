@@ -39,7 +39,7 @@ func test_null_effect_handling() -> bool:
 	var result = processor.process_single_effect(null, null)
 	
 	if not result:
-		GLog.error("TestErrorHandling: Expected EffectResult for null effect")
+		GLog.error("TestErrorHandling: Expected HandlerResult for null effect")
 		return false
 	
 	if result.success:
@@ -60,7 +60,7 @@ func test_malformed_context_handling() -> bool:
 	var processor = EffectProcessor.new()
 	
 	# Create a mock effect
-	var mock_effect = MockEffectHandler.new()
+	var mock_effect = MockHandlerBase.new()
 	
 	# Test with null context
 	var result = processor.process_single_effect(mock_effect, null)
@@ -71,7 +71,7 @@ func test_malformed_context_handling() -> bool:
 		return false
 	
 	# Test with malformed context (wrong type)
-	var malformed_context = Resource.new()  # Not an EffectContext
+	var malformed_context = Resource.new()  # Not an HandlerContext
 	result = processor.process_single_effect(mock_effect, malformed_context)
 	
 	if not result or result.success:
@@ -87,11 +87,11 @@ func test_invalid_effect_array_handling() -> bool:
 	GLog.debug("TestErrorHandling: Testing invalid effect array handling")
 	
 	var processor = EffectProcessor.new()
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	context.source_type = "test"
 	
 	# Test with null effects array
-	var null_effects: Array[EffectHandler] = []
+	var null_effects: Array[HandlerBase] = []
 	var results = processor.process_effects(null_effects, context)
 	
 	if not results is Array:
@@ -100,9 +100,9 @@ func test_invalid_effect_array_handling() -> bool:
 		return false
 	
 	# Test with mixed valid/invalid effects
-	var mixed_effects: Array[EffectHandler] = []
-	mixed_effects.append(MockEffectHandler.new())  # Valid
-	mixed_effects.append(MockEffectHandler.new())  # Valid (can't add null to typed array)
+	var mixed_effects: Array[HandlerBase] = []
+	mixed_effects.append(MockHandlerBase.new())  # Valid
+	mixed_effects.append(MockHandlerBase.new())  # Valid (can't add null to typed array)
 	
 	results = processor.process_effects(mixed_effects, context)
 	
@@ -157,7 +157,7 @@ func test_critical_error_detection() -> bool:
 	var initial_critical_errors = initial_stats.statistics.critical_errors
 	
 	# This should be detected as a critical error scenario
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	context.source_type = "test"
 	
 	var failing_effect = FailingMockEffect.new()
@@ -175,13 +175,13 @@ func test_critical_error_detection() -> bool:
 
 # Mock classes for testing
 
-class MockEffectHandler extends EffectHandler:
+class MockHandlerBase extends HandlerBase:
 	func _init():
 		effect_id = "mock_effect"
 		effect_type = "test"
 	
 	func apply_effect(_context: Resource) -> Resource:
-		var result = EffectResult.new()
+		var result = HandlerResult.new()
 		result.success = true
 		result.values_applied = {"test": 1}
 		return result
@@ -189,13 +189,13 @@ class MockEffectHandler extends EffectHandler:
 	func can_apply(_context: Resource) -> bool:
 		return true
 
-class FailingMockEffect extends EffectHandler:
+class FailingMockEffect extends HandlerBase:
 	func _init():
 		effect_id = "failing_effect"
 		effect_type = "test"
 	
 	func apply_effect(_context: Resource) -> Resource:
-		var result = EffectResult.new()
+		var result = HandlerResult.new()
 		result.success = false
 		var logs_array: Array[String] = ["Critical test failure"]
 		result.logs = logs_array

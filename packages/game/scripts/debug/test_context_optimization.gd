@@ -2,7 +2,7 @@ extends Node
 class_name TestContextOptimization
 
 ## Test script for context optimization system
-## This tests the enhanced EffectContext caching, reuse capabilities, and performance monitoring
+## This tests the enhanced HandlerContext caching, reuse capabilities, and performance monitoring
 
 const DEBUG_ENABLED: bool = true
 
@@ -103,15 +103,15 @@ func test_performance_monitoring() -> void:
 	if DEBUG_ENABLED:
 		GLog.info("TestContextOptimization: Testing performance monitoring")
 	
-	# Test EffectContext performance tracking
-	var context = EffectContext.new()
+	# Test HandlerContext performance tracking
+	var context = HandlerContext.new()
 	
 	# Simulate some operations
 	context.get_curio_modifications()
 	context.cache_conditional_values(null)  # Test with null effect
 	
 	var stats = context.get_performance_stats()
-	var global_stats = EffectContext.get_global_performance_stats()
+	var global_stats = HandlerContext.get_global_performance_stats()
 	
 	if DEBUG_ENABLED:
 		GLog.info("TestContextOptimization: Context stats - Age: %dms, Access count: %d" % [
@@ -125,11 +125,11 @@ func test_performance_monitoring() -> void:
 	context.queue_free()
 
 func test_conditional_value_caching() -> void:
-	"""Test conditional value caching in EffectContext."""
+	"""Test conditional value caching in HandlerContext."""
 	if DEBUG_ENABLED:
 		GLog.info("TestContextOptimization: Testing conditional value caching")
 	
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	
 	# Set up mock player data
 	var player_data = PlayerData.new()
@@ -142,7 +142,7 @@ func test_conditional_value_caching() -> void:
 	context.player_data = player_data
 	
 	# Create mock effect
-	var effect = EffectHandler.new()
+	var effect = HandlerBase.new()
 	effect.effect_id = "test_effect"
 	
 	# Cache conditional values

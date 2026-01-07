@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/types/resource_handler.gd" id="2"]
 
 [sub_resource type="Resource" id="ResourceHandler_1"]
 script = ExtResource("2")
@@ -14,7 +14,7 @@ card_name = "Tool Maintenance"
 energy_cost = 1
 card_type = "Skill"
 flavor_text = "A sharp pick finds more gold."
-effects = Array[EffectHandler]([SubResource("ResourceHandler_1")])
+effects = Array[HandlerBase]([SubResource("ResourceHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
