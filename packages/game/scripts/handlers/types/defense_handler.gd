@@ -6,7 +6,6 @@ class_name DefenseHandler
 @export var condition: String = "" # descriptive only; enforcement left to systems
 # Note: delayed is inherited from EffectHandler base class
 
-var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
 	var result = HandlerResult.new()

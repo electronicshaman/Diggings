@@ -6,7 +6,6 @@ class_name CurioRewardHandler
 @export var curio_rarity: String = "Common"
 @export var remove_curio: bool = false
 
-var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
 	var result = HandlerResult.new()
