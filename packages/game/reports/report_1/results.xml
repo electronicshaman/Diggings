@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites id="2026-01-08" name="report_1" tests="4" failures="0" skipped="0" flaky="0" time="0.000">
+	<testsuite id="0" name="test_card_instance" package="test/unit/cards" timestamp="2026-01-07T21:59:00" hostname="localhost" tests="4" failures="0" errors="0" skipped="0" flaky="0" time="0.206">
+		<testcase name="test_initialization" classname="test_card_instance" time="0.023">
+		</testcase>
+		<testcase name="test_durability_decrement" classname="test_card_instance" time="0.033">
+		</testcase>
+		<testcase name="test_dynamic_properties" classname="test_card_instance" time="0.031">
+		</testcase>
+		<testcase name="test_hold_mechanic" classname="test_card_instance" time="0.033">
+		</testcase>
+	</testsuite>
+</testsuites>

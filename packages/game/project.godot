@@ -54,6 +54,10 @@ window/stretch/mode="canvas_items"
 
 enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
 
+[gdunit4]
+
+settings/test/test_discovery=true
+
 [input]
 
 left_mouse={
