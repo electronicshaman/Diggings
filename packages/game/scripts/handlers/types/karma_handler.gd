@@ -6,8 +6,6 @@ class_name KarmaHandler
 @export var reason: String = ""
 @export var narrative_description: String = ""
 
-var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
-
 func apply_effect(context):
     var result = HandlerResult.new()
     var player = context.player_data if context else null

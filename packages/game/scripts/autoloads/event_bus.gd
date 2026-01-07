@@ -122,6 +122,10 @@ func disconnect_safe(signal_name: StringName, callable: Callable) -> void:
 	else:
 		GLog.warn("Signal not connected: " + str(signal_name))
 
+func emit_game_started() -> void:
+	game_started.emit()
+	GLog.debug("Game started")
+
 func emit_damage_dealt(target: Node, amount: int, source: Node) -> void:
 	damage_dealt.emit(target, amount, source)
 	GLog.debug("Damage dealt: " + str(amount) + " to " + target.name + " from " + source.name)

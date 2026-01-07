@@ -3,12 +3,10 @@ class_name StatusHandler
 
 # Status effects that modify target state (stun, debuff, etc.)
 
-@export var status_type: String = "stun"  # stun, weaken, vulnerable, etc.
-@export var duration: int = 1  # How many turns the status lasts
-@export var damage_modifier: int = 0  # For debuffs: reduce/increase damage
-@export var defense_modifier: int = 0  # For debuffs: reduce/increase defense
-
-var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
+@export var status_type: String = "stun" # stun, weaken, vulnerable, etc.
+@export var duration: int = 1 # How many turns the status lasts
+@export var damage_modifier: int = 0 # For debuffs: reduce/increase damage
+@export var defense_modifier: int = 0 # For debuffs: reduce/increase defense
 
 func apply_effect(context):
 	var result = HandlerResult.new()

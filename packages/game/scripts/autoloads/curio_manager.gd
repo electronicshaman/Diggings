@@ -9,8 +9,8 @@ signal curio_triggered(curio: Resource, effect_name: String)
 signal curio_stack_changed(curio: Resource, new_count: int)
 
 # Active curios and their stack counts
-var active_curios: Array = []  # Array of CurioData resources
-var curio_stacks: Dictionary = {}  # curio_name -> stack_count
+var active_curios: Array = [] # Array of CurioData resources
+var curio_stacks: Dictionary = {} # curio_name -> stack_count
 
 # Track curios offered to avoid duplicates (for non-stackable)
 var curios_offered_this_run: Array[String] = []
@@ -334,10 +334,10 @@ func get_available_curios_for_reward(character_class: String) -> Array:
 
 	for curio in pool:
 		var curio_name = curio.curio_name if "curio_name" in curio else ""
+		var is_stackable = curio.stackable if "stackable" in curio else false
 
 		# Skip if already owned and not stackable (or at max stacks)
 		if has_curio(curio_name):
-			var is_stackable = curio.stackable if "stackable" in curio else false
 			if not is_stackable:
 				continue
 			var max_stacks = curio.max_stacks if "max_stacks" in curio else 1
@@ -345,7 +345,6 @@ func get_available_curios_for_reward(character_class: String) -> Array:
 				continue
 
 		# Skip if already offered this run (for non-stackable)
-		var is_stackable = curio.stackable if "stackable" in curio else false
 		if not is_stackable and curio_name in curios_offered_this_run:
 			continue
 

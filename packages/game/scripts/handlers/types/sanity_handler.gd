@@ -5,8 +5,6 @@ class_name SanityHandler
 @export var percentage_based: bool = false
 @export var full_restore: bool = false
 
-var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
-
 func apply_effect(context):
 	var result = HandlerResult.new()
 	var target = context.primary_target if context and context.primary_target else (context.player_data if context else null)

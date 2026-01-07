@@ -40,7 +40,7 @@ var run_start_time: float = 0.0
 var pending_duel_config: DuelConfig = null
 
 # Test mode sequence state (typed as Resource to avoid autoload dependency issues)
-var test_sequence_state = null  # Will be TestSequenceState instance
+var test_sequence_state = null # Will be TestSequenceState instance
 
 func _ready() -> void:
 	GLog.debug("GameManager initialized - The cosmic game engine awakens")
@@ -65,11 +65,11 @@ func initialize_game_data() -> void:
 		"deck": [],
 		"curios": [],
 	"hexmap_state": {},
-		"maps": {},  # Multiple maps, one per region
-		"current_map": "",  # Current region being explored
-	"completed_maps": [],  # List of completed region IDs
+		"maps": {}, # Multiple maps, one per region
+		"current_map": "", # Current region being explored
+	"completed_maps": [], # List of completed region IDs
 	# Pre-populate with a few default regions used by MapSelection fallbacks
-	"available_maps": ["goldfields", "outback", "mountains", "coast"]  # List of available region IDs
+	"available_maps": ["goldfields", "outback", "mountains", "coast"] # List of available region IDs
 	}
 	
 	reset_run_statistics()
@@ -104,7 +104,7 @@ func prepare_new_run() -> void:
 	# Get the effective seed from GameSettings (prioritizes hash seed over regular seed)
 	var seed_to_use = GameSettings.get_effective_seed()
 	if seed_to_use.is_empty():
-		seed_to_use = null  # Auto-generate
+		seed_to_use = null # Auto-generate
 	
 	# Initialize the seed system for this run
 	var final_seed = SeedManager.set_master_seed(seed_to_use)
@@ -181,7 +181,7 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	
 	# Load directly into the Hexmap scene (replacing legacy map flow)
 	change_state(GameState.PLAYING)
-	EventBus.game_started.emit()
+	EventBus.emit_game_started()
 	# Route to region selection first
 	SceneManager.load_scene_by_name("map_selection")
 
@@ -346,7 +346,7 @@ func change_state(new_state: GameState) -> void:
 	var old_state := current_state
 	current_state = new_state
 	
-	GLog.debug("Game state changed: " + str(GameState.keys()[old_state]) + 
+	GLog.debug("Game state changed: " + str(GameState.keys()[old_state]) +
 		" -> " + str(GameState.keys()[new_state]))
 	
 	game_state_changed.emit(new_state)
