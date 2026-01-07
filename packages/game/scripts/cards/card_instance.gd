@@ -37,6 +37,39 @@ func _init(data: CardData = null, card_owner: Owner = Owner.PLAYER) -> void:
 func _generate_instance_id() -> String:
 	return "%s_%d_%d" % [card_data.resource_path.get_file().get_basename(), Time.get_unix_time_from_system(), randi()]
 
+# NEW: Create a context for this card instance
+func create_context(duel_manager_ref: Node) -> HandlerContext:
+	var context = HandlerContext.new()
+	context.source_type = "card"
+	context.source_object = card_data
+	context.duel_manager = duel_manager_ref
+	context.game_manager = GameManager if GameManager else null
+	
+	# Set player/enemy data references
+	if duel_manager_ref:
+		if duel_manager_ref.has_method("get_player_data"):
+			context.player_data = duel_manager_ref.get_player_data()
+		elif "duel_state" in duel_manager_ref and duel_manager_ref.duel_state:
+			context.player_data = duel_manager_ref.duel_state.player_data
+			
+		if duel_manager_ref.has_method("get_enemy_data"):
+			context.enemy_data = duel_manager_ref.get_enemy_data()
+		elif "duel_state" in duel_manager_ref and duel_manager_ref.duel_state:
+			context.enemy_data = duel_manager_ref.duel_state.enemy_data
+
+	# Set targets based on owner
+	if owner == Owner.PLAYER:
+		context.primary_target = context.enemy_data
+	else:
+		context.primary_target = context.player_data
+		
+	# Calculate curio modifications directly
+	# Only calculate for player cards
+	if owner == Owner.PLAYER and CurioManager:
+		context.curio_modifications = CurioManager.calculate_card_modifications(card_data, true)
+	
+	return context
+
 # Core CardData passthrough properties
 func get_card_name() -> String:
 	return card_data.card_name if card_data else "Unknown Card"
@@ -186,7 +219,6 @@ func _get_hold_bonus_effect():
 		# Check if this effect has hold bonus characteristics (duck typing)
 		if effect.has_method("get_effect_name") and "Hold" in effect.get_effect_name():
 			return effect
-
 	return null
 
 func _generate_dynamic_description(hold_bonus) -> String:

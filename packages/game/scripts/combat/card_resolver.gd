@@ -1,6 +1,6 @@
 ## CardResolver
 ## Handles card validation, cost payment, and effect resolution.
-## Serves as bridge between game logic and EffectProcessor.
+## NOW REFACTORED: Handles effect processing loop directly, removing EffectProcessor.
 extends RefCounted
 class_name CardResolver
 
@@ -17,18 +17,14 @@ signal enemy_card_played(card: CardData)
 
 # Component dependencies
 var duel_state: DuelState
-var effect_processor: EffectProcessor
 var duel_manager: DuelManager
 
-func _init(state: DuelState, processor: EffectProcessor, manager: DuelManager = null) -> void:
+func _init(state: DuelState, manager: DuelManager = null) -> void:
 	duel_state = state
-	effect_processor = processor
 	duel_manager = manager
 	
 	if not duel_state:
 		GLog.error("CardResolver: initialized with null DuelState")
-	if not effect_processor:
-		GLog.error("CardResolver: initialized with null EffectProcessor")
 	
 	GLog.debug("CardResolver: initialized")
 
@@ -232,16 +228,23 @@ func resolve_card(card_instance: CardInstance, is_player: bool, cards_played_bef
 	
 	GLog.info("CardResolver: Resolving card: %s" % card_instance.get_card_name())
 	
-	# Execute card effects WHILE card is still on battlefield
-	var results: Array[HandlerResult]
+	# Create Context at the start of resolution
+	var context: HandlerContext = card_instance.create_context(duel_manager)
+	
+	# For player cards, populate timing debug info if needed
 	if is_player:
-		# Use context for player cards (timing matters for some effects)
-		results = effect_processor.apply_card_instance_effects_with_context(
-			_get_duel_manager_interface(), card_instance, cards_played_before, hand_size_before
-		)
-	else:
-		# Enemy cards use basic resolution
-		results = effect_processor.apply_card_instance_effects(_get_duel_manager_interface(), card_instance)
+		# We can add strictly relevant runtime data if needed, but Context handles the heavy lifting
+		if context.trigger_data == null:
+			context.trigger_data = {}
+		context.trigger_data["cards_played_before"] = cards_played_before
+		context.trigger_data["hand_size_before"] = hand_size_before
+
+	# Execute card effects
+	var results: Array[HandlerResult] = _process_card_effects(card_instance, context)
+	
+	# Apply Gambling Modifiers (Post-Processing)
+	if is_player:
+		_apply_gambling_modifiers_to_results(results)
 	
 	# Apply effect results to appropriate targets
 	if is_player:
@@ -272,6 +275,91 @@ func resolve_card(card_instance: CardInstance, is_player: bool, cards_played_bef
 			enemy.enemy_discard.add_card_data(card_instance.card_data)
 		
 		GLog.debug("CardResolver: Resolved enemy card: %s" % card_instance.get_card_name())
+
+# NEW: Internal effect processing loop
+func _process_card_effects(card_instance: CardInstance, context: HandlerContext) -> Array[HandlerResult]:
+	var results: Array[HandlerResult] = []
+	
+	if not card_instance.card_data or not card_instance.card_data.effects:
+		return results
+		
+	for effect in card_instance.card_data.effects:
+		if not effect or not effect is HandlerBase:
+			continue
+			
+		# Check activation condition
+		if not effect.can_apply(context):
+			continue
+			
+		# Apply effect
+		var result = effect.apply_effect(context)
+		if result:
+			results.append(result)
+			
+	return results
+
+# NEW: Gambling Logic Migration
+func _apply_gambling_modifiers_to_results(effect_results: Array[HandlerResult]) -> void:
+	if not duel_state or not duel_state.player_data:
+		return
+	
+	var player_data = duel_state.player_data
+	
+	if not player_data.has_method("check_and_apply_gambling"):
+		return
+	
+	# Check if gambling is active
+	var gambling_result = player_data.check_and_apply_gambling()
+	
+	if not gambling_result is Dictionary or not gambling_result.get("active", false):
+		return
+	
+	var multiplier = gambling_result.get("multiplier", 1.0)
+	
+	if DEBUG_ENABLED:
+		GLog.debug("CardResolver: Gambling active! Multiplier: %.1fx" % multiplier)
+	
+	# Query for success chance modifiers
+	var context = {
+		"success_chance": 0.5,
+		"player_data": player_data
+	}
+	# Safe signal emission
+	if EventBus and EventBus.has_signal("gambling_modifier_query"):
+		EventBus.gambling_modifier_query.emit(player_data, context)
+	
+	var success_chance = context.get("success_chance", 0.5)
+	
+	# Roll for success
+	if SeedManager.get_combat_random_float() < success_chance:
+		# SUCCESS: Multiply effects
+		var multiplied_fields = ["damage", "defense", "heal"]
+		for result in effect_results:
+			if not result.success:
+				continue
+			
+			for field in multiplied_fields:
+				if result.values_applied.has(field) and result.values_applied[field] is int:
+					result.values_applied[field] = int(result.values_applied[field] * multiplier)
+		
+		if DEBUG_ENABLED:
+			GLog.debug("CardResolver: Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier)
+	else:
+		# FAILURE: Zero out effects
+		for result in effect_results:
+			if not result.success:
+				continue
+			
+			# Zero out damage, defense, and heal effects
+			if result.values_applied.has("damage"):
+				result.values_applied["damage"] = 0
+			if result.values_applied.has("defense"):
+				result.values_applied["defense"] = 0
+			if result.values_applied.has("heal"):
+				result.values_applied["heal"] = 0
+		
+		if DEBUG_ENABLED:
+			GLog.debug("CardResolver: Gambling FAILED! All effects negated")
 
 func apply_effect_results(effect_results: Array[HandlerResult], source, target) -> void:
 	"""Map effect results to appropriate state changes"""
@@ -332,6 +420,7 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 	if values.has("delayed_damage") and values.delayed_damage > 0:
 		source.delayed_damage += values.delayed_damage
 	
+	# Delayed defense
 	if values.has("delayed_defense") and values.delayed_defense > 0:
 		source.delayed_defense += values.delayed_defense
 	
@@ -356,18 +445,3 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 					   "stun_enemy", "delayed_damage", "delayed_defense", "energy", "sanity",
 					   "discard_random", "exhaust_random", "ignores_defense", "damage_hits"]:
 			GLog.warn("CardResolver: Unknown effect key: %s" % key)
-
-## Compatibility Methods for EffectProcessor
-
-func get_player_data():
-	"""Minimal getter expected by EffectProcessor validation"""
-	return duel_state.player_data if duel_state else null
-
-func get_enemy_data():
-	"""Minimal getter expected by EffectProcessor validation"""
-	return duel_state.enemy_data if duel_state else null
-
-func _get_duel_manager_interface():
-	"""Provide a minimal interface that EffectProcessor expects from DuelManager"""
-	# Return the actual DuelManager if available, otherwise self as fallback
-	return duel_manager if duel_manager else self
