@@ -7,8 +7,6 @@ class_name HealthHandler
 @export var full_heal: bool = false
 @export var can_overheal: bool = false
 
-var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
-
 func apply_effect(context):
 	var result = HandlerResult.new()
 	var target = _get_target(context)

@@ -1,7 +1,7 @@
 extends Node
 
 const DEBUG_ENABLED: bool = true
-const HandlerContext = preload("res://scripts/handlers/core/handler_context.gd")
+
 
 signal event_triggered(event_instance: EncounterInstance)
 signal event_choice_made(event_instance: EncounterInstance, choice_index: int)

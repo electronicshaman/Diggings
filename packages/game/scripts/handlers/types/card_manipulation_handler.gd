@@ -5,7 +5,6 @@ class_name CardManipulationHandler
 @export var amount: int = 1
 @export var card_filter: String = "" # optional filter expression/tag
 
-var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
 	var result = HandlerResult.new()

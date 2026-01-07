@@ -62,7 +62,7 @@ func load_backstory_pools():
 	
 	GLog.info("Loaded backstory pools - Origins: %d, Tragedies: %d, Motivations: %d, Quirks: %d" % [
 		backstory_pools.origins.size(),
-		backstory_pools.tragedies.size(), 
+		backstory_pools.tragedies.size(),
 		backstory_pools.motivations.size(),
 		backstory_pools.quirks.size()
 	])
@@ -294,7 +294,7 @@ func generate_first_name(character_class: String, backstory_chain: Array) -> Str
 	var first_names = class_names["first_names"]
 	
 	# Determine cultural background from backstory
-	var culture_key = "english"  # Default culture
+	var culture_key = "english" # Default culture
 	
 	for element in backstory_chain:
 		if element.element_id == "aboriginal_guide":
@@ -473,7 +473,7 @@ func generate_simple_nickname() -> String:
 func load_random_starting_curio() -> Resource:
 	var curios = [
 		"res://data/curios/common/lucky_nugget.tres",
-		"res://data/curios/common/thick_leather.tres", 
+		"res://data/curios/common/thick_leather.tres",
 		"res://data/curios/common/old_compass.tres",
 		"res://data/curios/common/worn_boots.tres"
 	]
