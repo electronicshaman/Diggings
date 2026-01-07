@@ -3,9 +3,29 @@
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="2"]
 
+[ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
+
+[sub_resource type="Resource" id="EffectCondition_Faith"]
+script = ExtResource("4")
+condition_type = 10
+comparison_value = 3
+comparison_operator = "greater_equal"
+custom_resource_name = "Faith"
+invert = false
+
+[sub_resource type="Resource" id="ConditionalValue_Damage"]
+script = ExtResource("3")
+property_name = "amount"
+condition = SubResource("EffectCondition_Faith")
+value_if_true = 3
+value_if_false = 0
+applies_to_base_value = true
+
 [sub_resource type="Resource" id="DamageEffect_1"]
 script = ExtResource("2")
 amount = 5
+conditional_values = Array[ExtResource("3")]([SubResource("ConditionalValue_Damage")])
 
 [resource]
 script = ExtResource("1")

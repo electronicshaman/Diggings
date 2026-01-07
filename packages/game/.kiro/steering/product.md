@@ -30,7 +30,7 @@ Explore map → Find encounters → 1v1 card duels → Manage resources → Prog
 - **Bushranger** (Attack cards) - Aggressive damage dealing
 - **Tracker** (Skill cards) - Defense and survival focus
 - **Publican** (Power cards) - Healing and sanity management
-
+- **Preacher** (Fortune cards) - 
 ## Development Philosophy
 - **Start simple, iterate** - 100-line prototypes before complexity
 - **Data-driven design** - everything configurable via Resources

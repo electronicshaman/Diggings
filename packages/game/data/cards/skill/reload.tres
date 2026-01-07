@@ -2,12 +2,22 @@
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/effects/types/card_manipulation_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
 
 [sub_resource type="Resource" id="CardManipulationEffect_1"]
 script = ExtResource("2")
 action = "draw"
-amount = 2
+amount = 1
 card_filter = ""
+
+[sub_resource type="Resource" id="ResourceEffect_1"]
+script = ExtResource("3")
+resource_type = "Ammo"
+amount = 3
+can_go_negative = false
+random_range = false
+min_amount = 0
+max_amount = 0
 
 [resource]
 script = ExtResource("1")
@@ -16,7 +26,7 @@ energy_cost = 0
 card_type = "Skill"
 card_icon = null
 flavor_text = "A quick reload can turn the tide of battle."
-effects = [SubResource("CardManipulationEffect_1")]
+effects = [SubResource("ResourceEffect_1"), SubResource("CardManipulationEffect_1")]
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

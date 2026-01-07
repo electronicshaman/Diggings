@@ -14,22 +14,28 @@ class_name CardData
 @export var effects: Array = []
 
 # Core card costs (not effects)
-@export var sanity_cost: int = 0  # Cost to sanity when played
+@export var sanity_cost: int = 0 # Cost to sanity when played
+
+# Custom resource costs (e.g. {"Ammo": 1, "Faith": 2})
+@export var unique_resource_costs: Dictionary = {}
 
 # Card durability - number of times card can be played before being removed
-@export var base_durability: int = -1  # -1 = infinite, 0+ = limited uses
+@export var base_durability: int = -1 # -1 = infinite, 0+ = limited uses
 
 # Card handling behavior (Standard/Equipped/Flash/Keep/Hold/Oneshot)
 @export var card_handling: String = "Standard"
 
 # Type-specific properties
-@export var volatile_bonus: bool = false  # For power cards with random effects
-@export var luck_modifier: float = 0.0    # For fortune cards that affect RNG
+@export var volatile_bonus: bool = false # For power cards with random effects
+@export var luck_modifier: float = 0.0 # For fortune cards that affect RNG
 
 # Character class relationships
 @export_group("Class Accessibility")
-@export var class_affinity: Array[String] = []  # Empty = all classes can use, populated = restricted
-@export var accessibility_tier: String = "Neutral"  # Starting/Class/Neutral/Rare
+@export var class_affinity: Array[String] = [] # Empty = all classes can use, populated = restricted
+@export var accessibility_tier: String = "Neutral" # Starting/Class/Neutral/Rare
+
+@export_group("Rarity")
+@export var rarity: String = "Common" # Common, Uncommon, Rare, Eldritch
 
 # Helper methods for mechanical behavior
 func discards_after_use() -> bool:
@@ -152,7 +158,7 @@ func has_first_card_played_condition() -> bool:
 		if "activation_condition" in effect and effect.activation_condition:
 			var condition = effect.activation_condition
 			if "condition_type" in condition:
-				if condition.condition_type == 0:  # ConditionType.FIRST_CARD_PLAYED
+				if condition.condition_type == 0: # ConditionType.FIRST_CARD_PLAYED
 					return true
 
 		# Check conditional_values array for conditional damage/draw amounts
@@ -161,7 +167,7 @@ func has_first_card_played_condition() -> bool:
 				if "condition" in conditional_value and conditional_value.condition:
 					var condition = conditional_value.condition
 					if "condition_type" in condition:
-						if condition.condition_type == 0:  # ConditionType.FIRST_CARD_PLAYED
+						if condition.condition_type == 0: # ConditionType.FIRST_CARD_PLAYED
 							return true
 
 	return false

@@ -9,13 +9,14 @@
 script = ExtResource("2")
 amount = 4
 
-[sub_resource type="Resource" id="CardManipulationEffect_1"]
-script = ExtResource("3")
-
 [resource]
 script = ExtResource("1")
 card_name = "Boomerang Throw"
 flavor_text = "What goes around, comes around."
-effects = [SubResource("DamageEffect_1"), SubResource("CardManipulationEffect_1")]
+effects = [SubResource("DamageEffect_1")]
+sanity_cost = 0
+card_handling = "Keep"
+volatile_bonus = false
+luck_modifier = 0.0
 class_affinity = Array[String](["Tracker"])
 accessibility_tier = "Class"

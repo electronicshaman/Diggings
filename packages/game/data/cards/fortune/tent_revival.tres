@@ -3,10 +3,30 @@
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="2"]
 
+[ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
+
+[sub_resource type="Resource" id="EffectCondition_NoFaith"]
+script = ExtResource("4")
+condition_type = 10
+comparison_value = 0
+comparison_operator = "equal"
+custom_resource_name = "Faith"
+invert = false
+
+[sub_resource type="Resource" id="ConditionalValue_Gain"]
+script = ExtResource("3")
+property_name = "amount"
+condition = SubResource("EffectCondition_NoFaith")
+value_if_true = 2
+value_if_false = 1
+applies_to_base_value = false
+
 [sub_resource type="Resource" id="ResourceEffect_Faith"]
 script = ExtResource("2")
 resource_type = "Faith"
 amount = 1
+conditional_values = Array[ExtResource("3")]([SubResource("ConditionalValue_Gain")])
 
 [resource]
 script = ExtResource("1")

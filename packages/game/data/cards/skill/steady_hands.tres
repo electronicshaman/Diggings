@@ -17,6 +17,9 @@ effects = Array[GameEffect]([SubResource("DefenseEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
+unique_resource_costs = {
+"Fever": 1
+}
 luck_modifier = 0.0
 class_affinity = Array[String](["Prospector"])
 accessibility_tier = "Class"

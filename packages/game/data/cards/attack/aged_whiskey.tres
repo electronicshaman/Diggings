@@ -18,6 +18,9 @@ effects = Array[GameEffect]([SubResource("DamageEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
+unique_resource_costs = {
+"Brew": 1
+}
 luck_modifier = 0.0
 class_affinity = Array[String](["Publican"])
 accessibility_tier = "Class"

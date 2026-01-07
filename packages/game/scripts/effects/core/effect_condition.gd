@@ -3,22 +3,24 @@ class_name EffectCondition
 
 # Condition types for when effects should activate
 enum ConditionType {
-	FIRST_CARD_PLAYED,      # First card played this turn
-	SECOND_CARD_PLAYED,     # Second card played this turn
-	LAST_CARD_IN_HAND,      # Last card remaining in hand
-	ONLY_CARD_IN_HAND,      # Only one card in hand
-	CARDS_PLAYED_COUNT,     # Specific number of cards played this turn
-	CARDS_IN_HAND_COUNT,    # Specific number of cards in hand
-	PLAYER_HEALTH_PERCENT,  # Player health percentage threshold
-	ENEMY_HEALTH_PERCENT,   # Enemy health percentage threshold
-	PLAYER_ENERGY_AMOUNT,   # Player energy amount threshold
-	PLAYER_SANITY_PERCENT   # Player sanity percentage threshold
+	FIRST_CARD_PLAYED, # First card played this turn
+	SECOND_CARD_PLAYED, # Second card played this turn
+	LAST_CARD_IN_HAND, # Last card remaining in hand
+	ONLY_CARD_IN_HAND, # Only one card in hand
+	CARDS_PLAYED_COUNT, # Specific number of cards played this turn
+	CARDS_IN_HAND_COUNT, # Specific number of cards in hand
+	PLAYER_HEALTH_PERCENT, # Player health percentage threshold
+	ENEMY_HEALTH_PERCENT, # Enemy health percentage threshold
+	PLAYER_ENERGY_AMOUNT, # Player energy amount threshold
+	PLAYER_SANITY_PERCENT, # Player sanity percentage threshold
+	CUSTOM_RESOURCE_AMOUNT # Custom resource amount threshold (requires custom_resource_name)
 }
 
 @export var condition_type: ConditionType = ConditionType.FIRST_CARD_PLAYED
-@export var comparison_value: int = 0  # Used for threshold/count conditions
-@export var comparison_operator: String = "equal"  # "equal", "less", "greater", "less_equal", "greater_equal"
-@export var invert: bool = false  # Invert the condition result
+@export var comparison_value: int = 0 # Used for threshold/count conditions
+@export var comparison_operator: String = "equal" # "equal", "less", "greater", "less_equal", "greater_equal"
+@export var custom_resource_name: String = "" # Used for CUSTOM_RESOURCE_AMOUNT
+@export var invert: bool = false # Invert the condition result
 
 func evaluate(context) -> bool:
 	if not context:
@@ -62,6 +64,10 @@ func evaluate(context) -> bool:
 		ConditionType.PLAYER_SANITY_PERCENT:
 			var percent = _get_player_sanity_percent(context)
 			result = _compare_value(percent, comparison_value)
+
+		ConditionType.CUSTOM_RESOURCE_AMOUNT:
+			var amount = _get_custom_resource_amount(context)
+			result = _compare_value(amount, comparison_value)
 	
 	return result if not invert else not result
 
@@ -157,6 +163,13 @@ func _get_player_sanity_percent(context: Resource) -> int:
 	
 	return 100
 
+func _get_custom_resource_amount(context) -> int:
+	if context.has_method("get") and context.get("player_data"):
+		var player_data = context.get("player_data")
+		if player_data and player_data.has_method("get_custom_resource"):
+			return player_data.get_custom_resource(custom_resource_name)
+	return 0
+
 func _compare_value(actual: int, expected: int) -> bool:
 	match comparison_operator:
 		"equal":
@@ -196,5 +209,7 @@ func get_description() -> String:
 			desc = "player energy %s %d" % [comparison_operator, comparison_value]
 		ConditionType.PLAYER_SANITY_PERCENT:
 			desc = "player sanity %s %d%%" % [comparison_operator, comparison_value]
+		ConditionType.CUSTOM_RESOURCE_AMOUNT:
+			desc = "%s %s %d" % [custom_resource_name.capitalize(), comparison_operator, comparison_value]
 	
 	return "NOT " + desc if invert else desc

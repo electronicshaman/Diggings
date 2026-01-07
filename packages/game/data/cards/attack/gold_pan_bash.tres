@@ -6,13 +6,8 @@
 
 [sub_resource type="Resource" id="DamageEffect_1"]
 script = ExtResource("2")
-amount = 3
+amount = 8
 ignores_defense = false
-
-[sub_resource type="Resource" id="ResourceEffect_1"]
-script = ExtResource("3")
-resource_type = "gold"
-amount = 2
 
 [resource]
 script = ExtResource("1")
@@ -20,10 +15,13 @@ card_name = "Gold Pan Bash"
 energy_cost = 1
 card_type = "Attack"
 flavor_text = "Heavy iron pan finds gold and trouble."
-effects = Array[GameEffect]([SubResource("DamageEffect_1"), SubResource("ResourceEffect_1")])
+effects = Array[GameEffect]([SubResource("DamageEffect_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
+unique_resource_costs = {
+"Fever": 2
+}
 luck_modifier = 0.0
 class_affinity = Array[String](["Prospector"])
 accessibility_tier = "Class"
