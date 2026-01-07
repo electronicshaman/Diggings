@@ -1,4 +1,4 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name DamageHandler
 
 @export var amount: int = 0
@@ -11,10 +11,10 @@ class_name DamageHandler
 @export var min_amount: int = 0
 @export var max_amount: int = 0
 
-var EffectResultResource := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResultResource := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-	var result = EffectResultResource.new()
+	var result = HandlerResultResource.new()
 	var applied = 0
 	var target = _select_target(context)
 	if target == null:

@@ -1,4 +1,4 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name KarmaHandler
 
 @export var karma_category: String = "wildlife"
@@ -6,10 +6,10 @@ class_name KarmaHandler
 @export var reason: String = ""
 @export var narrative_description: String = ""
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-    var result = EffectResult.new()
+    var result = HandlerResult.new()
     var player = context.player_data if context else null
     if player == null or not player.has_method("add_karma"):
         result.success = false

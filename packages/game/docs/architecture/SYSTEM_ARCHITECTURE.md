@@ -25,7 +25,7 @@ These are loaded at startup and available as singletons:
 - CharacterGenerator — `res://scripts/autoloads/character_generator.gd`
 - RunHistoryManager — `res://scripts/autoloads/run_history_manager.gd`
 - DebugHUD (scene) — `res://scenes/debug/debug_hud.tscn`
-- EffectRegistry — `res://scripts/effects/registry/effect_registry.gd`
+- EffectRegistry — `res://scripts/handlers/registry/effect_registry.gd`
 
 ## Core Managers (scenes/managers)
 

@@ -1,4 +1,4 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name HealthHandler
 
 @export var amount: int = 0
@@ -7,10 +7,10 @@ class_name HealthHandler
 @export var full_heal: bool = false
 @export var can_overheal: bool = false
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-	var result = EffectResult.new()
+	var result = HandlerResult.new()
 	var target = _get_target(context)
 	if target == null:
 		result.success = false

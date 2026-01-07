@@ -133,12 +133,12 @@ func test_effect_processing() -> bool:
 	add_child(processor)  # Add to scene tree since it extends Node
 	
 	# Create a simple test context
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	context.source_type = "test"
 	context.trigger_event = "integration_test"
 	
 	# Test empty effects processing
-	var empty_effects: Array[EffectHandler] = []
+	var empty_effects: Array[HandlerBase] = []
 	var results = processor.process_effects(empty_effects, context)
 	
 	if not results is Array:
@@ -154,7 +154,7 @@ func test_effect_processing() -> bool:
 	# Test single effect processing with null effect (should handle gracefully)
 	var result = processor.process_single_effect(null, context)
 	if not result:
-		print("  ERROR: Expected EffectResult for null effect")
+		print("  ERROR: Expected HandlerResult for null effect")
 		processor.queue_free()
 		return false
 	
@@ -253,7 +253,7 @@ func test_error_handling() -> bool:
 		return false
 	
 	# Test error handling with invalid inputs
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	context.source_type = "test"
 	
 	var result = processor.process_single_effect(null, context)

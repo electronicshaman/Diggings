@@ -363,17 +363,17 @@ func _test_status_effects_with_triggers() -> Dictionary:
 	"""Test status effects with various triggers."""
 	var result = {"passed": true, "details": ""}
 	
-	# Status effects are handled through the same EffectHandler system
+	# Status effects are handled through the same HandlerBase system
 	# This test verifies the trigger system works correctly
 	var processor = EffectProcessor.new()
 	
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	context.source_type = "status"
 	context.trigger_event = "turn_end"
 	
 	# Create a simple status effect
 	var status_effect = _create_mock_status_effect()
-	var effects: Array[EffectHandler] = [status_effect]
+	var effects: Array[HandlerBase] = [status_effect]
 	
 	var results = processor.process_effects(effects, context)
 	
@@ -421,9 +421,9 @@ func _test_data_structure_compatibility() -> Dictionary:
 	
 	# Test that core data structures can still be created and used
 	var test_structures = [
-		{"class": "EffectContext", "script": "res://scripts/effects/core/effect_context.gd"},
-		{"class": "EffectResult", "script": "res://scripts/effects/core/effect_result.gd"},
-		{"class": "EffectHandler", "script": "res://scripts/effects/core/effect_handler.gd"}
+		{"class": "HandlerContext", "script": "res://scripts/handlers/core/effect_context.gd"},
+		{"class": "HandlerResult", "script": "res://scripts/handlers/core/effect_result.gd"},
+		{"class": "HandlerBase", "script": "res://scripts/handlers/core/effect_handler.gd"}
 	]
 	
 	for structure in test_structures:
@@ -691,7 +691,7 @@ func _test_cardeffects_removal() -> Dictionary:
 	# Check if CardEffects script still exists
 	var cardeffects_paths = [
 		"res://scripts/combat/CardEffects.gd",
-		"res://scripts/effects/CardEffects.gd",
+		"res://scripts/handlers/CardEffects.gd",
 		"res://scripts/systems/CardEffects.gd"
 	]
 	
@@ -712,9 +712,9 @@ func _test_wrapper_class_removal() -> Dictionary:
 	
 	# Check for wrapper classes
 	var wrapper_paths = [
-		"res://scripts/effects/CardEffectWrapper.gd",
-		"res://scripts/effects/CurioEffectWrapper.gd",
-		"res://scripts/effects/EncounterEffectWrapper.gd"
+		"res://scripts/handlers/CardEffectWrapper.gd",
+		"res://scripts/handlers/CurioEffectWrapper.gd",
+		"res://scripts/handlers/EncounterEffectWrapper.gd"
 	]
 	
 	for path in wrapper_paths:
@@ -734,8 +734,8 @@ func _test_adapter_class_removal() -> Dictionary:
 	
 	# Check for adapter classes
 	var adapter_paths = [
-		"res://scripts/effects/LegacyCurioAdapter.gd",
-		"res://scripts/effects/LegacyEncounterAdapter.gd"
+		"res://scripts/handlers/LegacyCurioAdapter.gd",
+		"res://scripts/handlers/LegacyEncounterAdapter.gd"
 	]
 	
 	for path in adapter_paths:
@@ -904,40 +904,40 @@ func _create_mock_enemy_data() -> Resource:
 	enemy_data.set_meta("max_health", 50)
 	return enemy_data
 
-func _create_mock_damage_effect() -> EffectHandler:
+func _create_mock_damage_effect() -> HandlerBase:
 	"""Create a mock damage effect for testing."""
-	var effect = EffectHandler.new()
+	var effect = HandlerBase.new()
 	effect.effect_id = "test_damage"
 	effect.effect_type = "damage"
 	effect.set_meta("amount", 5)
 	return effect
 
-func _create_mock_status_effect() -> EffectHandler:
+func _create_mock_status_effect() -> HandlerBase:
 	"""Create a mock status effect for testing."""
-	var effect = EffectHandler.new()
+	var effect = HandlerBase.new()
 	effect.effect_id = "test_status"
 	effect.effect_type = "status"
 	return effect
 
-func _create_failing_effect() -> EffectHandler:
+func _create_failing_effect() -> HandlerBase:
 	"""Create an effect that will fail for testing error handling."""
-	var effect = EffectHandler.new()
+	var effect = HandlerBase.new()
 	effect.effect_id = "failing_effect"
 	effect.effect_type = "test_failure"
 	return effect
 
-func _create_test_effects(count: int) -> Array[EffectHandler]:
+func _create_test_effects(count: int) -> Array[HandlerBase]:
 	"""Create an array of test effects."""
-	var effects: Array[EffectHandler] = []
+	var effects: Array[HandlerBase] = []
 	for i in range(count):
 		var effect = _create_mock_damage_effect()
 		effect.effect_id = "test_effect_%d" % i
 		effects.append(effect)
 	return effects
 
-func _create_test_context() -> EffectContext:
+func _create_test_context() -> HandlerContext:
 	"""Create a test context for effect processing."""
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	context.source_type = "test"
 	context.trigger_event = "test_trigger"
 	context.player_data = _create_mock_player_data()

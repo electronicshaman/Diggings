@@ -1,14 +1,14 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name CombatTriggerHandler
 
 @export var enemy_path: String = ""
 @export var combat_context: String = "encounter"
 @export var combat_modifiers: Dictionary = {}
 
-var EffectResultResource := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResultResource := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-	var result = EffectResultResource.new()
+	var result = HandlerResultResource.new()
 
 	if enemy_path.is_empty():
 		result.success = false

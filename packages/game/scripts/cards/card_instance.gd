@@ -12,15 +12,15 @@ const DEBUG_ENABLED = true
 @export var card_data: CardData
 
 # Card ownership tracking
-enum Owner { PLAYER, ENEMY, NEUTRAL }
+enum Owner {PLAYER, ENEMY, NEUTRAL}
 @export var owner: Owner = Owner.PLAYER
 
 # Runtime instance state
 @export var turns_held: int = 0
-@export var instance_id: String = ""  # Unique identifier for this instance
+@export var instance_id: String = "" # Unique identifier for this instance
 
 # Durability tracking
-@export var current_durability: int = -1  # Current durability, initialized from card_data.base_durability
+@export var current_durability: int = -1 # Current durability, initialized from card_data.base_durability
 
 # Dynamic properties that override CardData when set
 var _dynamic_description: String = ""
@@ -36,6 +36,39 @@ func _init(data: CardData = null, card_owner: Owner = Owner.PLAYER) -> void:
 
 func _generate_instance_id() -> String:
 	return "%s_%d_%d" % [card_data.resource_path.get_file().get_basename(), Time.get_unix_time_from_system(), randi()]
+
+# NEW: Create a context for this card instance
+func create_context(duel_manager_ref: Node) -> HandlerContext:
+	var context = HandlerContext.new()
+	context.source_type = "card"
+	context.source_object = card_data
+	context.duel_manager = duel_manager_ref
+	context.game_manager = GameManager if GameManager else null
+	
+	# Set player/enemy data references
+	if duel_manager_ref:
+		if duel_manager_ref.has_method("get_player_data"):
+			context.player_data = duel_manager_ref.get_player_data()
+		elif "duel_state" in duel_manager_ref and duel_manager_ref.duel_state:
+			context.player_data = duel_manager_ref.duel_state.player_data
+			
+		if duel_manager_ref.has_method("get_enemy_data"):
+			context.enemy_data = duel_manager_ref.get_enemy_data()
+		elif "duel_state" in duel_manager_ref and duel_manager_ref.duel_state:
+			context.enemy_data = duel_manager_ref.duel_state.enemy_data
+
+	# Set targets based on owner
+	if owner == Owner.PLAYER:
+		context.primary_target = context.enemy_data
+	else:
+		context.primary_target = context.player_data
+		
+	# Calculate curio modifications directly
+	# Only calculate for player cards
+	if owner == Owner.PLAYER and CurioManager:
+		context.curio_modifications = CurioManager.calculate_card_modifications(card_data, true)
+	
+	return context
 
 # Core CardData passthrough properties
 func get_card_name() -> String:
@@ -143,7 +176,7 @@ func get_card_handling() -> String:
 	if hold_bonus_effect and card_data.card_handling == "Hold":
 		var turns_required = hold_bonus_effect.get("turns_required", 2)
 		if turns_held >= turns_required:
-			return "Standard"  # Card is "charged up" and should be discarded after use
+			return "Standard" # Card is "charged up" and should be discarded after use
 	
 	return card_data.card_handling
 
@@ -186,7 +219,6 @@ func _get_hold_bonus_effect():
 		# Check if this effect has hold bonus characteristics (duck typing)
 		if effect.has_method("get_effect_name") and "Hold" in effect.get_effect_name():
 			return effect
-
 	return null
 
 func _generate_dynamic_description(hold_bonus) -> String:
@@ -240,8 +272,8 @@ func _update_dynamic_properties() -> void:
 	clear_dynamic_properties()
 	
 	# This will trigger recalculation of description and handling
-	get_description()  # Force calculation
-	get_card_handling()  # Force calculation
+	get_description() # Force calculation
+	get_card_handling() # Force calculation
 
 # Serialization support
 func get_save_data() -> Dictionary:
@@ -371,7 +403,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 func _get_standard_description(effect: Resource) -> String:
 	"""Get standard description for an effect"""
 	# Create context with curio modifications ONCE for all paths
-	var preview_context = EffectContext.new() if EffectContext else null
+	var preview_context = HandlerContext.new() if HandlerContext else null
 	if preview_context and card_data:
 		preview_context.source_type = "card"
 		preview_context.source_object = card_data

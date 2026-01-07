@@ -22,11 +22,11 @@ func _ready() -> void:
 		push_warning("TestDuelBootstrap: GameController not found")
 		return
 	
-	# Load EffectHandler test deck
+	# Load HandlerBase test deck
 	var test_deck_path = "res://data/decks/test/gameeffect_test.tres"
 	var deck_data = load(test_deck_path) as DeckData
 	if not deck_data:
-		push_error("TestDuelBootstrap: Failed to load EffectHandler test deck")
+		push_error("TestDuelBootstrap: Failed to load HandlerBase test deck")
 		return
 	
 	# Load default enemy
@@ -42,8 +42,8 @@ func _ready() -> void:
 	else:
 		print("TestDuelBootstrap: Enemy has no stats!")
 	
-	# Start test duel with EffectHandler cards only
-	print("TestDuelBootstrap: Starting test duel with %d EffectHandler cards" % deck_data.card_paths.size())
+	# Start test duel with HandlerBase cards only
+	print("TestDuelBootstrap: Starting test duel with %d HandlerBase cards" % deck_data.card_paths.size())
 	if game_controller.has_method("start_duel"):
 		game_controller.start_duel(deck_data, enemy_data)
 	else:

@@ -1,4 +1,4 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name CurioRewardHandler
 
 @export var curio_paths: Array[String] = []
@@ -6,10 +6,10 @@ class_name CurioRewardHandler
 @export var curio_rarity: String = "Common"
 @export var remove_curio: bool = false
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-	var result = EffectResult.new()
+	var result = HandlerResult.new()
 	if remove_curio:
 		# Open a UI for curio removal via EventBus if available (non-blocking effect)
 		var eb = null

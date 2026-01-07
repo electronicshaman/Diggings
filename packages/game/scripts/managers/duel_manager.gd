@@ -23,7 +23,7 @@ var card_resolver: CardResolver
 var passive_handler: ClassPassiveHandler
 var test_handler: TestSequenceHandler
 
-var effect_processor: EffectProcessor
+# Removed EffectProcessor dependency
 
 func _ready():
 	GLog.info("DuelManager initializing...")
@@ -32,12 +32,10 @@ func _ready():
 		duel_state = DuelState.new()
 		GLog.info("Created new DuelState")
 
-	effect_processor = EffectProcessor.new()
-
 	# Initialize components
 	flow_controller = DuelFlowController.new(duel_state)
 	ai_controller = EnemyAIController.new(duel_state)
-	card_resolver = CardResolver.new(duel_state, effect_processor, self)
+	card_resolver = CardResolver.new(duel_state, self) # Removed effect_processor arg
 	passive_handler = ClassPassiveHandler.new(duel_state)
 	test_handler = TestSequenceHandler.new()
 	
@@ -110,10 +108,6 @@ func play_card(card_instance: CardInstance):
 	# Delegate to CardResolver
 	card_resolver.play_player_card(card_instance)
 
-
-
-
-
 func end_duel(winner: String):
 	GLog.info("DuelManager: Duel ended! Winner: %s" % winner)
 
@@ -147,7 +141,7 @@ func end_duel(winner: String):
 				GLog.info("DuelManager: Elite/Boss defeated! Curio reward will be offered")
 
 		# Load victory reward scene for card selection
-		await get_tree().create_timer(1.0).timeout  # Brief pause before transition
+		await get_tree().create_timer(1.0).timeout # Brief pause before transition
 		SceneManager.load_scene("res://scenes/ui/victory_reward.tscn")
 	else:
 		# Player lost - go to game over or appropriate scene

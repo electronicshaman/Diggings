@@ -1,4 +1,4 @@
-extends "res://scripts/effects/core/effect_handler.gd"
+extends "res://scripts/handlers/core/handler_base.gd"
 class_name StatHandler
 
 @export var stat_name: String = ""
@@ -6,10 +6,10 @@ class_name StatHandler
 @export var modifier_type: String = "flat" # "flat" | "percent"
 @export var duration: int = 0 # 0 immediate, >0 persistent turns
 
-var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
+var HandlerResult := preload("res://scripts/handlers/core/handler_result.gd")
 
 func apply_effect(context):
-	var result = EffectResult.new()
+	var result = HandlerResult.new()
 	var target = context.primary_target if context and context.primary_target else (context.player_data if context else null)
 	if target == null or stat_name == "":
 		result.success = false

@@ -35,7 +35,7 @@ EncounterManager="*res://scripts/autoloads/encounter_manager.gd"
 CharacterGenerator="*res://scripts/autoloads/character_generator.gd"
 RunHistoryManager="*res://scripts/autoloads/run_history_manager.gd"
 DebugHUD="*res://scenes/debug/debug_hud.tscn"
-EffectRegistry="*res://scripts/effects/registry/effect_registry.gd"
+HandlerRegistry="*res://scripts/handlers/registry/handler_registry.gd"
 
 [debug]
 

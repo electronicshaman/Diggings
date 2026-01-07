@@ -1,7 +1,7 @@
 extends Node
 
 const DEBUG_ENABLED: bool = true
-const EffectContext = preload("res://scripts/effects/core/effect_context.gd")
+const HandlerContext = preload("res://scripts/handlers/core/handler_context.gd")
 
 signal event_triggered(event_instance: EncounterInstance)
 signal event_choice_made(event_instance: EncounterInstance, choice_index: int)
@@ -225,7 +225,7 @@ func apply_effect(effect: Resource, extra_context: Dictionary = {}) -> void:
 		return
 
 	# Build EffectContext for EffectHandler
-	var ctx = EffectContext.new()
+	var ctx = HandlerContext.new()
 	ctx.source_type = "encounter"
 	ctx.source_object = active_event.encounter_data if active_event and active_event.encounter_data else null
 	ctx.game_manager = game_manager

@@ -91,7 +91,7 @@ func _test_deterministic_scenario(processor: EffectProcessor, scenario_index: in
 
 func _test_empty_effects_determinism(processor: EffectProcessor) -> bool:
 	"""Test that empty effect arrays are processed deterministically."""
-	var empty_effects: Array[EffectHandler] = []
+	var empty_effects: Array[HandlerBase] = []
 	var context = _create_test_context(0)
 	
 	var result1 = processor.process_effects(empty_effects, context)
@@ -108,7 +108,7 @@ func _test_empty_effects_determinism(processor: EffectProcessor) -> bool:
 func _test_single_effect_determinism(processor: EffectProcessor) -> bool:
 	"""Test that single effects are processed deterministically."""
 	var effect = _create_damage_effect("test_single", 10)
-	var effects: Array[EffectHandler] = [effect]
+	var effects: Array[HandlerBase] = [effect]
 	var context = _create_test_context(1)
 	
 	var result1 = processor.process_effects(effects, context)
@@ -130,7 +130,7 @@ func _test_multiple_identical_effects_determinism(processor: EffectProcessor) ->
 	var effect2 = _create_damage_effect("identical_2", 5)
 	var effect3 = _create_damage_effect("identical_3", 5)
 	
-	var effects: Array[EffectHandler] = [effect1, effect2, effect3]
+	var effects: Array[HandlerBase] = [effect1, effect2, effect3]
 	var context = _create_test_context(2)
 	
 	var result1 = processor.process_effects(effects, context)
@@ -175,12 +175,12 @@ func _test_gambling_determinism(processor: EffectProcessor) -> bool:
 	
 	return true
 
-func _generate_test_effects(seed: int) -> Array[EffectHandler]:
+func _generate_test_effects(seed: int) -> Array[HandlerBase]:
 	"""Generate a random array of effects for testing."""
 	var rng = RandomNumberGenerator.new()
 	rng.seed = seed
 	
-	var effects: Array[EffectHandler] = []
+	var effects: Array[HandlerBase] = []
 	var effect_count = rng.randi_range(0, 5)  # 0-5 effects
 	
 	for i in range(effect_count):
@@ -195,9 +195,9 @@ func _generate_test_effects(seed: int) -> Array[EffectHandler]:
 	
 	return effects
 
-func _create_test_context(seed: int) -> EffectContext:
+func _create_test_context(seed: int) -> HandlerContext:
 	"""Create a test context for effect processing."""
-	var context = EffectContext.new()
+	var context = HandlerContext.new()
 	context.source_type = "test"
 	context.trigger_event = "test_trigger"
 	context.trigger_data = {"seed": seed}
@@ -209,26 +209,26 @@ func _create_test_context(seed: int) -> EffectContext:
 	
 	return context
 
-func _create_damage_effect(id: String, amount: int) -> EffectHandler:
+func _create_damage_effect(id: String, amount: int) -> HandlerBase:
 	"""Create a test damage effect."""
-	var effect = load("res://scripts/effects/types/damage_handler.gd").new()
+	var effect = load("res://scripts/handlers/types/damage_handler.gd").new()
 	effect.effect_id = id
 	effect.amount = amount
 	effect.target_type = "enemy"
 	return effect
 
-func _create_heal_effect(id: String, amount: int) -> EffectHandler:
+func _create_heal_effect(id: String, amount: int) -> HandlerBase:
 	"""Create a test heal effect."""
-	var effect = load("res://scripts/effects/types/resource_handler.gd").new()
+	var effect = load("res://scripts/handlers/types/resource_handler.gd").new()
 	effect.effect_id = id
 	effect.resource_type = "health"
 	effect.amount = amount
 	effect.target_type = "player"
 	return effect
 
-func _create_resource_effect(id: String, amount: int) -> EffectHandler:
+func _create_resource_effect(id: String, amount: int) -> HandlerBase:
 	"""Create a test resource effect."""
-	var effect = load("res://scripts/effects/types/resource_handler.gd").new()
+	var effect = load("res://scripts/handlers/types/resource_handler.gd").new()
 	effect.effect_id = id
 	effect.resource_type = "energy"
 	effect.amount = amount
@@ -277,8 +277,8 @@ func _create_test_duel_manager() -> Resource:
 	duel_manager.duel_state = duel_state
 	return duel_manager
 
-func _compare_effect_results(results1: Array[EffectResult], results2: Array[EffectResult]) -> Dictionary:
-	"""Compare two arrays of EffectResult for identical content."""
+func _compare_effect_results(results1: Array[HandlerResult], results2: Array[HandlerResult]) -> Dictionary:
+	"""Compare two arrays of HandlerResult for identical content."""
 	var comparison = {
 		"identical": true,
 		"differences": []
