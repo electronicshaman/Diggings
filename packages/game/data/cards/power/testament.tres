@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/combat_trigger_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/combat_trigger_handler.gd" id="2"]
 
-[sub_resource type="Resource" id="CombatTriggerEffect_1"]
+[sub_resource type="Resource" id="CombatTriggerHandler_1"]
 script = ExtResource("2")
 trigger_event = "turn_start"
 effect_description = "Deal damage equal to your current Faith"
@@ -15,7 +15,7 @@ energy_cost = 3
 card_type = "Fortune"
 description = "At the start of each turn, deal damage to enemy equal to your current Faith."
 flavor_text = "My word is law. My law is suffering."
-effects = Array[GameEffect]([SubResource("CombatTriggerEffect_1")])
+effects = Array[EffectHandler]([SubResource("CombatTriggerHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

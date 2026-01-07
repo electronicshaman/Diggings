@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/data/encounter_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/encounter_choice.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/effects/types/karma_effect.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/effects/types/sanity_effect.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/karma_handler.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/sanity_handler.gd" id="5"]
 
 [sub_resource type="Resource" id="1"]
 script = ExtResource("4")

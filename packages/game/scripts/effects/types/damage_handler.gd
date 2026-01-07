@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name DamageEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name DamageHandler
 
 @export var amount: int = 0
 @export var ignores_defense: bool = false
@@ -43,7 +43,7 @@ func apply_effect(context):
 	var final_hits = resolve_conditional_value("hits", hits, context)
 	var final_ignores_defense = _resolve_conditional_bool("ignores_defense", ignores_defense, context)
 	
-	# NOTE: GameEffect system standardizes on NOT directly mutating targets during
+	# NOTE: EffectHandler system standardizes on NOT directly mutating targets during
 	# effect resolution; instead we accumulate intended outcomes in EffectResult
 	# and let the central DuelManager.apply_card_results() perform mutations.
 	# The previous implementation applied damage immediately AND then the

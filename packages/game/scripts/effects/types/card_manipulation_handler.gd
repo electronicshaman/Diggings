@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name CardManipulationEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name CardManipulationHandler
 
 @export var action: String = "draw" # draw, discard, shuffle, etc.
 @export var amount: int = 1
@@ -17,7 +17,7 @@ func apply_effect(context):
 	# Resolve conditional values
 	var final_amount = resolve_conditional_value("amount", amount, context)
 
-	# NOTE: Like DamageEffect, we do NOT directly perform actions during effect
+	# NOTE: Like DamageHandler, we do NOT directly perform actions during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual operations.
 	match action:

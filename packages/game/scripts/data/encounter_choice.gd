@@ -17,9 +17,9 @@ const DEBUG_ENABLED: bool = true
 @export var min_stat_requirement: Dictionary = {}
 
 @export_group("Outcomes")
-@export var outcomes: Array[Resource] = [] # GameEffect resources
+@export var outcomes: Array[Resource] = [] # EffectHandler resources
 @export var success_chance: float = 1.0
-@export var failure_outcomes: Array[Resource] = [] # GameEffect resources
+@export var failure_outcomes: Array[Resource] = [] # EffectHandler resources
 
 @export_group("Conditions")
 @export var is_hidden: bool = false

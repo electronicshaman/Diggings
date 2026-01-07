@@ -224,7 +224,7 @@ func apply_effect(effect: Resource, extra_context: Dictionary = {}) -> void:
 		GLog.debug("Delayed effect for %d turns" % delay_turns)
 		return
 
-	# Build EffectContext for GameEffect
+	# Build EffectContext for EffectHandler
 	var ctx = EffectContext.new()
 	ctx.source_type = "encounter"
 	ctx.source_object = active_event.encounter_data if active_event and active_event.encounter_data else null
@@ -543,7 +543,7 @@ func _track_effect_rewards(effect: Resource, outcome_data: EncounterOutcomeData)
 	if description and description != "":
 		outcome_data.narrative_texts.append(description)
 
-	# Handle KarmaEffect specifically
+	# Handle KarmaHandler specifically
 	if effect.get("karma_category"):
 		var narrative_desc = effect.get("narrative_description")
 		if narrative_desc and narrative_desc != "":
@@ -552,7 +552,7 @@ func _track_effect_rewards(effect: Resource, outcome_data: EncounterOutcomeData)
 		var amount = effect.get("amount") if effect.get("amount") else 0
 		outcome_data.karma_changes[category] = outcome_data.karma_changes.get(category, 0) + amount
 
-	# Handle ResourceEffect (gold, corruption, etc.)
+	# Handle ResourceHandler (gold, corruption, etc.)
 	if effect.get("resource_type"):
 		var amount = effect.get("amount") if effect.get("amount") else 0
 		match effect.resource_type:
@@ -561,7 +561,7 @@ func _track_effect_rewards(effect: Resource, outcome_data: EncounterOutcomeData)
 			"corruption":
 				outcome_data.corruption_change += amount
 
-	# Handle DamageEffect (check script path since we can't use 'is' easily)
+	# Handle DamageHandler (check script path since we can't use 'is' easily)
 	var script = effect.get_script()
 	if script:
 		var script_path = script.resource_path if script.resource_path else ""
@@ -569,17 +569,17 @@ func _track_effect_rewards(effect: Resource, outcome_data: EncounterOutcomeData)
 			var amount = effect.get("amount") if effect.get("amount") else 0
 			outcome_data.health_change -= amount
 
-		# Handle SanityEffect
+		# Handle SanityHandler
 		if "sanity_effect" in script_path.to_lower():
 			var amount = effect.get("amount") if effect.get("amount") else 0
 			outcome_data.sanity_change += amount
 
-		# Handle HealthEffect (healing)
+		# Handle HealthHandler (healing)
 		if "health_effect" in script_path.to_lower():
 			var amount = effect.get("amount") if effect.get("amount") else 0
 			outcome_data.health_change += amount
 
-		# Handle CombatTriggerEffect
+		# Handle CombatTriggerHandler
 		if "combat_trigger" in script_path.to_lower():
 			outcome_data.combat_triggered = true
 			var enemy_path = effect.get("enemy_path")

@@ -363,7 +363,7 @@ func _test_status_effects_with_triggers() -> Dictionary:
 	"""Test status effects with various triggers."""
 	var result = {"passed": true, "details": ""}
 	
-	# Status effects are handled through the same GameEffect system
+	# Status effects are handled through the same EffectHandler system
 	# This test verifies the trigger system works correctly
 	var processor = EffectProcessor.new()
 	
@@ -373,7 +373,7 @@ func _test_status_effects_with_triggers() -> Dictionary:
 	
 	# Create a simple status effect
 	var status_effect = _create_mock_status_effect()
-	var effects: Array[GameEffect] = [status_effect]
+	var effects: Array[EffectHandler] = [status_effect]
 	
 	var results = processor.process_effects(effects, context)
 	
@@ -423,7 +423,7 @@ func _test_data_structure_compatibility() -> Dictionary:
 	var test_structures = [
 		{"class": "EffectContext", "script": "res://scripts/effects/core/effect_context.gd"},
 		{"class": "EffectResult", "script": "res://scripts/effects/core/effect_result.gd"},
-		{"class": "GameEffect", "script": "res://scripts/effects/core/game_effect.gd"}
+		{"class": "EffectHandler", "script": "res://scripts/effects/core/effect_handler.gd"}
 	]
 	
 	for structure in test_structures:
@@ -904,31 +904,31 @@ func _create_mock_enemy_data() -> Resource:
 	enemy_data.set_meta("max_health", 50)
 	return enemy_data
 
-func _create_mock_damage_effect() -> GameEffect:
+func _create_mock_damage_effect() -> EffectHandler:
 	"""Create a mock damage effect for testing."""
-	var effect = GameEffect.new()
+	var effect = EffectHandler.new()
 	effect.effect_id = "test_damage"
 	effect.effect_type = "damage"
 	effect.set_meta("amount", 5)
 	return effect
 
-func _create_mock_status_effect() -> GameEffect:
+func _create_mock_status_effect() -> EffectHandler:
 	"""Create a mock status effect for testing."""
-	var effect = GameEffect.new()
+	var effect = EffectHandler.new()
 	effect.effect_id = "test_status"
 	effect.effect_type = "status"
 	return effect
 
-func _create_failing_effect() -> GameEffect:
+func _create_failing_effect() -> EffectHandler:
 	"""Create an effect that will fail for testing error handling."""
-	var effect = GameEffect.new()
+	var effect = EffectHandler.new()
 	effect.effect_id = "failing_effect"
 	effect.effect_type = "test_failure"
 	return effect
 
-func _create_test_effects(count: int) -> Array[GameEffect]:
+func _create_test_effects(count: int) -> Array[EffectHandler]:
 	"""Create an array of test effects."""
-	var effects: Array[GameEffect] = []
+	var effects: Array[EffectHandler] = []
 	for i in range(count):
 		var effect = _create_mock_damage_effect()
 		effect.effect_id = "test_effect_%d" % i

@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name KarmaEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name KarmaHandler
 
 @export var karma_category: String = "wildlife"
 @export var amount: int = 1

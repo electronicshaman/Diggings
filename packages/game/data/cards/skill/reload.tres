@@ -1,16 +1,16 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/card_manipulation_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/card_manipulation_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="3"]
 
-[sub_resource type="Resource" id="CardManipulationEffect_1"]
+[sub_resource type="Resource" id="CardManipulationHandler_1"]
 script = ExtResource("2")
 action = "draw"
 amount = 1
 card_filter = ""
 
-[sub_resource type="Resource" id="ResourceEffect_1"]
+[sub_resource type="Resource" id="ResourceHandler_1"]
 script = ExtResource("3")
 resource_type = "Ammo"
 amount = 3
@@ -26,7 +26,7 @@ energy_cost = 0
 card_type = "Skill"
 card_icon = null
 flavor_text = "A quick reload can turn the tide of battle."
-effects = [SubResource("ResourceEffect_1"), SubResource("CardManipulationEffect_1")]
+effects = [SubResource("ResourceHandler_1"), SubResource("CardManipulationHandler_1")]
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

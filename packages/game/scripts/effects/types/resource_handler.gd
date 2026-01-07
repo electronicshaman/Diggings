@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name ResourceEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name ResourceHandler
 
 @export var resource_type: String = "gold" # gold, energy, sanity, or custom (e.g. ammo, brew)
 @export var amount: int = 0
@@ -24,7 +24,7 @@ func apply_effect(context):
 		var hi = max(min_amount, max_amount)
 		apply_amt = randi_range(lo, hi)
 
-	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
+	# NOTE: Like DamageHandler, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual mutations.
 	

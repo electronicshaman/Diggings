@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/health_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/health_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
 
@@ -20,7 +20,7 @@ value_if_true = 6
 value_if_false = 0
 applies_to_base_value = true
 
-[sub_resource type="Resource" id="HealthEffect_1"]
+[sub_resource type="Resource" id="HealthHandler_1"]
 script = ExtResource("2")
 amount = 6
 conditional_values = Array[ConditionalValue]([SubResource("ConditionalValue_1")])
@@ -31,7 +31,7 @@ card_name = "Bush Survival"
 energy_cost = 1
 card_type = "Skill"
 flavor_text = "The bush teaches you to make do with what you have."
-effects = Array[GameEffect]([SubResource("HealthEffect_1")])
+effects = Array[EffectHandler]([SubResource("HealthHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

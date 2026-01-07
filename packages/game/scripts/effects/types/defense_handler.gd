@@ -1,10 +1,10 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name DefenseEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name DefenseHandler
 
 @export var amount: int = 0
 @export var duration: int = 0
 @export var condition: String = "" # descriptive only; enforcement left to systems
-# Note: delayed is inherited from GameEffect base class
+# Note: delayed is inherited from EffectHandler base class
 
 var EffectResult := preload("res://scripts/effects/core/effect_result.gd")
 
@@ -27,7 +27,7 @@ func apply_effect(context):
 		if curio_defense_bonus > 0:
 			final_amount += curio_defense_bonus
 
-	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
+	# NOTE: Like DamageHandler, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual mutations.
 	if delayed:

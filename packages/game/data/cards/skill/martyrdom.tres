@@ -1,25 +1,25 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/health_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/effects/types/health_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="4"]
 
-[sub_resource type="Resource" id="HealthEffect_1"]
+[sub_resource type="Resource" id="HealthHandler_1"]
 script = ExtResource("2")
 amount = -10
 
-[sub_resource type="Resource" id="DefenseEffect_1"]
+[sub_resource type="Resource" id="DefenseHandler_1"]
 script = ExtResource("3")
 amount = 15
 
-[sub_resource type="Resource" id="ResourceEffect_1"]
+[sub_resource type="Resource" id="ResourceHandler_1"]
 script = ExtResource("4")
 resource_type = "energy"
 amount = 2
 delayed = true
 
-[sub_resource type="Resource" id="ResourceEffect_Faith"]
+[sub_resource type="Resource" id="ResourceHandler_Faith"]
 script = ExtResource("4")
 resource_type = "Faith"
 amount = -5
@@ -31,7 +31,7 @@ energy_cost = 2
 card_type = "Fortune"
 description = "Take 10 damage. Gain 15 Defense. Next turn, gain +2 energy. Spend 5 Faith."
 flavor_text = "Through suffering comes salvation."
-effects = Array[GameEffect]([SubResource("HealthEffect_1"), SubResource("DefenseEffect_1"), SubResource("ResourceEffect_1"), SubResource("ResourceEffect_Faith")])
+effects = Array[EffectHandler]([SubResource("HealthHandler_1"), SubResource("DefenseHandler_1"), SubResource("ResourceHandler_1"), SubResource("ResourceHandler_Faith")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

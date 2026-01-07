@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_handler.gd" id="3"]
 
-[sub_resource type="Resource" id="ResourceEffect_1"]
+[sub_resource type="Resource" id="ResourceHandler_1"]
 script = ExtResource("2")
 resource_type = "gold"
 amount = 3
 
-[sub_resource type="Resource" id="DamageEffect_1"]
+[sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("3")
 amount = 4
 ignores_defense = false
@@ -20,7 +20,7 @@ card_name = "Claim Jumping"
 energy_cost = 2
 card_type = "Fortune"
 flavor_text = "Their loss is your gain... if you're quick enough."
-effects = Array[GameEffect]([SubResource("ResourceEffect_1"), SubResource("DamageEffect_1")])
+effects = Array[EffectHandler]([SubResource("ResourceHandler_1"), SubResource("DamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
