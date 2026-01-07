@@ -1,4 +1,4 @@
-extends GameEffect
+extends EffectHandler
 class_name SimpleTestEffect
 
 ## Simple test effect for deterministic testing

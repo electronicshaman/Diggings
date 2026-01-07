@@ -1,5 +1,5 @@
 extends Resource
-class_name GameEffect
+class_name EffectHandler
 
 @export var effect_id: String = ""
 @export var effect_type: String = ""

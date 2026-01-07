@@ -60,7 +60,7 @@ func test_malformed_context_handling() -> bool:
 	var processor = EffectProcessor.new()
 	
 	# Create a mock effect
-	var mock_effect = MockGameEffect.new()
+	var mock_effect = MockEffectHandler.new()
 	
 	# Test with null context
 	var result = processor.process_single_effect(mock_effect, null)
@@ -91,7 +91,7 @@ func test_invalid_effect_array_handling() -> bool:
 	context.source_type = "test"
 	
 	# Test with null effects array
-	var null_effects: Array[GameEffect] = []
+	var null_effects: Array[EffectHandler] = []
 	var results = processor.process_effects(null_effects, context)
 	
 	if not results is Array:
@@ -100,9 +100,9 @@ func test_invalid_effect_array_handling() -> bool:
 		return false
 	
 	# Test with mixed valid/invalid effects
-	var mixed_effects: Array[GameEffect] = []
-	mixed_effects.append(MockGameEffect.new())  # Valid
-	mixed_effects.append(MockGameEffect.new())  # Valid (can't add null to typed array)
+	var mixed_effects: Array[EffectHandler] = []
+	mixed_effects.append(MockEffectHandler.new())  # Valid
+	mixed_effects.append(MockEffectHandler.new())  # Valid (can't add null to typed array)
 	
 	results = processor.process_effects(mixed_effects, context)
 	
@@ -175,7 +175,7 @@ func test_critical_error_detection() -> bool:
 
 # Mock classes for testing
 
-class MockGameEffect extends GameEffect:
+class MockEffectHandler extends EffectHandler:
 	func _init():
 		effect_id = "mock_effect"
 		effect_type = "test"
@@ -189,7 +189,7 @@ class MockGameEffect extends GameEffect:
 	func can_apply(_context: Resource) -> bool:
 		return true
 
-class FailingMockEffect extends GameEffect:
+class FailingMockEffect extends EffectHandler:
 	func _init():
 		effect_id = "failing_effect"
 		effect_type = "test"

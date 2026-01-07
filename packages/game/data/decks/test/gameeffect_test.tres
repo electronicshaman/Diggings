@@ -4,8 +4,8 @@
 
 [resource]
 script = ExtResource("1")
-deck_name = "GameEffect Test Deck"
-description = "Test deck containing only migrated GameEffect cards for testing the new effect system."
+deck_name = "EffectHandler Test Deck"
+description = "Test deck containing only migrated EffectHandler cards for testing the new effect system."
 deck_theme = "test"
 difficulty_level = 1
 card_paths = Array[String](["res://data/cards/attack/ambush.tres", "res://data/cards/attack/desperados_gambit.tres", "res://data/cards/skill/bandits_code.tres", "res://data/cards/skill/canvas_overalls.tres", "res://data/cards/skill/reload.tres", "res://data/cards/power/pub_brawl.tres"])

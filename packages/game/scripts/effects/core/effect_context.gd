@@ -88,7 +88,7 @@ func get_curio_modifications() -> Dictionary:
 	return _curio_modifications_cache
 
 ## Cache conditional values for an effect to avoid repeated calculations
-func cache_conditional_values(effect: GameEffect) -> void:
+func cache_conditional_values(effect: EffectHandler) -> void:
 	if not effect:
 		return
 	
@@ -142,7 +142,7 @@ func cache_conditional_values(effect: GameEffect) -> void:
 	_conditional_values_cache[effect_id] = cached_values
 
 ## Get cached conditional value for an effect
-func get_cached_conditional_value(effect: GameEffect, value_key: String, default_value = null):
+func get_cached_conditional_value(effect: EffectHandler, value_key: String, default_value = null):
 	if not effect:
 		return default_value
 	

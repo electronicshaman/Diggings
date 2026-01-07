@@ -115,7 +115,7 @@ func _test_effect_processing(processor: EffectProcessor) -> bool:
 	GLog.debug("TestEffectProcessor: Testing effect processing")
 	
 	# Create a simple damage effect for testing
-	var damage_effect = DamageEffect.new()
+	var damage_effect = DamageHandler.new()
 	damage_effect.effect_id = "test_damage"
 	damage_effect.amount = 5
 	
@@ -140,7 +140,7 @@ func _test_effect_processing(processor: EffectProcessor) -> bool:
 		return false
 	
 	# Test batch processing
-	var effects: Array[GameEffect] = [damage_effect]
+	var effects: Array[EffectHandler] = [damage_effect]
 	var results = processor.process_effects(effects, context)
 	
 	if results.size() != 1:
@@ -163,7 +163,7 @@ func _test_error_handling(processor: EffectProcessor) -> bool:
 		return false
 	
 	# Test with invalid context
-	var damage_effect = DamageEffect.new()
+	var damage_effect = DamageHandler.new()
 	damage_effect.effect_id = "test_damage"
 	result = processor.process_single_effect(damage_effect, null)
 	
@@ -172,7 +172,7 @@ func _test_error_handling(processor: EffectProcessor) -> bool:
 		return false
 	
 	# Test batch validation with empty array
-	var empty_effects: Array[GameEffect] = []
+	var empty_effects: Array[EffectHandler] = []
 	var results = processor.process_effects(empty_effects, context)
 	
 	if results.size() != 0:
@@ -219,7 +219,7 @@ func _test_deterministic_processing_property(processor: EffectProcessor) -> bool
 
 func _test_empty_effects_determinism(processor: EffectProcessor) -> bool:
 	"""Test that empty effect arrays are processed deterministically."""
-	var empty_effects: Array[GameEffect] = []
+	var empty_effects: Array[EffectHandler] = []
 	var context = _create_minimal_test_context()
 	
 	var result1 = processor.process_effects(empty_effects, context)
@@ -234,7 +234,7 @@ func _test_empty_effects_determinism(processor: EffectProcessor) -> bool:
 func _test_single_effect_determinism(processor: EffectProcessor) -> bool:
 	"""Test that single effects are processed deterministically."""
 	var effect = _create_simple_test_effect("deterministic_test", 10)
-	var effects: Array[GameEffect] = [effect]
+	var effects: Array[EffectHandler] = [effect]
 	var context = _create_minimal_test_context()
 	
 	var result1 = processor.process_effects(effects, context)
@@ -257,7 +257,7 @@ func _test_multiple_effects_determinism(processor: EffectProcessor) -> bool:
 	var effect2 = _create_simple_test_effect("multi_test_2", 10)
 	var effect3 = _create_simple_test_effect("multi_test_3", 15)
 	
-	var effects: Array[GameEffect] = [effect1, effect2, effect3]
+	var effects: Array[EffectHandler] = [effect1, effect2, effect3]
 	var context = _create_minimal_test_context()
 	
 	var result1 = processor.process_effects(effects, context)
@@ -282,7 +282,7 @@ func _test_effect_sorting_determinism(processor: EffectProcessor) -> bool:
 	var effect_a = _create_simple_test_effect("a_first", 2)
 	var effect_m = _create_simple_test_effect("m_middle", 3)
 	
-	var effects: Array[GameEffect] = [effect_z, effect_a, effect_m]
+	var effects: Array[EffectHandler] = [effect_z, effect_a, effect_m]
 	var context = _create_minimal_test_context()
 	
 	# Process multiple times to ensure consistent ordering
@@ -324,9 +324,9 @@ func _create_test_context() -> EffectContext:
 	"""Create a test context for batch optimization testing."""
 	return _create_minimal_test_context()
 
-func _create_simple_test_effect(id: String, value: int) -> GameEffect:
+func _create_simple_test_effect(id: String, value: int) -> EffectHandler:
 	"""Create a simple test effect for deterministic testing."""
-	var effect = GameEffect.new()
+	var effect = EffectHandler.new()
 	effect.effect_id = id
 	effect.effect_type = "test"
 	effect.set_meta("test_value", value)
@@ -354,7 +354,7 @@ func _test_batch_processing_optimization(processor: EffectProcessor) -> bool:
 		return false
 	
 	# Test 2: Create effects above threshold to trigger optimization
-	var test_effects: Array[GameEffect] = []
+	var test_effects: Array[EffectHandler] = []
 	for i in range(10):  # Above threshold
 		var effect = _create_simple_test_effect("batch_test_%d" % i, i)
 		test_effects.append(effect)
@@ -383,7 +383,7 @@ func _test_batch_processing_optimization(processor: EffectProcessor) -> bool:
 		return false
 	
 	# Test 3: Test with effects below threshold (should use standard processing)
-	var small_effects: Array[GameEffect] = []
+	var small_effects: Array[EffectHandler] = []
 	for i in range(3):  # Below threshold
 		var effect = _create_simple_test_effect("small_batch_%d" % i, i)
 		small_effects.append(effect)

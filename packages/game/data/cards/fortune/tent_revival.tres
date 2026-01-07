@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="2"]
 
 [ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="4"]
@@ -22,7 +22,7 @@ value_if_true = 2
 value_if_false = 1
 applies_to_base_value = false
 
-[sub_resource type="Resource" id="ResourceEffect_Faith"]
+[sub_resource type="Resource" id="ResourceHandler_Faith"]
 script = ExtResource("2")
 resource_type = "Faith"
 amount = 1
@@ -35,7 +35,7 @@ energy_cost = 0
 card_type = "Fortune"
 description = "Gain 1 Faith. If Faith is 0, gain 2 Faith instead."
 flavor_text = "Gather 'round, sinners. Salvation starts here."
-effects = Array[GameEffect]([SubResource("ResourceEffect_Faith")])
+effects = Array[EffectHandler]([SubResource("ResourceHandler_Faith")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/status_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/status_handler.gd" id="3"]
 
-[sub_resource type="Resource" id="DefenseEffect_1"]
+[sub_resource type="Resource" id="DefenseHandler_1"]
 script = ExtResource("2")
 amount = 5
 
-[sub_resource type="Resource" id="StatusEffect_1"]
+[sub_resource type="Resource" id="StatusHandler_1"]
 script = ExtResource("3")
 status_type = "weaken"
 duration = 1
@@ -20,7 +20,7 @@ card_name = "Smooth Talk"
 energy_cost = 1
 description = "Gain 5 defense. Enemy deals -3 damage next attack."
 card_type = "Grog"
-effects = Array[GameEffect]([SubResource("DefenseEffect_1"), SubResource("StatusEffect_1")])
+effects = Array[EffectHandler]([SubResource("DefenseHandler_1"), SubResource("StatusHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

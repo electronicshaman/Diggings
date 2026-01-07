@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name HealthEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name HealthHandler
 
 @export var amount: int = 0
 @export var percentage_based: bool = false
@@ -21,7 +21,7 @@ func apply_effect(context):
 		result.success = true
 		result.values_applied["heal"] = 0
 		return result
-	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
+	# NOTE: Like DamageHandler, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual mutations.
 	result.values_applied["heal"] = heal_amount

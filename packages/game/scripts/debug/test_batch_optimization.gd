@@ -81,9 +81,9 @@ func test_object_pooling(processor: EffectProcessor):
 	var initial_pooled = initial_stats.get("objects_pooled", 0)
 	
 	# Create test effects that should trigger pooling
-	var test_effects: Array[GameEffect] = []
+	var test_effects: Array[EffectHandler] = []
 	for i in range(10):  # Above threshold to trigger optimization
-		var effect = DamageEffect.new()
+		var effect = DamageHandler.new()
 		effect.effect_id = "pool_test_effect_%d" % i
 		effect.amount = 1
 		test_effects.append(effect)
@@ -122,9 +122,9 @@ func test_validation_caching(processor: EffectProcessor):
 	var initial_cache_hits = initial_stats.get("validation_cache_hits", 0)
 	
 	# Create test effects
-	var test_effects: Array[GameEffect] = []
+	var test_effects: Array[EffectHandler] = []
 	for i in range(8):  # Above threshold
-		var effect = DamageEffect.new()
+		var effect = DamageHandler.new()
 		effect.effect_id = "cache_test_effect_%d" % i
 		effect.amount = 1
 		test_effects.append(effect)
@@ -155,9 +155,9 @@ func test_performance_comparison(processor: EffectProcessor):
 		GLog.debug("TestBatchOptimization: Testing performance comparison")
 	
 	# Create a larger set of test effects
-	var test_effects: Array[GameEffect] = []
+	var test_effects: Array[EffectHandler] = []
 	for i in range(20):  # Large enough to see performance difference
-		var effect = DamageEffect.new()
+		var effect = DamageHandler.new()
 		effect.effect_id = "perf_test_effect_%d" % i
 		effect.amount = 1
 		test_effects.append(effect)
@@ -221,17 +221,17 @@ func test_batch_size_thresholds(processor: EffectProcessor):
 	var initial_optimized = initial_stats.get("batches_optimized", 0)
 	
 	# Create small batch (below threshold)
-	var small_effects: Array[GameEffect] = []
+	var small_effects: Array[EffectHandler] = []
 	for i in range(5):  # Below threshold
-		var effect = DamageEffect.new()
+		var effect = DamageHandler.new()
 		effect.effect_id = "small_batch_effect_%d" % i
 		effect.amount = 1
 		small_effects.append(effect)
 	
 	# Create large batch (above threshold)
-	var large_effects: Array[GameEffect] = []
+	var large_effects: Array[EffectHandler] = []
 	for i in range(20):  # Above threshold
-		var effect = DamageEffect.new()
+		var effect = DamageHandler.new()
 		effect.effect_id = "large_batch_effect_%d" % i
 		effect.amount = 1
 		large_effects.append(effect)

@@ -91,7 +91,7 @@ func _test_deterministic_scenario(processor: EffectProcessor, scenario_index: in
 
 func _test_empty_effects_determinism(processor: EffectProcessor) -> bool:
 	"""Test that empty effect arrays are processed deterministically."""
-	var empty_effects: Array[GameEffect] = []
+	var empty_effects: Array[EffectHandler] = []
 	var context = _create_test_context(0)
 	
 	var result1 = processor.process_effects(empty_effects, context)
@@ -108,7 +108,7 @@ func _test_empty_effects_determinism(processor: EffectProcessor) -> bool:
 func _test_single_effect_determinism(processor: EffectProcessor) -> bool:
 	"""Test that single effects are processed deterministically."""
 	var effect = _create_damage_effect("test_single", 10)
-	var effects: Array[GameEffect] = [effect]
+	var effects: Array[EffectHandler] = [effect]
 	var context = _create_test_context(1)
 	
 	var result1 = processor.process_effects(effects, context)
@@ -130,7 +130,7 @@ func _test_multiple_identical_effects_determinism(processor: EffectProcessor) ->
 	var effect2 = _create_damage_effect("identical_2", 5)
 	var effect3 = _create_damage_effect("identical_3", 5)
 	
-	var effects: Array[GameEffect] = [effect1, effect2, effect3]
+	var effects: Array[EffectHandler] = [effect1, effect2, effect3]
 	var context = _create_test_context(2)
 	
 	var result1 = processor.process_effects(effects, context)
@@ -175,12 +175,12 @@ func _test_gambling_determinism(processor: EffectProcessor) -> bool:
 	
 	return true
 
-func _generate_test_effects(seed: int) -> Array[GameEffect]:
+func _generate_test_effects(seed: int) -> Array[EffectHandler]:
 	"""Generate a random array of effects for testing."""
 	var rng = RandomNumberGenerator.new()
 	rng.seed = seed
 	
-	var effects: Array[GameEffect] = []
+	var effects: Array[EffectHandler] = []
 	var effect_count = rng.randi_range(0, 5)  # 0-5 effects
 	
 	for i in range(effect_count):
@@ -209,26 +209,26 @@ func _create_test_context(seed: int) -> EffectContext:
 	
 	return context
 
-func _create_damage_effect(id: String, amount: int) -> GameEffect:
+func _create_damage_effect(id: String, amount: int) -> EffectHandler:
 	"""Create a test damage effect."""
-	var effect = load("res://scripts/effects/types/damage_effect.gd").new()
+	var effect = load("res://scripts/effects/types/damage_handler.gd").new()
 	effect.effect_id = id
 	effect.amount = amount
 	effect.target_type = "enemy"
 	return effect
 
-func _create_heal_effect(id: String, amount: int) -> GameEffect:
+func _create_heal_effect(id: String, amount: int) -> EffectHandler:
 	"""Create a test heal effect."""
-	var effect = load("res://scripts/effects/types/resource_effect.gd").new()
+	var effect = load("res://scripts/effects/types/resource_handler.gd").new()
 	effect.effect_id = id
 	effect.resource_type = "health"
 	effect.amount = amount
 	effect.target_type = "player"
 	return effect
 
-func _create_resource_effect(id: String, amount: int) -> GameEffect:
+func _create_resource_effect(id: String, amount: int) -> EffectHandler:
 	"""Create a test resource effect."""
-	var effect = load("res://scripts/effects/types/resource_effect.gd").new()
+	var effect = load("res://scripts/effects/types/resource_handler.gd").new()
 	effect.effect_id = id
 	effect.resource_type = "energy"
 	effect.amount = amount

@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name StatusEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name StatusHandler
 
 # Status effects that modify target state (stun, debuff, etc.)
 
@@ -20,7 +20,7 @@ func apply_effect(context):
 	# Resolve conditional values
 	var final_duration = resolve_conditional_value("duration", duration, context)
 
-	# NOTE: Like DamageEffect, we do NOT directly mutate targets during effect
+	# NOTE: Like DamageHandler, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let
 	# DuelManager.apply_card_results() perform the actual mutations.
 	match status_type:

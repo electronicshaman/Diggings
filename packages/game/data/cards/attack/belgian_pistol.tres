@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://diotvmyurqkbx" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://bxvsehxk3ktf8" path="res://scripts/effects/core/conditional_value.gd" id="1_gys81"]
-[ext_resource type="Script" uid="uid://xanin6lft6g2" path="res://scripts/effects/types/damage_effect.gd" id="2"]
+[ext_resource type="Script" uid="uid://xanin6lft6g2" path="res://scripts/effects/types/damage_handler.gd" id="2"]
 
-[sub_resource type="Resource" id="DamageEffect_1"]
+[sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
 amount = 2
 
@@ -13,5 +13,5 @@ script = ExtResource("1")
 card_name = "Belgian Pistol"
 energy_cost = 0
 flavor_text = "Cheap, common, and just about reliable."
-effects = [SubResource("DamageEffect_1")]
+effects = [SubResource("DamageHandler_1")]
 accessibility_tier = "Starting"

@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name CombatTriggerEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name CombatTriggerHandler
 
 @export var enemy_path: String = ""
 @export var combat_context: String = "encounter"
@@ -19,7 +19,7 @@ func apply_effect(context):
 	if not enemy_resource:
 		result.success = false
 		result.prevented_by = "invalid_enemy_path"
-		push_error("CombatTriggerEffect: Could not load enemy at path: %s" % enemy_path)
+		push_error("CombatTriggerHandler: Could not load enemy at path: %s" % enemy_path)
 		return result
 
 	var game_manager = context.game_manager if context else null
@@ -37,7 +37,7 @@ func apply_effect(context):
 	if not game_manager:
 		result.success = false
 		result.prevented_by = "no_game_manager"
-		push_error("CombatTriggerEffect: GameManager not found")
+		push_error("CombatTriggerHandler: GameManager not found")
 		return result
 
 	# Prepare the duel

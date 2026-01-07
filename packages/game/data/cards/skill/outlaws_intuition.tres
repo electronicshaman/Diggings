@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/effects/types/defense_effect.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/effects/types/resource_effect.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/effects/types/defense_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/effects/types/resource_handler.gd" id="3"]
 
-[sub_resource type="Resource" id="DefenseEffect_1"]
+[sub_resource type="Resource" id="DefenseHandler_1"]
 script = ExtResource("2")
 amount = 4
 
-[sub_resource type="Resource" id="ResourceEffect_1"]
+[sub_resource type="Resource" id="ResourceHandler_1"]
 script = ExtResource("3")
 resource_type = "Ammo"
 amount = 1
@@ -23,7 +23,7 @@ card_name = "Outlaw's Intuition"
 energy_cost = 1
 card_type = "Skill"
 flavor_text = "A good outlaw can read the wind before the storm hits."
-effects = Array[GameEffect]([SubResource("DefenseEffect_1"), SubResource("ResourceEffect_1")])
+effects = Array[EffectHandler]([SubResource("DefenseHandler_1"), SubResource("ResourceHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false

@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name SanityEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name SanityHandler
 
 @export var amount: int = 0
 @export var percentage_based: bool = false

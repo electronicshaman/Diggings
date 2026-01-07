@@ -210,7 +210,7 @@ func _generate_upgraded_description(hold_bonus) -> String:
 	# This is a simplified implementation - you might want to make this more sophisticated
 	var base_desc = card_data.description
 	
-	# Handle both GameEffect and CardEffect hold bonuses
+	# Handle both EffectHandler and CardEffect hold bonuses
 	if hold_bonus.has("bonus_energy") and hold_bonus.bonus_energy > 0:
 		# Try to upgrade energy gain descriptions
 		var regex = RegEx.new()
@@ -273,7 +273,7 @@ func get_effect_descriptions(separator: String = " ") -> String:
 	for effect in card_data.effects:
 		var desc = ""
 		
-		# Check if this is a GameEffect with conditional values
+		# Check if this is a EffectHandler with conditional values
 		if effect.has_method("get") and effect.get("conditional_values") != null:
 			var conditional_values = effect.get("conditional_values")
 			if conditional_values is Array and conditional_values.size() > 0:
@@ -314,7 +314,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 			var condition_desc = cv.condition.get_description() if cv.condition else "unknown condition"
 
 			# Generate conditional text based on effect type
-			if effect.get_script().get_global_name() == "DamageEffect":
+			if effect.get_script().get_global_name() == "DamageHandler":
 				var val_true = cv.value_if_true
 				var val_false = cv.value_if_false
 				if curio_damage_bonus > 0:
@@ -325,7 +325,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 					return "Deal %d damage if %s, otherwise deal %d damage" % [
 						val_true, condition_desc, val_false
 					]
-			elif effect.get_script().get_global_name() == "DefenseEffect":
+			elif effect.get_script().get_global_name() == "DefenseHandler":
 				var val_true = cv.value_if_true
 				var val_false = cv.value_if_false
 				if curio_defense_bonus > 0:
@@ -336,7 +336,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 					return "Gain %d defense if %s, otherwise gain %d defense" % [
 						val_true, condition_desc, val_false
 					]
-			elif effect.get_script().get_global_name() == "CardManipulationEffect":
+			elif effect.get_script().get_global_name() == "CardManipulationHandler":
 				var action = effect.get("action") if effect.get("action") else "draw"
 				if cv.value_if_false == 0:
 					return "%s %d card(s) if %s" % [action.capitalize(), cv.value_if_true, condition_desc]
@@ -345,7 +345,7 @@ func _generate_conditional_description(effect: Resource) -> String:
 						action.capitalize(), cv.value_if_true, condition_desc,
 						action, cv.value_if_false
 					]
-			elif effect.get_script().get_global_name() == "HealthEffect":
+			elif effect.get_script().get_global_name() == "HealthHandler":
 				var base_amount = effect.amount
 				# Check if this is an additive conditional (applies_to_base_value) or replacement
 				if cv.applies_to_base_value:

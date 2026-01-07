@@ -1,5 +1,5 @@
-extends "res://scripts/effects/core/game_effect.gd"
-class_name CurioRewardEffect
+extends "res://scripts/effects/core/effect_handler.gd"
+class_name CurioRewardHandler
 
 @export var curio_paths: Array[String] = []
 @export var random_curio: bool = false

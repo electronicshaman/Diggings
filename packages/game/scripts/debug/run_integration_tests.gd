@@ -138,7 +138,7 @@ func test_effect_processing() -> bool:
 	context.trigger_event = "integration_test"
 	
 	# Test empty effects processing
-	var empty_effects: Array[GameEffect] = []
+	var empty_effects: Array[EffectHandler] = []
 	var results = processor.process_effects(empty_effects, context)
 	
 	if not results is Array:

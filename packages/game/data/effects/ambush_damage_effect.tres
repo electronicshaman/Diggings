@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="DamageEffect" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="DamageHandler" load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/effects/types/damage_effect.gd" id="1_ambush"]
+[ext_resource type="Script" path="res://scripts/effects/types/damage_handler.gd" id="1_ambush"]
 [ext_resource type="Script" path="res://scripts/effects/core/effect_condition.gd" id="2_condition"]
 [ext_resource type="Script" path="res://scripts/effects/core/conditional_value.gd" id="3_value"]
 

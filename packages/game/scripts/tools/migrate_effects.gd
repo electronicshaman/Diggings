@@ -1,5 +1,5 @@
 extends Node
-# Tool to migrate legacy .tres resources to unified GameEffect types.
+# Tool to migrate legacy .tres resources to unified EffectHandler types.
 # Run from editor or via a small entrypoint.
 
 var mapping := {

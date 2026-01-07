@@ -72,7 +72,7 @@ func evaluate(context) -> bool:
 	return result if not invert else not result
 
 func _get_cards_played_this_turn(context) -> int:
-	# Handle EffectContext from new GameEffect system
+	# Handle EffectContext from new EffectHandler system
 	if context is Resource and context.has_method("get"):
 		# Check for trigger_data dictionary containing cards_played_this_turn
 		var trigger_data = context.get("trigger_data")
@@ -102,7 +102,7 @@ func _get_cards_played_this_turn(context) -> int:
 	return 0
 
 func _get_cards_in_hand(context) -> int:
-	# Handle EffectContext from new GameEffect system
+	# Handle EffectContext from new EffectHandler system
 	if context is Resource and context.has_method("get"):
 		# Check for trigger_data dictionary containing hand_size
 		var trigger_data = context.get("trigger_data")

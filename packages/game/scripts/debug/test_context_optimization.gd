@@ -142,7 +142,7 @@ func test_conditional_value_caching() -> void:
 	context.player_data = player_data
 	
 	# Create mock effect
-	var effect = GameEffect.new()
+	var effect = EffectHandler.new()
 	effect.effect_id = "test_effect"
 	
 	# Cache conditional values

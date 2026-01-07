@@ -25,8 +25,8 @@ func _safe_log(level: String, message: String) -> void:
 			print("[%s] %s" % [level.to_upper(), message])
 
 # Signals for effect processing events
-signal effect_executed(effect: GameEffect, result: EffectResult, context: EffectContext)
-signal effect_failed(effect: GameEffect, reason: String, context: EffectContext)
+signal effect_executed(effect: EffectHandler, result: EffectResult, context: EffectContext)
+signal effect_failed(effect: EffectHandler, reason: String, context: EffectContext)
 signal batch_completed(results: Array[EffectResult])
 
 # Enhanced debugging signals
@@ -147,7 +147,7 @@ var _processing_history: Array[Dictionary] = []
 var _max_history_entries: int = 50
 
 ## Process multiple effects in batch with performance optimizations
-func process_effects(effects: Array[GameEffect], context: EffectContext) -> Array[EffectResult]:
+func process_effects(effects: Array[EffectHandler], context: EffectContext) -> Array[EffectResult]:
 	var batch_start_time = Time.get_ticks_msec()
 	var results: Array[EffectResult] = []
 	
@@ -160,7 +160,7 @@ func process_effects(effects: Array[GameEffect], context: EffectContext) -> Arra
 		return _process_effects_standard(effects, context, batch_start_time)
 
 ## Optimized batch processing for large effect sets
-func _process_effects_optimized(effects: Array[GameEffect], context: EffectContext, batch_start_time: int) -> Array[EffectResult]:
+func _process_effects_optimized(effects: Array[EffectHandler], context: EffectContext, batch_start_time: int) -> Array[EffectResult]:
 	var results: Array[EffectResult] = []
 	
 	if DEBUG_ENABLED:
@@ -186,7 +186,7 @@ func _process_effects_optimized(effects: Array[GameEffect], context: EffectConte
 					"original_error": validation_result.error_message,
 					"effect_count": effects.size() if effects else 0
 				})
-				effects = recovery_result.recovered_effects as Array[GameEffect]
+				effects = recovery_result.recovered_effects as Array[EffectHandler]
 				context = recovery_result.recovered_context
 			else:
 				_handle_critical_error("batch_validation_unrecoverable", {
@@ -301,7 +301,7 @@ func _process_effects_optimized(effects: Array[GameEffect], context: EffectConte
 	return results
 
 ## Standard batch processing for smaller effect sets
-func _process_effects_standard(effects: Array[GameEffect], context: EffectContext, batch_start_time: int) -> Array[EffectResult]:
+func _process_effects_standard(effects: Array[EffectHandler], context: EffectContext, batch_start_time: int) -> Array[EffectResult]:
 	var results: Array[EffectResult] = []
 	
 	# Enhanced input validation with graceful error handling
@@ -321,7 +321,7 @@ func _process_effects_standard(effects: Array[GameEffect], context: EffectContex
 					"effect_count": effects.size() if effects else 0
 				})
 				# Continue with recovered data
-				effects = recovery_result.recovered_effects as Array[GameEffect]
+				effects = recovery_result.recovered_effects as Array[EffectHandler]
 				context = recovery_result.recovered_context
 			else:
 				# Recovery failed, return empty results but don't crash
@@ -527,7 +527,7 @@ func _process_effects_standard(effects: Array[GameEffect], context: EffectContex
 	return results
 
 ## Process a single effect
-func process_single_effect(effect: GameEffect, context: EffectContext) -> EffectResult:
+func process_single_effect(effect: EffectHandler, context: EffectContext) -> EffectResult:
 	var effect_start_time = Time.get_ticks_msec()
 	var result = EffectResult.new()
 	
@@ -943,7 +943,7 @@ func create_context_for_curio(curio: CurioData, trigger_event: String, game_stat
 	return context
 
 ## Validate batch processing inputs
-func _validate_batch_inputs(effects: Array[GameEffect], context: EffectContext) -> bool:
+func _validate_batch_inputs(effects: Array[EffectHandler], context: EffectContext) -> bool:
 	if effects.is_empty():
 		_safe_log("warn", "EffectProcessor: Empty effects array provided")
 		return false
@@ -962,8 +962,8 @@ func _validate_batch_inputs(effects: Array[GameEffect], context: EffectContext) 
 			_safe_log("error", "EffectProcessor: Invalid effect at index %d" % i)
 			return false
 		
-		if not effects[i] is GameEffect:
-			_safe_log("error", "EffectProcessor: Non-GameEffect at index %d (type: %s)" % [i, effects[i].get_class()])
+		if not effects[i] is EffectHandler:
+			_safe_log("error", "EffectProcessor: Non-EffectHandler at index %d (type: %s)" % [i, effects[i].get_class()])
 			return false
 		
 		if effects[i].effect_id.is_empty():
@@ -1440,7 +1440,7 @@ func _log_context_details(context: EffectContext, operation: String) -> void:
 		_safe_log("trace", "  - Curio modifications: %d active" % context.curio_modifications.size())
 
 ## Log detailed effect context for debugging
-func _log_detailed_effect_context(effect: GameEffect, context: EffectContext) -> void:
+func _log_detailed_effect_context(effect: EffectHandler, context: EffectContext) -> void:
 	_safe_log("trace", "EffectProcessor: Detailed effect context:")
 	_safe_log("trace", "  - Effect ID: %s" % effect.effect_id)
 	_safe_log("trace", "  - Effect Type: %s" % effect.get_class())
@@ -1452,7 +1452,7 @@ func _log_detailed_effect_context(effect: GameEffect, context: EffectContext) ->
 		_safe_log("trace", "  - Trigger data keys: %s" % context.trigger_data.keys())
 
 ## Log effect result details for successful effects
-func _log_effect_result_details(effect: GameEffect, result: EffectResult, _processing_time_ms: int) -> void:
+func _log_effect_result_details(effect: EffectHandler, result: EffectResult, _processing_time_ms: int) -> void:
 	if not result.values_applied.is_empty():
 		_safe_log("debug", "EffectProcessor: Effect %s applied values: %s" % [effect.effect_id, result.values_applied])
 	
@@ -1460,7 +1460,7 @@ func _log_effect_result_details(effect: GameEffect, result: EffectResult, _proce
 		_safe_log("debug", "EffectProcessor: Effect %s logs: %s" % [effect.effect_id, result.logs])
 
 ## Log effect failure details for debugging
-func _log_effect_failure_details(effect: GameEffect, result: EffectResult, context: EffectContext, processing_time_ms: int) -> void:
+func _log_effect_failure_details(effect: EffectHandler, result: EffectResult, context: EffectContext, processing_time_ms: int) -> void:
 	_safe_log("warn", "EffectProcessor: Effect failure analysis for %s:" % effect.effect_id)
 	_safe_log("warn", "  - Processing time: %dms" % processing_time_ms)
 	_safe_log("warn", "  - Context source: %s" % context.source_type)
@@ -1470,14 +1470,14 @@ func _log_effect_failure_details(effect: GameEffect, result: EffectResult, conte
 		_safe_log("warn", "  - Error logs: %s" % result.logs)
 
 ## Log effect application failure details
-func _log_effect_application_failure(effect: GameEffect, context: EffectContext) -> void:
+func _log_effect_application_failure(effect: EffectHandler, context: EffectContext) -> void:
 	_safe_log("debug", "EffectProcessor: Effect %s cannot be applied:" % effect.effect_id)
 	_safe_log("debug", "  - Source: %s" % context.source_type)
 	_safe_log("debug", "  - Target: %s" % _get_target_description(context.primary_target))
 	_safe_log("debug", "  - Trigger: %s" % context.trigger_event)
 
 ## Log effect application error details
-func _log_effect_application_error(effect: GameEffect, result: EffectResult, apply_time_ms: int) -> void:
+func _log_effect_application_error(effect: EffectHandler, result: EffectResult, apply_time_ms: int) -> void:
 	_safe_log("warn", "EffectProcessor: Effect %s application error (took %dms):" % [effect.effect_id, apply_time_ms])
 	
 	if not result.logs.is_empty():
@@ -1485,7 +1485,7 @@ func _log_effect_application_error(effect: GameEffect, result: EffectResult, app
 			_safe_log("warn", "  - %s" % log_entry)
 
 ## Log successful effect details for trace level
-func _log_successful_effect_details(effect: GameEffect, result: EffectResult, apply_time_ms: int) -> void:
+func _log_successful_effect_details(effect: EffectHandler, result: EffectResult, apply_time_ms: int) -> void:
 	_safe_log("trace", "EffectProcessor: Effect %s success details (took %dms):" % [effect.effect_id, apply_time_ms])
 	
 	if not result.values_applied.is_empty():
@@ -1628,7 +1628,7 @@ func _get_target_description(target: Resource) -> String:
 		return target.get_class()
 
 ## Enhanced validation for batch inputs with detailed error reporting
-func _validate_batch_inputs_enhanced(effects: Array[GameEffect], context: EffectContext) -> Dictionary:
+func _validate_batch_inputs_enhanced(effects: Array[EffectHandler], context: EffectContext) -> Dictionary:
 	var result = {
 		"valid": false,
 		"error_message": "",
@@ -1672,7 +1672,7 @@ func _validate_batch_inputs_enhanced(effects: Array[GameEffect], context: Effect
 			invalid_effects.append({"index": i, "reason": "null_effect"})
 			continue
 		
-		if not effect is GameEffect:
+		if not effect is EffectHandler:
 			invalid_effects.append({"index": i, "reason": "wrong_type", "type": effect.get_class()})
 			continue
 		
@@ -1702,7 +1702,7 @@ func _validate_batch_inputs_enhanced(effects: Array[GameEffect], context: Effect
 	return result
 
 ## Enhanced validation for single effect inputs
-func _validate_single_effect_inputs(effect: GameEffect, context: EffectContext) -> Dictionary:
+func _validate_single_effect_inputs(effect: EffectHandler, context: EffectContext) -> Dictionary:
 	var result = {
 		"valid": false,
 		"error_message": "",
@@ -1717,8 +1717,8 @@ func _validate_single_effect_inputs(effect: GameEffect, context: EffectContext) 
 		result.recoverable = false
 		return result
 	
-	if not effect is GameEffect:
-		result.error_message = "Object is not a GameEffect (type: %s)" % effect.get_class()
+	if not effect is EffectHandler:
+		result.error_message = "Object is not a EffectHandler (type: %s)" % effect.get_class()
 		result.error_type = "wrong_effect_type"
 		result.recoverable = false
 		return result
@@ -1767,7 +1767,7 @@ func _validate_single_effect_inputs(effect: GameEffect, context: EffectContext) 
 	return result
 
 ## Attempt to recover from batch validation failures
-func _attempt_batch_recovery(effects: Array[GameEffect], context: EffectContext, validation_result: Dictionary) -> Dictionary:
+func _attempt_batch_recovery(effects: Array[EffectHandler], context: EffectContext, validation_result: Dictionary) -> Dictionary:
 	var recovery_result = {
 		"success": false,
 		"error_message": "",
@@ -1778,7 +1778,7 @@ func _attempt_batch_recovery(effects: Array[GameEffect], context: EffectContext,
 	
 	match validation_result.error_type:
 		"null_effects_array":
-			var empty_effects: Array[GameEffect] = []
+			var empty_effects: Array[EffectHandler] = []
 			recovery_result.recovered_effects = empty_effects
 			recovery_result.success = true
 			recovery_result.recovery_action = "Created empty effects array"
@@ -1791,10 +1791,10 @@ func _attempt_batch_recovery(effects: Array[GameEffect], context: EffectContext,
 		
 		"invalid_effects":
 			if _malformed_data_recovery:
-				var filtered_effects: Array[GameEffect] = []
+				var filtered_effects: Array[EffectHandler] = []
 				for i in range(effects.size()):
 					var effect = effects[i]
-					if is_instance_valid(effect) and effect is GameEffect:
+					if is_instance_valid(effect) and effect is EffectHandler:
 						filtered_effects.append(effect)
 				
 				recovery_result.recovered_effects = filtered_effects
@@ -1811,7 +1811,7 @@ func _attempt_batch_recovery(effects: Array[GameEffect], context: EffectContext,
 	return recovery_result
 
 ## Attempt to recover from single effect validation failures
-func _attempt_effect_recovery(effect: GameEffect, context: EffectContext, validation_result: Dictionary) -> Dictionary:
+func _attempt_effect_recovery(effect: EffectHandler, context: EffectContext, validation_result: Dictionary) -> Dictionary:
 	var recovery_result = {
 		"success": false,
 		"error_message": "",
@@ -1842,7 +1842,7 @@ func _attempt_effect_recovery(effect: GameEffect, context: EffectContext, valida
 	return recovery_result
 
 ## Validate an effect for processing with null safety
-func _validate_effect_for_processing(effect: GameEffect, index: int) -> bool:
+func _validate_effect_for_processing(effect: EffectHandler, index: int) -> bool:
 	if not _null_safety_enabled:
 		return true  # Skip validation if null safety is disabled
 	
@@ -1851,8 +1851,8 @@ func _validate_effect_for_processing(effect: GameEffect, index: int) -> bool:
 		_stats.null_safety_activations += 1
 		return false
 	
-	if not effect is GameEffect:
-		_safe_log("warn", "EffectProcessor: Non-GameEffect at index %d (type: %s), skipping" % [index, effect.get_class()])
+	if not effect is EffectHandler:
+		_safe_log("warn", "EffectProcessor: Non-EffectHandler at index %d (type: %s), skipping" % [index, effect.get_class()])
 		_stats.null_safety_activations += 1
 		return false
 	
@@ -1892,7 +1892,7 @@ func _validate_effect_result(result: EffectResult) -> bool:
 	return true
 
 ## Recover a malformed EffectResult
-func _recover_malformed_result(malformed_result: EffectResult, effect: GameEffect) -> EffectResult:
+func _recover_malformed_result(malformed_result: EffectResult, effect: EffectHandler) -> EffectResult:
 	var recovered = EffectResult.new()
 	
 	# Try to preserve what we can from the malformed result
@@ -1936,7 +1936,7 @@ func _create_validation_failure_result(error_message: String) -> EffectResult:
 	return result
 
 ## Safely get effect ID with null checking
-func _safe_get_effect_id(effect: GameEffect) -> String:
+func _safe_get_effect_id(effect: EffectHandler) -> String:
 	if not is_instance_valid(effect):
 		return "null_effect"
 	
@@ -2074,12 +2074,12 @@ func apply_card_instance_effects_with_context(duel_manager: DuelManager, card_in
 	context.trigger_data["hand_size"] = hand_size_before
 	
 	# Process effects
-	var typed_effects: Array[GameEffect] = []
+	var typed_effects: Array[EffectHandler] = []
 	for effect in card_instance.card_data.effects:
-		if effect is GameEffect:
+		if effect is EffectHandler:
 			typed_effects.append(effect)
 		else:
-			_safe_log("warn", "EffectProcessor: Skipping non-GameEffect in card effects: %s" % effect)
+			_safe_log("warn", "EffectProcessor: Skipping non-EffectHandler in card effects: %s" % effect)
 	
 	var effect_results = process_effects(typed_effects, context)
 	
@@ -2199,14 +2199,14 @@ func _apply_gambling_modifiers(duel_manager: DuelManager, results: Dictionary) -
 				_safe_log("debug", "EffectProcessor: Gambling FAILED! All effects negated")
 
 ## Sort effects for deterministic processing
-func _sort_effects_for_deterministic_processing(effects: Array[GameEffect]) -> Array[GameEffect]:
+func _sort_effects_for_deterministic_processing(effects: Array[EffectHandler]) -> Array[EffectHandler]:
 	"""Sort effects by their effect_id to ensure consistent processing order.
 	
 	This ensures that identical effect arrays are always processed in the same order,
 	which is crucial for deterministic behavior.
 	
 	Args:
-		effects: Array of GameEffect instances to sort
+		effects: Array of EffectHandler instances to sort
 		
 	Returns:
 		New array with effects sorted by effect_id
@@ -2218,7 +2218,7 @@ func _sort_effects_for_deterministic_processing(effects: Array[GameEffect]) -> A
 	var sorted_effects = effects.duplicate()
 	
 	# Sort by effect_id using a stable sort
-	sorted_effects.sort_custom(func(a: GameEffect, b: GameEffect) -> bool:
+	sorted_effects.sort_custom(func(a: EffectHandler, b: EffectHandler) -> bool:
 		var id_a = _safe_get_effect_id(a)
 		var id_b = _safe_get_effect_id(b)
 		
@@ -2233,7 +2233,7 @@ func _sort_effects_for_deterministic_processing(effects: Array[GameEffect]) -> A
 	return sorted_effects
 
 ## Validate deterministic processing by running effects multiple times
-func validate_deterministic_processing(effects: Array[GameEffect], context: EffectContext, iterations: int = 3) -> Dictionary:
+func validate_deterministic_processing(effects: Array[EffectHandler], context: EffectContext, iterations: int = 3) -> Dictionary:
 	"""Validate that effect processing produces consistent results across multiple runs.
 	
 	This method processes the same effects multiple times and compares results to ensure
@@ -2455,7 +2455,7 @@ func _return_pooled_context(context: EffectContext) -> void:
 	_context_pool.append(context)
 
 ## Batch validate effects with caching to avoid redundant validation
-func _batch_validate_effects(effects: Array[GameEffect]) -> Array[bool]:
+func _batch_validate_effects(effects: Array[EffectHandler]) -> Array[bool]:
 	"""Pre-validate all effects in a batch and cache results to avoid redundant checks."""
 	var validations: Array[bool] = []
 	validations.resize(effects.size())
@@ -2480,7 +2480,7 @@ func _batch_validate_effects(effects: Array[GameEffect]) -> Array[bool]:
 	return validations
 
 ## Enhanced batch input validation with caching
-func _validate_batch_inputs_cached(effects: Array[GameEffect], context: EffectContext) -> Dictionary:
+func _validate_batch_inputs_cached(effects: Array[EffectHandler], context: EffectContext) -> Dictionary:
 	"""Validate batch inputs with caching to improve performance for repeated validations."""
 	# Create a cache key based on effect count and context type
 	var cache_key = "%d_effects_%s" % [effects.size(), context.source_type if context else "null"]
@@ -2507,7 +2507,7 @@ func _validate_batch_inputs_cached(effects: Array[GameEffect], context: EffectCo
 	return result
 
 ## Optimized single effect processing with object pooling
-func _process_single_effect_optimized(effect: GameEffect, context: EffectContext, result: EffectResult) -> EffectResult:
+func _process_single_effect_optimized(effect: EffectHandler, context: EffectContext, result: EffectResult) -> EffectResult:
 	"""Process a single effect with optimizations like reduced validation and object reuse."""
 	var effect_start_time = Time.get_ticks_msec()
 	
@@ -2696,9 +2696,9 @@ func benchmark_batch_processing(effect_counts: Array[int], iterations: int = 10)
 		}
 		
 		# Create test effects (simple damage effects for consistency)
-		var test_effects: Array[GameEffect] = []
+		var test_effects: Array[EffectHandler] = []
 		for i in range(effect_count):
-			var effect = DamageEffect.new()
+			var effect = DamageHandler.new()
 			effect.effect_id = "benchmark_effect_%d" % i
 			effect.damage_amount = 1
 			test_effects.append(effect)
