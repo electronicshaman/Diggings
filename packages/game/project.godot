@@ -39,6 +39,7 @@ EffectRegistry="*res://scripts/effects/registry/effect_registry.gd"
 
 [debug]
 
+settings/gdscript/always_track_call_stacks=true
 shapes/collision/draw_2d=true
 
 [display]

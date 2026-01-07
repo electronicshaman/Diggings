@@ -26,5 +26,8 @@ card_name = "Ambush"
 energy_cost = 2
 flavor_text = "Strike first, strike hard, no mercy."
 effects = [SubResource("AmbushDamage_1")]
+unique_resource_costs = {
+"Ammo": 2
+}
 class_affinity = Array[String](["Bushranger"])
 accessibility_tier = "Class"

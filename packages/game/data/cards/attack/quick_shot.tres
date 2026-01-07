@@ -33,6 +33,9 @@ effects = Array[GameEffect]([SubResource("DamageEffect_1"), SubResource("CardMan
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
+unique_resource_costs = {
+"Ammo": 1
+}
 luck_modifier = 0.0
 class_affinity = Array[String](["Bushranger"])
 accessibility_tier = "Starting"
