@@ -52,7 +52,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg")
+enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
 
 [input]
 
