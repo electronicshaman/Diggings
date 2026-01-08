@@ -105,28 +105,33 @@ Hexmap-based exploration system:
 ## File Organization
 
 ```
-data/
-  cards/           # Card resources by type
-  characters/      # Character class definitions
-  enemies/         # Enemy configurations
-  map_nodes/       # Map node resources (cities, camps, etc.)
-  maps/            # Regional map configurations
-  game_state/      # DuelState, PlayerData, EnemyData resources
+src/
+  addons/          # Godot plugins (e.g. godot-mcp)
+  assets/          # Art, audio, and other binary assets
+  data/            # Game data resources (cards, enemies, etc.)
+    cards/         # Card resources by type
+    characters/    # Character class definitions
+    enemies/       # Enemy configurations
+    map_nodes/     # Map node resources
+    maps/          # Region/map configurations
+    game_state/    # Global state resources
+  
+  scripts/         # GDScript source code
+    autoloads/     # Singleton systems
+    cards/         # Card system logic
+    combat/        # Combat controllers
+    hexmap/        # Map exploration system
+    managers/      # MVC controllers
+    systems/       # Cross-cutting systems
+    ui/            # UI components
 
-scripts/
-  autoloads/       # Singletons (EventBus, GLog, SceneManager, etc.)
-  cards/           # Card system, CardData, effects
-  combat/          # Controllers for duel scenes (e.g., DuelSceneController)
-  hexmap/          # Hexmap system (grid, rendering, terrain generation)
-  managers/        # MVC controllers (game/ui/input/duel)
-  systems/         # Cross-cutting systems (e.g., card_effects.gd)
-  ui/              # UI helpers/components
+  scenes/          # Scene files (.tscn)
+    game/          # Gameplay scenes
+    ui/            # UI screens
+    map/           # Map scenes
+    debug/         # Test scenes
 
-scenes/
-  game/            # Gameplay scenes (duel, map, city hub, etc.)
-  ui/              # UI scenes (menus, settings, game over)
-  map/             # Map-related scenes and visualizers
-  debug/           # Debug/testing scenes (e.g., map_test.tscn)
+  test/            # Unit/integration tests
 ```
 
 ## Current Development Focus
