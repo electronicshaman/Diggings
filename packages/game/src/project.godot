@@ -1,0 +1,84 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Card Battler Prototype"
+run/main_scene="res://scenes/ui/main_menu.tscn"
+config/features=PackedStringArray("4.5", "Mobile")
+config/icon="res://icon.svg"
+
+[autoload]
+
+GameSettings="*res://scripts/autoloads/game_settings.gd"
+EventBus="*res://scripts/autoloads/event_bus.gd"
+SaveSystem="*res://scripts/autoloads/save_system.gd"
+ResourceManager="*res://scripts/autoloads/resource_manager.gd"
+SeedManager="*res://scripts/autoloads/seed_manager.gd"
+HexmapState="*res://scripts/autoloads/hexmap_state.gd"
+GLog="*res://scripts/autoloads/glog.gd"
+GameManager="*res://scripts/autoloads/game_manager.gd"
+DeckManager="*res://scripts/autoloads/deck_manager.gd"
+ModalManager="*res://scripts/autoloads/modal_manager.gd"
+SceneManager="*res://scripts/autoloads/scene_manager.gd"
+GDAIMCPRuntime="*res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd"
+MapNodeRegistry="*res://scripts/autoloads/map_node_registry.gd"
+CurioManager="*res://scripts/autoloads/curio_manager.gd"
+EncounterManager="*res://scripts/autoloads/encounter_manager.gd"
+CharacterGenerator="*res://scripts/autoloads/character_generator.gd"
+RunHistoryManager="*res://scripts/autoloads/run_history_manager.gd"
+DebugHUD="*res://scenes/debug/debug_hud.tscn"
+HandlerRegistry="*res://scripts/handlers/registry/handler_registry.gd"
+
+[debug]
+
+settings/gdscript/always_track_call_stacks=true
+shapes/collision/draw_2d=true
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=3
+window/size/initial_position_type=4
+window/stretch/mode="canvas_items"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
+
+[gdunit4]
+
+settings/test/test_discovery=true
+hooks/session_hooks=Dictionary[String, bool]({
+"res://addons/gdUnit4/src/core/hooks/GdUnitHtmlReporterTestSessionHook.gd": false,
+"res://addons/gdUnit4/src/core/hooks/GdUnitXMLReporterTestSessionHook.gd": true
+})
+
+[input]
+
+left_mouse={
+"deadzone": 0.2,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"canceled":false,"pressed":false,"double_click":false,"script":null)
+]
+}
+HUD={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194335,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+
+[network]
+
+limits/debugger/max_queued_messages=4096
+
+[rendering]
+
+renderer/rendering_method="mobile"

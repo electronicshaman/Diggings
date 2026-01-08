@@ -26,3 +26,7 @@ mono_crash.*.json
 
 # macOS Finder metadata
 .DS_Store
+
+# Generated reports
+reports/
+src/reports/

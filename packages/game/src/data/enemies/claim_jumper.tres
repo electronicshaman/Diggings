@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="EnemyState" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/stats.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/data/enemy_card_manager.gd" id="3"]
+[ext_resource type="Resource" uid="uid://bs7k2xma8k8gy" path="res://data/decks/enemy/claim_jumper_deck.tres" id="4_deck"]
+
+[sub_resource type="Resource" id="Stats_1"]
+script = ExtResource("2")
+current_health = 20
+max_health = 20
+current_energy = 3
+max_energy = 3
+current_sanity = 100
+max_sanity = 100
+defense = 0
+
+[sub_resource type="Resource" id="CardManager_1"]
+script = ExtResource("3")
+hand_size_limit = 7
+cards_per_turn = 5
+deck_data = ExtResource("4_deck")
+
+[resource]
+script = ExtResource("1")
+stats = SubResource("Stats_1")
+card_manager = SubResource("CardManager_1")
+enemy_name = "Claim Jumper"
+description = "A greedy prospector who steals from other miners"
+is_boss = false
+is_elite = true
+ai_type = "aggressive"
+player_pattern_memory_size = 3

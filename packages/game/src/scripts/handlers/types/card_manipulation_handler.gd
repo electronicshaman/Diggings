@@ -1,0 +1,75 @@
+extends "res://scripts/handlers/core/handler_base.gd"
+class_name CardManipulationHandler
+
+@export var action: String = "draw" # draw, discard, shuffle, etc.
+@export var amount: int = 1
+@export var card_filter: String = "" # optional filter expression/tag
+
+
+## Applies card manipulation actions (draw, discard, shuffle, exhaust).
+## Returns a HandlerResult with card actions to be applied by DuelManager.
+func apply_effect(context: Resource) -> Resource:
+	var result = HandlerResult.new()
+	if not context:
+		result.success = false
+		result.prevented_by = "no_context"
+		return result
+
+	# Resolve conditional values
+	var final_amount = resolve_conditional_value("amount", amount, context)
+
+	# NOTE: Like DamageHandler, we do NOT directly perform actions during effect
+	# resolution. We accumulate intended outcomes in EffectResult and let
+	# DuelManager.apply_card_results() perform the actual operations.
+	match action:
+		"draw":
+			result.values_applied["drawn"] = final_amount
+			result.success = true
+		"discard":
+			result.values_applied["discard_random"] = final_amount
+			if card_filter != "":
+				result.values_applied["discard_filter"] = card_filter
+			result.success = true
+		"shuffle":
+			result.values_applied["shuffle_deck"] = true
+			result.success = true
+		"exhaust":
+			result.values_applied["exhaust_random"] = final_amount
+			if card_filter != "":
+				result.values_applied["exhaust_filter"] = card_filter
+			result.success = true
+		_:
+			result.success = false
+			result.prevented_by = "unsupported_action"
+	return result
+
+func get_description_text(context: Resource) -> String:
+	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
+	
+	var text = ""
+	
+	match action:
+		"draw":
+			if final_amount == 1:
+				text = "Draw 1 card"
+			else:
+				text = "Draw %d cards" % final_amount
+		"discard":
+			if final_amount == 1:
+				text = "Discard 1 card"
+			else:
+				text = "Discard %d cards" % final_amount
+		"shuffle":
+			text = "Shuffle deck"
+		"exhaust":
+			if final_amount == 1:
+				text = "Exhaust 1 card"
+			else:
+				text = "Exhaust %d cards" % final_amount
+		_:
+			text = "%s %d cards" % [action.capitalize(), final_amount]
+	
+	if activation_condition:
+		text += " (if " + activation_condition.get_description() + ")"
+	
+	return text
