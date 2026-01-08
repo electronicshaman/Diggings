@@ -254,6 +254,10 @@ func is_duel_over() -> bool:
 
 func _on_duel_state_changed(_change_type: String, _data: Dictionary) -> void:
 	"""Handle duel state changes to check for immediate win/loss"""
+	# Ignore state changes if the duel is not active (e.g. during setup)
+	if not duel_state or not duel_state.duel_active:
+		return
+
 	# Check for win/loss conditions immediately on any state change
 	# This ensures we catch death events right away instead of waiting for end of turn
 	var winner = check_win_loss_conditions()

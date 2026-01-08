@@ -45,7 +45,16 @@ func handle_duel_end(winner: String, _duel_state: DuelState) -> Dictionary:
 	# Handle test duel end logic
 	var seq_state = GameManager.test_sequence_state
 	if not seq_state:
-		# Single test duel, return to test setup
+		# Single test duel
+		# Check if rewards should be shown
+		if GameManager.game_data.get("show_test_rewards", false):
+			GLog.info("Single test duel victory - routing to rewards", "test_sequence_handler")
+			response.handled = true
+			response.scene_to_load = "res://scenes/ui/victory_reward.tscn"
+			response.should_emit_signals = true
+			return response
+			
+		# Return to test setup if no rewards
 		response.handled = true
 		response.scene_to_load = "res://scenes/debug/test_duel_setup.tscn"
 		response.should_emit_signals = true
@@ -91,6 +100,10 @@ func start_next_battle() -> DuelConfig:
 	if not next_enemy:
 		GLog.error("Cannot start next battle - no next enemy", "test_sequence_handler")
 		return null
+		
+	# Duplicate the enemy resource to ensure a fresh state (full health, etc.)
+	# We use deep duplicate (true) to also duplicate sub-resources like Stats
+	next_enemy = next_enemy.duplicate(true)
 	
 	# Create deck from selected deck data
 	var deck_cards: Array[CardData] = []

@@ -432,6 +432,9 @@ func _on_start_pressed() -> void:
 		# Start first battle
 		_start_sequence_battle()
 	else:
+		# Persist rewards option for single duel
+		GameManager.game_data["show_test_rewards"] = show_rewards
+		
 		# Single enemy - backward compatibility (no sequence)
 		var enemy = selected_enemies[0]
 		_start_test_duel(character, deck, enemy, selected_curios, health_override, energy_override)
@@ -464,6 +467,17 @@ func _start_test_duel(character: Resource, deck: Resource, enemy: Resource, sele
 	if player_deck.is_empty():
 		GLog.error("Failed to load deck cards")
 		return
+	
+	# Store deck in GameData for runtime modification (rewards)
+	if not GameManager.game_data.has("player_deck"):
+		GameManager.game_data["player_deck"] = []
+	
+	# Clear previous runtime deck and fill with new cards
+	GameManager.game_data["player_deck"] = []
+	if deck and deck.has_method("get") and deck.get("card_paths"):
+		GameManager.game_data["player_deck"].append_array(deck.card_paths)
+	
+	GLog.info("Initialized runtime deck in GameData with %d cards" % player_deck.size(), "test_duel")
 
 	# Create DuelConfig with modifiers for health/energy overrides and character class
 	var modifiers = {

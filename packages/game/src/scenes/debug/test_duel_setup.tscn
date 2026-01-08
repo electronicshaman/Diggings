@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b6y5hkrls41kg"]
 
-[ext_resource type="Script" uid="uid://cshw0qnerg6cx" path="res://scripts/debug/test_duel_setup.gd" id="1"]
+[ext_resource type="Script" uid="uid://c4lffd0txjwvi" path="res://scripts/debug/test_duel_setup.gd" id="1"]
 
 [node name="TestDuelSetup" type="Control"]
 layout_mode = 3
@@ -157,8 +157,10 @@ layout_mode = 2
 [node name="RewardsLabel" type="Label" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/RewardsRow"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+text = "Rewards:"
 
 [node name="RewardsCheckbox" type="CheckBox" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection/RewardsRow"]
+button_pressed = true
 layout_mode = 2
 
 [node name="ProgressRow" type="HBoxContainer" parent="MarginContainer/MainHBox/VBoxContainer/ConfigSection"]
