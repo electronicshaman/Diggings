@@ -208,6 +208,26 @@ func _initialize_duel() -> void:
 			GameManager.clear_pending_duel_config()
 			return
 	
+	# Check for active test sequence (returning from victory reward mid-sequence)
+	if GameManager.test_sequence_state and GameManager.test_sequence_state.is_active:
+		GLog.info("Active test sequence detected - starting next battle", "duel_scene_controller")
+		
+		# Use TestSequenceHandler to create next battle config
+		var test_handler = TestSequenceHandler.new()
+		var next_config = test_handler.start_next_battle()
+		
+		if next_config and next_config.is_valid():
+			var card_array = next_config.get_modified_deck()
+			var enemy_data = next_config.enemy_data
+			var player_deck = _create_deck_data_from_cards(card_array, next_config.scene_context)
+			
+			duel_state_manager.start_duel(player_deck, enemy_data)
+			GameManager.game_data["is_test_duel"] = true
+			GLog.info("Started sequence battle against: %s" % (enemy_data.enemy_name if enemy_data and "enemy_name" in enemy_data else "Unknown"), "duel_scene_controller")
+			return
+		else:
+			GLog.error("Failed to create config for sequence battle", "duel_scene_controller")
+
 	# No fallback - let test scenes handle their own initialization
 	GLog.debug("No duel config found - waiting for external initialization")
 

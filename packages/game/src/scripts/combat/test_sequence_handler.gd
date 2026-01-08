@@ -48,9 +48,11 @@ func handle_duel_end(winner: String, _duel_state: DuelState) -> Dictionary:
 		# Single test duel
 		# Check if rewards should be shown
 		if GameManager.game_data.get("show_test_rewards", false):
+			var intent = RewardIntent.create_test_preview(false, "test_duel_setup")
 			GLog.info("Single test duel victory - routing to rewards", "test_sequence_handler")
 			response.handled = true
 			response.scene_to_load = "res://scenes/ui/victory_reward.tscn"
+			response.intent = intent
 			response.should_emit_signals = true
 			return response
 			
@@ -78,12 +80,23 @@ func handle_duel_end(winner: String, _duel_state: DuelState) -> Dictionary:
 		response.should_emit_signals = true
 		return response
 	else:
-		# Continue sequence - advance and start next battle
-		seq_state.advance_to_next_enemy()
-		response.handled = true
-		response.scene_to_load = "" # Stay in duel scene for next battle
-		response.should_emit_signals = false # Don't emit normal end signals
-		return response
+		# Continue sequence - check if rewards should be shown between battles
+		if seq_state.show_rewards:
+			# Show victory screen with intent, then continue sequence
+			var intent = RewardIntent.create_test_preview(true, "duel")
+			GLog.info("Sequence victory - routing to rewards before next battle", "test_sequence_handler")
+			response.handled = true
+			response.scene_to_load = "res://scenes/ui/victory_reward.tscn"
+			response.intent = intent
+			response.should_emit_signals = true
+			return response
+		else:
+			# Skip rewards - advance and start next battle directly
+			seq_state.advance_to_next_enemy()
+			response.handled = true
+			response.scene_to_load = "" # Stay in duel scene for next battle
+			response.should_emit_signals = false # Don't emit normal end signals
+			return response
 
 # ============================================================================
 # Sequence Progression

@@ -124,7 +124,11 @@ func end_duel(winner: String):
 		
 		if handler_result.scene_to_load:
 			await get_tree().create_timer(0.5).timeout
-			SceneManager.load_scene(handler_result.scene_to_load)
+			# Use intent-based loading if available
+			if handler_result.has("intent") and handler_result.intent:
+				SceneManager.load_scene_with_intent(handler_result.scene_to_load, handler_result.intent)
+			else:
+				SceneManager.load_scene(handler_result.scene_to_load)
 		else:
 			# Handled, but no scene change -> Sequence Continue
 			GLog.info("DuelManager: Sequence continuing to next battle...")

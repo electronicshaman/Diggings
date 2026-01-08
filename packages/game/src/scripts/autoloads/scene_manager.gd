@@ -11,6 +11,9 @@ var current_scene: Node = null
 var is_transitioning: bool = false
 var loaded_scenes: Dictionary = {}
 
+## Pending intent to be consumed by the target scene
+var pending_intent: SceneIntent = null
+
 const TRANSITION_DURATION: float = 0.5
 const SCENE_PATHS: Dictionary = {
 	"main_menu": "res://scenes/ui/main_menu.tscn",
@@ -86,6 +89,29 @@ func load_scene_by_name(scene_name: String, with_transition: bool = true) -> voi
 		load_scene(SCENE_PATHS[scene_name], with_transition)
 	else:
 		GLog.error("Unknown scene name: " + scene_name)
+
+## Load a scene with an intent providing typed parameters
+func load_scene_with_intent(scene_path: String, intent: SceneIntent, with_transition: bool = true) -> void:
+	pending_intent = intent
+	GLog.debug("Loading scene with intent: %s -> %s" % [intent.get_intent_type(), scene_path])
+	load_scene(scene_path, with_transition)
+
+## Load a named scene with an intent
+func load_scene_by_name_with_intent(scene_name: String, intent: SceneIntent, with_transition: bool = true) -> void:
+	if SCENE_PATHS.has(scene_name):
+		load_scene_with_intent(SCENE_PATHS[scene_name], intent, with_transition)
+	else:
+		GLog.error("Unknown scene name: " + scene_name)
+
+## Get and consume the pending intent (returns null if none)
+func get_pending_intent() -> SceneIntent:
+	var intent = pending_intent
+	pending_intent = null
+	return intent
+
+## Check if there's a pending intent without consuming it
+func has_pending_intent() -> bool:
+	return pending_intent != null
 
 func _change_scene(scene_path: String) -> void:
 	transition_started.emit()

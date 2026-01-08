@@ -7,8 +7,8 @@
 
 [sub_resource type="Resource" id="Stats_1"]
 script = ExtResource("2")
-current_health = 55
-max_health = 55
+current_health = 20
+max_health = 20
 current_energy = 4
 max_energy = 4
 current_sanity = 100
