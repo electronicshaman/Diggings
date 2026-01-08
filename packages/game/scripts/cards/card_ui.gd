@@ -51,22 +51,22 @@ func setup_card_visuals() -> void:
 
 	# Set type symbol
 	if type_symbol:
-		var symbol = CardTypeUtils.get_card_symbol(card_data.card_type)
+		var symbol = CardProperties.get_card_symbol(card_data.card_type)
 		type_symbol.text = symbol
 
 	# Set card colors based on type
-	var type_color = CardTypeUtils.get_card_color(card_data.card_type)
+	var type_color = CardProperties.get_card_color(card_data.card_type)
 	if card_border:
 		card_border.color = type_color
 	if card_background:
 		card_background.color = Color.WHITE
 	if card_inner:
-		card_inner.color = Color(0.95, 0.93, 0.9, 1)  # Cream/off-white
+		card_inner.color = Color(0.95, 0.93, 0.9, 1) # Cream/off-white
 
 	# Set energy cost
 	if energy_cost_label:
 		energy_cost_label.text = str(card_data.energy_cost)
-		energy_cost_label.add_theme_color_override("font_color", Color(0, 0.5, 1, 1))  # Blue
+		energy_cost_label.add_theme_color_override("font_color", Color(0, 0.5, 1, 1)) # Blue
 
 	# Set description
 	if description_label:

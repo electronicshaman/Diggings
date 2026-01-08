@@ -510,7 +510,7 @@ func _update_encounter_ids() -> void:
 
 	var id_map: Dictionary = {}
 	# Prefer autoload singleton if available
-	if typeof(EncounterManager) != TYPE_NIL and EncounterManager:
+	if is_instance_valid(EncounterManager):
 		id_map = EncounterManager.encountered_ids if EncounterManager.encountered_ids else {}
 	else:
 		var mgr := get_node_or_null("/root/EncounterManager")

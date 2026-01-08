@@ -1,13 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites id="2026-01-08" name="report_1" tests="4" failures="0" skipped="0" flaky="0" time="0.000">
-	<testsuite id="0" name="test_card_instance" package="test/unit/cards" timestamp="2026-01-07T21:59:00" hostname="localhost" tests="4" failures="0" errors="0" skipped="0" flaky="0" time="0.206">
-		<testcase name="test_initialization" classname="test_card_instance" time="0.023">
+<testsuites id="2026-01-08" name="report_1" tests="20" failures="0" skipped="0" flaky="0" time="0.000">
+	<testsuite id="0" name="test_card_handling" package="test/unit/config" timestamp="2026-01-08T04:03:40" hostname="localhost" tests="11" failures="0" errors="0" skipped="0" flaky="0" time="0.579">
+		<testcase name="test_valid_handling_types" classname="test_card_handling" time="0.045">
 		</testcase>
-		<testcase name="test_durability_decrement" classname="test_card_instance" time="0.033">
+		<testcase name="test_standard_handling" classname="test_card_handling" time="0.033">
 		</testcase>
-		<testcase name="test_dynamic_properties" classname="test_card_instance" time="0.031">
+		<testcase name="test_equipped_handling" classname="test_card_handling" time="0.032">
 		</testcase>
-		<testcase name="test_hold_mechanic" classname="test_card_instance" time="0.033">
+		<testcase name="test_flash_handling" classname="test_card_handling" time="0.033">
+		</testcase>
+		<testcase name="test_keep_handling" classname="test_card_handling" time="0.033">
+		</testcase>
+		<testcase name="test_hold_handling" classname="test_card_handling" time="0.033">
+		</testcase>
+		<testcase name="test_oneshot_handling" classname="test_card_handling" time="0.033">
+		</testcase>
+		<testcase name="test_recycle_handling" classname="test_card_handling" time="0.033">
+		</testcase>
+		<testcase name="test_topdeck_handling" classname="test_card_handling" time="0.033">
+		</testcase>
+		<testcase name="test_bottomdeck_handling" classname="test_card_handling" time="0.034">
+		</testcase>
+		<testcase name="test_unknown_handling_defaults_to_standard" classname="test_card_handling" time="0.034">
+		</testcase>
+	</testsuite>
+	<testsuite id="1" name="test_card_properties" package="test/unit/config" timestamp="2026-01-08T04:03:41" hostname="localhost" tests="5" failures="0" errors="0" skipped="0" flaky="0" time="0.175">
+		<testcase name="test_valid_card_types" classname="test_card_properties" time="0.023">
+		</testcase>
+		<testcase name="test_card_type_colors" classname="test_card_properties" time="0.013">
+		</testcase>
+		<testcase name="test_card_type_symbols" classname="test_card_properties" time="0.014">
+		</testcase>
+		<testcase name="test_valid_card_rarity" classname="test_card_properties" time="0.022">
+		</testcase>
+		<testcase name="test_rarity_colors" classname="test_card_properties" time="0.021">
+		</testcase>
+	</testsuite>
+	<testsuite id="2" name="test_card_instance" package="test/unit/cards" timestamp="2026-01-08T04:03:41" hostname="localhost" tests="4" failures="0" errors="0" skipped="0" flaky="0" time="0.139">
+		<testcase name="test_initialization" classname="test_card_instance" time="0.022">
+		</testcase>
+		<testcase name="test_durability_decrement" classname="test_card_instance" time="0.022">
+		</testcase>
+		<testcase name="test_dynamic_properties" classname="test_card_instance" time="0.014">
+		</testcase>
+		<testcase name="test_hold_mechanic" classname="test_card_instance" time="0.014">
 		</testcase>
 	</testsuite>
 </testsuites>

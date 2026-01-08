@@ -82,17 +82,20 @@ func _scan_resources() -> void:
 func _scan_directory(path: String, extension: String) -> Array[Resource]:
 	var result: Array[Resource] = []
 	var dir = DirAccess.open(path)
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while file_name != "":
-			if not dir.current_is_dir() and file_name.ends_with("." + extension):
-				var full_path = path + file_name
-				var resource = load(full_path)
-				if resource:
-					result.append(resource)
-			file_name = dir.get_next()
-		dir.list_dir_end()
+	if not dir:
+		GLog.warn("Failed to open directory: %s" % path)
+		return result
+
+	dir.list_dir_begin()
+	var file_name = dir.get_next()
+	while file_name != "":
+		if not dir.current_is_dir() and file_name.ends_with("." + extension):
+			var full_path = path + file_name
+			var resource = load(full_path)
+			if resource:
+				result.append(resource)
+		file_name = dir.get_next()
+	dir.list_dir_end()
 	return result
 
 func _sort_by_name(a: Resource, b: Resource) -> bool:
@@ -290,6 +293,8 @@ func _resume_sequence() -> void:
 		# Auto-advance to next battle after brief delay
 		GLog.info("Continuing sequence from rewards - battle %d/%d" % [seq_state.current_enemy_index + 1, seq_state.total_enemies], "test_duel")
 		await get_tree().create_timer(1.5).timeout
+		if not is_instance_valid(self) or not is_inside_tree():
+			return
 		_start_sequence_battle()
 
 func _setup_connections() -> void:

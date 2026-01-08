@@ -165,9 +165,9 @@ func _update_static_visuals() -> void:
 
 	# Type symbol and colors
 	if type_symbol:
-		type_symbol.text = CardTypeUtils.get_card_symbol(card_data.card_type)
+		type_symbol.text = CardProperties.get_card_symbol(card_data.card_type)
 
-	var type_color: Color = CardTypeUtils.get_card_color(card_data.card_type)
+	var type_color: Color = CardProperties.get_card_color(card_data.card_type)
 	if card_border:
 		card_border.color = type_color
 		original_border_color = type_color
@@ -350,7 +350,7 @@ func update_visual_state() -> void:
 	if not card_data or not card_background:
 		return
 
-	var base_color: Color = CardTypeUtils.get_card_color(card_data.card_type)
+	var base_color: Color = CardProperties.get_card_color(card_data.card_type)
 	if is_selected:
 		# Highlight selected cards
 		card_background.color = base_color.lightened(0.3)
@@ -375,7 +375,7 @@ func set_quick_draw_highlight(enabled: bool) -> void:
 	else:
 		# Restore original type-based border color
 		if card_data:
-			var type_color: Color = CardTypeUtils.get_card_color(card_data.card_type)
+			var type_color: Color = CardProperties.get_card_color(card_data.card_type)
 			card_border.color = type_color
 		is_quick_draw_highlighted = false
 

@@ -123,17 +123,7 @@ func get_formatted_description(game_state: Dictionary = {}) -> String:
 	return formatted
 
 func get_rarity_color() -> Color:
-	match rarity:
-		"Common":
-			return Color.GRAY
-		"Rare":
-			return Color.CYAN
-		"Legendary":
-			return Color.GOLD
-		"Story":
-			return Color.PURPLE
-		_:
-			return Color.WHITE
+	return CardProperties.get_rarity_color(rarity)
 
 func get_type_icon() -> String:
 	match encounter_type:
