@@ -14,8 +14,8 @@ signal duel_ended(winner: String)
 
 # Component dependencies
 var duel_state: DuelState
-var card_resolver: RefCounted  # CardResolver - typed as RefCounted to avoid forward reference
-var ai_controller: RefCounted  # EnemyAIController - typed as RefCounted to avoid forward reference
+var card_resolver: RefCounted # CardResolver - typed as RefCounted to avoid forward reference
+var ai_controller: RefCounted # EnemyAIController - typed as RefCounted to avoid forward reference
 
 # Timing constants
 const ENEMY_TURN_START_DELAY: float = 1.0
@@ -24,6 +24,9 @@ func _init(state: DuelState) -> void:
 	duel_state = state
 	if not duel_state:
 		GLog.error("DuelFlowController: initialized with null DuelState")
+	else:
+		# Connect to state changes to monitor win/loss conditions
+		duel_state.add_change_listener(_on_duel_state_changed)
 
 # Turn management methods
 func start_duel(player_deck: DeckData, enemy_data: EnemyState) -> void:
@@ -83,6 +86,56 @@ func start_duel(player_deck: DeckData, enemy_data: EnemyState) -> void:
 	# Start first turn
 	start_player_turn()
 
+func start_duel_with_config(config: DuelConfig) -> void:
+	"""Initialize duel from a DuelConfig object (runtime data)"""
+	GLog.info("DuelFlowController: Starting duel from config...")
+	
+	if not duel_state:
+		GLog.error("DuelFlowController: Cannot start duel - no DuelState")
+		return
+		
+	# 1. Assign enemy data (triggers setter we added earlier)
+	duel_state.enemy_data = config.enemy_data
+	
+	# 2. Batch notifications
+	if duel_state.has_method("begin_batch_changes"):
+		duel_state.begin_batch_changes()
+
+	# 3. Clear all card piles
+	duel_state.deck.clear()
+	duel_state.discard_pile.clear()
+	duel_state.hand.clear()
+	duel_state.removed_pile.clear()
+	duel_state.battlefield.clear()
+	
+	# 4. Load cards from Config directly (already CardData objects)
+	for card in config.player_deck:
+		if card:
+			duel_state.deck.add_card_data(card)
+	
+	duel_state.deck.shuffle()
+	
+	# 5. Initialize duel state (turns, active flag, etc)
+	duel_state.start_duel()
+	
+	# 6. Load enemy deck (delegated to enemy state)
+	if duel_state.enemy_data is EnemyState:
+		_load_enemy_deck(duel_state.enemy_data)
+		
+		# Draw initial enemy hand
+		var enemy_initial_draw = duel_state.enemy_data.draw_cards(5)
+		GLog.info("DuelFlowController: Drew initial enemy hand: %d cards" % enemy_initial_draw.size())
+	
+	# 7. Draw initial player hand
+	_draw_initial_hand()
+	
+	# 8. End batch
+	if duel_state.has_method("end_batch_changes"):
+		duel_state.end_batch_changes()
+	
+	# 9. Start first turn
+	start_player_turn()
+
 func start_player_turn() -> void:
 	"""Increment turn count, draw cards, emit signal"""
 	GLog.info("DuelFlowController: Starting player turn %d" % (duel_state.player_turn_count + 1))
@@ -91,7 +144,7 @@ func start_player_turn() -> void:
 	
 	# Draw cards for turn (except first turn which already drew initial hand)
 	if duel_state.player_turn_count > 1:
-		var cards_per_turn_draw = 1  # Standard card draw per turn
+		var cards_per_turn_draw = 1 # Standard card draw per turn
 		var drawn = duel_state.draw_cards(cards_per_turn_draw)
 		if drawn.size() > 0:
 			GLog.debug("DuelFlowController: Drew %d card(s) for turn" % drawn.size())
@@ -148,7 +201,7 @@ func end_enemy_turn() -> void:
 # Helper methods
 func _draw_initial_hand() -> void:
 	"""Draw initial hand of cards"""
-	var initial_hand_size = 5  # Standard initial hand size
+	var initial_hand_size = 5 # Standard initial hand size
 	var drawn = duel_state.draw_cards(initial_hand_size)
 	GLog.info("DuelFlowController: Drew initial hand of %d cards" % drawn.size())
 
@@ -198,3 +251,12 @@ func is_duel_over() -> bool:
 	
 	# Use DuelState's built-in check
 	return duel_state.is_duel_over()
+
+func _on_duel_state_changed(_change_type: String, _data: Dictionary) -> void:
+	"""Handle duel state changes to check for immediate win/loss"""
+	# Check for win/loss conditions immediately on any state change
+	# This ensures we catch death events right away instead of waiting for end of turn
+	var winner = check_win_loss_conditions()
+	if winner != "":
+		GLog.info("DuelFlowController: Immediate win/loss detected: %s" % winner)
+		duel_ended.emit(winner)

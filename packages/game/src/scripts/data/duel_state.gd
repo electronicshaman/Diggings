@@ -8,8 +8,23 @@ const DEBUG_ENABLED: bool = true
 # This replaces the complex serialization logic in the old system
 
 # Core game entities
-@export var player_data: PlayerData
-@export var enemy_data: EnemyState
+# Core game entities
+@export var player_data: PlayerData:
+	set(value):
+		if player_data:
+			player_data.remove_change_listener(_forward_player_change)
+		player_data = value
+		if player_data:
+			player_data.add_change_listener(_forward_player_change)
+			# Initial state sync if implementation requires it, but usually listeners are enough
+
+@export var enemy_data: EnemyState:
+	set(value):
+		if enemy_data:
+			enemy_data.remove_change_listener(_forward_enemy_change)
+		enemy_data = value
+		if enemy_data:
+			enemy_data.add_change_listener(_forward_enemy_change)
 
 # Card collections
 @export var hand: CardPile
@@ -44,7 +59,7 @@ func _init():
 		enemy_data = EnemyState.new()
 	
 	if not hand:
-		hand = CardPile.new("hand", 10)  # Max 10 cards in hand
+		hand = CardPile.new("hand", 10) # Max 10 cards in hand
 	
 	if not deck:
 		deck = CardPile.new("deck")
@@ -58,16 +73,14 @@ func _init():
 	if not battlefield:
 		battlefield = CardPile.new("battlefield")
 	
-	# Set up change forwarding
+	# Set up change forwarding for non-property lists if any remain.
+	# Standard properties like player_data and enemy_data are handled by setters now.
+	# We still need to setup card piles as they don't have setters defined above yet.
 	setup_change_forwarding()
 
 func setup_change_forwarding():
 	"""Set up change notification forwarding from all sub-resources"""
-	if player_data:
-		player_data.add_change_listener(_forward_player_change)
-	
-	if enemy_data:
-		enemy_data.add_change_listener(_forward_enemy_change)
+	# player_data and enemy_data are handled by their setters
 	
 	if hand:
 		hand.add_change_listener(_forward_hand_change)
@@ -173,7 +186,7 @@ func start_player_turn():
 	
 	# Draw 5 cards at the start of each turn (except turn 1, which already drew initial hand)
 	if player_turn_count > 1:
-		var cards_to_draw = 5 - hand.size()  # Draw up to 5 cards
+		var cards_to_draw = 5 - hand.size() # Draw up to 5 cards
 		if cards_to_draw > 0:
 			var drawn = draw_cards(cards_to_draw)
 			GLog.info("Drew %d cards at start of turn %d" % [drawn.size(), player_turn_count])
@@ -243,7 +256,7 @@ func play_card(card_instance: CardInstance):
 	"""Move card from hand to battlefield for staging"""
 	if not hand.remove_card(card_instance):
 		GLog.warn("Tried to play card not in hand: %s" % card_instance.get_card_name())
-		return  # Card not in hand
+		return # Card not in hand
 	
 	GLog.debug("Playing card '%s' to battlefield" % card_instance.get_card_name())
 	
@@ -255,7 +268,7 @@ func resolve_battlefield():
 	"""Process all cards on the battlefield and move them to final destinations"""
 	GLog.info("Resolving battlefield with %d cards" % battlefield.size())
 	
-	var cards_to_resolve = battlefield.cards.duplicate()  # Copy to avoid modification during iteration
+	var cards_to_resolve = battlefield.cards.duplicate() # Copy to avoid modification during iteration
 	
 	for card_instance in cards_to_resolve:
 		# Remove from battlefield first
@@ -369,7 +382,7 @@ func can_play_cards() -> bool:
 
 func can_end_turn() -> bool:
 	"""Check if player can end their turn"""
-	return can_play_cards()  # Same conditions for now
+	return can_play_cards() # Same conditions for now
 
 func is_duel_over() -> bool:
 	"""Check if duel should end"""
@@ -396,7 +409,7 @@ func get_winner() -> String:
 	if enemy_data and enemy_data.is_dead():
 		return "player"
 	
-	return "draw"  # Shouldn't happen but just in case
+	return "draw" # Shouldn't happen but just in case
 
 # Serialization support
 func get_save_data() -> Dictionary:

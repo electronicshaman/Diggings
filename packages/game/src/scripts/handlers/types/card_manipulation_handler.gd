@@ -46,23 +46,30 @@ func apply_effect(context: Resource) -> Resource:
 func get_description_text(context: Resource) -> String:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
 	
+	var text = ""
+	
 	match action:
 		"draw":
 			if final_amount == 1:
-				return "Draw 1 card"
+				text = "Draw 1 card"
 			else:
-				return "Draw %d cards" % final_amount
+				text = "Draw %d cards" % final_amount
 		"discard":
 			if final_amount == 1:
-				return "Discard 1 card"
+				text = "Discard 1 card"
 			else:
-				return "Discard %d cards" % final_amount
+				text = "Discard %d cards" % final_amount
 		"shuffle":
-			return "Shuffle deck"
+			text = "Shuffle deck"
 		"exhaust":
 			if final_amount == 1:
-				return "Exhaust 1 card"
+				text = "Exhaust 1 card"
 			else:
-				return "Exhaust %d cards" % final_amount
+				text = "Exhaust %d cards" % final_amount
 		_:
-			return "%s %d cards" % [action.capitalize(), final_amount]
+			text = "%s %d cards" % [action.capitalize(), final_amount]
+	
+	if activation_condition:
+		text += " (if " + activation_condition.get_description() + ")"
+	
+	return text

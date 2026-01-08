@@ -125,6 +125,24 @@ func end_duel(winner: String):
 		if handler_result.scene_to_load:
 			await get_tree().create_timer(0.5).timeout
 			SceneManager.load_scene(handler_result.scene_to_load)
+		else:
+			# Handled, but no scene change -> Sequence Continue
+			GLog.info("DuelManager: Sequence continuing to next battle...")
+			var next_config = test_handler.start_next_battle()
+			if next_config:
+				# Brief pause between battles
+				await get_tree().create_timer(1.0).timeout
+				
+				# Start the next duel using the config
+				flow_controller.start_duel_with_config(next_config)
+				
+				# Re-setup passives for the new duel
+				passive_handler.setup_passives()
+				
+				duel_started.emit()
+			else:
+				GLog.error("DuelManager: Failed to get next battle config from sequence handler")
+				
 		return
 
 	# Normal (non-test) duel - do state cleanup

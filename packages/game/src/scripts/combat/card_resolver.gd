@@ -237,6 +237,7 @@ func resolve_card(card_instance: CardInstance, is_player: bool, cards_played_bef
 		if context.trigger_data == null:
 			context.trigger_data = {}
 		context.trigger_data["cards_played_before"] = cards_played_before
+		context.trigger_data["cards_played_this_turn"] = cards_played_before
 		context.trigger_data["hand_size_before"] = hand_size_before
 
 	# Execute card effects

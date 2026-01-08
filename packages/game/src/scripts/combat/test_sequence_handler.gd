@@ -72,8 +72,8 @@ func handle_duel_end(winner: String, _duel_state: DuelState) -> Dictionary:
 		# Continue sequence - advance and start next battle
 		seq_state.advance_to_next_enemy()
 		response.handled = true
-		response.scene_to_load = ""  # Stay in duel scene for next battle
-		response.should_emit_signals = false  # Don't emit normal end signals
+		response.scene_to_load = "" # Stay in duel scene for next battle
+		response.should_emit_signals = false # Don't emit normal end signals
 		return response
 
 # ============================================================================
@@ -94,8 +94,23 @@ func start_next_battle() -> DuelConfig:
 	
 	# Create deck from selected deck data
 	var deck_cards: Array[CardData] = []
-	if seq_state.selected_deck and "cards" in seq_state.selected_deck:
-		deck_cards = seq_state.selected_deck.cards.duplicate()
+	GLog.info("Preparing next battle deck...", "test_sequence_handler")
+	if seq_state.selected_deck:
+		if "cards" in seq_state.selected_deck:
+			# Handle explicit card list (e.g. ad-hoc deck)
+			deck_cards = seq_state.selected_deck.cards.duplicate()
+		elif "card_paths" in seq_state.selected_deck:
+			# Handle DeckData resource
+			var paths = seq_state.selected_deck.card_paths
+			GLog.info("Loading %d cards from paths" % paths.size(), "test_sequence_handler")
+			for path in paths:
+				var card = load(path) as CardData
+				if card:
+					deck_cards.append(card)
+				else:
+					GLog.warn("Failed to load card at path: %s" % path, "test_sequence_handler")
+	
+	GLog.info("Creating DuelConfig with %d cards and enemy %s" % [deck_cards.size(), next_enemy], "test_sequence_handler")
 	
 	# Create DuelConfig with test modifiers
 	var config = DuelConfig.new(
@@ -105,7 +120,7 @@ func start_next_battle() -> DuelConfig:
 		{"test_duel": true}
 	)
 	
-	GLog.info("Created DuelConfig for next sequence battle: %s" % next_enemy.get("enemy_name", "Unknown"), "test_sequence_handler")
+	GLog.info("Created DuelConfig successfully", "test_sequence_handler")
 	return config
 
 func get_persistent_state() -> Dictionary:
