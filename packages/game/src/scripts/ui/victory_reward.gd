@@ -186,20 +186,22 @@ func _on_card_selected(card_node: Node, card_data: CardData):
 	_complete_card_reward()
 
 func _add_card_to_deck(card_data: CardData):
-	"""Add the selected card to the player's deck"""
+	"""Add the selected card to the player's deck via DeckManager"""
 	# Preview mode: show selection but don't add to deck
 	if is_test_sequence_preview:
 		GLog.info("PREVIEW: Card '%s' selected but NOT added to deck" % card_data.card_name, "victory_reward")
 		EventBus.emit_ui_notification("Preview: %s (not added)" % card_data.card_name, "info")
 		return
 
-	# Store the card path in game_data for persistence
-	if not GameManager.game_data.has("player_deck"):
-		GameManager.game_data["player_deck"] = []
-
-	# Add the card's resource path to the deck
-	GameManager.game_data["player_deck"].append(card_data.resource_path)
-	GLog.info("Added %s to player deck" % card_data.card_name)
+	# Use DeckManager to add the card (proper SOLID approach)
+	if DeckManager and DeckManager.is_deck_available():
+		var success := DeckManager.add_card(card_data)
+		if success:
+			GLog.info("Added %s to player deck via DeckManager" % card_data.card_name)
+		else:
+			GLog.error("Failed to add card via DeckManager: %s" % card_data.card_name)
+	else:
+		GLog.error("DeckManager not available - card '%s' not added" % card_data.card_name)
 
 	# Emit event for other systems to react
 	if EventBus.has_signal("card_added_to_deck"):
