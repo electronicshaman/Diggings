@@ -18,7 +18,9 @@ const VALID_CARD_TYPES: Array[String] = [
 	"Attack",
 	"Skill",
 	"Power",
-	"Fortune"
+	"Fortune",
+	"Grog",
+	"Gamble"
 ]
 
 

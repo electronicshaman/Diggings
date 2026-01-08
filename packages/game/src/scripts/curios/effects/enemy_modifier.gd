@@ -3,7 +3,7 @@ class_name EnemyModifier
 
 const EFFECT_NAME := "Enemy Modifier"
 
-@export var stat_name: String = "strength"  # strength, defense, health
+@export var stat_name: String = "strength" # strength, defense, health
 @export var modifier_value: int = 0
 @export var apply_to_all: bool = true
 
@@ -27,16 +27,16 @@ func _apply_to_enemy(enemy: Object) -> void:
 			if enemy.has_method("modify_max_health"):
 				enemy.modify_max_health(modifier_value)
 
-func _find_duel_manager(game_state: Node):
+func _find_duel_manager(game_state: Node) -> DuelManager:
 	if not game_state or not game_state.get_tree():
 		return null
-	var root = game_state.get_tree().get_root()
+	var root := game_state.get_tree().get_root()
 	if not root:
 		return null
 	# Breadth-first search for a node of type DuelManager
-	var queue: Array = [root]
+	var queue: Array[Node] = [root]
 	while not queue.is_empty():
-		var node = queue.pop_front()
+		var node: Node = queue.pop_front() as Node
 		# Direct type check using class_name
 		if node is DuelManager:
 			return node

@@ -57,6 +57,10 @@ enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg", "res:
 [gdunit4]
 
 settings/test/test_discovery=true
+hooks/session_hooks=Dictionary[String, bool]({
+"res://addons/gdUnit4/src/core/hooks/GdUnitHtmlReporterTestSessionHook.gd": false,
+"res://addons/gdUnit4/src/core/hooks/GdUnitXMLReporterTestSessionHook.gd": false
+})
 
 [input]
 
