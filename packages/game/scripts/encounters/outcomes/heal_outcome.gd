@@ -49,7 +49,7 @@ func get_formatted_description() -> String:
 		return "Heal %d%% of max health" % int(percentage * 100)
 	return "Heal %d health" % heal_amount
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	if full_heal:
 		return "Full heal"
 	elif percentage_based:

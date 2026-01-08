@@ -16,16 +16,16 @@ class_name CurioData
 @export var max_stacks: int = 1
 
 # Modular effects system (like cards)
-@export var effects: Array[Resource] = []  # Array of CurioEffect resources
+@export var effects: Array[Resource] = [] # Array of CurioEffect resources
 
 # Costs and Requirements
-@export var corruption_cost: int = 0  # For corrupted curios
-@export var gold_cost: int = 100  # Default shop price
-@export var unlock_requirement: String = ""  # Optional unlock condition
+@export var corruption_cost: int = 0 # For corrupted curios
+@export var gold_cost: int = 100 # Default shop price
+@export var unlock_requirement: String = "" # Optional unlock condition
 
 # Class Relationships (synergy scores)
 @export_group("Class Synergy")
-@export var bushranger_synergy: float = 1.0  # 1.0 = neutral, >1.0 = good synergy
+@export var bushranger_synergy: float = 1.0 # 1.0 = neutral, >1.0 = good synergy
 @export var prospector_synergy: float = 1.0
 @export var tracker_synergy: float = 1.0
 @export var publican_synergy: float = 1.0
@@ -33,7 +33,7 @@ class_name CurioData
 # Visual Properties
 @export_group("Visual")
 @export var glow_color: Color = Color.WHITE
-@export var trigger_particle: PackedScene  # Optional particle effect on trigger
+@export var trigger_particle: PackedScene # Optional particle effect on trigger
 
 # Helper methods
 func get_synergy_for_class(character_class: String) -> float:
@@ -50,17 +50,7 @@ func get_synergy_for_class(character_class: String) -> float:
 			return 1.0
 
 func get_rarity_color() -> Color:
-	match rarity:
-		"Common":
-			return Color.GRAY
-		"Rare":
-			return Color.CYAN
-		"Legendary":
-			return Color.GOLD
-		"Corrupted":
-			return Color.PURPLE
-		_:
-			return Color.WHITE
+	return CardProperties.get_rarity_color(rarity)
 
 func get_shop_price() -> int:
 	# Base price modified by rarity
@@ -73,7 +63,7 @@ func get_shop_price() -> int:
 		"Legendary":
 			base_price = int(base_price * 2.5)
 		"Corrupted":
-			base_price = int(base_price * 0.8)  # Cheaper but has corruption cost
+			base_price = int(base_price * 0.8) # Cheaper but has corruption cost
 	return base_price
 
 func can_stack_with(other_curio: CurioData) -> bool:

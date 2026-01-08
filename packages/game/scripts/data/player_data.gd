@@ -38,8 +38,8 @@ const DEBUG_ENABLED: bool = true
 @export var damage_taken_this_turn: int = 0
 
 # Unified class resource system (Ammo, Faith, Fever, Scent, Brew, etc.)
-@export var custom_resources: Dictionary = {}  # resource_name -> current_amount
-@export var custom_resource_max: Dictionary = {}  # resource_name -> max_value (0 = no max)
+@export var custom_resources: Dictionary = {} # resource_name -> current_amount
+@export var custom_resource_max: Dictionary = {} # resource_name -> max_value (0 = no max)
 
 # HOLD card persistence (cards that persist between turns)
 @export var hold_cards: Array[CardData] = []
@@ -48,20 +48,20 @@ const DEBUG_ENABLED: bool = true
 @export var delayed_damage: int = 0
 
 # Curio system
-@export var curios: Array = []  # Array of CurioData resources
-@export var curio_stacks: Dictionary = {}  # curio_name -> stack count
+@export var curios: Array = [] # Array of CurioData resources
+@export var curio_stacks: Dictionary = {} # curio_name -> stack count
 
 # Karma system for moral choices and reputation
-@export var moral_karma: int = 0  # Overall moral character (-10 to +10)
+@export var moral_karma: int = 0 # Overall moral character (-10 to +10)
 @export var karma_categories: Dictionary = {
-	"wildlife": 0,      # Animal interactions
-	"strangers": 0,     # Helping travelers, sharing resources
-	"community": 0,     # Town/settlement interactions
-	"business": 0,      # Fair dealing vs exploitation
-	"survival": 0       # Desperate situations, life-or-death choices
+	"wildlife": 0, # Animal interactions
+	"strangers": 0, # Helping travelers, sharing resources
+	"community": 0, # Town/settlement interactions
+	"business": 0, # Fair dealing vs exploitation
+	"survival": 0 # Desperate situations, life-or-death choices
 }
 @export var reputation_tier: String = "neutral_wanderer"
-@export var reputation_events: Array[String] = []  # Significant moral choices made
+@export var reputation_events: Array[String] = [] # Significant moral choices made
 
 # Change tracking system
 var _change_listeners: Array[Callable] = []
@@ -93,84 +93,84 @@ func _forward_stats_change(change_type: String, old_value, new_value):
 	_emit_change(change_type, old_value, new_value)
 
 # Unified Resource Management (supports all class resources: Ammo, Faith, Fever, Scent, Brew)
-func gain_resource(resource_name: String, amount: int) -> int:
+func gain_resource(res_name: String, amount: int) -> int:
 	"""Gain resource points, respecting max cap if defined. Returns actual amount gained."""
-	var old_value = custom_resources.get(resource_name, 0)
-	var max_val = custom_resource_max.get(resource_name, 0)
+	var old_value = custom_resources.get(res_name, 0)
+	var max_val = custom_resource_max.get(res_name, 0)
 	var new_value = old_value + amount
 	if max_val > 0:
 		new_value = clamp(new_value, 0, max_val)
-	custom_resources[resource_name] = new_value
+	custom_resources[res_name] = new_value
 	var actual_gain = new_value - old_value
 	if actual_gain > 0:
-		_emit_change("resource_gained", {"resource": resource_name, "amount": actual_gain, "current": new_value})
+		_emit_change("resource_gained", {"resource": res_name, "amount": actual_gain, "current": new_value})
 		# Emit generic resource signal via EventBus
 		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
 		if event_bus and event_bus.has_signal("resource_gained"):
-			event_bus.resource_gained.emit(self, resource_name, actual_gain)
+			event_bus.resource_gained.emit(self, res_name, actual_gain)
 	return actual_gain
 
-func spend_resource(resource_name: String, amount: int) -> bool:
+func spend_resource(res_name: String, amount: int) -> bool:
 	"""Spend resource points if available. Returns success."""
-	var current = custom_resources.get(resource_name, 0)
+	var current = custom_resources.get(res_name, 0)
 	if current >= amount:
-		custom_resources[resource_name] = current - amount
-		_emit_change("resource_spent", {"resource": resource_name, "amount": amount, "current": current - amount})
+		custom_resources[res_name] = current - amount
+		_emit_change("resource_spent", {"resource": res_name, "amount": amount, "current": current - amount})
 		# Emit generic resource signal via EventBus
 		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
 		if event_bus and event_bus.has_signal("resource_spent"):
-			event_bus.resource_spent.emit(self, resource_name, amount)
+			event_bus.resource_spent.emit(self, res_name, amount)
 		return true
 	return false
 
-func can_afford_resource(resource_name: String, amount: int) -> bool:
+func can_afford_resource(res_name: String, amount: int) -> bool:
 	"""Check if player has enough of the specified resource."""
-	return custom_resources.get(resource_name, 0) >= amount
+	return custom_resources.get(res_name, 0) >= amount
 
-func reset_resource(resource_name: String):
+func reset_resource(res_name: String):
 	"""Reset resource to 0."""
-	var old_value = custom_resources.get(resource_name, 0)
+	var old_value = custom_resources.get(res_name, 0)
 	if old_value != 0:
-		custom_resources[resource_name] = 0
-		_emit_change("resource_reset", {"resource": resource_name, "old_value": old_value})
+		custom_resources[res_name] = 0
+		_emit_change("resource_reset", {"resource": res_name, "old_value": old_value})
 
 func reset_all_resources():
 	"""Reset all class resources to 0."""
-	for resource_name in custom_resources.keys():
-		reset_resource(resource_name)
+	for res_name in custom_resources.keys():
+		reset_resource(res_name)
 
-func get_resource(resource_name: String) -> int:
+func get_resource(res_name: String) -> int:
 	"""Get current value of a resource."""
-	return custom_resources.get(resource_name, 0)
+	return custom_resources.get(res_name, 0)
 
-func get_resource_max(resource_name: String) -> int:
+func get_resource_max(res_name: String) -> int:
 	"""Get max value of a resource (0 = no max)."""
-	return custom_resource_max.get(resource_name, 0)
+	return custom_resource_max.get(res_name, 0)
 
-func set_resource(resource_name: String, amount: int):
+func set_resource(res_name: String, amount: int):
 	"""Set a resource value directly."""
-	var max_val = custom_resource_max.get(resource_name, 0)
+	var max_val = custom_resource_max.get(res_name, 0)
 	if max_val > 0:
 		amount = clamp(amount, 0, max_val)
-	custom_resources[resource_name] = amount
-	_emit_change("resource_changed", {"resource": resource_name, "current": amount})
+	custom_resources[res_name] = amount
+	_emit_change("resource_changed", {"resource": res_name, "current": amount})
 
-func modify_resource(resource_name: String, amount: int):
+func modify_resource(res_name: String, amount: int):
 	"""Modify a resource value (positive = gain, negative = spend)."""
 	if amount > 0:
-		gain_resource(resource_name, amount)
+		gain_resource(res_name, amount)
 	elif amount < 0:
-		spend_resource(resource_name, -amount)
+		spend_resource(res_name, -amount)
 
 # Legacy compatibility aliases
-func set_custom_resource(resource_name: String, amount: int):
-	set_resource(resource_name, amount)
+func set_custom_resource(res_name: String, amount: int):
+	set_resource(res_name, amount)
 
-func modify_custom_resource(resource_name: String, amount: int):
-	modify_resource(resource_name, amount)
+func modify_custom_resource(res_name: String, amount: int):
+	modify_resource(res_name, amount)
 
-func get_custom_resource(resource_name: String) -> int:
-	return get_resource(resource_name)
+func get_custom_resource(res_name: String) -> int:
+	return get_resource(res_name)
 
 # Character class methods
 func set_character_class(new_class: CharacterClass):
@@ -192,12 +192,12 @@ func initialize_class_resources():
 	custom_resource_max.clear()
 
 	# Initialize resources from character class definition
-	for resource_name in character_class.unique_resources:
-		var default_val = character_class.unique_resource_defaults.get(resource_name, 0)
-		var max_val = character_class.unique_resource_max.get(resource_name, 0)
-		custom_resources[resource_name] = default_val
+	for res_name in character_class.unique_resources:
+		var default_val = character_class.unique_resource_defaults.get(res_name, 0)
+		var max_val = character_class.unique_resource_max.get(res_name, 0)
+		custom_resources[res_name] = default_val
 		if max_val > 0:
-			custom_resource_max[resource_name] = max_val
+			custom_resource_max[res_name] = max_val
 
 	GLog.debug("Initialized class resources for %s: %s" % [character_class_name, str(custom_resources)])
 
@@ -476,7 +476,7 @@ func get_curio_stack_count(curio_name: String) -> int:
 	"""Get the stack count for a stackable curio"""
 	return curio_stacks.get(curio_name, 0)
 
-func get_curio_stat_modifier(stat_name: String) -> float:
+func get_curio_stat_modifier(_stat_name: String) -> float:
 	"""Calculate cumulative stat modifiers from all curios"""
 	var total = 0.0
 	# This will be handled by CurioManager in practice

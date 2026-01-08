@@ -7,7 +7,9 @@ class_name HealthHandler
 @export var full_heal: bool = false
 @export var can_overheal: bool = false
 
-func apply_effect(context):
+## Applies healing to the target based on configured values.
+## Returns a HandlerResult with heal values to be applied by DuelManager.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	var target = _get_target(context)
 	if target == null:
@@ -26,7 +28,8 @@ func apply_effect(context):
 	result.success = true
 	return result
 
-func _get_target(context):
+## Selects the appropriate target for healing.
+func _get_target(context: Resource) -> Resource:
 	if context and context.primary_target:
 		return context.primary_target
 	return context.player_data if context else null
@@ -43,7 +46,7 @@ func _calculate_amount(target, context) -> int:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
 	return max(0, final_amount)
 
-func get_preview_text(context: Resource) -> String:
+func get_description_text(context: Resource) -> String:
 	if full_heal:
 		return "Heal to full health"
 	elif percentage_based:

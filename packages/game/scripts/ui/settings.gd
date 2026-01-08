@@ -49,7 +49,7 @@ func _on_validate_seed():
 	"""Validate the current seed input and show feedback."""
 	_validate_current_input()
 
-func _on_seed_input_changed(new_text: String):
+func _on_seed_input_changed(_new_text: String):
 	"""Handle seed input changes."""
 	# Auto-validate as user types (with slight delay to avoid spam)
 	get_tree().create_timer(0.5).timeout.connect(_validate_current_input)
@@ -65,8 +65,8 @@ func _on_copy_seed():
 		var seed_text = GameSettings.last_used_hash_seed
 		DisplayServer.clipboard_set(seed_text)
 		custom_seed_input.text = seed_text
-		GameSettings.custom_hash_seed = seed_text  # Set hash seed since we're copying a hash
-		GameSettings.custom_seed = ""  # Clear regular seed since hash takes precedence
+		GameSettings.custom_hash_seed = seed_text # Set hash seed since we're copying a hash
+		GameSettings.custom_seed = "" # Clear regular seed since hash takes precedence
 		
 		# Show temporary feedback
 		_show_validation_message("Seed copied to clipboard and input field!", Color.GREEN)
@@ -86,7 +86,7 @@ func _validate_current_input():
 	# Check if it's a valid hash seed (10 alphanumeric characters)
 	if SeedManager.validate_hash_seed(input_text.to_upper()):
 		GameSettings.custom_hash_seed = input_text.to_upper()
-		GameSettings.custom_seed = ""  # Clear regular seed since hash takes precedence
+		GameSettings.custom_seed = "" # Clear regular seed since hash takes precedence
 		var is_thematic = SeedManager.is_thematic_seed(input_text.to_upper())
 		if is_thematic:
 			_show_validation_message("Valid thematic hash seed! ✨", Color.GREEN)
@@ -95,7 +95,7 @@ func _validate_current_input():
 	elif SeedManager.validate_seed_input(input_text):
 		# It's a regular seed (integer or string to be hashed)
 		GameSettings.custom_seed = input_text
-		GameSettings.custom_hash_seed = ""  # Clear hash seed
+		GameSettings.custom_hash_seed = "" # Clear hash seed
 		if input_text.is_valid_int():
 			_show_validation_message("Valid integer seed!", Color.GREEN)
 		else:

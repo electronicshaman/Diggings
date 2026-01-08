@@ -1,4 +1,7 @@
 extends Node
+## Registry for handler types and instances.
+## Provides factory methods to create handlers by type and lookup handlers by ID.
+## Should be set up as an autoload in project.godot.
 
 var _by_id: Dictionary = {}
 var _class_by_type: Dictionary = {
@@ -13,14 +16,17 @@ var _class_by_type: Dictionary = {
 	"status": "res://scripts/handlers/types/status_handler.gd",
 }
 
-func register_effect(effect) -> void:
+## Registers a handler instance by its effect_id for later lookup.
+func register_effect(effect: Resource) -> void:
 	if effect and effect.effect_id != "":
 		_by_id[effect.effect_id] = effect
 
-func get_by_id(id: String):
+## Returns a registered handler by its effect_id, or null if not found.
+func get_by_id(id: String) -> Resource:
 	return _by_id.get(id, null)
 
-func new_by_type(type_key: String):
+## Creates a new handler instance of the specified type (e.g., "damage", "health").
+func new_by_type(type_key: String) -> Resource:
 	var path = _class_by_type.get(type_key, null)
 	if path == null:
 		return null

@@ -337,9 +337,6 @@ func _generate_conditional_description(effect: Resource) -> String:
 		curio_damage_bonus = mods.get("damage", 0)
 		curio_defense_bonus = mods.get("defense", 0)
 
-	# Get the base description for the effect type
-	var base_text = _get_effect_base_description(effect)
-
 	# Find conditional values for important properties
 	for cv in conditional_values:
 		if cv.property_name == "amount":
@@ -415,7 +412,10 @@ func _get_standard_description(effect: Resource) -> String:
 	# Use the context for all description methods
 	if effect.has_method("get_formatted_description"):
 		return effect.get_formatted_description(preview_context)
+	elif effect.has_method("get_description_text"):
+		return effect.get_description_text(preview_context)
 	elif effect.has_method("get_preview_text"):
+		# Deprecated: kept for backward compatibility with older effects
 		return effect.get_preview_text(preview_context)
 	elif "description" in effect:
 		return str(effect.description)

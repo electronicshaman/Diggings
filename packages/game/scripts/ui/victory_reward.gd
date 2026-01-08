@@ -34,7 +34,7 @@ func _ready():
 	if GameManager:
 		is_test_sequence_preview = GameManager.game_data.get("test_sequence_preview", false)
 		if is_test_sequence_preview:
-			GameManager.game_data["test_sequence_preview"] = false  # Clear the flag
+			GameManager.game_data["test_sequence_preview"] = false # Clear the flag
 			GLog.info("Victory reward in PREVIEW mode - deck unchanged", "victory_reward")
 			if title_label:
 				title_label.text = "Victory! (Preview - Deck Unchanged)"
@@ -42,7 +42,7 @@ func _ready():
 	# Check if curio reward is pending (boss/elite defeated)
 	if GameManager:
 		pending_curio_reward = GameManager.game_data.get("pending_curio_reward", false)
-		GameManager.game_data["pending_curio_reward"] = false  # Clear the flag
+		GameManager.game_data["pending_curio_reward"] = false # Clear the flag
 		if pending_curio_reward:
 			GLog.info("Curio reward will be offered after card selection")
 
@@ -138,7 +138,7 @@ func _create_card_display(card_data: CardData, index: int):
 func _on_card_selected(card_node: Node, card_data: CardData):
 	"""Handle when a card is selected"""
 	if selected_card:
-		return  # Already selected
+		return # Already selected
 
 	selected_card = card_data
 	GLog.info("Card selected: %s" % card_data.card_name)
@@ -205,7 +205,7 @@ func _show_curio_selection():
 	"""Show curio selection phase after card reward"""
 	GLog.info("Showing curio selection")
 	curio_phase_active = true
-	pending_curio_reward = false  # Consumed
+	pending_curio_reward = false # Consumed
 
 	# Clear card displays
 	for child in card_container.get_children():
@@ -247,7 +247,7 @@ func _show_curio_selection():
 
 	GLog.info("Offering %d curios as rewards" % offered_curios.size())
 
-func _create_curio_display(curio_data: Resource, index: int):
+func _create_curio_display(curio_data: Resource, _index: int):
 	"""Create a visual curio display for selection"""
 	# Create a simple button-based display for now
 	var curio_button = Button.new()
@@ -279,13 +279,13 @@ func _get_rarity_color(rarity: String) -> Color:
 	"""Get display color for curio rarity"""
 	match rarity.to_lower():
 		"common":
-			return Color(0.8, 0.8, 0.8)  # Light gray
+			return Color(0.8, 0.8, 0.8) # Light gray
 		"rare":
-			return Color(0.3, 0.5, 1.0)  # Blue
+			return Color(0.3, 0.5, 1.0) # Blue
 		"legendary":
-			return Color(1.0, 0.8, 0.2)  # Gold
+			return Color(1.0, 0.8, 0.2) # Gold
 		"corrupted":
-			return Color(0.6, 0.2, 0.8)  # Purple
+			return Color(0.6, 0.2, 0.8) # Purple
 		_:
 			return Color.WHITE
 
@@ -362,7 +362,7 @@ func _highlight_selected_card(card_node: Node):
 			var fade_tween = create_tween()
 			fade_tween.tween_property(child, "modulate:a", 0.3, 0.3)
 
-func set_rewards(gold: int = 0, extra_cards: Array = []):
+func set_rewards(gold: int = 0, _extra_cards: Array = []):
 	"""Set specific rewards (called from duel manager)"""
 	gold_reward = gold
 	# Could add specific card pools or guaranteed cards here

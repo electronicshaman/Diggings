@@ -8,7 +8,9 @@ class_name StatusHandler
 @export var damage_modifier: int = 0 # For debuffs: reduce/increase damage
 @export var defense_modifier: int = 0 # For debuffs: reduce/increase defense
 
-func apply_effect(context):
+## Applies a status effect (stun, weaken, etc.) to the enemy.
+## Returns a HandlerResult with status values to be applied by DuelManager.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	if not context:
 		result.success = false
@@ -42,7 +44,7 @@ func apply_effect(context):
 			result.success = true
 	return result
 
-func get_preview_text(context: Resource) -> String:
+func get_description_text(context: Resource) -> String:
 	var final_duration = resolve_conditional_value("duration", duration, context) if context else duration
 
 	match status_type:

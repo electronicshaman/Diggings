@@ -316,8 +316,7 @@ func _apply_gambling_modifiers_to_results(effect_results: Array[HandlerResult]) 
 	
 	var multiplier = gambling_result.get("multiplier", 1.0)
 	
-	if DEBUG_ENABLED:
-		GLog.debug("CardResolver: Gambling active! Multiplier: %.1fx" % multiplier)
+	GLog.debug("CardResolver: Gambling active! Multiplier: %.1fx" % multiplier)
 	
 	# Query for success chance modifiers
 	var context = {
@@ -342,8 +341,7 @@ func _apply_gambling_modifiers_to_results(effect_results: Array[HandlerResult]) 
 				if result.values_applied.has(field) and result.values_applied[field] is int:
 					result.values_applied[field] = int(result.values_applied[field] * multiplier)
 		
-		if DEBUG_ENABLED:
-			GLog.debug("CardResolver: Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier)
+		GLog.debug("CardResolver: Gambling SUCCESS! Effects multiplied by %.1fx" % multiplier)
 	else:
 		# FAILURE: Zero out effects
 		for result in effect_results:
@@ -358,8 +356,7 @@ func _apply_gambling_modifiers_to_results(effect_results: Array[HandlerResult]) 
 			if result.values_applied.has("heal"):
 				result.values_applied["heal"] = 0
 		
-		if DEBUG_ENABLED:
-			GLog.debug("CardResolver: Gambling FAILED! All effects negated")
+		GLog.debug("CardResolver: Gambling FAILED! All effects negated")
 
 func apply_effect_results(effect_results: Array[HandlerResult], source, target) -> void:
 	"""Map effect results to appropriate state changes"""

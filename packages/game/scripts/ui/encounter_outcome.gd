@@ -115,11 +115,11 @@ func _display_mechanical_outcomes(outcome_data: EncounterOutcomeData) -> void:
 		outcomes_container.add_child(no_change_label)
 
 
-func _add_outcome_row(name: String, value: int, color: Color) -> void:
+func _add_outcome_row(label_text: String, value: int, color: Color) -> void:
 	var row = HBoxContainer.new()
 
 	var name_label = Label.new()
-	name_label.text = name + ":"
+	name_label.text = label_text + ":"
 	name_label.custom_minimum_size.x = 150
 
 	var value_label = Label.new()
@@ -132,11 +132,11 @@ func _add_outcome_row(name: String, value: int, color: Color) -> void:
 	outcomes_container.add_child(row)
 
 
-func _add_outcome_row_text(name: String, value_text: String, color: Color) -> void:
+func _add_outcome_row_text(label_text: String, value_text: String, color: Color) -> void:
 	var row = HBoxContainer.new()
 
 	var name_label = Label.new()
-	name_label.text = name + ":"
+	name_label.text = label_text + ":"
 	name_label.custom_minimum_size.x = 150
 
 	var value_label = Label.new()

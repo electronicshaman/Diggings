@@ -3,6 +3,7 @@
 This iteration turns the proposal into an actionable plan with concrete Godot wiring, decisions on stacking/ordering/conditions, a directory layout, adapters, tests, and a migration path.
 
 | Gold Changes | `gold_gain.gd` | `gold_reward.gd` | - |
+
 ```text
 scripts/
    effects/
@@ -33,6 +34,7 @@ data/
 tests/
    effects/                      # unit tests
 ```
+
 | Corruption | `add_corruption.gd` | `corruption_gain.gd` | - |
 
 ## Proposed Solution: Unified GameEffect System
@@ -60,7 +62,7 @@ extends Resource
 @export var stack_cap: int = 0  # 0 = no cap; used when stack_behavior == "cap_value" or for max stacks
 
     pass
-func get_preview_text(context: EffectContext) -> String:
+func get_description_text(context: EffectContext) -> String:
 ### Effect Context System
 
 # State references
@@ -164,6 +166,7 @@ The functionality previously provided by wrapper classes has been integrated dir
 ```
 
 This eliminates the need for separate wrapper classes while maintaining all the source-specific functionality.
+
 ```
 
 ## Godot Project Wiring and Directory Layout
@@ -301,6 +304,7 @@ func new_by_type(type_key: String) -> GameEffect:
 ## Example: Healing Effect Migration
 
 ### Before (3 separate implementations)
+
 ```gdscript
 # cards/effects/heal.gd
 extends CardEffect
@@ -320,6 +324,7 @@ class_name HealingAura
 ```
 
 ### After (1 unified implementation)
+
 ```gdscript
 # effects/core/health_effect.gd
 extends GameEffect
@@ -364,6 +369,7 @@ func _calculate_amount(target: Object) -> int:
 ## Implementation Checklist
 
 ### Immediate Actions (Before Any Refactoring)
+
 - [ ] Create this documentation
 - [ ] Get team buy-in on approach
 - [ ] Create refactor/gameeffect branch
@@ -372,12 +378,14 @@ func _calculate_amount(target: Object) -> int:
 - [ ] Scaffold directory structure under scripts/effects/
 
 ### Quick Fixes (Can do now)
+
 - [ ] Rename `SanityRestore` in encounters to `SanityRestoreOutcome`
 - [ ] Rename `StatModifier` in encounters to `StatModifierOutcome`
 - [ ] Fix any other naming conflicts
 - [ ] Add unique `effect_id` to existing effect resources where ambiguous
 
 ### Foundation Work
+
 - [ ] Create effects/ directory structure
 - [ ] Implement GameEffect base class
 - [ ] Implement EffectContext
@@ -387,6 +395,7 @@ func _calculate_amount(target: Object) -> int:
 - [ ] Decide on `phase` values and default `priority` ranges
 
 ### Migration Work
+
 - [ ] Create adapter classes
 - [ ] Migrate encounters (smallest scope)
 - [ ] Migrate curios (medium scope)
@@ -399,15 +408,19 @@ func _calculate_amount(target: Object) -> int:
 ## Risks and Mitigation
 
 ### Risk: Breaking existing content
+
 **Mitigation**: Adapter layer allows gradual migration
 
 ### Risk: Performance impact
+
 **Mitigation**: Profile before/after, optimize hot paths
 
 ### Risk: Save game compatibility
+
 **Mitigation**: Version saves, provide migration path
 
 ### Risk: Mod compatibility
+
 **Mitigation**: Keep legacy effect names as aliases
 
 ## Success Criteria
@@ -431,16 +444,19 @@ func _calculate_amount(target: Object) -> int:
 ## Alternative Approaches Considered
 
 ### Option 1: Namespace Effects
+
 - Keep separate systems but namespace them
 - Pros: Less work, no migration needed
 - Cons: Doesn't solve duplication, still have multiple implementations
 
 ### Option 2: Effect Composition
+
 - Build effects from smaller atomic operations
 - Pros: Very flexible, highly reusable
 - Cons: More complex, harder to understand
 
 ### Option 3: Effect Inheritance Tree
+
 - Use inheritance for effect variants
 - Pros: OOP approach, type safe
 - Cons: Deep hierarchies, rigid structure
@@ -466,5 +482,6 @@ func _calculate_amount(target: Object) -> int:
 ---
 
 Notes
+
 - Prefer class types over stringly-typed `effect_type` for logic; keep `effect_type` only for tagging/queries and analytics.
 - Keep public APIs stable during migration; mark adapters with `@warning_ignore("deprecated")` comments where needed.

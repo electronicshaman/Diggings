@@ -6,7 +6,9 @@ class_name CardManipulationHandler
 @export var card_filter: String = "" # optional filter expression/tag
 
 
-func apply_effect(context):
+## Applies card manipulation actions (draw, discard, shuffle, exhaust).
+## Returns a HandlerResult with card actions to be applied by DuelManager.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	if not context:
 		result.success = false
@@ -41,7 +43,7 @@ func apply_effect(context):
 			result.prevented_by = "unsupported_action"
 	return result
 
-func get_preview_text(context: Resource) -> String:
+func get_description_text(context: Resource) -> String:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
 	
 	match action:

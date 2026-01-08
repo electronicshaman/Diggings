@@ -34,8 +34,8 @@ func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Di
 			player_data.take_damage(amount)
 	
 	GLog.debug("Applied %s: %d damage (health: %d/%d)" % [
-		get_outcome_name(), 
-		amount, 
+		get_outcome_name(),
+		amount,
 		game_state["health"],
 		game_state.get("max_health", 100)
 	])
@@ -45,7 +45,7 @@ func get_formatted_description() -> String:
 		return "Take %d%% of max health as damage" % int(percentage * 100)
 	return "Take %d damage" % damage_amount
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	if percentage_based:
 		return "-%d%% HP" % int(percentage * 100)
 	return "-%d HP" % damage_amount

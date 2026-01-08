@@ -77,7 +77,7 @@ func get_formatted_description() -> String:
 		_:
 			return karma_text
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	var sign_prefix = "+" if karma_amount > 0 else ""
 	return "%s%d %s karma" % [sign_prefix, karma_amount, karma_category.capitalize()]
 

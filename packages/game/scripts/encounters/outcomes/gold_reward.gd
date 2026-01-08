@@ -29,7 +29,7 @@ func get_formatted_description() -> String:
 		return "Gain %d-%d gold" % [min_gold, max_gold]
 	return "Gain %d gold" % gold_amount
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	if random_range:
 		return "+%d-%d gold" % [min_gold, max_gold]
 	return "+%d gold" % gold_amount

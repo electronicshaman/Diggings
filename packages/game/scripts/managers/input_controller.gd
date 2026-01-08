@@ -10,7 +10,7 @@ var end_turn_button: Button
 var debug_controller: DebugController
 
 var input_enabled: bool = true
-var is_processing_input: bool = false
+var is_handling_input: bool = false
 
 func _ready() -> void:
 	GLog.debug("InputController initialized - Interpreting mortal intentions")
@@ -40,10 +40,10 @@ func setup_event_connections() -> void:
 	EventBus.connect_safe("duel_ended", _on_duel_ended)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not input_enabled or is_processing_input:
+	if not input_enabled or is_handling_input:
 		return
 	
-	is_processing_input = true
+	is_handling_input = true
 	
 	# Handle standard input
 	if event.is_action_pressed("ui_page_up"):
@@ -56,7 +56,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Let DebugController handle debug shortcuts if available
 	# (It will process its own input events)
 	
-	is_processing_input = false
+	is_handling_input = false
 
 func _handle_debug_toggle() -> void:
 	if ui_controller and ui_controller.has_method("toggle_debug_panel"):

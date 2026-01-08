@@ -94,7 +94,7 @@ func apply_costs(game_state: Dictionary) -> void:
 		game_state["sanity"] = max(0, game_state.get("sanity", 100) - sanity_cost)
 	
 	if corruption_cost > 0:
-		game_state["corruption"] = min(game_state.get("max_corruption", 100), 
+		game_state["corruption"] = min(game_state.get("max_corruption", 100),
 			game_state.get("corruption", 0) + corruption_cost)
 	
 	if health_cost > 0:
@@ -116,7 +116,12 @@ func get_outcome_preview() -> String:
 	var preview_parts = []
 	
 	for outcome in outcomes:
-		if outcome and outcome.has_method("get_preview_text"):
+		if outcome and outcome.has_method("get_description_text"):
+			var preview = outcome.get_description_text()
+			if preview != "":
+				preview_parts.append(preview)
+		elif outcome and outcome.has_method("get_preview_text"):
+			# Deprecated: kept for backward compatibility
 			var preview = outcome.get_preview_text()
 			if preview != "":
 				preview_parts.append(preview)

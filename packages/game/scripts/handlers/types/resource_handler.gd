@@ -8,7 +8,9 @@ class_name ResourceHandler
 @export var min_amount: int = 0
 @export var max_amount: int = 0
 
-func apply_effect(context):
+## Applies resource changes (gold, energy, sanity, or custom resources).
+## Returns a HandlerResult with resource deltas to be applied by DuelManager.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	if not context:
 		result.success = false
@@ -41,7 +43,7 @@ func apply_effect(context):
 	result.success = true
 	return result
 
-func get_preview_text(context: Resource) -> String:
+func get_description_text(context: Resource) -> String:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
 	var display_name = resource_type.capitalize()
 

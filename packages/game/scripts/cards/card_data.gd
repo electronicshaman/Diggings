@@ -39,24 +39,33 @@ class_name CardData
 
 # Helper methods for mechanical behavior
 func discards_after_use() -> bool:
-	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = CardHandling.get_handling_definition(card_handling)
 	return handling_def.get("discards_after_use", true)
 
 func discards_end_of_turn() -> bool:
-	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = CardHandling.get_handling_definition(card_handling)
 	return handling_def.get("discards_end_of_turn", true)
 
 func starts_in_hand() -> bool:
-	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = CardHandling.get_handling_definition(card_handling)
 	return handling_def.get("starts_in_hand", false)
 
 func removed_after_use() -> bool:
-	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = CardHandling.get_handling_definition(card_handling)
 	return handling_def.get("removed_after_use", false)
 
 func triggers_on_draw() -> bool:
-	var handling_def: Dictionary = CardTypeUtils.get_card_handling_definition(card_handling)
+	var handling_def: Dictionary = CardHandling.get_handling_definition(card_handling)
 	return handling_def.get("triggers_on_draw", false)
+
+func get_deck_return_position() -> String:
+	"""Returns where the card goes after use: 'none', 'shuffle', 'top', or 'bottom'"""
+	var handling_def: Dictionary = CardHandling.get_handling_definition(card_handling)
+	return handling_def.get("deck_return_position", CardHandling.DECK_RETURN_NONE)
+
+func returns_to_deck() -> bool:
+	"""Returns true if card returns to deck instead of discarding"""
+	return get_deck_return_position() != CardHandling.DECK_RETURN_NONE
 
 # Class affinity helper methods
 func get_class_affinity() -> Array[String]:

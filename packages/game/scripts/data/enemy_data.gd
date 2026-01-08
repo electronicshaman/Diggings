@@ -28,8 +28,8 @@ const DEBUG_ENABLED: bool = true
 @export var turns_alive: int = 0
 
 # Enemy intent system
-@export var current_intent: String = "Unknown"  # Attack, Defend, Special, Unknown
-@export var intent_value: int = 0  # Damage amount, defense amount, etc.
+@export var current_intent: String = "Unknown" # Attack, Defend, Special, Unknown
+@export var intent_value: int = 0 # Damage amount, defense amount, etc.
 @export var intent_revealed: bool = false
 
 # Enemy-specific modifiers
@@ -37,14 +37,14 @@ const DEBUG_ENABLED: bool = true
 @export var defense_modifier: float = 1.0
 
 # Enemy deck configuration
-@export var enemy_deck_data: DeckData  # Deck resource containing cards and strategy info
-@export var enemy_deck_paths: Array[String] = []  # DEPRECATED: Legacy card paths (use enemy_deck_data instead)
-@export var ai_type: String = "aggressive"  # aggressive, defensive, balanced, cunning
+@export var enemy_deck_data: DeckData # Deck resource containing cards and strategy info
+@export var enemy_deck_paths: Array[String] = [] # DEPRECATED: Legacy card paths (use enemy_deck_data instead)
+@export var ai_type: String = "aggressive" # aggressive, defensive, balanced, cunning
 @export var hand_size_limit: int = 7
-@export var cards_per_turn: int = 5  # Cards to draw each turn
+@export var cards_per_turn: int = 5 # Cards to draw each turn
 
 # Memory system for tracking player patterns
-@export var player_card_history: Array[String] = []  # Track last N cards played by player
+@export var player_card_history: Array[String] = [] # Track last N cards played by player
 @export var player_pattern_memory_size: int = 3
 
 # Change tracking system
@@ -54,11 +54,9 @@ func _init():
 	# Initialize with default stats if none provided
 	if not stats:
 		stats = Stats.new()
-		if DEBUG_ENABLED:
-			GLog.debug("EnemyState._init(): Created new default Stats")
+		GLog.debug("EnemyState._init(): Created new default Stats")
 	else:
-		if DEBUG_ENABLED:
-			GLog.debug("EnemyState._init(): Using existing Stats - HP: %d/%d" % [stats.current_health, stats.max_health])
+		GLog.debug("EnemyState._init(): Using existing Stats - HP: %d/%d" % [stats.current_health, stats.max_health])
 	
 	# Initialize card piles
 	if not enemy_hand:
@@ -124,7 +122,7 @@ func take_damage(amount: int, ignore_defense: bool = false) -> int:
 		var old_defense = stats.defense
 		stats.defense = 0
 		var damage_taken = stats.take_damage(modified_amount)
-		stats.defense = old_defense  # Restore defense after damage
+		stats.defense = old_defense # Restore defense after damage
 		return damage_taken
 	else:
 		return stats.take_damage(modified_amount)
@@ -142,7 +140,7 @@ func lose_defense(amount: int):
 func apply_stun(turns: int):
 	"""Apply stun effect"""
 	var old_stun = stun_turns_remaining
-	stun_turns_remaining = max(stun_turns_remaining, turns)  # Take highest stun value
+	stun_turns_remaining = max(stun_turns_remaining, turns) # Take highest stun value
 	_emit_change("stun_applied", old_stun, stun_turns_remaining)
 
 func apply_direct_stun(turns: int):
@@ -212,7 +210,7 @@ func set_intent(intent_type: String, value: int = 0):
 	var old_intent = current_intent
 	current_intent = intent_type
 	intent_value = value
-	intent_revealed = false  # Reset revealed status when intent changes
+	intent_revealed = false # Reset revealed status when intent changes
 	_emit_change("intent_set", old_intent, current_intent)
 
 func reveal_intent():
@@ -413,18 +411,15 @@ func initialize_deck_from_data():
 	
 	# Try to load from DeckData resource first
 	if enemy_deck_data:
-		if DEBUG_ENABLED:
-			GLog.debug("Loading enemy deck from DeckData resource: %s" % enemy_deck_data.deck_name)
+		GLog.debug("Loading enemy deck from DeckData resource: %s" % enemy_deck_data.deck_name)
 		var deck_pile = enemy_deck_data.to_card_pile(CardInstance.Owner.ENEMY)
 		deck_pile.move_all_to(enemy_deck)
-		if DEBUG_ENABLED:
-			GLog.debug("Loaded %d cards from DeckData" % enemy_deck.size())
+		GLog.debug("Loaded %d cards from DeckData" % enemy_deck.size())
 		return
 	
 	# Fallback to legacy enemy_deck_paths
 	if not enemy_deck_paths.is_empty():
-		if DEBUG_ENABLED:
-			GLog.debug("Loading enemy deck from legacy paths (%d cards)" % enemy_deck_paths.size())
+		GLog.debug("Loading enemy deck from legacy paths (%d cards)" % enemy_deck_paths.size())
 		var loaded_count = 0
 		for path in enemy_deck_paths:
 			var card_data: CardData = load(path) as CardData
@@ -433,8 +428,7 @@ func initialize_deck_from_data():
 				loaded_count += 1
 			else:
 				GLog.error("Failed to load card from legacy path: %s" % path)
-		if DEBUG_ENABLED:
-			GLog.debug("Loaded %d/%d cards from legacy paths" % [loaded_count, enemy_deck_paths.size()])
+		GLog.debug("Loaded %d/%d cards from legacy paths" % [loaded_count, enemy_deck_paths.size()])
 	else:
 		GLog.warn("No deck data or legacy paths found for enemy: %s" % enemy_name)
 
@@ -443,7 +437,7 @@ func get_deck_strategy() -> String:
 	if enemy_deck_data and enemy_deck_data.preferred_strategy:
 		return enemy_deck_data.preferred_strategy
 	else:
-		return ai_type  # fallback to AI type
+		return ai_type # fallback to AI type
 
 func get_deck_theme() -> String:
 	"""Get enemy's deck theme"""
@@ -457,7 +451,7 @@ func get_deck_difficulty() -> int:
 	if enemy_deck_data:
 		return enemy_deck_data.difficulty_level
 	else:
-		return 1  # default difficulty
+		return 1 # default difficulty
 
 # Debug methods
 func print_status():

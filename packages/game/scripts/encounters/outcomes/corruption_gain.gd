@@ -14,8 +14,8 @@ func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Di
 		amount = randi_range(min_corruption, max_corruption)
 	
 	var current_corruption = game_state.get("corruption", 0)
-	var max_corruption = game_state.get("max_corruption", 100)
-	game_state["corruption"] = min(max_corruption, current_corruption + amount)
+	var player_max_corruption = game_state.get("max_corruption", 100)
+	game_state["corruption"] = min(player_max_corruption, current_corruption + amount)
 	
 	if encounter_manager.event_bus:
 		encounter_manager.event_bus.corruption_changed.emit(amount)
@@ -27,7 +27,7 @@ func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Di
 		get_outcome_name(),
 		amount,
 		game_state["corruption"],
-		max_corruption
+		player_max_corruption
 	])
 
 func get_formatted_description() -> String:
@@ -35,7 +35,7 @@ func get_formatted_description() -> String:
 		return "Gain %d-%d corruption" % [min_corruption, max_corruption]
 	return "Gain %d corruption" % corruption_amount
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	if random_range:
 		return "+%d-%d corruption" % [min_corruption, max_corruption]
 	return "+%d corruption" % corruption_amount

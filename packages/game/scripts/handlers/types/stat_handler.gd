@@ -6,7 +6,9 @@ class_name StatHandler
 @export var modifier_type: String = "flat" # "flat" | "percent"
 @export var duration: int = 0 # 0 immediate, >0 persistent turns
 
-func apply_effect(context):
+## Applies flat or percentage-based stat modifications to the target.
+## Returns a HandlerResult with stat change details.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	var target = context.primary_target if context and context.primary_target else (context.player_data if context else null)
 	if target == null or stat_name == "":

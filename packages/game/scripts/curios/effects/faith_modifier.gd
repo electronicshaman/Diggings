@@ -3,14 +3,14 @@ class_name FaithModifier
 
 const EFFECT_NAME := "Faith Modifier"
 
-@export var faith_gain_bonus: int = 0  # Increase all Faith gains by this amount
-@export var faith_max_bonus: int = 0  # Increase Faith cap
-@export var faith_minimum: int = 0  # Faith cannot go below this value
-@export var faith_conversion_rate: float = 1.0  # Multiplier for Faith effects
-@export var trigger_on_damage: bool = false  # Gain Faith when taking damage
-@export var damage_to_faith_percent: float = 0.2  # Percentage of damage converted to Faith
-@export var resource_type: String = "faith"  # Default to faith
-@export var amount: int = 1  # Amount of Faith to gain when triggered
+@export var faith_gain_bonus: int = 0 # Increase all Faith gains by this amount
+@export var faith_max_bonus: int = 0 # Increase Faith cap
+@export var faith_minimum: int = 0 # Faith cannot go below this value
+@export var faith_conversion_rate: float = 1.0 # Multiplier for Faith effects
+@export var trigger_on_damage: bool = false # Gain Faith when taking damage
+@export var damage_to_faith_percent: float = 0.2 # Percentage of damage converted to Faith
+@export var resource_type: String = "faith" # Default to faith
+@export var amount: int = 1 # Amount of Faith to gain when triggered
 
 func _init() -> void:
 	pass
@@ -58,13 +58,12 @@ func _add_faith(player_data, value: int) -> void:
 	"""Add Faith to player using the generic resource system"""
 	if player_data and player_data.has_method("gain_resource"):
 		player_data.gain_resource("Faith", value)
-		if DEBUG_ENABLED:
-			var current = player_data.get_resource("Faith")
-			var max_val = player_data.get_resource_max("Faith")
-			if max_val > 0:
-				GLog.debug("FaithModifier: Added %d Faith (current: %d/%d)" % [value, current, max_val])
-			else:
-				GLog.debug("FaithModifier: Added %d Faith (current: %d)" % [value, current])
+		var current = player_data.get_resource("Faith")
+		var max_val = player_data.get_resource_max("Faith")
+		if max_val > 0:
+			GLog.debug("FaithModifier: Added %d Faith (current: %d/%d)" % [value, current, max_val])
+		else:
+			GLog.debug("FaithModifier: Added %d Faith (current: %d)" % [value, current])
 
 func _get_player_data(game_state: Node):
 	"""Get player data from game state"""

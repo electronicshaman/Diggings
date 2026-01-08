@@ -61,23 +61,23 @@ func _display_rewards() -> void:
 		for category in karma_changes:
 			var change = karma_changes[category]
 			if change != 0:
-				var sign = "+" if change > 0 else ""
+				var sign_str = "+" if change > 0 else ""
 				var color = Color.GREEN if change > 0 else Color.RED
-				_add_reward_display("Karma (%s)" % category.capitalize(), "%s%d" % [sign, change], color)
+				_add_reward_display("Karma (%s)" % category.capitalize(), "%s%d" % [sign_str, change], color)
 				has_rewards = true
 	
 	# Display overall karma change
 	if reward_data.has("total_karma") and reward_data.total_karma != 0:
-		var sign = "+" if reward_data.total_karma > 0 else ""
+		var sign_str = "+" if reward_data.total_karma > 0 else ""
 		var color = Color.GREEN if reward_data.total_karma > 0 else Color.RED
-		_add_reward_display("Total Karma", "%s%d" % [sign, reward_data.total_karma], color)
+		_add_reward_display("Total Karma", "%s%d" % [sign_str, reward_data.total_karma], color)
 		has_rewards = true
 	
 	# Display corruption changes
 	if reward_data.has("corruption") and reward_data.corruption != 0:
-		var sign = "+" if reward_data.corruption > 0 else ""
+		var sign_str = "+" if reward_data.corruption > 0 else ""
 		var color = Color.RED if reward_data.corruption > 0 else Color.GREEN
-		_add_reward_display("Corruption", "%s%d" % [sign, reward_data.corruption], color)
+		_add_reward_display("Corruption", "%s%d" % [sign_str, reward_data.corruption], color)
 		has_rewards = true
 	
 	# Display card rewards
@@ -105,12 +105,12 @@ func _display_rewards() -> void:
 		var custom_rewards = reward_data.custom_rewards as Array
 		for reward in custom_rewards:
 			if reward is Dictionary:
-				var name = reward.get("name", "Unknown Reward")
-				var description = reward.get("description", "")
-				var color = Color.WHITE
+				var reward_name = reward.get("name", "Unknown Reward")
+				var reward_description = reward.get("description", "")
+				var reward_color = Color.WHITE
 				if reward.has("color"):
-					color = reward.color
-				_add_reward_display(name, description, color)
+					reward_color = reward.color
+				_add_reward_display(reward_name, reward_description, reward_color)
 				has_rewards = true
 	
 	# If no rewards, show a message
