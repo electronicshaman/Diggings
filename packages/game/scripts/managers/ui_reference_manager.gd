@@ -60,7 +60,7 @@ func refresh_ui_reference(reference_key: String) -> void:
 func clear_cache() -> void:
 	_ui_cache.clear()
 	_validation_status.clear()
-	GLog.debug("UIReferenceManager: Cache cleared") if DEBUG_ENABLED else null
+	GLog.debug("UIReferenceManager: Cache cleared")
 
 ## Get UI reference dictionary for compatibility with existing code
 func get_ui_reference_dictionary() -> Dictionary:
@@ -113,11 +113,11 @@ func _validate_ui_structure() -> void:
 		push_error("UIReferenceManager: Root node is invalid")
 		return
 	
-	GLog.debug("UIReferenceManager: Validating UI structure...") if DEBUG_ENABLED else null
+	GLog.debug("UIReferenceManager: Validating UI structure...")
 	
 	# Pre-validate critical UI paths using unique names
 	var critical_references = [
-		"player_health", "player_energy", "enemy_health", 
+		"player_health", "player_energy", "enemy_health",
 		"end_turn_button", "hand_area"
 	]
 	
@@ -129,7 +129,7 @@ func _validate_ui_structure() -> void:
 	if missing_count > 0:
 		push_warning("UIReferenceManager: %d critical UI references are missing" % missing_count)
 	else:
-		GLog.debug("UIReferenceManager: All critical UI references validated") if DEBUG_ENABLED else null
+		GLog.debug("UIReferenceManager: All critical UI references validated")
 
 ## Cache a UI reference by finding the appropriate node
 func _cache_ui_reference(reference_key: String) -> bool:
@@ -227,7 +227,7 @@ func _get_fallback_path_for_reference(reference_key: String) -> String:
 		"enemy_hand_area": "UI/Control/EnemyHandArea",
 		"battlefield_area": "UI/Control/BattlefieldArea",
 		"add_card_button": "UI/Control/DebugPanel/DebugButtons/AddCardButton",
-		"set_health_button": "UI/Control/DebugPanel/DebugButtons/SetHealthButton", 
+		"set_health_button": "UI/Control/DebugPanel/DebugButtons/SetHealthButton",
 		"set_energy_button": "UI/Control/DebugPanel/DebugButtons/SetEnergyButton",
 		"reset_duel_button": "UI/Control/DebugPanel/DebugButtons/ResetDuelButton",
 		"curios_panel": "UI/Control/CuriosPanel",
@@ -240,7 +240,7 @@ func _get_fallback_path_for_reference(reference_key: String) -> String:
 func _log_missing_node_warning(reference_key: String) -> void:
 	if not _validation_status.get(reference_key, false):
 		push_warning("UIReferenceManager: UI reference '%s' is missing or invalid" % reference_key)
-		GLog.warn("Missing UI reference: %s" % reference_key) if DEBUG_ENABLED else null
+		GLog.warn("Missing UI reference: %s" % reference_key)
 
 ## Get validation report for debugging
 func get_validation_report() -> Dictionary:

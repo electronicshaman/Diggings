@@ -25,7 +25,7 @@ func get_outcome_name() -> String:
 			return p.get_file().get_basename()
 	return get_class()
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	return description
 
 func get_notification_text() -> String:

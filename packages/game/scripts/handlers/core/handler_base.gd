@@ -1,44 +1,48 @@
 extends Resource
 class_name HandlerBase
+## Base class for all effect handlers in the game.
+## Handlers process game effects (damage, healing, status, etc.) and return
+## HandlerResult objects containing the values to be applied by DuelManager.
+## Subclasses should override apply_effect() and get_description_text().
 
+@export_group("Core Properties")
 @export var effect_id: String = ""
 @export var effect_type: String = ""
-@export var target_type: String = "player" # "player", "enemy", "all", "random"
-@export var timing: String = "immediate" # "immediate", "delayed", "persistent"
+@export var target_type: String = "player" ## "player", "enemy", "all", "random"
+@export var timing: String = "immediate" ## "immediate", "delayed", "persistent"
 @export var description: String = ""
 @export var delayed: bool = false
 @export var delay_turns: int = 0
 
-# Execution and ordering
-@export var priority: int = 0
-@export var phase: String = "default" # e.g., "on_play", "turn_start", "turn_end"
+@export_group("Execution & Ordering")
+@export var priority: int = 0 ## Higher runs earlier within a phase
+@export var phase: String = "default" ## e.g., "on_play", "turn_start", "turn_end"
 
-# Stacking semantics
-@export var stack_key: String = ""
-@export var stack_behavior: String = "independent" # "independent" | "stack_values" | "refresh_duration" | "cap_value"
-@export var stack_cap: int = 0 # 0 = no cap
+@export_group("Stacking")
+@export var stack_key: String = "" ## Effects with same key are considered the same for stacking
+@export var stack_behavior: String = "independent" ## "independent" | "stack_values" | "refresh_duration" | "cap_value"
+@export var stack_cap: int = 0 ## 0 = no cap
 
-# Versioning for save/migration
+@export_group("Versioning")
 @export var version: int = 1
 @export var tags: Array[String] = []
 
-# Conditional activation and values
-@export var activation_condition: HandlerCondition # Optional condition for when effect applies
-@export var conditional_values: Array[ConditionalValue] = [] # Values that change based on conditions
+@export_group("Conditions")
+@export var activation_condition: HandlerCondition ## Optional condition for when effect applies
+@export var conditional_values: Array[ConditionalValue] = [] ## Values that change based on conditions
 
-# Source-specific properties (migrated from wrapper classes)
-# Card-specific properties
+@export_group("Card Properties")
 @export var energy_cost_modifier: int = 0
 @export var exhaust_on_use: bool = false
 @export var card_specific_conditions: Dictionary = {}
 
-# Curio-specific properties  
-@export var trigger_events: Array[String] = [] # Events that trigger this effect
+@export_group("Curio Properties")
+@export var trigger_events: Array[String] = [] ## Events that trigger this effect
 @export var stacks_with_duplicates: bool = false
 @export var chance_to_trigger: float = 1.0
 @export var max_stacks: int = 0
 
-# Encounter-specific properties
+@export_group("Encounter Properties")
 @export var choice_requirements: Dictionary = {}
 @export var narrative_text: String = ""
 @export var karma_impact: int = 0
@@ -97,12 +101,18 @@ func should_exhaust() -> bool:
 	"""Check if this effect causes the card to exhaust"""
 	return exhaust_on_use
 
-func get_preview_text(_context: Resource) -> String:
+## Generates human-readable description text for this handler's effect.
+## Override in subclasses to provide dynamic descriptions based on resolved values.
+func get_description_text(_context: Resource) -> String:
 	return description
 
 func get_formatted_description(context: Resource = null) -> String:
 	"""Compatibility method for CardData description generation"""
-	return get_preview_text(context)
+	return get_description_text(context)
+
+## @deprecated Use get_description_text instead
+func get_preview_text(context: Resource) -> String:
+	return get_description_text(context)
 
 func on_added(_context: Resource) -> void:
 	pass

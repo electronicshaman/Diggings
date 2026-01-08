@@ -106,7 +106,7 @@ func get_formatted_description() -> String:
 			return "Add %s to your deck" % card_name
 		return "Add %d specific cards to your deck" % card_paths.size()
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	if remove_card:
 		return "Remove card"
 	elif random_cards:

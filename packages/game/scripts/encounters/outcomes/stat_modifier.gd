@@ -34,20 +34,20 @@ func apply_outcome(encounter_manager: Node, game_state: Dictionary, _context: Di
 	])
 
 func get_formatted_description() -> String:
-	var sign = "+" if modifier_amount > 0 else ""
+	var modifier_sign = "+" if modifier_amount > 0 else ""
 	var permanent_text = "Permanently " if is_permanent else "Temporarily "
 	
 	if is_percentage:
-		return "%s%s %s by %s%d%%" % [permanent_text, _get_stat_verb(), _format_stat_name(), sign, modifier_amount]
+		return "%s%s %s by %s%d%%" % [permanent_text, _get_stat_verb(), _format_stat_name(), modifier_sign, modifier_amount]
 	else:
-		return "%s%s %s%d %s" % [permanent_text, _get_stat_verb(), sign, modifier_amount, _format_stat_name()]
+		return "%s%s %s%d %s" % [permanent_text, _get_stat_verb(), modifier_sign, modifier_amount, _format_stat_name()]
 
-func get_preview_text() -> String:
-	var sign = "+" if modifier_amount > 0 else ""
+func get_description_text() -> String:
+	var modifier_sign = "+" if modifier_amount > 0 else ""
 	if is_percentage:
-		return "%s%d%% %s" % [sign, modifier_amount, _format_stat_name()]
+		return "%s%d%% %s" % [modifier_sign, modifier_amount, _format_stat_name()]
 	else:
-		return "%s%d %s" % [sign, modifier_amount, _format_stat_name()]
+		return "%s%d %s" % [modifier_sign, modifier_amount, _format_stat_name()]
 
 func _get_stat_verb() -> String:
 	if modifier_amount > 0:

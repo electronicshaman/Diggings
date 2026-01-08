@@ -34,10 +34,10 @@ func check_previous_seed_available():
 	use_previous_seed_button.disabled = not has_previous_run
 	if has_previous_run:
 		var last_run = RunHistoryManager.get_last_run()
-		var seed = last_run.get("seed", 0)
+		var run_seed = last_run.get("seed", 0)
 		var hash_seed = last_run.get("hash_seed", "")
 		var character = last_run.get("character_name", "Unknown")
-		GLog.debug("Previous run available: " + character + " - Seed: " + str(seed) + " (" + hash_seed + ")")
+		GLog.debug("Previous run available: " + character + " - Seed: " + str(run_seed) + " (" + hash_seed + ")")
 	else:
 		GLog.debug("No previous run available")
 

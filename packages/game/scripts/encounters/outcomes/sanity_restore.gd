@@ -40,7 +40,7 @@ func get_formatted_description() -> String:
 		return "Restore %d%% of max sanity" % int(percentage * 100)
 	return "Restore %d sanity" % sanity_amount
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	if full_restore:
 		return "Full sanity"
 	elif percentage_based:

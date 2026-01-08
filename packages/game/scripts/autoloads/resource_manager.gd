@@ -170,8 +170,7 @@ func load_resource(path: String, cache: bool = true) -> Resource:
 	if loaded_resources.has(path):
 		var cached = loaded_resources[path]
 		if is_instance_valid(cached):
-			if DEBUG_ENABLED:
-				GLog.debug("Returning cached resource: " + path)
+			GLog.debug("Returning cached resource: " + path)
 			return cached
 		else:
 			# Remove invalid cached resource
@@ -202,8 +201,7 @@ func load_resource(path: String, cache: bool = true) -> Resource:
 	if cache:
 		loaded_resources[path] = resource
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Successfully loaded resource: " + path)
+	GLog.debug("Successfully loaded resource: " + path)
 	resource_loaded.emit(path, resource)
 	return resource
 
@@ -253,8 +251,7 @@ func _create_fallback_resource(original_path: String) -> Resource:
 		fallback = Resource.new()
 		fallback.resource_name = "Fallback_" + original_path.get_file()
 	
-	if DEBUG_ENABLED:
-		GLog.warn("Created fallback resource for: " + original_path)
+	GLog.warn("Created fallback resource for: " + original_path)
 	return fallback
 
 ## Validate resource path format
@@ -352,8 +349,7 @@ func _wait_for_resource(path: String, callback: Callable) -> void:
 				loaded_resources[path] = resource
 				callback.call(resource)
 				resource_loaded.emit(path, resource)
-				if DEBUG_ENABLED:
-					GLog.debug("Async load completed: " + path)
+				GLog.debug("Async load completed: " + path)
 			else:
 				push_error("ResourceManager: Threaded load returned invalid resource: " + path)
 				callback.call(_create_fallback_resource(path))
@@ -427,7 +423,7 @@ func load_all_in_directory(dir_path: String, extension: String = "tres") -> Arra
 		if not dir.current_is_dir() and not file_name.begins_with("."):
 			if file_name.ends_with("." + extension):
 				total_files += 1
-				var full_path := dir_path.path_join(file_name)  # Use path_join for better path handling
+				var full_path := dir_path.path_join(file_name) # Use path_join for better path handling
 				
 				var resource := load_resource(full_path)
 				if is_instance_valid(resource):
@@ -435,8 +431,7 @@ func load_all_in_directory(dir_path: String, extension: String = "tres") -> Arra
 					loaded_count += 1
 				else:
 					failed_count += 1
-					if DEBUG_ENABLED:
-						GLog.warn("Failed to load resource: " + full_path)
+					GLog.warn("Failed to load resource: " + full_path)
 		
 		file_name = dir.get_next()
 	
@@ -444,8 +439,7 @@ func load_all_in_directory(dir_path: String, extension: String = "tres") -> Arra
 	if failed_count > 0:
 		push_warning("ResourceManager: Loaded %d/%d resources from '%s' (%d failed)" % [loaded_count, total_files, dir_path, failed_count])
 	else:
-		if DEBUG_ENABLED:
-			GLog.debug("Successfully loaded %d resources from: %s" % [loaded_count, dir_path])
+		GLog.debug("Successfully loaded %d resources from: %s" % [loaded_count, dir_path])
 	
 	return resources
 
@@ -487,8 +481,7 @@ func validate_resource(resource: Resource, required_properties: Array[String]) -
 		push_error("ResourceManager: Resource '%s' missing required properties: %s" % [resource.resource_name, str(missing_properties)])
 		return false
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Resource validation passed: " + resource.resource_name)
+	GLog.debug("Resource validation passed: " + resource.resource_name)
 	return true
 
 func get_resource_path(category: String, filename: String) -> String:
@@ -509,8 +502,7 @@ func get_resource_path(category: String, filename: String) -> String:
 	var base_path = RESOURCE_PATHS[category]
 	var full_path = base_path.path_join(filename)
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Generated resource path: " + full_path)
+	GLog.debug("Generated resource path: " + full_path)
 	return full_path
 
 

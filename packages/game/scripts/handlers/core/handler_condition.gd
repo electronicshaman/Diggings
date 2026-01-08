@@ -1,26 +1,29 @@
 extends Resource
 class_name HandlerCondition
+## Condition resource that determines when a handler effect should activate.
+## Supports various game state checks like card counts, health thresholds,
+## energy levels, and custom resources. Used by HandlerBase.activation_condition.
 
-# Condition types for when effects should activate
+## Condition types for when effects should activate.
 enum ConditionType {
-	FIRST_CARD_PLAYED, # First card played this turn
-	SECOND_CARD_PLAYED, # Second card played this turn
-	LAST_CARD_IN_HAND, # Last card remaining in hand
-	ONLY_CARD_IN_HAND, # Only one card in hand
-	CARDS_PLAYED_COUNT, # Specific number of cards played this turn
-	CARDS_IN_HAND_COUNT, # Specific number of cards in hand
-	PLAYER_HEALTH_PERCENT, # Player health percentage threshold
-	ENEMY_HEALTH_PERCENT, # Enemy health percentage threshold
-	PLAYER_ENERGY_AMOUNT, # Player energy amount threshold
-	PLAYER_SANITY_PERCENT, # Player sanity percentage threshold
-	CUSTOM_RESOURCE_AMOUNT # Custom resource amount threshold (requires custom_resource_name)
+	FIRST_CARD_PLAYED, ## First card played this turn
+	SECOND_CARD_PLAYED, ## Second card played this turn
+	LAST_CARD_IN_HAND, ## Last card remaining in hand
+	ONLY_CARD_IN_HAND, ## Only one card in hand
+	CARDS_PLAYED_COUNT, ## Specific number of cards played this turn
+	CARDS_IN_HAND_COUNT, ## Specific number of cards in hand
+	PLAYER_HEALTH_PERCENT, ## Player health percentage threshold
+	ENEMY_HEALTH_PERCENT, ## Enemy health percentage threshold
+	PLAYER_ENERGY_AMOUNT, ## Player energy amount threshold
+	PLAYER_SANITY_PERCENT, ## Player sanity percentage threshold
+	CUSTOM_RESOURCE_AMOUNT ## Custom resource amount threshold (requires custom_resource_name)
 }
 
 @export var condition_type: ConditionType = ConditionType.FIRST_CARD_PLAYED
-@export var comparison_value: int = 0 # Used for threshold/count conditions
-@export var comparison_operator: String = "equal" # "equal", "less", "greater", "less_equal", "greater_equal"
-@export var custom_resource_name: String = "" # Used for CUSTOM_RESOURCE_AMOUNT
-@export var invert: bool = false # Invert the condition result
+@export var comparison_value: int = 0 ## Used for threshold/count conditions
+@export var comparison_operator: String = "equal" ## "equal", "less", "greater", "less_equal", "greater_equal"
+@export var custom_resource_name: String = "" ## Used for CUSTOM_RESOURCE_AMOUNT
+@export var invert: bool = false ## Invert the condition result
 
 func evaluate(context) -> bool:
 	if not context:

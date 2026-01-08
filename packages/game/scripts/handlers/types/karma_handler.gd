@@ -6,7 +6,9 @@ class_name KarmaHandler
 @export var reason: String = ""
 @export var narrative_description: String = ""
 
-func apply_effect(context):
+## Applies karma changes to the player in a specific category (wildlife, people, etc.).
+## Returns a HandlerResult with karma delta to be tracked for moral alignment.
+func apply_effect(context: Resource) -> Resource:
     var result = HandlerResult.new()
     var player = context.player_data if context else null
     if player == null or not player.has_method("add_karma"):
@@ -24,6 +26,6 @@ func apply_effect(context):
     result.ui_feedback = {"message": ("%s%d %s karma" % [("+" if amount > 0 else ""), amount, karma_category.capitalize()])}
     return result
 
-func get_preview_text(_context = null):
+func get_description_text(_context: Resource = null) -> String:
     var sign_prefix = "+" if amount > 0 else ""
     return "%s%d %s karma" % [sign_prefix, amount, karma_category.capitalize()]

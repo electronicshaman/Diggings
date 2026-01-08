@@ -9,15 +9,14 @@ const DEBUG_ENABLED: bool = true
 
 # Constants
 const MAX_CARDS_PER_TURN: int = 3
-const ENEMY_CARD_PLAY_DELAY: float = 1.5  # Time between enemy card plays
+const ENEMY_CARD_PLAY_DELAY: float = 1.5 # Time between enemy card plays
 
 # Dependencies
 var duel_state: DuelState
 
 func _init(state: DuelState) -> void:
 	duel_state = state
-	if DEBUG_ENABLED:
-		GLog.debug("EnemyAIController initialized", "enemy_ai_controller")
+	GLog.debug("EnemyAIController initialized", "enemy_ai_controller")
 
 # Card selection methods
 func get_playable_cards(enemy: EnemyState) -> Array[CardData]:
@@ -30,8 +29,7 @@ func get_playable_cards(enemy: EnemyState) -> Array[CardData]:
 		if cd and cd.energy_cost <= current_energy:
 			playable.append(cd)
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Found %d playable cards with %d energy" % [playable.size(), current_energy], "enemy_ai_controller")
+	GLog.debug("Found %d playable cards with %d energy" % [playable.size(), current_energy], "enemy_ai_controller")
 	return playable
 
 func select_card(enemy: EnemyState, playable: Array[CardData]) -> CardData:
@@ -50,7 +48,7 @@ func select_card(enemy: EnemyState, playable: Array[CardData]) -> CardData:
 			return _select_cunning(enemy, playable)
 		_:
 			GLog.warn("Unknown AI type '%s', using default" % enemy.ai_type, "enemy_ai_controller")
-			return playable[0]  # Fallback to first card
+			return playable[0] # Fallback to first card
 
 func execute_turn(enemy: EnemyState, card_resolver: RefCounted) -> void:
 	"""Execute the enemy's turn by playing cards"""
@@ -89,13 +87,11 @@ func _select_aggressive(playable: Array[CardData]) -> CardData:
 	# First, try to find Attack cards
 	for card in playable:
 		if card.card_type == "Attack":
-			if DEBUG_ENABLED:
-				GLog.debug("Aggressive AI selected Attack card: %s" % card.card_name, "enemy_ai_controller")
+			GLog.debug("Aggressive AI selected Attack card: %s" % card.card_name, "enemy_ai_controller")
 			return card
 	
 	# Fall back to any card if no Attack cards available
-	if DEBUG_ENABLED:
-		GLog.debug("Aggressive AI: No Attack cards, selecting first available: %s" % playable[0].card_name, "enemy_ai_controller")
+	GLog.debug("Aggressive AI: No Attack cards, selecting first available: %s" % playable[0].card_name, "enemy_ai_controller")
 	return playable[0]
 
 func _select_defensive(playable: Array[CardData]) -> CardData:
@@ -103,8 +99,7 @@ func _select_defensive(playable: Array[CardData]) -> CardData:
 	# First, try to find Skill cards
 	for card in playable:
 		if card.card_type == "Skill":
-			if DEBUG_ENABLED:
-				GLog.debug("Defensive AI selected Skill card: %s" % card.card_name, "enemy_ai_controller")
+			GLog.debug("Defensive AI selected Skill card: %s" % card.card_name, "enemy_ai_controller")
 			return card
 	
 	# Fall back to cheapest card
@@ -113,8 +108,7 @@ func _select_defensive(playable: Array[CardData]) -> CardData:
 		if card.energy_cost < cheapest.energy_cost:
 			cheapest = card
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Defensive AI: No Skill cards, selecting cheapest: %s (cost: %d)" % [cheapest.card_name, cheapest.energy_cost], "enemy_ai_controller")
+	GLog.debug("Defensive AI: No Skill cards, selecting cheapest: %s (cost: %d)" % [cheapest.card_name, cheapest.energy_cost], "enemy_ai_controller")
 	return cheapest
 
 func _select_balanced(enemy: EnemyState, playable: Array[CardData]) -> CardData:
@@ -126,15 +120,13 @@ func _select_balanced(enemy: EnemyState, playable: Array[CardData]) -> CardData:
 		# Low health, play defensively - prioritize Skill cards
 		for card in playable:
 			if card.card_type == "Skill":
-				if DEBUG_ENABLED:
-					GLog.debug("Balanced AI (defensive): Selected Skill card: %s" % card.card_name, "enemy_ai_controller")
+				GLog.debug("Balanced AI (defensive): Selected Skill card: %s" % card.card_name, "enemy_ai_controller")
 				return card
 	elif player_health_ratio < 0.3:
 		# Player low health, be aggressive - prioritize Attack cards
 		for card in playable:
 			if card.card_type == "Attack":
-				if DEBUG_ENABLED:
-					GLog.debug("Balanced AI (aggressive): Selected Attack card: %s" % card.card_name, "enemy_ai_controller")
+				GLog.debug("Balanced AI (aggressive): Selected Attack card: %s" % card.card_name, "enemy_ai_controller")
 				return card
 	
 	# Default: play highest cost card we can afford
@@ -143,8 +135,7 @@ func _select_balanced(enemy: EnemyState, playable: Array[CardData]) -> CardData:
 		if card.energy_cost > best.energy_cost:
 			best = card
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Balanced AI (default): Selected highest cost card: %s (cost: %d)" % [best.card_name, best.energy_cost], "enemy_ai_controller")
+	GLog.debug("Balanced AI (default): Selected highest cost card: %s (cost: %d)" % [best.card_name, best.energy_cost], "enemy_ai_controller")
 	return best
 
 func _select_cunning(enemy: EnemyState, playable: Array[CardData]) -> CardData:
@@ -156,19 +147,16 @@ func _select_cunning(enemy: EnemyState, playable: Array[CardData]) -> CardData:
 		# Player plays lots of attacks, prioritize defense
 		for card in playable:
 			if card.card_type == "Skill":
-				if DEBUG_ENABLED:
-					GLog.debug("Cunning AI (counter-attack): Selected Skill card: %s" % card.card_name, "enemy_ai_controller")
+				GLog.debug("Cunning AI (counter-attack): Selected Skill card: %s" % card.card_name, "enemy_ai_controller")
 				return card
 	elif "Block" in most_played or "Defend" in most_played:
 		# Player plays defensively, be aggressive
 		for card in playable:
 			if card.card_type == "Attack":
-				if DEBUG_ENABLED:
-					GLog.debug("Cunning AI (counter-defense): Selected Attack card: %s" % card.card_name, "enemy_ai_controller")
+				GLog.debug("Cunning AI (counter-defense): Selected Attack card: %s" % card.card_name, "enemy_ai_controller")
 				return card
 	
 	# Default: random selection for unpredictability
 	var selected = playable[randi() % playable.size()]
-	if DEBUG_ENABLED:
-		GLog.debug("Cunning AI (random): Selected card: %s" % selected.card_name, "enemy_ai_controller")
+	GLog.debug("Cunning AI (random): Selected card: %s" % selected.card_name, "enemy_ai_controller")
 	return selected

@@ -9,13 +9,13 @@ extends Node
 const DEBUG_ENABLED: bool = true
 
 # Timing configuration (can be overridden by GameSettings)
-var card_stage_delay: float = 0.5  # Time card sits on battlefield before resolving
-var enemy_card_play_delay: float = 1.5  # Time between enemy card plays
-var enemy_turn_start_delay: float = 1.0  # Delay before enemy starts
-var turn_transition_delay: float = 0.6  # Delay between turns
-var card_draw_delay: float = 0.3  # Time for card draw animation
-var damage_number_duration: float = 1.0  # Time damage numbers are visible
-var effect_resolve_delay: float = 0.4  # Time between effect resolutions
+var card_stage_delay: float = 0.5 # Time card sits on battlefield before resolving
+var enemy_card_play_delay: float = 1.5 # Time between enemy card plays
+var enemy_turn_start_delay: float = 1.0 # Delay before enemy starts
+var turn_transition_delay: float = 0.6 # Delay between turns
+var card_draw_delay: float = 0.3 # Time for card draw animation
+var damage_number_duration: float = 1.0 # Time damage numbers are visible
+var effect_resolve_delay: float = 0.4 # Time between effect resolutions
 
 signal animation_started(animation_name: String)
 signal animation_completed(animation_name: String)
@@ -77,8 +77,7 @@ func play_animation(animation_name: String, duration: float, callback: Callable 
 	active_animations.append(animation_name)
 	animation_started.emit(animation_name)
 	
-	if DEBUG_ENABLED:
-		GLog.debug("Animation started: %s (%.2fs)" % [animation_name, duration])
+	GLog.debug("Animation started: %s (%.2fs)" % [animation_name, duration])
 	
 	await get_tree().create_timer(duration).timeout
 	

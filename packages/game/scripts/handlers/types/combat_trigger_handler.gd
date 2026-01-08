@@ -7,7 +7,9 @@ class_name CombatTriggerHandler
 
 var HandlerResultResource := preload("res://scripts/handlers/core/handler_result.gd")
 
-func apply_effect(context):
+## Triggers a combat encounter with the specified enemy.
+## Returns a HandlerResult indicating whether combat was successfully initiated.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResultResource.new()
 
 	if enemy_path.is_empty():
@@ -55,7 +57,7 @@ func apply_effect(context):
 	return result
 
 
-func get_preview_text(_context: Resource) -> String:
+func get_description_text(_context: Resource) -> String:
 	if enemy_path.is_empty():
 		return "Triggers combat"
 

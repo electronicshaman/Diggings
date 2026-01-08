@@ -7,7 +7,9 @@ class_name CurioRewardHandler
 @export var remove_curio: bool = false
 
 
-func apply_effect(context):
+## Adds or removes curios from the player's collection.
+## Can add specific curios, random curios by rarity, or trigger curio removal UI.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	if remove_curio:
 		# Open a UI for curio removal via EventBus if available (non-blocking effect)

@@ -5,7 +5,9 @@ class_name SanityHandler
 @export var percentage_based: bool = false
 @export var full_restore: bool = false
 
-func apply_effect(context):
+## Applies sanity changes to the target (restore, damage, or full restore).
+## Returns a HandlerResult with sanity delta to be applied.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	var target = context.primary_target if context and context.primary_target else (context.player_data if context else null)
 	if target == null:

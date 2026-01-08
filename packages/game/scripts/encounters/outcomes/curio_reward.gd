@@ -85,7 +85,7 @@ func get_formatted_description() -> String:
 		return "Gain %s" % curio_name
 	return "Gain a curio"
 
-func get_preview_text() -> String:
+func get_description_text() -> String:
 	if remove_curio:
 		return "Remove curio"
 	elif random_curio:

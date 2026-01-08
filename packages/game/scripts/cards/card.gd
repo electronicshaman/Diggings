@@ -19,14 +19,12 @@ class_name Card
 ## - EventBus integration for MVC compliance
 ## - Quick draw highlighting support
 
-# Preload CardTypeUtils for card type utilities
-const CardTypeUtils = preload("res://scripts/config/card_type_utils.gd")
 
 # Per-file debug control (GLog will check this)
 const DEBUG_ENABLED: bool = true
 
 # Color constants
-const ENERGY_COST_COLOR_NORMAL := Color(0, 0.5, 1, 1)  # Blue
+const ENERGY_COST_COLOR_NORMAL := Color(0, 0.5, 1, 1) # Blue
 const ENERGY_COST_COLOR_MODIFIED := Color.LIME
 const ENERGY_COST_COLOR_INSUFFICIENT := Color.DARK_RED
 const CARD_BACK_COLOR := Color(0.3, 0.2, 0.1, 1)
@@ -48,21 +46,21 @@ const Z_INDEX_HOVER := 10
 # Note: Some nodes may not exist in card_back.tscn variant, so we use get_node_or_null
 @onready var card_background: ColorRect = $CardBackground
 @onready var card_border: ColorRect = $CardBorder
-@onready var card_inner: Node = $CardInner  # Can be ColorRect or TextureRect depending on scene variant
+@onready var card_inner: Node = $CardInner # Can be ColorRect or TextureRect depending on scene variant
 @onready var type_symbol: Label = get_node_or_null("CardContent/Header/TypeSymbol")
 @onready var card_name_label: Label = get_node_or_null("CardContent/Header/CardName")
 @onready var card_handling_label: Label = get_node_or_null("CardContent/CardInfo/CardHandling")
 @onready var description_label: RichTextLabel = get_node_or_null("CardContent/CardInfo/Description")
 @onready var energy_cost_label: Label = get_node_or_null("CardContent/CardInfo/HBoxContainer/EnergyCost")
 @onready var sanity_cost_label: Label = get_node_or_null("CardContent/CardInfo/HBoxContainer/SanityCost")
-@onready var card_image: Node = get_node_or_null("CardImage")  # May not exist in card_back variant
+@onready var card_image: Node = get_node_or_null("CardImage") # May not exist in card_back variant
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 # Selection state
 var is_selected: bool = false
 var is_hovering: bool = false
 var original_scale: Vector2
-var original_z_index: int = 0  # Store original z-index for hand positioning
+var original_z_index: int = 0 # Store original z-index for hand positioning
 var is_quick_draw_highlighted: bool = false
 var original_border_color: Color = Color.WHITE
 
@@ -97,13 +95,11 @@ func set_card(card: Variant) -> void:
 	if card is CardInstance:
 		card_instance = card
 		card_data = card.card_data
-		if DEBUG_ENABLED:
-			GLog.debug("Card set from CardInstance: %s" % card_data.card_name, "Card")
+		GLog.debug("Card set from CardInstance: %s" % card_data.card_name, "Card")
 	elif card is CardData:
 		card_data = card
 		card_instance = null
-		if DEBUG_ENABLED:
-			GLog.debug("Card set from CardData: %s" % card_data.card_name, "Card")
+		GLog.debug("Card set from CardData: %s" % card_data.card_name, "Card")
 	else:
 		GLog.error("set_card called with invalid type: %s" % type_string(typeof(card)), "Card")
 		return
@@ -118,7 +114,7 @@ func get_card_instance_or_null() -> CardInstance:
 func _is_player_card() -> bool:
 	if card_instance:
 		return card_instance.owner == CardInstance.Owner.PLAYER
-	return true  # Default for preview/shop cards
+	return true # Default for preview/shop cards
 
 func _get_display_cost() -> Dictionary:
 	"""Get display cost - delegates to CardInstance if available"""
@@ -148,13 +144,11 @@ func _on_curio_changed(_curio: Resource = null, _stacks: int = 0) -> void:
 func setup_card_visuals() -> void:
 	"""Initial setup - called once in _ready or set_card"""
 	if not card_data:
-		if DEBUG_ENABLED:
-			GLog.warn("setup_card_visuals called but card_data is null", "Card")
+		GLog.warn("setup_card_visuals called but card_data is null", "Card")
 		return
 
 	if not is_node_ready():
-		if DEBUG_ENABLED:
-			GLog.warn("setup_card_visuals called before _ready()", "Card")
+		GLog.warn("setup_card_visuals called before _ready()", "Card")
 		return
 
 	_update_static_visuals()
@@ -283,8 +277,7 @@ func _on_button_clicked() -> void:
 		GLog.error("Card clicked but has no card_data! (name: %s)" % name, "Card")
 		return
 
-	if DEBUG_ENABLED:
-		GLog.debug("Card clicked (via button): %s" % card_data.card_name, "Card")
+	GLog.debug("Card clicked (via button): %s" % card_data.card_name, "Card")
 
 	# Emit via EventBus for MVC compliance
 	EventBus.card_played.emit(self)
@@ -319,8 +312,7 @@ func _on_card_clicked(_viewport: Node, event: InputEvent, _shape_idx: int) -> vo
 		GLog.error("Card clicked but has no card_data! (name: %s)" % name, "Card")
 		return
 
-	if DEBUG_ENABLED:
-		GLog.debug("Card clicked (via Area2D): %s" % card_data.card_name, "Card")
+	GLog.debug("Card clicked (via Area2D): %s" % card_data.card_name, "Card")
 
 	# Emit via EventBus for MVC compliance
 	EventBus.card_played.emit(self)
@@ -362,11 +354,11 @@ func update_visual_state() -> void:
 	if is_selected:
 		# Highlight selected cards
 		card_background.color = base_color.lightened(0.3)
-		position.y -= 10  # Lift selected cards slightly
+		position.y -= 10 # Lift selected cards slightly
 	else:
 		# Normal appearance
 		card_background.color = base_color
-		position.y += 10 if position.y < 500 else 0  # Reset position if lifted
+		position.y += 10 if position.y < 500 else 0 # Reset position if lifted
 
 func set_quick_draw_highlight(enabled: bool) -> void:
 	"""Highlight or unhighlight this card for quick draw/first turn bonus"""

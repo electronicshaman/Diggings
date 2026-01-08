@@ -1,8 +1,10 @@
 extends Resource
 class_name ConditionalValue
-
-# Allows effect values to change based on conditions
-# Example: Ambush damage is 15 if first card, 6 otherwise
+## Allows effect values to change based on runtime conditions.
+## Used by handlers to implement conditional mechanics like:
+## - "Deal 15 damage if first card played, 6 otherwise" (Ambush)
+## - "Draw 2 cards if health < 50%, 1 otherwise"
+## Attach to HandlerBase.conditional_values array.
 
 @export var property_name: String = "" # Which property this affects (e.g., "amount", "hits")
 @export var condition: HandlerCondition

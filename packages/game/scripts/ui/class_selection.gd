@@ -140,9 +140,9 @@ func get_stats_display(character: GeneratedCharacter) -> String:
 	var mod_text = []
 	for mod in character.stat_modifiers:
 		var value = character.stat_modifiers[mod]
-		if abs(value) >= 5:  # Only show significant modifiers
-			var sign = "+" if value > 0 else ""
-			mod_text.append(mod.capitalize() + " " + sign + str(value))
+		if abs(value) >= 5: # Only show significant modifiers
+			var sign_str = "+" if value > 0 else ""
+			mod_text.append(mod.capitalize() + " " + sign_str + str(value))
 	
 	if not mod_text.is_empty():
 		display += "\nModifiers: " + ", ".join(mod_text)
@@ -167,10 +167,10 @@ func get_starting_curio_display(character: GeneratedCharacter) -> String:
 	if character.starting_curio:
 		var curio_resource = character.starting_curio
 		if curio_resource.has_method("get") and curio_resource.curio_name:
-			var name = curio_resource.curio_name if curio_resource.curio_name else "Unknown Curio"
-			var desc = curio_resource.description if curio_resource.description else "No description"
-			return "Starting Curio: " + name + "\n" + desc
-	
+			var curio_name = curio_resource.curio_name if curio_resource.curio_name else "Unknown Curio"
+			var curio_desc = curio_resource.description if curio_resource.description else "No description"
+			return "Starting Curio: " + curio_name + "\n" + curio_desc
+
 	return "Starting Curio: Unknown"
 
 func setup_button_connections():
@@ -192,11 +192,11 @@ func update_seed_display():
 	if hash_seed.is_empty():
 		seed_label.text = "Seed: Not Set"
 	elif is_thematic:
-		seed_label.text = "Seed: " + hash_seed + " ✨"  # Special indicator for thematic seeds
+		seed_label.text = "Seed: " + hash_seed + " ✨" # Special indicator for thematic seeds
 	else:
 		seed_label.text = "Seed: " + hash_seed
 
-func _on_hash_seed_changed(new_hash_seed: String):
+func _on_hash_seed_changed(_new_hash_seed: String):
 	update_seed_display()
 
 func _on_character_selected(character_index: int):

@@ -6,8 +6,9 @@ class_name DefenseHandler
 @export var condition: String = "" # descriptive only; enforcement left to systems
 # Note: delayed is inherited from EffectHandler base class
 
-
-func apply_effect(context):
+## Applies defense/armor to the target.
+## Returns a HandlerResult with defense values to be applied by DuelManager.
+func apply_effect(context: Resource) -> Resource:
 	var result = HandlerResult.new()
 	var target = context.primary_target if context and context.primary_target else (context.player_data if context else null)
 	if target == null:
@@ -44,7 +45,7 @@ func apply_effect(context):
 	result.success = true
 	return result
 
-func get_preview_text(context: Resource) -> String:
+func get_description_text(context: Resource) -> String:
 	var final_amount = resolve_conditional_value("amount", amount, context) if context else amount
 	var curio_bonus = _get_curio_bonus(context, "defense")
 
