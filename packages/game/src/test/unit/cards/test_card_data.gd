@@ -20,7 +20,7 @@ func test_standard_handling():
 	assert_bool(_card_data.starts_in_hand()).is_false()
 	assert_bool(_card_data.removed_after_use()).is_false()
 	assert_bool(_card_data.returns_to_deck()).is_false()
-	assert_str(_card_data.get_deck_return_position()).is_equal("none")
+	assert_int(_card_data.get_resolution_destination()).is_equal(CardHandling.Destination.DISCARD)
 
 func test_equipped_handling():
 	_card_data.card_handling = "Equipped"
@@ -39,13 +39,13 @@ func test_recycle_handling():
 	
 	assert_bool(_card_data.discards_after_use()).is_false()
 	assert_bool(_card_data.returns_to_deck()).is_true()
-	assert_str(_card_data.get_deck_return_position()).is_equal("shuffle")
+	assert_int(_card_data.get_resolution_destination()).is_equal(CardHandling.Destination.DECK_SHUFFLE)
 
 func test_top_deck_handling():
 	_card_data.card_handling = "TopDeck"
 	
 	assert_bool(_card_data.returns_to_deck()).is_true()
-	assert_str(_card_data.get_deck_return_position()).is_equal("top")
+	assert_int(_card_data.get_resolution_destination()).is_equal(CardHandling.Destination.DECK_TOP)
 	
 func test_class_access_methods():
 	_card_data.accessibility_tier = "Class"
