@@ -25,10 +25,10 @@ func _init(p_return_scene: String = "map") -> void:
 func get_intent_type() -> String:
 	return "RewardIntent"
 
-## Factory for test sequence preview rewards
-static func create_test_preview(p_continue_sequence: bool, p_return_scene: String = "test_duel_setup") -> RewardIntent:
+## Factory for test sequence rewards (preview mode controls if deck is modified)
+static func create_test_preview(p_continue_sequence: bool, p_return_scene: String = "test_duel_setup", p_is_preview: bool = false) -> RewardIntent:
 	var intent = RewardIntent.new(p_return_scene)
-	intent.is_preview_mode = true
+	intent.is_preview_mode = p_is_preview
 	intent.continue_sequence = p_continue_sequence
 	return intent
 

@@ -118,17 +118,23 @@ func start_next_battle() -> DuelConfig:
 	# We use deep duplicate (true) to also duplicate sub-resources like Stats
 	next_enemy = next_enemy.duplicate(true)
 	
-	# Create deck from selected deck data
+	# Create deck from DeckManager (runtime deck includes rewards) or fall back to original
 	var deck_cards: Array[CardData] = []
 	GLog.info("Preparing next battle deck...", "test_sequence_handler")
-	if seq_state.selected_deck:
+	
+	# Priority 1: Use DeckManager if available (contains cards added during run)
+	if DeckManager and DeckManager.is_deck_available():
+		deck_cards = DeckManager.get_current_deck()
+		GLog.info("Loaded %d cards from DeckManager (runtime deck)" % deck_cards.size(), "test_sequence_handler")
+	# Priority 2: Fall back to original deck data from sequence state
+	elif seq_state.selected_deck:
 		if "cards" in seq_state.selected_deck:
 			# Handle explicit card list (e.g. ad-hoc deck)
 			deck_cards = seq_state.selected_deck.cards.duplicate()
 		elif "card_paths" in seq_state.selected_deck:
 			# Handle DeckData resource
 			var paths = seq_state.selected_deck.card_paths
-			GLog.info("Loading %d cards from paths" % paths.size(), "test_sequence_handler")
+			GLog.info("Loading %d cards from paths (fallback)" % paths.size(), "test_sequence_handler")
 			for path in paths:
 				var card = load(path) as CardData
 				if card:
