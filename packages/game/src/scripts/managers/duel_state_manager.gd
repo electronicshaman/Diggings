@@ -52,12 +52,12 @@ func initialize(duel_manager_ref: Node) -> Error:
 	]
 	
 	for connection in signal_connections:
-		if duel_manager.has_signal(connection.signal):
-			var connect_result = duel_manager.connect(connection.signal, Callable(self, connection.method))
+		if duel_manager.has_signal(connection.signal ):
+			var connect_result = duel_manager.connect(connection.signal , Callable(self, connection.method))
 			if connect_result != OK:
-				push_warning("GameController: Failed to connect signal: " + connection.signal)
+				push_warning("GameController: Failed to connect signal: " + connection.signal )
 		else:
-			push_warning("GameController: DuelManager missing signal: " + connection.signal)
+			push_warning("GameController: DuelManager missing signal: " + connection.signal )
 	
 	# Initialize duel state safely
 	if _has_prop(duel_manager, "duel_state"):
@@ -96,8 +96,8 @@ func start_duel(player_deck: DeckData, enemy: Resource) -> Error:
 	
 	return OK
 
-## Convenience: Start a default/test duel (used on scene load or via debug UI)
-func start_test_duel() -> void:
+## Convenience: Start a default/quick duel (used on scene load or via debug UI)
+func start_quick_duel() -> void:
 	# Build a reasonable default player deck from the selected character class
 	var deck: DeckData = _build_default_player_deck()
 	# Pick a default enemy
@@ -109,7 +109,7 @@ func start_test_duel() -> void:
 	
 	var err = start_duel(deck, enemy)
 	if err != OK:
-		push_warning("GameController: start_test_duel failed with error code: " + str(err))
+		push_warning("GameController: start_quick_duel failed with error code: " + str(err))
 
 ## Convenience: Draw a single card into hand (debug helper for UI)
 func add_random_card_to_hand() -> void:

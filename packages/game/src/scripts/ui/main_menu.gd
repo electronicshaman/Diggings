@@ -6,7 +6,7 @@ class_name MainMenuController
 @onready var continue_button = $MenuContainer/ContinueButton
 @onready var settings_button = $MenuContainer/SettingsButton
 @onready var deck_builder_button = $MenuContainer/DeckBuilderButton
-@onready var test_duel_button = $MenuContainer/TestDuelButton
+@onready var quick_duel_button = $MenuContainer/QuickDuelButton
 @onready var quit_button = $MenuContainer/QuitButton
 
 func _ready():
@@ -20,7 +20,7 @@ func setup_button_connections():
 	continue_button.pressed.connect(_on_continue_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	deck_builder_button.pressed.connect(_on_deck_builder_pressed)
-	test_duel_button.pressed.connect(_on_test_duel_pressed)
+	quick_duel_button.pressed.connect(_on_quick_duel_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 
 func check_save_file_exists():
@@ -101,9 +101,9 @@ func _on_use_previous_seed_pressed():
 	# Transition to class selection
 	SceneManager.load_scene_by_name("class_selection")
 
-func _on_test_duel_pressed():
-	GLog.info("Test Duel button pressed")
-	SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+func _on_quick_duel_pressed():
+	GLog.info("Quick Duel button pressed")
+	SceneManager.load_scene("res://scenes/game/quick_duel_setup.tscn")
 
 func _on_quit_pressed():
 	GLog.info("Quit button pressed")

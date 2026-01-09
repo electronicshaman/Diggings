@@ -48,7 +48,7 @@ var discard_card_instance: Node = null
 var removed_card_instance: Node = null
 
 # Pile icon scale for card scenes (300x420 -> ~90x90)
-const PILE_CARD_SCALE: float = 0.30  # 300 * 0.3 = 90px width
+const PILE_CARD_SCALE: float = 0.30 # 300 * 0.3 = 90px width
 
 # Battlefield system - visual areas
 var enemy_hand_area: Node2D
@@ -289,7 +289,7 @@ func _update_enemy_status_display(enemy: EnemyState) -> void:
 			status_text += " (%d turns)" % stun_turns
 		active_statuses.append({
 			"text": status_text,
-			"color": Color(1, 0.8, 0, 1)  # Yellow/orange for stun
+			"color": Color(1, 0.8, 0, 1) # Yellow/orange for stun
 		})
 	
 	# TODO: Add other status effects here as they are implemented
@@ -370,7 +370,7 @@ func update_seed_ui() -> void:
 		var is_thematic = SeedManager.is_thematic_seed(hash_seed)
 		
 		if is_thematic:
-			seed_label.text = "Seed: %s ✨" % hash_seed  # Special indicator for thematic seeds
+			seed_label.text = "Seed: %s ✨" % hash_seed # Special indicator for thematic seeds
 		else:
 			seed_label.text = "Seed: %s" % hash_seed
 	else:
@@ -411,10 +411,10 @@ func refresh_hand_display() -> void:
 		var card_scale = 0.625
 		var card_width = 300 * card_scale
 		var total_width = (hand_data.size() - 1) * card_spacing
-		var start_x = -total_width / 2 - card_width / 2
+		var start_x = - total_width / 2 - card_width / 2
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
-		card_node.scale = Vector2(0.625, 0.625)  # Scale down from 300x420 to 187x262 (25% larger)
+		card_node.scale = Vector2(0.625, 0.625) # Scale down from 300x420 to 187x262 (25% larger)
 
 		if card_node.has_method("set_card"):
 			card_node.set_card(ci)
@@ -451,7 +451,7 @@ func _on_ui_refresh_timer_timeout() -> void:
 	refresh_hand_display()
 	refresh_enemy_hand_display()
 	refresh_battlefield_display()
-	update_pile_ui()  # Update pile visuals after card nodes have settled
+	update_pile_ui() # Update pile visuals after card nodes have settled
 	ui_refresh_requested.emit()
 
 func clear_hand_display() -> void:
@@ -520,10 +520,10 @@ func refresh_enemy_hand_display() -> void:
 		var card_scale = 0.4
 		var card_width = 300 * card_scale
 		var total_width = (enemy_hand_data.size() - 1) * card_spacing
-		var start_x = -total_width / 2 - card_width / 2
+		var start_x = - total_width / 2 - card_width / 2
 		card_instance.position.x = start_x + i * card_spacing
 		card_instance.position.y = 0
-		card_instance.scale = Vector2(0.4, 0.4)  # Smaller enemy cards (120x168)
+		card_instance.scale = Vector2(0.4, 0.4) # Smaller enemy cards (120x168)
 		
 		# Show as card back (enemy cards are hidden)
 		card_instance.show_as_card_back()
@@ -552,10 +552,10 @@ func refresh_battlefield_display() -> void:
 		var card_scale = 0.45
 		var card_width = 300 * card_scale
 		var total_width = (battlefield_data.size() - 1) * card_spacing
-		var start_x = -total_width / 2 - card_width / 2
+		var start_x = - total_width / 2 - card_width / 2
 		card_node.position.x = start_x + i * card_spacing
 		card_node.position.y = 0
-		card_node.scale = Vector2(0.45, 0.45)  # Slightly smaller battlefield cards (135x189)
+		card_node.scale = Vector2(0.45, 0.45) # Slightly smaller battlefield cards (135x189)
 		
 		if card_node.has_method("set_card"):
 			card_node.set_card(ci)
@@ -618,7 +618,7 @@ func _on_reset_duel_pressed() -> void:
 		return
 	var duel_state_manager = game_controller.get_duel_state_manager()
 	if duel_state_manager:
-		duel_state_manager.start_test_duel()
+		duel_state_manager.start_quick_duel()
 
 func _on_ui_notification(message: String, type: String) -> void:
 	"""Handle UI notifications like curio rewards"""

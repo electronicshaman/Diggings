@@ -1,6 +1,6 @@
 extends Node
 
-# Old map system removed; Hexmap is now the primary exploration scene
+# Quick Duel is now the primary game mode
 
 const DEBUG_ENABLED: bool = true
 
@@ -39,8 +39,8 @@ var run_start_time: float = 0.0
 # Duel system
 var pending_duel_config: DuelConfig = null
 
-# Test mode sequence state (typed as Resource to avoid autoload dependency issues)
-var test_sequence_state = null # Will be TestSequenceState instance
+# Duel sequence state (typed as Resource to avoid autoload dependency issues)
+var duel_sequence_state = null # Will be DuelSequenceState instance
 
 func _ready() -> void:
 	GLog.debug("GameManager initialized - The cosmic game engine awakens")
@@ -64,7 +64,7 @@ func initialize_game_data() -> void:
 		"corruption": 0,
 		"deck": [],
 		"curios": [],
-	"hexmap_state": {},
+
 		"maps": {}, # Multiple maps, one per region
 		"current_map": "", # Current region being explored
 	"completed_maps": [], # List of completed region IDs
@@ -166,11 +166,7 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	if CurioManager:
 		CurioManager.reset_run_curios()
 
-	# Clear any previous hexmap state for a fresh run
-	var _hexmap_state := get_node_or_null("/root/HexmapState")
-	if _hexmap_state:
-		_hexmap_state.call("clear")
-	
+
 	# Apply character data if available
 	if selected_character:
 		apply_character_data()
@@ -179,7 +175,7 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	if is_instance_valid(DeckManager):
 		DeckManager.start_new_run_deck(character_class)
 	
-	# Load directly into the Hexmap scene (replacing legacy map flow)
+	# Load map selection
 	change_state(GameState.PLAYING)
 	EventBus.emit_game_started()
 	# Route to region selection first
@@ -448,11 +444,10 @@ func add_corruption(amount: int) -> void:
 		EventBus.corruption_changed.emit(amount)
 
 func generate_all_maps() -> void:
-	# Legacy map generation removed. Hexmap scene manages its own world generation.
-	# Keep available_maps as initialized for MapSelection
+	# Map generation placeholder for region selection
 	game_data.completed_maps = []
 	game_data.maps = {}
-	GLog.info("Legacy map generation disabled (Hexmap in use)")
+	GLog.info("Map generation initialized")
 
 func select_map(region_id: String) -> void:
 	if not game_data.maps.has(region_id):
@@ -466,11 +461,6 @@ func select_map(region_id: String) -> void:
 	game_data.current_map = region_id
 	GLog.info("Selected map: " + region_id)
 
-	# Initialize HexmapState for this region so the map scene can generate once and persist
-	var _hexmap_state := get_node_or_null("/root/HexmapState")
-	if _hexmap_state:
-		_hexmap_state.call("begin_new_map", region_id)
-	
 	# Load the map scene
 	SceneManager.load_scene_by_name("map")
 

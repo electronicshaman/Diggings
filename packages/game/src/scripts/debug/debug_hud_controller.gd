@@ -47,7 +47,7 @@ var memory_value: Label
 var god_mode_value: Label
 var debug_mode_value: Label
 var eventbus_signals_value: Label
-var active_modals_value: Label
+
 var encountered_ids_title: Label
 var encountered_ids_list: RichTextLabel
 
@@ -132,7 +132,7 @@ func cache_ui_references() -> void:
 	god_mode_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/GodMode/Value")
 	debug_mode_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/DebugMode/Value")
 	eventbus_signals_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EventBusSignals/Value")
-	active_modals_value = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/ActiveModals/Value")
+
 
 	# Cache Encounter IDs UI references from scene
 	encountered_ids_title = get_node_or_null("CanvasLayer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/SystemDebug/EncounterIDs/Title")
@@ -179,7 +179,6 @@ func _update_all_data() -> void:
 	update_run_statistics()
 	update_system_debug()
 	update_deck_info()
-	_update_encounter_ids()
 
 func update_core_game_state() -> void:
 	# Current Scene
@@ -385,16 +384,6 @@ func update_system_debug() -> void:
 		# Count connected signals (simplified)
 		eventbus_signals_value.text = "Active"
 	
-	# Active Modals
-	if active_modals_value and ModalManager:
-		var active_count := 0
-		if ModalManager.has_method("is_modal_active") and ModalManager.is_modal_active():
-			active_count = 1
-		var queued_count := 0
-		if ModalManager.has_method("get_queue_size"):
-			queued_count = ModalManager.get_queue_size()
-		# Show active modal count and queued for extra context
-		active_modals_value.text = "%d (queued: %d)" % [active_count, queued_count]
 
 func update_deck_info() -> void:
 	# Only show deck info if DeckManager is available and we're in a duel or deck is loaded
@@ -502,37 +491,6 @@ func update_deck_info() -> void:
 		if removed_count_value:
 			removed_count_value.text = "---"
 
-
-func _update_encounter_ids() -> void:
-	# Update encounter IDs list and title count from EncounterManager
-	if encountered_ids_list == null:
-		return
-
-	var id_map: Dictionary = {}
-	# Prefer autoload singleton if available
-	if is_instance_valid(EncounterManager):
-		id_map = EncounterManager.encountered_ids if EncounterManager.encountered_ids else {}
-	else:
-		var mgr := get_node_or_null("/root/EncounterManager")
-		if mgr:
-			id_map = mgr.encountered_ids if mgr.encountered_ids else {}
-
-	var keys := id_map.keys()
-	keys.sort()
-	var lines: Array[String] = []
-	for k in keys:
-		lines.append("%s: %s" % [str(k), str(id_map.get(k, 0))])
-
-	var text := "(none)"
-	if lines.size() > 0:
-		text = "\n".join(lines)
-
-	# RichTextLabel update
-	encountered_ids_list.clear()
-	encountered_ids_list.append_text(text)
-
-	if encountered_ids_title:
-		encountered_ids_title.text = "Encounter IDs Seen (%d)" % id_map.size()
 
 func format_time(seconds: float) -> String:
 	var minutes = int(seconds / 60.0)

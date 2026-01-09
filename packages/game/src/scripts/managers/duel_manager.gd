@@ -21,7 +21,7 @@ var flow_controller: DuelFlowController
 var ai_controller: EnemyAIController
 var card_resolver: CardResolver
 var passive_handler: ClassPassiveHandler
-var test_handler: TestSequenceHandler
+var sequence_handler: DuelSequenceHandler
 
 # Removed EffectProcessor dependency
 
@@ -37,7 +37,7 @@ func _ready():
 	ai_controller = EnemyAIController.new(duel_state)
 	card_resolver = CardResolver.new(duel_state, self) # Removed effect_processor arg
 	passive_handler = ClassPassiveHandler.new(duel_state)
-	test_handler = TestSequenceHandler.new()
+	sequence_handler = DuelSequenceHandler.new()
 	
 	# Wire inter-component references
 	flow_controller.card_resolver = card_resolver
@@ -114,8 +114,8 @@ func end_duel(winner: String):
 	# Cleanup class passives
 	passive_handler.cleanup()
 
-	# Delegate test sequence handling to TestSequenceHandler
-	var handler_result = test_handler.handle_duel_end(winner, duel_state)
+	# Delegate test sequence handling to DuelSequenceHandler
+	var handler_result = sequence_handler.handle_duel_end(winner, duel_state)
 	
 	if handler_result.handled:
 		# Test sequence handler took care of everything
@@ -132,7 +132,7 @@ func end_duel(winner: String):
 		else:
 			# Handled, but no scene change -> Sequence Continue
 			GLog.info("DuelManager: Sequence continuing to next battle...")
-			var next_config = test_handler.start_next_battle()
+			var next_config = sequence_handler.start_next_battle()
 			if next_config:
 				# Brief pause between battles
 				await get_tree().create_timer(1.0).timeout

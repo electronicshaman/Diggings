@@ -24,9 +24,6 @@ var pending_curio_reward: bool = false
 var offered_curios: Array = []
 var curio_phase_active: bool = false
 
-# Test sequence preview mode
-var is_test_sequence_preview: bool = false
-
 # Where to navigate after reward selection (from intent or legacy)
 var continue_to_scene: String = ""
 var should_continue_sequence: bool = false
@@ -38,19 +35,6 @@ func _ready():
 	var intent = SceneManager.get_pending_intent() as RewardIntent
 	if intent:
 		_apply_intent(intent)
-	else:
-		# Legacy: Check for test sequence preview mode via game_data
-		if GameManager:
-			is_test_sequence_preview = GameManager.game_data.get("test_sequence_preview", false)
-			if is_test_sequence_preview:
-				GameManager.game_data["test_sequence_preview"] = false # Clear the flag
-				GLog.info("Victory reward in PREVIEW mode (legacy) - deck unchanged", "victory_reward")
-				if title_label:
-					title_label.text = "Victory! (Preview - Deck Unchanged)"
-			
-			# Legacy: check for sequence continuation
-			should_continue_sequence = GameManager.game_data.get("continue_test_sequence", false)
-			GameManager.game_data["continue_test_sequence"] = false
 
 	# Check if curio reward is pending (boss/elite defeated)
 	if GameManager:
@@ -74,21 +58,15 @@ func _ready():
 
 func _apply_intent(intent: RewardIntent) -> void:
 	"""Configure scene from a RewardIntent"""
-	is_test_sequence_preview = intent.is_preview_mode
 	should_continue_sequence = intent.continue_sequence
 	continue_to_scene = intent.return_scene
 	pending_curio_reward = intent.offer_curio
-	
+
 	if intent.gold_reward > 0:
 		gold_reward = intent.gold_reward
-	
-	if is_test_sequence_preview:
-		GLog.info("Victory reward in PREVIEW mode (via intent) - deck unchanged", "victory_reward")
-		if title_label:
-			title_label.text = "Victory! (Preview - Deck Unchanged)"
-	
-	GLog.debug("Applied RewardIntent: preview=%s, continue=%s, return=%s" % [
-		is_test_sequence_preview, should_continue_sequence, continue_to_scene
+
+	GLog.debug("Applied RewardIntent: continue=%s, return=%s" % [
+		should_continue_sequence, continue_to_scene
 	], "victory_reward")
 
 func _load_card_pool():
@@ -187,12 +165,6 @@ func _on_card_selected(card_node: Node, card_data: CardData):
 
 func _add_card_to_deck(card_data: CardData):
 	"""Add the selected card to the player's deck via DeckManager"""
-	# Preview mode: show selection but don't add to deck
-	if is_test_sequence_preview:
-		GLog.info("PREVIEW: Card '%s' selected but NOT added to deck" % card_data.card_name, "victory_reward")
-		EventBus.emit_ui_notification("Preview: %s (not added)" % card_data.card_name, "info")
-		return
-
 	# Use DeckManager to add the card (proper SOLID approach)
 	if DeckManager and DeckManager.is_deck_available():
 		var success := DeckManager.add_card(card_data)
@@ -220,17 +192,15 @@ func _complete_card_reward():
 	"""Complete the card reward phase"""
 	GLog.info("Card reward phase complete")
 
-	# Add gold if any (skip in preview mode)
-	if gold_reward > 0 and not is_test_sequence_preview:
+	# Add gold if any
+	if gold_reward > 0:
 		if not GameManager.game_data.has("gold"):
 			GameManager.game_data["gold"] = 0
 		GameManager.game_data["gold"] += gold_reward
 		GLog.info("Added %d gold to player (total: %d)" % [gold_reward, GameManager.game_data["gold"]])
-	elif gold_reward > 0 and is_test_sequence_preview:
-		GLog.info("PREVIEW: Gold reward %d shown but not added" % gold_reward, "victory_reward")
 
-	# Check if curio reward is pending (skip in preview mode)
-	if pending_curio_reward and not is_test_sequence_preview:
+	# Check if curio reward is pending
+	if pending_curio_reward:
 		_show_curio_selection()
 	else:
 		_finish_and_return_to_map()
@@ -353,18 +323,17 @@ func _on_curio_unhover(button: Button):
 	tween.tween_property(button, "scale", Vector2(1.0, 1.0), 0.1)
 
 func _finish_and_return_to_map():
-	"""Complete all rewards and return to map (or continue sequence/test setup in preview mode)"""
-	if is_test_sequence_preview:
-		if should_continue_sequence:
-			GLog.info("Victory reward preview complete - continuing to next battle in sequence", "victory_reward")
-			# Advance to next enemy in sequence
-			if GameManager.test_sequence_state:
-				GameManager.test_sequence_state.advance_to_next_enemy()
-			# Return to duel scene to continue sequence
-			SceneManager.load_scene("res://scenes/game/duel.tscn")
-		else:
-			GLog.info("Victory reward preview complete - returning to test setup", "victory_reward")
-			SceneManager.load_scene("res://scenes/debug/test_duel_setup.tscn")
+	"""Complete all rewards and return to map (or continue sequence)"""
+	if should_continue_sequence:
+		GLog.info("Victory reward complete - continuing to next battle in sequence", "victory_reward")
+		# Advance to next enemy in sequence
+		if GameManager.duel_sequence_state:
+			GameManager.duel_sequence_state.advance_to_next_enemy()
+		# Return to duel scene to continue sequence
+		SceneManager.load_scene("res://scenes/game/duel.tscn")
+	elif continue_to_scene and not continue_to_scene.is_empty():
+		GLog.info("Victory reward complete - returning to %s" % continue_to_scene, "victory_reward")
+		SceneManager.load_scene_by_name(continue_to_scene)
 	else:
 		GLog.info("Victory reward complete - returning to map")
 		SceneManager.load_scene_by_name("map")

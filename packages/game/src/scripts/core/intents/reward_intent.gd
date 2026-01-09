@@ -4,9 +4,6 @@ extends SceneIntent
 ## Intent for the victory/reward scene.
 ## Defines what mode the reward screen operates in and where to go after.
 
-## Whether this is preview mode (deck not modified)
-var is_preview_mode: bool = false
-
 ## Should continue to next battle in a sequence
 var continue_sequence: bool = false
 
@@ -25,10 +22,9 @@ func _init(p_return_scene: String = "map") -> void:
 func get_intent_type() -> String:
 	return "RewardIntent"
 
-## Factory for test sequence rewards (preview mode controls if deck is modified)
-static func create_test_preview(p_continue_sequence: bool, p_return_scene: String = "test_duel_setup", p_is_preview: bool = false) -> RewardIntent:
+## Factory for quick duel sequence rewards
+static func create_quick_duel_reward(p_continue_sequence: bool, p_return_scene: String = "quick_duel_setup") -> RewardIntent:
 	var intent = RewardIntent.new(p_return_scene)
-	intent.is_preview_mode = p_is_preview
 	intent.continue_sequence = p_continue_sequence
 	return intent
 
