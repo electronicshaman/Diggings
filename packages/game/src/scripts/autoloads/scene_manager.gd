@@ -19,20 +19,19 @@ const SCENE_PATHS: Dictionary = {
 	"main_menu": "res://scenes/ui/main_menu.tscn",
 	"class_selection": "res://scenes/ui/class_selection.tscn",
 	"duel": "res://scenes/game/duel.tscn",
-	"map": "res://scenes/hexmap/hexmap.tscn",
+	"quick_duel_setup": "res://scenes/game/quick_duel_setup.tscn",
 	"map_selection": "res://scenes/game/map_selection.tscn",
 	"city_hub": "res://scenes/game/city_hub.tscn",
 	"shop": "res://scenes/game/shop.tscn",
 	"camp": "res://scenes/game/camp.tscn",
 	"junction": "res://scenes/game/junction.tscn",
 	"rest_site": "res://scenes/game/rest_site.tscn",
-	"event": "res://scenes/game/event.tscn",
-	"encounter_outcome": "res://scenes/game/encounter_outcome.tscn",
 	"game_over": "res://scenes/ui/game_over.tscn",
-	"victory": "res://scenes/ui/victory.tscn",
+
 	"settings": "res://scenes/ui/settings.tscn",
 	"deck_viewer": "res://scenes/ui/deck_viewer.tscn",
-	"deck_management": "res://scenes/ui/deck_management.tscn"
+	"deck_management": "res://scenes/ui/deck_management.tscn",
+	"run_complete": "res://scenes/ui/run_complete.tscn"
 }
 
 var transition_overlay: ColorRect
@@ -169,7 +168,7 @@ func preload_common_scenes() -> void:
 		"duel",
 		"map",
 		"game_over",
-		"victory"
+
 	]
 	
 	for scene_name in scenes_to_preload:
@@ -209,6 +208,3 @@ func transition_to_game() -> void:
 
 func transition_to_game_over() -> void:
 	load_scene_by_name("game_over")
-
-func transition_to_victory() -> void:
-	load_scene_by_name("victory")

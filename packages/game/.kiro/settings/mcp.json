@@ -4,7 +4,7 @@
       "command": "/opt/homebrew/bin/uv",
       "args": [
         "run",
-        "addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"
+        "src/addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"
       ],
       "autoApprove": [
         "search_files",

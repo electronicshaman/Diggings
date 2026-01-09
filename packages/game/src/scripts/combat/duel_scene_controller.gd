@@ -169,10 +169,10 @@ func _initialize_duel() -> void:
 			# Start the duel via DuelStateManager
 			duel_state_manager.start_duel(player_deck, enemy_data)
 
-			# Check if this is a test duel and set flag
-			if duel_config.get_modifier("test_duel", false):
-				GameManager.game_data["is_test_duel"] = true
-				GLog.info("Test duel mode activated", "duel_scene_controller")
+			# Check if this is a quick duel and set flag
+			if duel_config.get_modifier("quick_duel", false):
+				GameManager.game_data["is_quick_duel"] = true
+				GLog.info("Quick duel mode activated", "duel_scene_controller")
 				
 				# Apply health override if present
 				var health_override = duel_config.get_modifier("health_override", -1)
@@ -202,27 +202,27 @@ func _initialize_duel() -> void:
 							ds.player_data.set_character_class(char_class)
 							GLog.info("Applied character class: %s" % char_class.character_class_name, "duel_scene_controller")
 			else:
-				GameManager.game_data["is_test_duel"] = false
+				GameManager.game_data["is_quick_duel"] = false
 
 			# Clear the config after using it
 			GameManager.clear_pending_duel_config()
 			return
 	
-	# Check for active test sequence (returning from victory reward mid-sequence)
-	if GameManager.test_sequence_state and GameManager.test_sequence_state.is_active:
-		GLog.info("Active test sequence detected - starting next battle", "duel_scene_controller")
-		
-		# Use TestSequenceHandler to create next battle config
-		var test_handler = TestSequenceHandler.new()
-		var next_config = test_handler.start_next_battle()
-		
+	# Check for active duel sequence (returning from victory reward mid-sequence)
+	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
+		GLog.info("Active duel sequence detected - starting next battle", "duel_scene_controller")
+
+		# Use DuelSequenceHandler to create next battle config
+		var sequence_handler = DuelSequenceHandler.new()
+		var next_config = sequence_handler.start_next_battle()
+
 		if next_config and next_config.is_valid():
 			var card_array = next_config.get_modified_deck()
 			var enemy_data = next_config.enemy_data
 			var player_deck = _create_deck_data_from_cards(card_array, next_config.scene_context)
-			
+
 			duel_state_manager.start_duel(player_deck, enemy_data)
-			GameManager.game_data["is_test_duel"] = true
+			GameManager.game_data["is_quick_duel"] = true
 			GLog.info("Started sequence battle against: %s" % (enemy_data.enemy_name if enemy_data and "enemy_name" in enemy_data else "Unknown"), "duel_scene_controller")
 			return
 		else:
@@ -251,9 +251,9 @@ func _on_duel_ended_from_state_manager(victory: bool) -> void:
 	GLog.debug("Duel ended (from state manager) - Victory: %s" % victory)
 	game_state_updated.emit()
 	
-	# Check for test sequence - let DuelManager handle the transition and persistence
-	if GameManager.test_sequence_state and GameManager.test_sequence_state.is_active:
-		GLog.debug("Test sequence active - deferring end game logic to DuelManager", "duel_scene_controller")
+	# Check for duel sequence - let DuelManager handle the transition and persistence
+	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
+		GLog.debug("Duel sequence active - deferring end game logic to DuelManager", "duel_scene_controller")
 		return
 
 	await get_tree().create_timer(0.6).timeout
@@ -294,12 +294,12 @@ func _on_win_duel_pressed() -> void:
 	else:
 		push_warning("DuelSceneController: Cannot end duel - DuelManager is invalid or missing method")
 	
-	# Return to map after a brief delay
+	# Return to quick duel setup after a brief delay
 	await get_tree().create_timer(1.0).timeout
 	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene"):
-		SceneManager.load_scene("res://scenes/hexmap/hexmap.tscn")
+		SceneManager.load_scene("res://scenes/game/quick_duel_setup.tscn")
 	else:
-		push_error("DuelSceneController: Cannot load map scene - SceneManager unavailable")
+		push_error("DuelSceneController: Cannot load quick duel setup scene - SceneManager unavailable")
 
 func _on_lose_duel_pressed() -> void:
 	GLog.debug("Test lose button pressed - ending duel as player defeat")
