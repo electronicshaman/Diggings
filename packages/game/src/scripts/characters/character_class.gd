@@ -5,39 +5,39 @@ class_name CharacterClass
 @export_group("Character Identity")
 @export var character_class_name: String = "Bushranger"
 @export var description: String = "An outlaw of the Australian bush"
-@export var difficulty_rating: int = 2  # 1=Easy, 2=Medium, 3=Hard, 4=Expert
+@export var difficulty_rating: int = 2 # 1=Easy, 2=Medium, 3=Hard, 4=Expert
 
 # Starting statistics
 @export_group("Starting Stats")
 @export var base_health: int = 55
-@export var base_sanity: int = 90
+@export var base_sanity: int = 18 # Lower sanity pool for impactful roguelike gameplay
 @export var base_energy: int = 3
 @export var starting_gold: int = 10
 
 # Starting deck composition
 @export_group("Starting Deck")
-@export var starting_deck_paths: Array[String] = []  # Paths to starting cards (legacy)
-@export var starting_deck_resource: String = ""      # Path to DeckData resource (preferred)
+@export var starting_deck_paths: Array[String] = [] # Paths to starting cards (legacy)
+@export var starting_deck_resource: String = "" # Path to DeckData resource (preferred)
 @export var starting_deck_size: int = 15
 
 # Character mechanics and abilities
 @export_group("Class Mechanics")
-@export var passive_abilities: Array[String] = []  # Names of passive abilities
-@export var active_abilities: Array[String] = []   # Names of active abilities
-@export var unique_resources: Array[String] = []   # e.g., ["Ammo"] for Bushranger
-@export var unique_resource_defaults: Dictionary = {}  # e.g., {"Ammo": 6} - starting values
-@export var unique_resource_max: Dictionary = {}  # e.g., {"Faith": 10} - max values (0 = no max)
+@export var passive_abilities: Array[String] = [] # Names of passive abilities
+@export var active_abilities: Array[String] = [] # Names of active abilities
+@export var unique_resources: Array[String] = [] # e.g., ["Ammo"] for Bushranger
+@export var unique_resource_defaults: Dictionary = {} # e.g., {"Ammo": 6} - starting values
+@export var unique_resource_max: Dictionary = {} # e.g., {"Faith": 10} - max values (0 = no max)
 
 # Card accessibility rules
 @export_group("Card Access")
-@export var class_exclusive_cards: Array[String] = []  # Card names only this class can use
-@export var preferred_card_types: Array[String] = []   # Theme types this class prefers
-@export var forbidden_card_types: Array[String] = []   # Theme types this class cannot use
+@export var class_exclusive_cards: Array[String] = [] # Card names only this class can use
+@export var preferred_card_types: Array[String] = [] # Theme types this class prefers
+@export var forbidden_card_types: Array[String] = [] # Theme types this class cannot use
 
 # Character progression
 @export_group("Progression")
 @export var unlocked_by_default: bool = true
-@export var unlock_requirements: Array[String] = []  # Achievement names required
+@export var unlock_requirements: Array[String] = [] # Achievement names required
 @export var unlock_description: String = ""
 
 # Thematic elements
@@ -52,7 +52,7 @@ func get_display_name() -> String:
 func get_starting_stats() -> Dictionary:
 	return {
 		"base_health": base_health,
-		"base_sanity": base_sanity, 
+		"base_sanity": base_sanity,
 		"base_energy": base_energy,
 		"starting_gold": starting_gold
 	}

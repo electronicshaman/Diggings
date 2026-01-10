@@ -35,7 +35,7 @@ card_type = "Attack"
 description = "Deal 5 damage. If Faith >= 3: Deal +3 damage."
 flavor_text = "The righteous burn eternal!"
 effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
-sanity_cost = 0
+sanity_cost = 1
 card_handling = "Standard"
 volatile_bonus = false
 luck_modifier = 0.0

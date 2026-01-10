@@ -1,24 +1,31 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/types/sanity_damage_handler.gd" id="3"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
-amount = 12
-ignores_defense = true
+amount = 4
+ignores_defense = false
+
+[sub_resource type="Resource" id="SanityDamageHandler_1"]
+script = ExtResource("3")
+amount = 2
+description = "Deal 2 sanity damage"
 
 [resource]
 script = ExtResource("1")
 card_name = "Whispered Curse"
 energy_cost = 2
-card_type = "Attack"
+card_type = "Hex"
+description = "Deal 4 damage and 2 sanity damage."
 flavor_text = "Words that bypass flesh and strike at the soul."
-effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
+effects = Array[HandlerBase]([SubResource("DamageHandler_1"), SubResource("SanityDamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
 luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
-
+enemy_faction = "eldritch"

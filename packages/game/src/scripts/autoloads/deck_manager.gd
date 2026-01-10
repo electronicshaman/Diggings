@@ -281,6 +281,33 @@ func get_cards_by_type(card_type: String) -> Array[CardData]:
 	return cards
 
 
+## Get all curse cards in the deck (for UI display or rest site)
+func get_curse_cards() -> Array[CardData]:
+	return get_cards_by_type("Curse")
+
+
+## Remove all curse cards from deck (called at rest sites)
+## Returns number of curses removed
+func remove_curse_cards() -> int:
+	if not current_run_deck:
+		GLog.warn("DeckManager: Cannot remove curses - no deck loaded")
+		return 0
+	
+	var curses = get_curse_cards()
+	var removed_count = 0
+	
+	for curse in curses:
+		if current_run_deck.remove_card(curse):
+			removed_count += 1
+			GLog.info("Removed curse from deck: %s" % curse.card_name)
+	
+	if removed_count > 0:
+		deck_changed.emit("curses_removed", {"count": removed_count})
+		GLog.info("DeckManager: Removed %d curse cards at rest" % removed_count)
+	
+	return removed_count
+
+
 # ============================================================================
 # Private Methods
 # ============================================================================

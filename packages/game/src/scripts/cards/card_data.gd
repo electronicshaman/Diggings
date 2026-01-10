@@ -37,6 +37,9 @@ class_name CardData
 @export_group("Rarity")
 @export var rarity: String = "Common" # Common, Uncommon, Rare, Eldritch
 
+@export_group("Enemy Card Properties")
+@export var enemy_faction: String = "" # eldritch, wildlife, lawman, mining (empty = player card)
+
 
 # --- Card Handling Helper Methods ---
 # These delegate to CardHandling for clean separation of concerns.
@@ -123,6 +126,18 @@ func is_power() -> bool:
 func is_fortune() -> bool:
 	"""Check if this card is a Fortune type"""
 	return card_type == "Fortune"
+
+func is_hex() -> bool:
+	"""Check if this card is a Hex type (enemy sanity damage)"""
+	return card_type == "Hex"
+
+func is_curse() -> bool:
+	"""Check if this card is a Curse type (deck corruption)"""
+	return card_type == "Curse"
+
+func is_enemy_card() -> bool:
+	"""Check if this card belongs to an enemy faction"""
+	return not enemy_faction.is_empty()
 
 # --- Description generation helpers ---
 # Prefer effect-provided descriptions as the source of truth. These helpers let
