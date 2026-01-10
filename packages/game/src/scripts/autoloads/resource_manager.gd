@@ -21,10 +21,10 @@ const POOL_SIZES: Dictionary = {
 
 const RESOURCE_PATHS: Dictionary = {
 	"cards": "res://data/cards/",
-	"attack_cards": "res://data/cards/attack/",
-	"skill_cards": "res://data/cards/skill/",
-	"power_cards": "res://data/cards/power/",
-	"fortune_cards": "res://data/cards/fortune/",
+	"attack_cards": "res://data/cards/player/attack/",
+	"skill_cards": "res://data/cards/player/skill/",
+	"power_cards": "res://data/cards/player/power/",
+	"fortune_cards": "res://data/cards/player/fortune/",
 	"enemies": "res://data/enemies/",
 	"characters": "res://data/characters/",
 	"themes": "res://data/themes/",

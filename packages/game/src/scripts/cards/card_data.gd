@@ -3,6 +3,9 @@ class_name CardData
 
 # Card data resource - defines card properties and effects
 
+## Card ownership for filtering player vs enemy cards
+enum CardOwner {PLAYER, ENEMY, NEUTRAL}
+
 @export var card_name: String = "Card"
 @export var energy_cost: int = 1
 @export var description: String = ""
@@ -37,8 +40,9 @@ class_name CardData
 @export_group("Rarity")
 @export var rarity: String = "Common" # Common, Uncommon, Rare, Eldritch
 
-@export_group("Enemy Card Properties")
-@export var enemy_faction: String = "" # eldritch, wildlife, lawman, mining (empty = player card)
+@export_group("Card Ownership")
+@export var card_owner: CardOwner = CardOwner.PLAYER
+@export var enemy_faction: String = "" # eldritch, wildlife, lawman, mining (for enemy cards)
 
 
 # --- Card Handling Helper Methods ---
@@ -136,8 +140,16 @@ func is_curse() -> bool:
 	return card_type == "Curse"
 
 func is_enemy_card() -> bool:
-	"""Check if this card belongs to an enemy faction"""
-	return not enemy_faction.is_empty()
+	"""Check if this card belongs to an enemy"""
+	return card_owner == CardOwner.ENEMY
+
+func is_player_card() -> bool:
+	"""Check if this card belongs to the player"""
+	return card_owner == CardOwner.PLAYER
+
+func is_neutral_card_owner() -> bool:
+	"""Check if this card is neutral (curses, etc.)"""
+	return card_owner == CardOwner.NEUTRAL
 
 # --- Description generation helpers ---
 # Prefer effect-provided descriptions as the source of truth. These helpers let

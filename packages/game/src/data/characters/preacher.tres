@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="CharacterClass" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/character_class.gd" id="1"]
-[ext_resource type="Resource" path="res://data/cards/fortune/tent_revival.tres" id="2"]
-[ext_resource type="Resource" path="res://data/cards/skill/holy_water.tres" id="3"]
-[ext_resource type="Resource" path="res://data/cards/attack/fire_and_brimstone.tres" id="4"]
-[ext_resource type="Resource" path="res://data/cards/skill/psalm_of_protection.tres" id="5"]
-[ext_resource type="Resource" path="res://data/cards/skill/laying_on_hands.tres" id="6"]
-[ext_resource type="Resource" path="res://data/cards/fortune/snake_oil.tres" id="7"]
-[ext_resource type="Resource" path="res://data/cards/skill/missionary_zeal.tres" id="8"]
+[ext_resource type="Resource" path="res://data/cards/player/fortune/tent_revival.tres" id="2"]
+[ext_resource type="Resource" path="res://data/cards/player/skill/holy_water.tres" id="3"]
+[ext_resource type="Resource" path="res://data/cards/player/attack/fire_and_brimstone.tres" id="4"]
+[ext_resource type="Resource" path="res://data/cards/player/skill/psalm_of_protection.tres" id="5"]
+[ext_resource type="Resource" path="res://data/cards/player/skill/laying_on_hands.tres" id="6"]
+[ext_resource type="Resource" path="res://data/cards/player/fortune/snake_oil.tres" id="7"]
+[ext_resource type="Resource" path="res://data/cards/player/skill/missionary_zeal.tres" id="8"]
 
 [resource]
 script = ExtResource("1")

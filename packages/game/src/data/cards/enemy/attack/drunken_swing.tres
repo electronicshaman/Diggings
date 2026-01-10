@@ -5,15 +5,18 @@
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
-amount = 11
-ignores_defense = true
+amount = 5
+random_range = true
+min_amount = 3
+max_amount = 8
+ignores_defense = false
 
 [resource]
 script = ExtResource("1")
-card_name = "Corrupt Justice"
-energy_cost = 2
+card_name = "Drunken Swing"
+energy_cost = 1
 card_type = "Attack"
-flavor_text = "The law twisted to serve dark purposes."
+flavor_text = "Unsteady hands make for unpredictable strikes."
 effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
@@ -22,4 +25,5 @@ luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
 
-enemy_faction = "lawman"
+enemy_faction = "mining"
+card_owner = 1

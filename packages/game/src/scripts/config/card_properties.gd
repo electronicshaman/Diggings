@@ -20,7 +20,9 @@ const VALID_CARD_TYPES: Array[String] = [
 	"Power",
 	"Fortune",
 	"Grog",
-	"Gamble"
+	"Gamble",
+	"Hex",
+	"Curse"
 ]
 
 
@@ -44,6 +46,10 @@ static func get_card_color(card_type: String) -> Color:
 			return Color(0.722, 0.525, 0.043) # Amber
 		"Fortune":
 			return Color(0.133, 0.545, 0.133) # Green
+		"Hex":
+			return Color(0.58, 0.0, 0.83) # Purple
+		"Curse":
+			return Color(0.2, 0.2, 0.2) # Dark Gray
 		_:
 			return Color.WHITE
 
@@ -61,6 +67,10 @@ static func get_card_symbol(card_type: String) -> String:
 			return "🍺"
 		"Fortune":
 			return "🎲"
+		"Hex":
+			return "🕸"
+		"Curse":
+			return "💀"
 		_:
 			return "?"
 

@@ -5,18 +5,15 @@
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
-amount = 5
-random_range = true
-min_amount = 3
-max_amount = 8
+amount = 15
 ignores_defense = false
 
 [resource]
 script = ExtResource("1")
-card_name = "Drunken Swing"
-energy_cost = 1
+card_name = "Feral Rage"
+energy_cost = 3
 card_type = "Attack"
-flavor_text = "Unsteady hands make for unpredictable strikes."
+flavor_text = "Primal fury unleashed in a devastating assault."
 effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
@@ -25,4 +22,5 @@ luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
 
-enemy_faction = "mining"
+enemy_faction = "wildlife"
+card_owner = 1

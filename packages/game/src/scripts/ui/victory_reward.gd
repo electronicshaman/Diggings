@@ -72,25 +72,25 @@ func _apply_intent(intent: RewardIntent) -> void:
 func _load_card_pool():
 	"""Load all available card paths for reward selection"""
 	all_card_paths = [
-		"res://data/cards/attack/quick_shot.tres",
-		"res://data/cards/attack/wild_shot.tres",
-		"res://data/cards/attack/six_shooter.tres",
-		"res://data/cards/attack/fan_the_hammer.tres",
-		"res://data/cards/attack/ambush.tres",
-		"res://data/cards/attack/bounty_shot.tres",
-		"res://data/cards/attack/desperados_gambit.tres",
-		"res://data/cards/attack/pickaxe_strike.tres",
-		"res://data/cards/attack/dynamite.tres",
-		"res://data/cards/skill/take_cover.tres",
-		"res://data/cards/skill/reload.tres",
-		"res://data/cards/skill/last_stand.tres",
-		"res://data/cards/skill/bush_survival.tres",
-		"res://data/cards/skill/outlaws_intuition.tres",
-		"res://data/cards/skill/wanted_poster.tres",
-		"res://data/cards/skill/bandits_code.tres",
-		"res://data/cards/skill/bush_cover.tres",
-		"res://data/cards/fortune/strike_it_rich.tres",
-		"res://data/cards/power/pub_brawl.tres"
+		"res://data/cards/player/attack/quick_shot.tres",
+		"res://data/cards/player/attack/wild_shot.tres",
+		"res://data/cards/player/attack/six_shooter.tres",
+		"res://data/cards/player/attack/fan_the_hammer.tres",
+		"res://data/cards/player/attack/ambush.tres",
+		"res://data/cards/player/attack/bounty_shot.tres",
+		"res://data/cards/player/attack/desperados_gambit.tres",
+		"res://data/cards/player/attack/pickaxe_strike.tres",
+		"res://data/cards/player/attack/dynamite.tres",
+		"res://data/cards/player/skill/take_cover.tres",
+		"res://data/cards/player/skill/reload.tres",
+		"res://data/cards/player/skill/last_stand.tres",
+		"res://data/cards/player/skill/bush_survival.tres",
+		"res://data/cards/player/skill/outlaws_intuition.tres",
+		"res://data/cards/player/skill/wanted_poster.tres",
+		"res://data/cards/player/skill/bandits_code.tres",
+		"res://data/cards/player/skill/bush_cover.tres",
+		"res://data/cards/player/fortune/strike_it_rich.tres",
+		"res://data/cards/player/power/pub_brawl.tres"
 	]
 	
 	GLog.debug("Loaded %d cards into reward pool" % all_card_paths.size())

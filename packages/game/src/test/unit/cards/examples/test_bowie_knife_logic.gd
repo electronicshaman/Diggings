@@ -7,7 +7,7 @@ var _card_resolver: CardResolver
 var _duel_state: DuelState
 var _duel_manager: DuelManager
 
-const BOWIE_KNIFE_PATH = "res://data/cards/attack/bowie_knife.tres"
+const BOWIE_KNIFE_PATH = "res://data/cards/player/attack/bowie_knife.tres"
 
 func before_test():
 	# Setup isolated environment

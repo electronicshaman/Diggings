@@ -5,17 +5,15 @@
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
-amount = 4
-multi_hit = true
-hits = 2
+amount = 7
 ignores_defense = false
 
 [resource]
 script = ExtResource("1")
-card_name = "Constricting Coil"
-energy_cost = 2
+card_name = "Greedy Strike"
+energy_cost = 1
 card_type = "Attack"
-flavor_text = "Muscles tighten, crushing the life from its prey."
+flavor_text = "Desperation makes every swing count."
 effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
@@ -24,4 +22,5 @@ luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
 
-enemy_faction = "wildlife"
+enemy_faction = "mining"
+card_owner = 1

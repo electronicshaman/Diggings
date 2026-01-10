@@ -5,15 +5,15 @@
 
 [sub_resource type="Resource" id="DefenseHandler_1"]
 script = ExtResource("2")
-amount = 9
+amount = 10
 duration = 0
 
 [resource]
 script = ExtResource("1")
-card_name = "Miner's Fortitude"
+card_name = "Void Shield"
 energy_cost = 1
 card_type = "Skill"
-flavor_text = "Years of hard labor build resilience."
+flavor_text = "Darkness itself becomes a barrier against the light."
 effects = Array[HandlerBase]([SubResource("DefenseHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
@@ -22,4 +22,5 @@ luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
 
-enemy_faction = "mining"
+enemy_faction = "eldritch"
+card_owner = 1

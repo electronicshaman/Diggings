@@ -319,8 +319,8 @@ func _create_default_sandbox_deck() -> Array[CardData]:
 
 	# Generic starter - just load a few common cards
 	var starter_paths = [
-		"res://data/cards/attack/quick_shot.tres",
-		"res://data/cards/skill/take_cover.tres"
+		"res://data/cards/player/attack/quick_shot.tres",
+		"res://data/cards/player/skill/take_cover.tres"
 	]
 
 	for path in starter_paths:
