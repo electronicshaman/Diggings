@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CharacterClass" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/character_class.gd" id="1"]
-[ext_resource type="Resource" path="res://data/cards/fortune/pan_for_gold.tres" id="2"]
-[ext_resource type="Resource" uid="uid://v8aqsn00s55y" path="res://data/cards/attack/pickaxe_strike.tres" id="3"]
-[ext_resource type="Resource" path="res://data/cards/skill/steady_hands.tres" id="4"]
+[ext_resource type="Resource" path="res://data/cards/player/fortune/pan_for_gold.tres" id="2"]
+[ext_resource type="Resource" uid="uid://v8aqsn00s55y" path="res://data/cards/player/attack/pickaxe_strike.tres" id="3"]
+[ext_resource type="Resource" path="res://data/cards/player/skill/steady_hands.tres" id="4"]
 
 [resource]
 script = ExtResource("1")

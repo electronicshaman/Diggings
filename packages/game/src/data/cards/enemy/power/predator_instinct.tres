@@ -1,20 +1,20 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/handlers/types/defense_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 
-[sub_resource type="Resource" id="DefenseHandler_1"]
+[sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
-amount = 8
-duration = 0
+amount = 10
+ignores_defense = true
 
 [resource]
 script = ExtResource("1")
-card_name = "Thick Hide"
-energy_cost = 1
-card_type = "Skill"
-flavor_text = "Tough scales and hide shrug off most attacks."
-effects = Array[HandlerBase]([SubResource("DefenseHandler_1")])
+card_name = "Predator Instinct"
+energy_cost = 2
+card_type = "Power"
+flavor_text = "Ancient hunting knowledge guides every strike."
+effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
 volatile_bonus = false
@@ -23,3 +23,4 @@ class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
 
 enemy_faction = "wildlife"
+card_owner = 1

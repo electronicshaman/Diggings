@@ -6,14 +6,16 @@
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
 amount = 6
+multi_hit = true
+hits = 3
 ignores_defense = false
 
 [resource]
 script = ExtResource("1")
-card_name = "Badge Strike"
-energy_cost = 1
+card_name = "Fanatic Fury"
+energy_cost = 3
 card_type = "Attack"
-flavor_text = "Authority made manifest through force."
+flavor_text = "Blind rage channeled through unholy power."
 effects = Array[HandlerBase]([SubResource("DamageHandler_1")])
 sanity_cost = 0
 card_handling = "Standard"
@@ -22,4 +24,5 @@ luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
 
-enemy_faction = "lawman"
+enemy_faction = "eldritch"
+card_owner = 1
