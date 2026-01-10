@@ -40,13 +40,13 @@ func select_card(enemy: EnemyState, playable: Array[CardData]) -> CardData:
 		return null
 	
 	match enemy.ai_type:
-		"aggressive":
+		GameEnums.AIType.AGGRESSIVE:
 			return _select_aggressive(playable)
-		"defensive":
+		GameEnums.AIType.DEFENSIVE:
 			return _select_defensive(playable)
-		"balanced":
+		GameEnums.AIType.BALANCED:
 			return _select_balanced(enemy, playable)
-		"cunning":
+		GameEnums.AIType.CUNNING:
 			return _select_cunning(enemy, playable)
 		_:
 			GLog.warn("Unknown AI type '%s', using default" % enemy.ai_type, "enemy_ai_controller")
@@ -55,7 +55,7 @@ func select_card(enemy: EnemyState, playable: Array[CardData]) -> CardData:
 
 func execute_turn(enemy: EnemyState, card_resolver: RefCounted) -> void:
 	"""Execute the enemy's turn by playing cards"""
-	GLog.info("Enemy AI (%s) is taking its turn" % enemy.ai_type, "enemy_ai_controller")
+	GLog.info("Enemy AI (Type: %d) is taking its turn" % enemy.ai_type, "enemy_ai_controller")
 	
 	var cards_played := 0
 	

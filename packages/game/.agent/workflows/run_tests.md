@@ -6,17 +6,20 @@ To run unit tests using GdUnit4 in headless mode, use the following command stru
 Note: `--ignoreHeadlessMode` is required because GdUnit4 by default blocks headless mode for UI tests, even if the tests are logic-only.
 
 ```bash
-/Applications/Godot.app/Contents/MacOS/Godot --headless --path src -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a [path_to_test_script] --ignoreHeadlessMode
+cd src
+/Applications/Godot.app/Contents/MacOS/Godot --headless -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/[path_to_test_script] --ignoreHeadlessMode
 ```
 
 Example for a specific test file:
 
 ```bash
-/Applications/Godot.app/Contents/MacOS/Godot --headless --path src -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/cards/test_card_data.gd --ignoreHeadlessMode
+cd src
+/Applications/Godot.app/Contents/MacOS/Godot --headless -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/cards/test_card_data.gd --ignoreHeadlessMode
 ```
 
 Example for running a directory of tests:
 
 ```bash
-/Applications/Godot.app/Contents/MacOS/Godot --headless --path src -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/ --ignoreHeadlessMode
+cd src
+/Applications/Godot.app/Contents/MacOS/Godot --headless -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/ --ignoreHeadlessMode
 ```

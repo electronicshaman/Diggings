@@ -17,9 +17,11 @@ enum IntentType {UNKNOWN, ATTACK, DEFEND, SPECIAL, BUFF, DEBUFF}
 @export var enemy_name: String = ""
 @export var description: String = ""
 
-# Enemy tier (for rewards and difficulty)
-@export var is_boss: bool = false
-@export var is_elite: bool = false
+# Enemy Type Configuration
+@export var enemy_type: GameEnums.EnemyType = GameEnums.EnemyType.NORMAL
+
+# AI configuration
+@export var ai_type: GameEnums.AIType = GameEnums.AIType.AGGRESSIVE
 
 # AI and combat state
 @export var stun_turns_remaining: int = 0
@@ -34,9 +36,6 @@ enum IntentType {UNKNOWN, ATTACK, DEFEND, SPECIAL, BUFF, DEBUFF}
 # Enemy-specific modifiers
 @export var damage_modifier: float = 1.0
 @export var defense_modifier: float = 1.0
-
-# AI configuration
-@export var ai_type: String = "aggressive" # aggressive, defensive, balanced, cunning
 
 # Memory system for tracking player patterns
 @export var player_card_history: Array[String] = []
@@ -270,6 +269,18 @@ func is_intent_revealed() -> bool:
 
 ## Convenience Property Accessors for Compatibility
 
+var is_boss: bool:
+	get: return enemy_type == GameEnums.EnemyType.BOSS
+	set(value):
+		if value: enemy_type = GameEnums.EnemyType.BOSS
+		elif enemy_type == GameEnums.EnemyType.BOSS: enemy_type = GameEnums.EnemyType.NORMAL
+
+var is_elite: bool:
+	get: return enemy_type == GameEnums.EnemyType.ELITE
+	set(value):
+		if value: enemy_type = GameEnums.EnemyType.ELITE
+		elif enemy_type == GameEnums.EnemyType.ELITE: enemy_type = GameEnums.EnemyType.NORMAL
+
 var current_health: int:
 	get: return stats.current_health if stats else 0
 	set(value): if stats: stats.current_health = value
@@ -339,7 +350,7 @@ func get_deck_strategy() -> String:
 	"""Get enemy's preferred strategy from deck data"""
 	if card_manager:
 		return card_manager.get_strategy()
-	return ai_type
+	return "balanced"
 
 
 func get_deck_theme() -> String:
@@ -411,8 +422,7 @@ func get_save_data() -> Dictionary:
 		"card_manager": card_manager.get_save_data() if card_manager else {},
 		"enemy_name": enemy_name,
 		"description": description,
-		"is_boss": is_boss,
-		"is_elite": is_elite,
+		"enemy_type": enemy_type,
 		"stun_turns_remaining": stun_turns_remaining,
 		"current_pattern_index": current_pattern_index,
 		"turns_alive": turns_alive,
@@ -437,8 +447,17 @@ func load_from_data(data: Dictionary) -> void:
 	
 	enemy_name = data.get("enemy_name", "")
 	description = data.get("description", "")
-	is_boss = data.get("is_boss", false)
-	is_elite = data.get("is_elite", false)
+	
+	# Migration logic for enemy_type (backward compatibility)
+	if "enemy_type" in data:
+		enemy_type = data["enemy_type"]
+	elif data.get("is_boss", false):
+		enemy_type = GameEnums.EnemyType.BOSS
+	elif data.get("is_elite", false):
+		enemy_type = GameEnums.EnemyType.ELITE
+	else:
+		enemy_type = GameEnums.EnemyType.NORMAL
+	
 	stun_turns_remaining = data.get("stun_turns_remaining", 0)
 	current_pattern_index = data.get("current_pattern_index", 0)
 	turns_alive = data.get("turns_alive", 0)
@@ -447,7 +466,19 @@ func load_from_data(data: Dictionary) -> void:
 	intent_revealed = data.get("intent_revealed", false)
 	damage_modifier = data.get("damage_modifier", 1.0)
 	defense_modifier = data.get("defense_modifier", 1.0)
-	ai_type = data.get("ai_type", "aggressive")
+	
+	# Migration logic for ai_type (backward compatibility)
+	var loaded_ai = data.get("ai_type", GameEnums.AIType.AGGRESSIVE)
+	if loaded_ai is String:
+		match loaded_ai:
+			"aggressive": ai_type = GameEnums.AIType.AGGRESSIVE
+			"defensive": ai_type = GameEnums.AIType.DEFENSIVE
+			"balanced": ai_type = GameEnums.AIType.BALANCED
+			"cunning": ai_type = GameEnums.AIType.CUNNING
+			_: ai_type = GameEnums.AIType.AGGRESSIVE
+	else:
+		ai_type = loaded_ai
+		
 	player_card_history = data.get("player_card_history", [])
 
 
@@ -462,7 +493,13 @@ func print_status() -> void:
 	GLog.debug("Pattern: %d" % current_pattern_index)
 	GLog.debug("Turns alive: %d" % turns_alive)
 	GLog.debug("Modifiers: %.1fx damage, %.1fx defense" % [damage_modifier, defense_modifier])
-	GLog.debug("AI Type: %s" % ai_type)
+	
+	var type_str = "Normal"
+	match enemy_type:
+		GameEnums.EnemyType.BOSS: type_str = "Boss"
+		GameEnums.EnemyType.ELITE: type_str = "Elite"
+	GLog.debug("Type: %s" % type_str)
+	
 	if card_manager:
 		card_manager.print_status(enemy_name)
 	GLog.debug("Player memory: %s" % str(player_card_history))

@@ -42,7 +42,7 @@ enum CardOwner {PLAYER, ENEMY, NEUTRAL}
 
 @export_group("Card Ownership")
 @export var card_owner: CardOwner = CardOwner.PLAYER
-@export var enemy_faction: String = "" # eldritch, wildlife, lawman, mining (for enemy cards)
+@export var enemy_faction: GameEnums.EnemyFaction = GameEnums.EnemyFaction.NONE # eldritch, wildlife, lawman, mining (for enemy cards)
 
 
 # --- Card Handling Helper Methods ---
