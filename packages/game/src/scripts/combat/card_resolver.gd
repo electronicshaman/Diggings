@@ -430,6 +430,12 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 	if values.has("sanity") and values.sanity > 0:
 		source.restore_sanity(values.sanity)
 	
+	# Sanity damage (enemy attacks targeting mental state)
+	if values.has("sanity_damage") and values.sanity_damage > 0:
+		if target and target.stats:
+			target.stats.lose_sanity(values.sanity_damage)
+			GLog.debug("CardResolver: Applied %d sanity damage to target" % values.sanity_damage)
+	
 	# Card manipulation
 	if values.has("discard_random") and values.discard_random > 0:
 		duel_state.discard_random_cards(values.discard_random)
@@ -441,5 +447,5 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 	for key in values.keys():
 		if key not in ["damage", "defense", "heal", "drawn", "custom_resources", "gold",
 					   "stun_enemy", "delayed_damage", "delayed_defense", "energy", "sanity",
-					   "discard_random", "exhaust_random", "ignores_defense", "damage_hits"]:
+					   "sanity_damage", "discard_random", "exhaust_random", "ignores_defense", "damage_hits"]:
 			GLog.warn("CardResolver: Unknown effect key: %s" % key)

@@ -160,7 +160,7 @@ func get_base_stats(character_class: String) -> Dictionary:
 	
 	GLog.warn("Failed to load character resource for %s, using fallback stats" % character_class)
 	# Fallback stats if resource loading fails
-	return {"base_health": 50, "base_sanity": 100, "base_energy": 3, "starting_gold": 10}
+	return {"base_health": 50, "base_sanity": 20, "base_energy": 3, "starting_gold": 10}
 
 func get_starting_curio_display(character: GeneratedCharacter) -> String:
 	# Get the curio resource 

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/handlers/types/card_manipulation_handler.gd" id="2"]
+
+[sub_resource type="Resource" id="CardHandler_Draw"]
+script = ExtResource("2")
+action = "draw"
+amount = 2
+description = "Draw 2 cards"
+
+[sub_resource type="Resource" id="CardHandler_DiscardRandom"]
+script = ExtResource("2")
+action = "discard_random"
+amount = 1
+description = "Discard 1 random card"
+
+[resource]
+script = ExtResource("1")
+card_name = "Shattered Mind"
+energy_cost = 0
+card_type = "Curse"
+description = "Draw 2 cards, then randomly discard 1 card. Exhaust."
+flavor_text = "The pieces don't fit anymore. Maybe they never did."
+effects = Array[HandlerBase]([SubResource("CardHandler_Draw"), SubResource("CardHandler_DiscardRandom")])
+sanity_cost = 0
+card_handling = "Oneshot"
+volatile_bonus = false
+luck_modifier = 0.0
+class_affinity = Array[String]([])
+accessibility_tier = "Curse"
+rarity = "Curse"

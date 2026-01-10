@@ -179,9 +179,9 @@ func generate_character(character_class: String) -> GeneratedCharacter:
 	character.base_sanity += SeedManager.get_character_random_int(-5, 5)
 	character.starting_gold += SeedManager.get_character_random_int(-2, 5)
 	
-	# Ensure minimum values
+	# Ensure minimum values (adjusted for lower sanity pool)
 	character.base_health = max(character.base_health, 25)
-	character.base_sanity = max(character.base_sanity, 50)
+	character.base_sanity = max(character.base_sanity, 10)
 	character.starting_gold = max(character.starting_gold, 0)
 	
 	GLog.info("Generated character: " + character.formatted_name + " the " + character_class)
@@ -460,7 +460,7 @@ func get_base_character_stats(character_class: String) -> Dictionary:
 	
 	GLog.warn("Failed to load character resource for %s, using fallback stats" % character_class)
 	# Fallback stats if resource loading fails
-	return {"base_health": 50, "base_sanity": 100, "base_energy": 3, "starting_gold": 10}
+	return {"base_health": 50, "base_sanity": 20, "base_energy": 3, "starting_gold": 10}
 
 func generate_simple_name(character_class: String) -> String:
 	var names = ["Jack", "Mary", "William", "Sarah", "Thomas", "Elizabeth", "James", "Margaret", "John", "Catherine"]

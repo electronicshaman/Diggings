@@ -22,6 +22,7 @@ var ai_controller: EnemyAIController
 var card_resolver: CardResolver
 var passive_handler: ClassPassiveHandler
 var sequence_handler: DuelSequenceHandler
+var sanity_tracker: SanityThresholdTracker
 
 # Removed EffectProcessor dependency
 
@@ -51,6 +52,11 @@ func _ready():
 	card_resolver.enemy_card_played.connect(_on_card_resolver_enemy_card_played)
 
 	duel_state.add_change_listener(_on_duel_state_changed)
+	
+	# Initialize sanity threshold tracker for curse injection
+	sanity_tracker = SanityThresholdTracker.new()
+	sanity_tracker.corruption_triggered.connect(_on_corruption_triggered)
+	sanity_tracker.tier_changed.connect(_on_sanity_tier_changed)
 
 func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 	GLog.debug("DuelState changed: %s" % change_type)
@@ -60,6 +66,44 @@ func _on_duel_state_changed(change_type: String, _data: Dictionary) -> void:
 			end_duel("enemy")
 		"enemy_died":
 			end_duel("player")
+		"player_sanity_changed", "player_sanity_tier_changed":
+			# Check sanity thresholds when sanity changes
+			if sanity_tracker and duel_state and duel_state.player_data:
+				sanity_tracker.check_threshold(duel_state.player_data)
+
+# Sanity threshold tracking handlers
+func _on_sanity_tier_changed(old_tier: int, new_tier: int) -> void:
+	"""Handle sanity tier transition - log for debugging"""
+	var old_name = Stats.get_tier_name(old_tier)
+	var new_name = Stats.get_tier_name(new_tier)
+	GLog.info("DuelManager: Sanity tier changed: %s -> %s" % [old_name, new_name])
+	
+	# Emit event for UI to show visual feedback
+	if EventBus:
+		EventBus.emit_ui_notification("Mental state: " + new_name, "warning" if new_tier > old_tier else "info")
+
+func _on_corruption_triggered(tier: int, card_path: String) -> void:
+	"""Handle corruption event - inject curse card into run deck (persistent until rest)"""
+	if not ResourceLoader.exists(card_path):
+		GLog.error("DuelManager: Curse card not found: %s" % card_path)
+		return
+	
+	var curse_card = load(card_path) as CardData
+	if not curse_card:
+		GLog.error("DuelManager: Failed to load curse card: %s" % card_path)
+		return
+	
+	# Add curse to run deck (persistent until rest site removes it)
+	if DeckManager and DeckManager.is_deck_available():
+		DeckManager.add_card(curse_card)
+		var tier_name = Stats.get_tier_name(tier)
+		GLog.info("DuelManager: Corrupted! '%s' permanently added to deck (tier: %s)" % [curse_card.card_name, tier_name])
+		
+		# Notify player of the corruption
+		if EventBus:
+			EventBus.emit_ui_notification("Mind corrupted! " + curse_card.card_name + " added to deck", "error")
+	else:
+		GLog.warn("DuelManager: Cannot inject curse - DeckManager not available")
 
 # Signal forwarding methods
 func _on_flow_controller_turn_started(is_player_turn: bool) -> void:
@@ -83,6 +127,11 @@ func _on_card_resolver_enemy_card_played(card: CardData) -> void:
 
 func start_new_duel(player_deck: DeckData, enemy_data: Resource) -> void:
 	GLog.info("DuelManager: Starting new duel...")
+	
+	# Sync sanity tracker to player state (don't reset - corruption persists across run)
+	# Only triggers new corruption if player descends to a NEW tier they haven't hit yet this run
+	if sanity_tracker and duel_state and duel_state.player_data:
+		sanity_tracker.sync_to_player(duel_state.player_data)
 	
 	# Setup class passives for the new duel
 	passive_handler.setup_passives()

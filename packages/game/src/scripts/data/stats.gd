@@ -6,6 +6,15 @@ const DEBUG_ENABLED: bool = true
 # Stats Resource - Handles health, energy, sanity, and defense with change tracking
 # Part of the resource-based architecture migration for better performance and reusability
 
+## Sanity tier thresholds based on percentage of max sanity
+## Inspired by Call of Cthulhu's graduated insanity system
+enum SanityTier {
+	STABLE, # > 75%  - Normal operation
+	SHAKEN, # 50-75% - Minor effects, corruption starts
+	UNSTABLE, # 25-50% - Significant effects, UI unreliability
+	BROKEN # <= 25% - Severe effects, deck heavily corrupted
+}
+
 # Health stats
 @export var current_health: int = 50:
 	set(value):
@@ -42,19 +51,25 @@ const DEBUG_ENABLED: bool = true
 				current_energy = max_energy
 			_emit_change("max_energy_changed", old_value, max_energy)
 
-# Sanity stats
-@export var current_sanity: int = 100:
+# Sanity stats - Default 20 for more impactful roguelike gameplay
+@export var current_sanity: int = 20:
 	set(value):
 		if current_sanity != value:
 			var old_value: int = current_sanity
+			var old_tier: SanityTier = get_sanity_tier()
 			current_sanity = clamp(value, 0, max_sanity)
 			_emit_change("sanity_changed", old_value, current_sanity)
+			
+			# Check for tier transition
+			var new_tier: SanityTier = get_sanity_tier()
+			if new_tier != old_tier:
+				_emit_change("sanity_tier_changed", old_tier, new_tier)
 			
 			# Check for insanity
 			if current_sanity <= 0 and old_value > 0:
 				_emit_change("went_insane", null, null)
 
-@export var max_sanity: int = 100:
+@export var max_sanity: int = 20:
 	set(value):
 		if max_sanity != value:
 			var old_value: int = max_sanity
@@ -136,6 +151,32 @@ func get_sanity_percentage() -> float:
 		return 0.0
 	return float(current_sanity) / float(max_sanity)
 
+# Get current sanity tier based on percentage thresholds
+func get_sanity_tier() -> SanityTier:
+	var percent = get_sanity_percentage()
+	if percent > 0.75:
+		return SanityTier.STABLE
+	elif percent > 0.50:
+		return SanityTier.SHAKEN
+	elif percent > 0.25:
+		return SanityTier.UNSTABLE
+	else:
+		return SanityTier.BROKEN
+
+# Get human-readable name for a sanity tier
+static func get_tier_name(tier: SanityTier) -> String:
+	match tier:
+		SanityTier.STABLE:
+			return "Stable"
+		SanityTier.SHAKEN:
+			return "Shaken"
+		SanityTier.UNSTABLE:
+			return "Unstable"
+		SanityTier.BROKEN:
+			return "Broken"
+		_:
+			return "Unknown"
+
 # Get missing health as percentage (0.0 to 1.0)
 func get_missing_health_percentage() -> float:
 	if max_health <= 0:
@@ -167,7 +208,7 @@ func take_damage(amount: int) -> int:
 			# Prevent fatal damage - reduce health to 1 instead of 0 or below
 			var prevented_damage = actual_damage - (current_health - 1)
 			current_health = 1
-			fatal_damage_prevented = false  # Used up the prevention
+			fatal_damage_prevented = false # Used up the prevention
 			_emit_change("fatal_damage_prevented", prevented_damage, current_health)
 			return actual_damage - prevented_damage
 		else:
@@ -209,7 +250,7 @@ func lose_sanity(amount: int) -> void:
 # Gain defense
 func gain_defense(amount: int) -> void:
 	if amount > 0:
-		defense = defense + amount  # Use assignment to trigger setter and signal
+		defense = defense + amount # Use assignment to trigger setter and signal
 
 # Lose defense
 func lose_defense(amount: int) -> void:
@@ -224,7 +265,7 @@ func activate_fatal_damage_prevention() -> void:
 # Gain gold
 func gain_gold(amount: int) -> void:
 	if amount > 0:
-		current_gold = current_gold + amount  # Use assignment to trigger setter and signal
+		current_gold = current_gold + amount # Use assignment to trigger setter and signal
 
 # Spend gold if available, returns true if successful
 func spend_gold(amount: int) -> bool:
@@ -297,7 +338,7 @@ func load_from_data(data: Dictionary) -> void:
 func print_status() -> void:
 	GLog.debug("Stats: %d/%d HP, %d/%d Energy, %d/%d Sanity, %d Defense" % [
 		current_health, max_health,
-		current_energy, max_energy, 
+		current_energy, max_energy,
 		current_sanity, max_sanity,
 		defense
 	])
