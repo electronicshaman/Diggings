@@ -28,5 +28,5 @@ card_manager = SubResource("CardManager_1")
 enemy_name = "Mad Dog Morgan"
 description = "A legendary bushranger driven insane by bloodlust"
 damage_modifier = 1.2
-ai_type = "cunning"
+ai_type = 3
 player_pattern_memory_size = 5

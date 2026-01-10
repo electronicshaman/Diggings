@@ -22,5 +22,5 @@ volatile_bonus = false
 luck_modifier = 0.0
 class_affinity = Array[String]([])
 accessibility_tier = "Neutral"
-enemy_faction = "eldritch"
+enemy_faction = 1
 card_owner = 1
