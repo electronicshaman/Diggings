@@ -7,10 +7,6 @@ class_name CardResolver
 # Per-file debug control (GLog will check this)
 const DEBUG_ENABLED: bool = true
 
-# Timing constants for card resolution
-const CARD_STAGE_DELAY: float = 0.5 # Time card sits on battlefield before resolving
-const ENEMY_CARD_PLAY_DELAY: float = 1.5 # Time between enemy card plays
-
 # Signals for card resolution events
 signal card_played(card_instance: CardInstance)
 signal enemy_card_played(card: CardData)
@@ -146,33 +142,35 @@ func play_player_card(card_instance: CardInstance) -> void:
 	if not can_play_card(card_instance.card_data):
 		GLog.warn("CardResolver: Cannot play card: %s" % card_instance.get_card_name())
 		return
-	
+
 	GLog.info("CardResolver: Playing card: %s" % card_instance.get_card_name())
-	
+
 	var player = duel_state.player_data
-	
+
 	# Capture timing context BEFORE incrementing counter
 	var cards_played_before = player.cards_played_this_turn
 	var hand_size_before = duel_state.hand.size() - 1 # -1 because we're about to play this card
-	
+
 	# Pay all costs upfront to ensure consistent state
 	_pay_all_costs(player, card_instance.card_data)
-	
+
 	# Increment counter for this turn
 	player.cards_played_this_turn += 1
 	player.apply_card_cost_reductions()
-	
+
 	# Move card to battlefield temporarily for visual feedback
 	duel_state.play_card(card_instance)
-	
+
 	# Emit event for UI to show card on battlefield
 	card_played.emit(card_instance)
-	
+
 	# Track this card for enemy memory
 	_track_player_card_for_enemy_memory(card_instance.card_data)
-	
-	# Note: Timing delay will be handled by the caller (DuelManager)
-	# Immediately resolve the card with timing context
+
+	# Wait for card to be displayed on battlefield before resolving
+	await Engine.get_main_loop().create_timer(GameConstants.TIMING_VALUES["card_stage_delay"]).timeout
+
+	# Resolve the card with timing context
 	resolve_card(card_instance, true, cards_played_before, hand_size_before)
 
 func play_enemy_card(enemy: EnemyState, card: CardData) -> void:
@@ -194,7 +192,7 @@ func play_enemy_card(enemy: EnemyState, card: CardData) -> void:
 	enemy_card_played.emit(card)
 	
 	# Wait for card to be displayed before resolving
-	await Engine.get_main_loop().create_timer(CARD_STAGE_DELAY).timeout
+	await Engine.get_main_loop().create_timer(GameConstants.TIMING_VALUES["card_stage_delay"]).timeout
 	
 	# Resolve the card using the staged instance so battlefield removal works
 	if staged_instance:

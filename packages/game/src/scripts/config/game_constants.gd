@@ -96,6 +96,14 @@ const AUDIO_VALUES: Dictionary = {
 	"fade_out_duration": 0.5
 }
 
+const TIMING_VALUES: Dictionary = {
+	"card_stage_delay": 0.5,          # Time card sits on battlefield before resolving
+	"turn_transition_delay": 0.5,     # Pause between turns (player→enemy, enemy→player)
+	"enemy_card_play_delay": 1.5,     # Delay between enemy card plays
+	"enemy_turn_end_delay": 2.0,      # Wait after enemy AI completes before ending turn
+	"scene_transition_delay": 1.0     # Pause before scene transitions
+}
+
 const DEBUG_VALUES: Dictionary = {
 	"god_mode": false,
 	"unlimited_energy": false,

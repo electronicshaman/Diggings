@@ -17,9 +17,6 @@ var duel_state: DuelState
 var card_resolver: RefCounted # CardResolver - typed as RefCounted to avoid forward reference
 var ai_controller: RefCounted # EnemyAIController - typed as RefCounted to avoid forward reference
 
-# Timing constants
-const ENEMY_TURN_START_DELAY: float = 1.0
-
 func _init(state: DuelState) -> void:
 	duel_state = state
 	if not duel_state:
@@ -170,6 +167,8 @@ func end_player_turn() -> void:
 	
 	# Check if duel is over before starting enemy turn
 	if not is_duel_over():
+		# Brief pause before transitioning to enemy turn
+		await Engine.get_main_loop().create_timer(GameConstants.TIMING_VALUES["turn_transition_delay"]).timeout
 		start_enemy_turn()
 
 func start_enemy_turn() -> void:
@@ -196,6 +195,8 @@ func end_enemy_turn() -> void:
 	
 	# Check if duel is over before starting next player turn
 	if not is_duel_over():
+		# Brief pause before transitioning to player turn
+		await Engine.get_main_loop().create_timer(GameConstants.TIMING_VALUES["turn_transition_delay"]).timeout
 		start_player_turn()
 
 # Helper methods
