@@ -1,40 +1,35 @@
 # High-Level Summary: Gold Rush Lovecraft Game Design
 
-Last verified: 2026-01-03
+Last verified: 2026-01-11
 
 ## Core Game Identity
 
 **Genre**: Roguelite card battler
 **Setting**: Australian gold rush meets Lovecraftian horror
-**Core Loop**: Explore map → Find encounters → 1v1 card duels → Manage resources → Die or complete objectives
+**Core Loop**: 1v1 card duels → Manage resources → Build deck → Progress through encounters
 
 ## Key Differentiators from Slay the Spire
 
-### 1. Open Hex Exploration vs Linear Paths
-
-- **Player-driven exploration** - choose your own path across the outback
-- **Multiple objectives per run** (claim gold veins, seal breaches, hunt bounties) rather than just "reach the top"
-
-### 2. Seeded Runs and Debuggable Systems (Current)
+### 1. Seeded Runs and Debuggable Systems (Current)
 
 - **SeedManager autoload** drives deterministic runs
 - **Seed visible in UI** when enabled via `GameSettings.show_seed_in_ui`
 - **Debug HUD** and **DebugController** support fast iteration (HUD toggled via "HUD" input action)
 
-### 3. 1v1 Duels Only
+### 2. 1v1 Duels Only
 
 - **Single enemy encounters** for more intimate, strategic battles
 - **No target selection needed** - damage hits enemy, block/heal affects self
 - **Enemy uses cards too** - visible patterns you can learn and counter
 - **Simpler state management** - always just player vs enemy
 
-### 4. Card Modification System (Planned)
+### 3. Card Modification System (Planned)
 
 - Digital-first effects such as Evolving, Viral, Phasing, Unstable
 - Multiple mods per card and site-based modification opportunities
 - Status: Design documented; implementation tracked in future milestones
 
-### 5. Core Card Types - Mechanical Categories
+### 4. Core Card Types - Mechanical Categories
 
 - **Attack**: A card that deals direct damage to an enemy and may have a secondary effect. Attack cards are the primary way to reduce enemy health and end combat encounters.
 
@@ -99,25 +94,23 @@ Persistent run modifiers (like relics) with Australian gold rush + cosmic horror
 
 ## What Makes This Unique
 
-1. **The tension of exploration** - Do you have enough daylight to reach town? Is that gold worth the sanity cost?
+1. **Meaningful deck pollution** - Cards can become corrupted, viral, or unstable - your deck evolves during the run
 
-2. **Meaningful deck pollution** - Cards can become corrupted, viral, or unstable - your deck evolves during the run
+2. **Australian Gothic horror** - Unique theme combining historical gold rush with cosmic dread
 
-3. **Australian Gothic horror** - Unique theme combining historical gold rush with cosmic dread
+3. **Digital-first design** - Effects impossible in physical games make each run feel different
 
-4. **Time as pressure** - Not just "how many fights can you win" but "can you achieve your goals before nightfall/madness"
-
-5. **Digital-first design** - Effects impossible in physical games make each run feel different
+4. **Dual health system** - Health and Sanity provide two distinct failure states and strategic considerations
 
 ## MVP Priority Order (Roadmap)
 
-1. **Combat engine** - Get 1v1 duels working perfectly
-2. **Basic cards & effects** - Just damage, block, heal to start
-3. **Character classes** - Different starting decks and one unique mechanic each
-4. **Card modifications** - Start with simple ones (cost reduction, damage boost)
-5. **Hex exploration** - Basic movement and tile types
-6. **Day/night cycle** - Time system and visibility changes
-7. **Polish & content** - Only after everything else works
+1. **Combat engine** - Get 1v1 duels working perfectly (done)
+2. **Basic cards & effects** - Damage, block, heal, status effects (done)
+3. **Character classes** - Different starting decks and unique mechanics (done)
+4. **Handler system** - Modular effect processing via HandlerRegistry (done)
+5. **Curio system** - Persistent run modifiers (done)
+6. **Card modifications** - Cost reduction, damage boost, etc. (in progress)
+7. **Polish & content** - Ongoing
 
 ## Key Design Principles
 
@@ -129,13 +122,13 @@ Persistent run modifiers (like relics) with Australian gold rush + cosmic horror
 
 ## Planned Systems
 
-- Day/Night cycle impacting visibility and sanity costs
-- Location-based card modification sites
-- Additional exploration objectives (bounties, sealing breaches)
+- Card modification and upgrade mechanics
+- Additional character class balancing
+- Expanded enemy variety and patterns
 
 ## Current Feature Snapshot
 
 - 1v1 duels with player/enemy turns and visible intents
 - Core card categories: Attack, Skill, Power, Fortune; Status and Curse as deck pollutants
 - Seeded runs via SeedManager; seed display toggle in UI settings
-- Autoload managers: GameSettings, EventBus, SaveSystem, ResourceManager, ThemeManager, SeedManager, HexmapState, GLog, GameManager, ModalManager, SceneManager, MapNodeRegistry, CurioManager, EncounterManager, CharacterGenerator, RunHistoryManager, DebugHUD (scene)
+- Autoload managers: GameSettings, EventBus, SaveSystem, ResourceManager, SeedManager, GLog, GameManager, DeckManager, SceneManager, CurioManager, CharacterGenerator, RunHistoryManager, DebugHUD, HandlerRegistry

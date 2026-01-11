@@ -1,6 +1,6 @@
 # Project Structure Review & Godot 4.5 Best Practices
 
-Last verified: 2025-08-18
+Last verified: 2026-01-11
 
 ## Current Structure Analysis
 
@@ -61,7 +61,7 @@ res://
 
 Current Autoloads (from project.godot):
 
-GameSettings, EventBus, SaveSystem, ResourceManager, ThemeManager, SeedManager, HexmapState, GLog, GameManager, ModalManager, SceneManager, GDAIMCPRuntime, MapNodeRegistry, CurioManager, EncounterManager, CharacterGenerator, RunHistoryManager, DebugHUD (scene)
+GameSettings, EventBus, SaveSystem, ResourceManager, SeedManager, GLog, GameManager, DeckManager, SceneManager, GDAIMCPRuntime, CurioManager, CharacterGenerator, RunHistoryManager, DebugHUD (scene), HandlerRegistry
 
 Notes:
 

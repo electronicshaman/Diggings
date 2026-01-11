@@ -1,6 +1,6 @@
 # System Architecture
 
-Last verified: 2026-01-03
+Last verified: 2026-01-11
 
 ## Autoloads (from `project.godot`)
 
@@ -10,22 +10,17 @@ These are loaded at startup and available as singletons:
 - EventBus — `res://scripts/autoloads/event_bus.gd`
 - SaveSystem — `res://scripts/autoloads/save_system.gd`
 - ResourceManager — `res://scripts/autoloads/resource_manager.gd`
-- ThemeManager — `res://scripts/autoloads/theme_manager.gd`
 - SeedManager — `res://scripts/autoloads/seed_manager.gd`
-- HexmapState — `res://scripts/autoloads/hexmap_state.gd`
 - GLog — `res://scripts/autoloads/glog.gd`
 - GameManager — `res://scripts/autoloads/game_manager.gd`
 - DeckManager — `res://scripts/autoloads/deck_manager.gd`
-- ModalManager — `res://scripts/autoloads/modal_manager.gd`
 - SceneManager — `res://scripts/autoloads/scene_manager.gd`
 - GDAIMCPRuntime — `res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd`
-- MapNodeRegistry — `res://scripts/autoloads/map_node_registry.gd` (legacy stub - disabled)
 - CurioManager — `res://scripts/autoloads/curio_manager.gd`
-- EncounterManager — `res://scripts/autoloads/encounter_manager.gd`
 - CharacterGenerator — `res://scripts/autoloads/character_generator.gd`
 - RunHistoryManager — `res://scripts/autoloads/run_history_manager.gd`
 - DebugHUD (scene) — `res://scenes/debug/debug_hud.tscn`
-- EffectRegistry — `res://scripts/handlers/registry/effect_registry.gd`
+- HandlerRegistry — `res://scripts/handlers/registry/handler_registry.gd`
 
 ## Core Managers (scenes/managers)
 
@@ -64,7 +59,7 @@ Event-driven architecture. Key signals include:
 ## Scene flow
 
 - Main menu: `res://scenes/ui/main_menu.tscn` (run/main_scene)
-- Class selection → Map selection → City/Hexmap → Encounter/Combat scenes
+- Class selection → Quick Duel setup → Combat scenes
 - During combat: `scripts/combat/duel_scene_controller.gd` orchestrates duel managers
 - Global state transitions via `GameManager` and `SceneManager` with EventBus notifications
 
@@ -120,8 +115,8 @@ GameSettings="*res://scripts/autoloads/game_settings.gd"    # 1. Configuration f
 EventBus="*res://scripts/autoloads/event_bus.gd"            # 2. Communication layer
 SaveSystem="*res://scripts/autoloads/save_system.gd"        # 3. Persistence
 ResourceManager="*res://scripts/autoloads/resource_manager.gd" # 4. Asset loading
-ThemeManager="*res://scripts/autoloads/theme_manager.gd"     # 5. Content theming
-GLog="*res://scripts/autoloads/glog.gd"                     # 6. Logging system  
+SeedManager="*res://scripts/autoloads/seed_manager.gd"      # 5. RNG seeds
+GLog="*res://scripts/autoloads/glog.gd"                     # 6. Logging system
 GameManager="*res://scripts/autoloads/game_manager.gd"      # 7. Game state
 SceneManager="*res://scripts/autoloads/scene_manager.gd"    # 8. Scene transitions
 ```
@@ -152,11 +147,11 @@ SceneManager="*res://scripts/autoloads/scene_manager.gd"    # 8. Scene transitio
 - Object pooling for performance
 - Resource preloading strategies
 
-#### ThemeManager  
+#### HandlerRegistry
 
-- Dynamic theme loading and switching
-- Asset path resolution per theme
-- Theme-specific UI and audio
+- Effect handler registration and dispatch
+- Modular effect processing system
+- Handler types for damage, status, resources, etc.
 
 #### GLog
 
@@ -443,4 +438,3 @@ This architecture provides a solid foundation for the card battler while maintai
 ## Related documentation
 
 - Event Bus Reference: `docs/architecture/EVENT_BUS_REFERENCE.md`
-- Encounter Flow: `docs/architecture/ENCOUNTER_FLOW.md`

@@ -4,7 +4,7 @@ This file provides guidance to AI coding assistants when working with code in th
 
 ## Project Overview
 
-A roguelite card battler prototype built in Godot 4.5.x featuring Australian gold rush meets Lovecraftian horror. Core gameplay involves 1v1 card duels, procedural map exploration, and resource management.
+A roguelite card battler prototype built in Godot 4.5.x featuring Australian gold rush meets Lovecraftian horror. Core gameplay involves 1v1 card duels and resource management.
 
 ## Core Architecture
 
@@ -27,22 +27,17 @@ GameSettings        # Configuration
 EventBus            # Inter-system communication (signals + helpers)
 SaveSystem          # Persistence
 ResourceManager     # Asset management
-ThemeManager        # Theme loading
-SeedManager         # Procedural generation seeds (map RNG etc.)
-HexmapState         # Persistent map state across scenes
+SeedManager         # Procedural generation seeds
 GLog                # Logging system
 GameManager         # High-level game state and stats
 DeckManager         # Deck management and manipulation
-ModalManager        # Modal dialog queue and management
 SceneManager        # Scene transitions and preloading
 GDAIMCPRuntime      # MCP runtime for Godot editor control (dev only)
-MapNodeRegistry     # Legacy stub (disabled - old map system removed)
 CurioManager        # Curio acquisition, stacks, and signals
-EncounterManager    # Encounter/event system management
 CharacterGenerator  # Procedural character generation
 RunHistoryManager   # Run history and metrics
 DebugHUD            # Debug panel overlay (scene autoload)
-EffectRegistry      # Effect type registration and management
+HandlerRegistry     # Effect handler registration and dispatch
 ```
 
 ### Event-driven communication
@@ -89,18 +84,9 @@ mcp__godot-mcp__get_running_scene_screenshot()
 
 - CardData resources in `data/cards/` organized by type (attack/skill/power/fortune)
 - Effects stored as data arrays in CardData resources (data-driven design)
-- Centralized effect resolver at `scripts/systems/card_effects.gd`
-- Generic effect system in `scripts/effects/` (used by curios, encounters, etc.)
-
-### Map generation
-
-Hexmap-based exploration system:
-
-- MapController (`scripts/hexmap/map_controller.gd`) – hexmap scene controller
-- HexGrid (`scripts/hexmap/hex_system/hex_grid.gd`) – hex grid logic and pathfinding
-- HexRenderer (`scripts/hexmap/hex_system/hex_renderer.gd`) – hex rendering
-- TerrainGenerator (`scripts/hexmap/terrain_generation/terrain_generator.gd`) – procedural terrain
-- HexmapState autoload – persistent map state across scenes
+- CardResolver (`scripts/combat/card_resolver.gd`) – processes card effects
+- HandlerRegistry system (`scripts/handlers/`) – modular effect handlers for damage, status, resources, etc.
+- CardCost system (`scripts/combat/costs/`) – unified card cost handling (energy, sanity, resources)
 
 ## File Organization
 
@@ -109,26 +95,23 @@ src/
   addons/          # Godot plugins (e.g. godot-mcp)
   assets/          # Art, audio, and other binary assets
   data/            # Game data resources (cards, enemies, etc.)
-    cards/         # Card resources by type
+    cards/         # Card resources by type (player/, enemy/, curse/)
     characters/    # Character class definitions
+    curios/        # Curio resources by rarity
+    decks/         # Deck configurations
     enemies/       # Enemy configurations
-    map_nodes/     # Map node resources
-    maps/          # Region/map configurations
-    game_state/    # Global state resources
-  
+
   scripts/         # GDScript source code
     autoloads/     # Singleton systems
     cards/         # Card system logic
-    combat/        # Combat controllers
-    hexmap/        # Map exploration system
+    combat/        # Combat controllers and card resolution
+    handlers/      # Effect handler system (HandlerRegistry)
     managers/      # MVC controllers
-    systems/       # Cross-cutting systems
     ui/            # UI components
 
   scenes/          # Scene files (.tscn)
     game/          # Gameplay scenes
     ui/            # UI screens
-    map/           # Map scenes
     debug/         # Test scenes
 
   test/            # Unit/integration tests
@@ -138,11 +121,10 @@ src/
 
 ### Current development focus
 
-- Hexmap exploration system with procedural terrain generation
-- Movement points and turn-based exploration mechanics
-- Resource discovery and encounter system
-- Persistent map state via HexmapState autoload
-- Terrain types with movement costs and special properties
+- Combat system refinement and balancing
+- Card effect system via HandlerRegistry
+- Curio system integration
+- Character class mechanics and resources
 
 ### Known issues
 
@@ -168,22 +150,17 @@ src/
 
 All content as Godot Resources for hot-reloading:
 
-- Cards, characters, enemies as .tres files
-- Map configurations as resources
+- Cards, characters, enemies, curios as .tres files
+- Deck configurations as resources
 - Theme definitions loadable at runtime
 
 ### State machine combat
 
 - Clear phases: PLAYER_TURN → RESOLVE_EFFECTS → ENEMY_TURN
 - Effects as data descriptions, not behavior
-- Centralized effect resolution in CardEffects system
-
-### Legacy map system
-
-Note: The old MapNodeRegistry-based map system has been removed and replaced with the hexmap exploration system. MapNodeRegistry remains in the codebase as a disabled stub to prevent parser errors in legacy code.
+- Centralized effect resolution via CardResolver and HandlerRegistry
 
 ## Quick links
 
 - Logging: `docs/GLOG_USAGE_GUIDE.md`
-- Map config: `docs/MAP_CONFIG_GUIDE.md`
 - High-level summary: `docs/high_level_summary.md`
