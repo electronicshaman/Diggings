@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://c8h5t2xam4n7k"]
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://c8h5t2xam4n7k"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/core/conditional_value.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/handlers/core/handler_condition.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_5"]
 
 [sub_resource type="Resource" id="EnemyLowHealthCondition_1"]
 script = ExtResource("4")
@@ -11,6 +12,7 @@ condition_type = 7
 comparison_value = 50
 comparison_operator = "less_equal"
 invert = false
+
 
 [sub_resource type="Resource" id="ExecuteConditionalValue_1"]
 script = ExtResource("3")
@@ -20,13 +22,20 @@ value_if_true = 10
 value_if_false = 6
 applies_to_base_value = false
 
+
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
 amount = 6
 ignores_defense = false
 conditional_values = Array[ConditionalValue]([SubResource("ExecuteConditionalValue_1")])
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_5")
+amount = 2
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Coach Gun"
 energy_cost = 2

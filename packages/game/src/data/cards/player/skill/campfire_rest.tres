@@ -1,19 +1,27 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/health_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/types/resource_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_4"]
 
 [sub_resource type="Resource" id="HealthHandler_1"]
 script = ExtResource("2")
 amount = 8
+
 
 [sub_resource type="Resource" id="ResourceHandler_1"]
 script = ExtResource("3")
 resource_type = "sanity"
 amount = 5
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_4")
+amount = 2
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Campfire Rest"
 energy_cost = 2

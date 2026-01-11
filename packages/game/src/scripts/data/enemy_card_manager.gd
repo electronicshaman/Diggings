@@ -74,6 +74,12 @@ func _forward_discard_change(change_type: String, data: Dictionary) -> void:
 
 func draw_cards(count: int) -> Array[CardData]:
 	"""Draw cards from deck to hand, reshuffling discard if needed"""
+	GLog.info("EnemyCardManager.draw_cards called with count=%d" % count)
+	GLog.info("  deck size: %d, hand size: %d, discard size: %d" % [
+		deck.size() if deck else -1,
+		hand.size() if hand else -1,
+		discard.size() if discard else -1
+	])
 	var drawn_cards: Array[CardData] = []
 	
 	for i in range(count):
@@ -83,17 +89,23 @@ func draw_cards(count: int) -> Array[CardData]:
 				discard.shuffle()
 				discard.move_all_to(deck)
 				deck.shuffle()
+				GLog.info("  Reshuffled discard into deck, deck now has %d cards" % deck.size())
 		
 		var card = deck.draw_top()
 		if card and hand.add_card(card):
 			# Return CardData elements for callers; piles hold CardInstance
 			drawn_cards.append(card.card_data)
+			GLog.info("  Drew card: %s" % card.card_data.card_name)
 		else:
 			# Hand is full, put card back
 			if card:
 				deck.add_card(card)
+				GLog.warn("  Hand is full, put card back")
+			else:
+				GLog.warn("  No card to draw (deck empty)")
 			break
 	
+	GLog.info("  Total cards drawn: %d" % drawn_cards.size())
 	return drawn_cards
 
 
@@ -113,16 +125,24 @@ func discard_card(card_data: CardData) -> void:
 
 func initialize_from_deck_data(enemy_name: String = "") -> void:
 	"""Load deck cards from DeckData resource"""
+	GLog.info("EnemyCardManager.initialize_from_deck_data called for: %s" % enemy_name)
+	GLog.info("  deck_data is: %s" % str(deck_data))
+	GLog.info("  deck is: %s" % str(deck))
+	
 	if not deck:
 		deck = CardPile.new("enemy_deck")
+		GLog.info("  Created new deck CardPile")
 	else:
 		deck.clear()
+		GLog.info("  Cleared existing deck")
 	
 	if deck_data:
-		GLog.debug("Loading enemy deck from DeckData resource: %s" % deck_data.deck_name)
+		GLog.info("Loading enemy deck from DeckData resource: %s" % deck_data.deck_name)
+		GLog.info("  DeckData has %d card_paths" % deck_data.card_paths.size())
 		var deck_pile = deck_data.to_card_pile(CardInstance.Owner.ENEMY)
+		GLog.info("  Created temp pile with %d cards" % deck_pile.size())
 		deck_pile.move_all_to(deck)
-		GLog.debug("Loaded %d cards from DeckData" % deck.size())
+		GLog.info("  After move, deck has %d cards" % deck.size())
 	else:
 		GLog.warn("No deck data found for enemy: %s" % enemy_name)
 

@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3 uid="uid://bcn8t4kxar7m1"]
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://bcn8t4kxar7m1"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_3"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
@@ -14,7 +15,13 @@ random_range = false
 min_amount = 0
 max_amount = 0
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_3")
+amount = 1
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Navy Colt"
 energy_cost = 1

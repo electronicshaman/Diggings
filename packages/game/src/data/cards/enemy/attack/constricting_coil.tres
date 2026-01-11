@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_3"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
@@ -10,7 +11,13 @@ multi_hit = true
 hits = 2
 ignores_defense = false
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_3")
+amount = 2
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Constricting Coil"
 energy_cost = 2

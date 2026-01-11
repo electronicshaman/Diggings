@@ -75,17 +75,30 @@ func get_card_name() -> String:
 	return card_data.card_name if card_data else "Unknown Card"
 
 func get_energy_cost() -> int:
-	return card_data.energy_cost if card_data else 0
+	if not card_data: return 0
+	for cost in card_data.get_costs():
+		if cost is EnergyCost:
+			return cost.amount
+	return 0
 
 func get_sanity_cost() -> int:
-	return card_data.sanity_cost if card_data else 0
+	if not card_data: return 0
+	for cost in card_data.get_costs():
+		if cost is SanityCost:
+			return cost.amount
+	return 0
 
 func get_display_energy_cost() -> Dictionary:
 	"""Get energy cost with curio modifications. Returns {cost: int, modified: bool}"""
 	if not card_data:
 		return {"cost": 0, "modified": false}
 
-	var base_cost: int = card_data.energy_cost
+	var base_cost: int = 0
+	for cost in card_data.get_costs():
+		if cost is EnergyCost:
+			base_cost = cost.amount
+			break
+
 	var display_cost: int = base_cost
 	var cost_modified: bool = false
 

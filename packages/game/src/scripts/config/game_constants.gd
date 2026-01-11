@@ -5,7 +5,7 @@ const DEBUG_ENABLED: bool = true
 
 enum CardType {
 	ATTACK,
-	SKILL, 
+	SKILL,
 	POWER,
 	FORTUNE
 }
@@ -106,11 +106,10 @@ const DEBUG_VALUES: Dictionary = {
 
 const FILE_PATHS: Dictionary = {
 	"save_directory": "user://saves/",
-	"settings_file": "user://settings.cfg", 
+	"settings_file": "user://settings.cfg",
 	"statistics_file": "user://statistics.dat",
 	"unlocks_file": "user://unlocks.dat"
 }
-
 
 
 const STATUS_EFFECTS: Array[String] = [
@@ -153,14 +152,15 @@ static func get_card_type_name(card_type: CardType) -> String:
 static func card_type_to_string(card_type: CardType) -> String:
 	return get_card_type_name(card_type)
 
-# Convert string to enum
-static func string_to_card_type(card_type_string: String) -> CardType:
-	match card_type_string:
-		"Attack": return CardType.ATTACK
-		"Skill": return CardType.SKILL
-		"Power": return CardType.POWER
-		"Fortune": return CardType.FORTUNE
-		_: return CardType.ATTACK
+static func custom_resource_type_to_string(res_type: GameEnums.CustomResourceType) -> String:
+	match res_type:
+		GameEnums.CustomResourceType.NONE: return "None"
+		GameEnums.CustomResourceType.AMMO: return "Ammo"
+		GameEnums.CustomResourceType.FAITH: return "Faith"
+		GameEnums.CustomResourceType.FEVER: return "Fever"
+		GameEnums.CustomResourceType.SCENT: return "Scent"
+		GameEnums.CustomResourceType.BREW: return "Brew"
+		_: return "Unknown"
 
 static func get_resource_color(resource_type: ResourceType) -> Color:
 	match resource_type:
@@ -198,7 +198,7 @@ static func get_difficulty_modifier(difficulty: int) -> Dictionary:
 	
 	match difficulty:
 		1: return base_modifiers
-		2: 
+		2:
 			base_modifiers["enemy_health"] = 1.2
 			base_modifiers["enemy_damage"] = 1.1
 		3:

@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/defense_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/types/card_manipulation_handler.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/handlers/core/handler_condition.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/handlers/core/conditional_value.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_6"]
 
 [sub_resource type="Resource" id="FirstCardCondition_1"]
 script = ExtResource("4")
@@ -12,6 +13,7 @@ condition_type = 0
 comparison_value = 0
 comparison_operator = "equal"
 invert = false
+
 
 [sub_resource type="Resource" id="FirstCardDrawConditional_1"]
 script = ExtResource("5")
@@ -21,9 +23,11 @@ value_if_true = 1
 value_if_false = 0
 applies_to_base_value = false
 
+
 [sub_resource type="Resource" id="DefenseHandler_1"]
 script = ExtResource("2")
 amount = 8
+
 
 [sub_resource type="Resource" id="CardManipulationHandler_1"]
 script = ExtResource("3")
@@ -31,7 +35,13 @@ action = "draw"
 amount = 0
 conditional_values = [SubResource("FirstCardDrawConditional_1")]
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_6")
+amount = 2
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Bandit's Code"
 energy_cost = 2

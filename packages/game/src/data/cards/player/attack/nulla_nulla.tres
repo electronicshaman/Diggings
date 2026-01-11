@@ -1,20 +1,28 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3 uid="uid://d6bc0u02wsgy"]
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://d6bc0u02wsgy"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/types/status_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_4"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
 amount = 6
 ignores_defense = false
 
+
 [sub_resource type="Resource" id="StatusHandler_1"]
 script = ExtResource("3")
 status_type = "stun"
 duration = 1
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_4")
+amount = 2
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Nulla Nulla"
 energy_cost = 2
