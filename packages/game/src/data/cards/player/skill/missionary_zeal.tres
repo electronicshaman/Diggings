@@ -1,20 +1,28 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/card_manipulation_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/types/resource_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_4"]
 
 [sub_resource type="Resource" id="CardManipulationHandler_1"]
 script = ExtResource("2")
 action = "draw"
 amount = 1
 
+
 [sub_resource type="Resource" id="ResourceHandler_Faith"]
 script = ExtResource("3")
 resource_type = "Faith"
 amount = 1
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_4")
+amount = 1
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Missionary Zeal"
 energy_cost = 1

@@ -123,9 +123,14 @@ func _get_display_cost() -> Dictionary:
 		return card_instance.get_display_energy_cost()
 
 	# Fallback for CardData-only cards (shops, previews)
-	# These are typically player cards so assume curio bonuses apply
+	var base_cost: int = 0
+	if card_data:
+		for cost in card_data.get_costs():
+			if cost is EnergyCost:
+				base_cost = cost.amount
+				break
+
 	if card_data and CurioManager:
-		var base_cost: int = card_data.energy_cost
 		var mods: Dictionary = CurioManager.calculate_card_modifications(card_data, true)
 		var cost_reduction: int = mods.get("cost", 0)
 		if cost_reduction != 0:
@@ -133,8 +138,7 @@ func _get_display_cost() -> Dictionary:
 			return {"cost": display_cost, "modified": true}
 
 	# No curio modifications
-	var base = card_data.energy_cost if card_data else 0
-	return {"cost": base, "modified": false}
+	return {"cost": base_cost, "modified": false}
 
 func _on_curio_changed(_curio: Resource = null, _stacks: int = 0) -> void:
 	"""Refresh visuals when curios change"""
@@ -227,8 +231,14 @@ func _update_sanity_cost_display() -> void:
 	if not sanity_cost_label or not card_data:
 		return
 
-	if card_data.sanity_cost > 0:
-		sanity_cost_label.text = "Sanity: %d" % card_data.sanity_cost
+	var sanity_cost: int = 0
+	for cost in card_data.get_costs():
+		if cost is SanityCost:
+			sanity_cost = cost.amount
+			break
+
+	if sanity_cost > 0:
+		sanity_cost_label.text = "Sanity: %d" % sanity_cost
 		sanity_cost_label.visible = true
 		sanity_cost_label.add_theme_font_size_override("font_size", SANITY_COST_FONT_SIZE)
 		sanity_cost_label.add_theme_color_override("font_color", Color.PURPLE)

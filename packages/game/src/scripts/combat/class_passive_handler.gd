@@ -54,7 +54,7 @@ func _setup_preacher_passives() -> void:
 		var temptation_callable = _on_temptation_check
 		EventBus.connect_safe("resource_gained", temptation_callable)
 		_connected_signals.append({
-			"signal": "resource_gained", 
+			"signal": "resource_gained",
 			"callable": temptation_callable
 		})
 	
@@ -92,10 +92,10 @@ func _is_class(class_name_param: String) -> bool:
 	return _get_player_class() == class_name_param
 
 # Preacher passive handlers
-func _on_fervent_faith(player_data, resource_name: String, amount: int) -> void:
+func _on_fervent_faith(player_data, resource_type: GameEnums.CustomResourceType, amount: int) -> void:
 	"""Fervent Faith: +1 defense when gaining Faith"""
 	# Only trigger for Faith resource gains
-	if resource_name != "Faith":
+	if resource_type != GameEnums.CustomResourceType.FAITH:
 		return
 	
 	# Only trigger for the current player and positive amounts
@@ -110,10 +110,10 @@ func _on_fervent_faith(player_data, resource_name: String, amount: int) -> void:
 	player_data.gain_defense(1)
 	GLog.debug("ClassPassiveHandler: Fervent Faith: Gained 1 defense from Faith gain")
 
-func _on_temptation_check(player_data, resource_name: String, _amount: int) -> void:
+func _on_temptation_check(player_data, resource_type: GameEnums.CustomResourceType, _amount: int) -> void:
 	"""Temptation: trigger choice at max Faith"""
 	# Only trigger for Faith resource changes
-	if resource_name != "Faith":
+	if resource_type != GameEnums.CustomResourceType.FAITH:
 		return
 	
 	# Only trigger for the current player
@@ -125,8 +125,8 @@ func _on_temptation_check(player_data, resource_name: String, _amount: int) -> v
 		return
 	
 	# Check if Faith has reached maximum
-	var current_faith = player_data.get_resource("Faith")
-	var max_faith = player_data.get_resource_max("Faith")
+	var current_faith = player_data.get_resource(GameEnums.CustomResourceType.FAITH)
+	var max_faith = player_data.get_resource_max(GameEnums.CustomResourceType.FAITH)
 	if max_faith > 0 and current_faith >= max_faith:
 		_trigger_temptation_choice()
 
@@ -138,14 +138,14 @@ func _trigger_temptation_choice() -> void:
 	
 	# TODO: This needs a modal dialog UI
 	# For now, auto-choose gold (safer option)
-	var current_faith = player.get_resource("Faith")
-	var max_faith = player.get_resource_max("Faith")
+	var current_faith = player.get_resource(GameEnums.CustomResourceType.FAITH)
+	var max_faith = player.get_resource_max(GameEnums.CustomResourceType.FAITH)
 	GLog.info("ClassPassiveHandler: Temptation triggered! Max Faith reached (%d/%d)" % [current_faith, max_faith])
 	
 	# Auto-choose gold for now (25 gold, lose all Faith)
 	if player.stats:
 		player.stats.gain_gold(25)
-		player.reset_resource("Faith")
+		player.reset_resource(GameEnums.CustomResourceType.FAITH)
 		GLog.info("ClassPassiveHandler: Temptation: Chose gold. Gained 25 gold, lost all Faith")
 	
 	# Alternative: gain 3 Corruption and keep Faith
@@ -163,12 +163,12 @@ func _on_holy_conviction(player_data: Object, context: Dictionary) -> void:
 		return
 	
 	# Check if Faith >= 5
-	var current_faith = player_data.get_resource("Faith")
+	var current_faith = player_data.get_resource(GameEnums.CustomResourceType.FAITH)
 	if current_faith >= 5:
 		# Modify the success chance in the context
 		if context.has("success_chance"):
 			var current_chance: float = context.success_chance
-			context.success_chance = min(1.0, current_chance + 0.1)  # Cap at 100%
+			context.success_chance = min(1.0, current_chance + 0.1) # Cap at 100%
 			GLog.debug("ClassPassiveHandler: Holy Conviction active! Fortune success chance: %.0f%% -> %.0f%%" % [
 				current_chance * 100, context.success_chance * 100
 			])

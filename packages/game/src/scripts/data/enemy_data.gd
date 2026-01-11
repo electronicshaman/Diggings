@@ -41,6 +41,10 @@ enum IntentType {UNKNOWN, ATTACK, DEFEND, SPECIAL, BUFF, DEBUFF}
 @export var player_card_history: Array[String] = []
 @export var player_pattern_memory_size: int = 3
 
+# Custom Resources (e.g., Faith, Rage - enabling consistent cost handling)
+@export var custom_resources: Dictionary = {}
+@export var custom_resource_max: Dictionary = {}
+
 # Change tracking system
 var _change_listeners: Array[Callable] = []
 
@@ -128,6 +132,19 @@ func gain_defense(amount: int) -> void:
 
 func lose_defense(amount: int) -> void:
 	stats.lose_defense(amount)
+
+
+## Energy and Sanity Payment (matching PlayerData interface for CardCost compatibility)
+
+func pay_energy(amount: int) -> void:
+	"""Pay energy cost (doesn't check if affordable)"""
+	if stats:
+		stats.current_energy = max(0, stats.current_energy - amount)
+
+func pay_sanity(amount: int) -> void:
+	"""Pay sanity cost (doesn't check if affordable)"""
+	if stats:
+		stats.current_sanity = max(0, stats.current_sanity - amount)
 
 
 ## Stun Management
@@ -392,6 +409,84 @@ func get_player_most_played_card() -> String:
 			most_played = card_name
 	
 	return most_played
+
+
+## Resource Management System (Consistent with PlayerData)
+
+func _string_to_resource_type(res_name: String) -> GameEnums.CustomResourceType:
+	"""Convert string resource name to enum for compatibility"""
+	var key = res_name.to_upper()
+	if key in GameEnums.CustomResourceType:
+		return GameEnums.CustomResourceType[key]
+	return GameEnums.CustomResourceType.NONE
+
+func get_resource(res_type: GameEnums.CustomResourceType) -> int:
+	"""Get current value of a resource."""
+	return custom_resources.get(res_type, 0)
+
+func get_resource_max(res_type: GameEnums.CustomResourceType) -> int:
+	"""Get max value of a resource (0 = no max)."""
+	return custom_resource_max.get(res_type, 0)
+
+func set_resource(res_type: GameEnums.CustomResourceType, amount: int):
+	"""Set a resource value directly."""
+	var max_val = custom_resource_max.get(res_type, 0)
+	if max_val > 0:
+		amount = clamp(amount, 0, max_val)
+	
+	var old_val = custom_resources.get(res_type, 0)
+	if old_val != amount:
+		custom_resources[res_type] = amount
+		_emit_change("resource_changed", {"resource": res_type, "current": amount, "old": old_val})
+
+func modify_resource(res_type: GameEnums.CustomResourceType, amount: int):
+	"""Modify a resource value (positive = gain, negative = spend)."""
+	if amount > 0:
+		gain_resource(res_type, amount)
+	elif amount < 0:
+		spend_resource(res_type, -amount)
+
+func gain_resource(res_type: GameEnums.CustomResourceType, amount: int):
+	"""Gain an amount of a specific resource."""
+	if amount <= 0: return
+	
+	var current = get_resource(res_type)
+	var max_val = get_resource_max(res_type)
+	var new_val = current + amount
+	
+	if max_val > 0:
+		new_val = min(new_val, max_val)
+		
+	custom_resources[res_type] = new_val
+	_emit_change("resource_gained", {"resource": res_type, "amount": amount, "current": new_val})
+	
+	# Emit generic resource signal via EventBus if needed
+	if EventBus.has_signal("resource_gained"):
+		EventBus.resource_gained.emit(self, res_type, amount)
+
+func spend_resource(res_type: GameEnums.CustomResourceType, amount: int) -> bool:
+	"""Spend an amount of a specific resource. Returns true if successful."""
+	if amount <= 0: return true
+	
+	var current = get_resource(res_type)
+	if current >= amount:
+		custom_resources[res_type] = current - amount
+		_emit_change("resource_spent", {"resource": res_type, "amount": amount, "current": current - amount})
+		return true
+	return false
+
+func can_afford_resource(res_type: GameEnums.CustomResourceType, amount: int) -> bool:
+	"""Check if enemy has enough of the specified resource."""
+	if res_type == GameEnums.CustomResourceType.NONE:
+		return true
+	return custom_resources.get(res_type, 0) >= amount
+
+func reset_resource(res_type: GameEnums.CustomResourceType):
+	"""Reset resource to 0."""
+	var old_value = custom_resources.get(res_type, 0)
+	if old_value != 0:
+		custom_resources[res_type] = 0
+		_emit_change("resource_reset", {"resource": res_type, "old_value": old_value})
 
 
 ## Reset Methods

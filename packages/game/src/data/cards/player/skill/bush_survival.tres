@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/health_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/core/conditional_value.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/handlers/core/handler_condition.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_5"]
 
 [sub_resource type="Resource" id="LowHealthCondition_1"]
 script = ExtResource("4")
@@ -11,6 +12,7 @@ condition_type = 6
 comparison_value = 25
 comparison_operator = "less_equal"
 invert = false
+
 
 [sub_resource type="Resource" id="ConditionalValue_1"]
 script = ExtResource("3")
@@ -20,12 +22,19 @@ value_if_true = 6
 value_if_false = 0
 applies_to_base_value = true
 
+
 [sub_resource type="Resource" id="HealthHandler_1"]
 script = ExtResource("2")
 amount = 6
 conditional_values = Array[ConditionalValue]([SubResource("ConditionalValue_1")])
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_5")
+amount = 1
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Bush Survival"
 energy_cost = 1

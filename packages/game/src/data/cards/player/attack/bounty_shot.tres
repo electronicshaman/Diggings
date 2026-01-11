@@ -1,13 +1,15 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://ctdu3efmjp6g"]
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://ctdu3efmjp6g"]
 
 [ext_resource type="Script" uid="uid://diotvmyurqkbx" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://xanin6lft6g2" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/types/resource_handler.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_4"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
 amount = 8
 ignores_defense = false
+
 
 [sub_resource type="Resource" id="ResourceHandler_1"]
 script = ExtResource("3")
@@ -15,7 +17,13 @@ resource_type = "gold"
 amount = 4
 can_go_negative = false
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_4")
+amount = 2
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Bounty Shot"
 energy_cost = 2

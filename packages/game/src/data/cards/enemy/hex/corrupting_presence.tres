@@ -1,14 +1,21 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/sanity_damage_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_3"]
 
 [sub_resource type="Resource" id="SanityDamageHandler_1"]
 script = ExtResource("2")
 amount = 3
 description = "Deal 3 sanity damage"
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_3")
+amount = 2
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Corrupting Presence"
 energy_cost = 2

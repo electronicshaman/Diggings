@@ -7,6 +7,7 @@ class_name CardData
 enum CardOwner {PLAYER, ENEMY, NEUTRAL}
 
 @export var card_name: String = "Card"
+# Deprecated: energy_cost moved to costs array, keep for migration
 @export var energy_cost: int = 1
 @export var description: String = ""
 @export var card_type: String = "Attack"
@@ -16,11 +17,25 @@ enum CardOwner {PLAYER, ENEMY, NEUTRAL}
 # Modular card effects system - temporarily untyped during migration
 @export var effects: Array = []
 
-# Core card costs (not effects)
-@export var sanity_cost: int = 0 # Cost to sanity when played
+# Core card costs
+@export var costs: Array[CardCost] = []
 
-# Custom resource costs (e.g. {"Ammo": 1, "Faith": 2})
+# Deprecated: sanity_cost and unique_resource_costs moved to costs array
+@export var sanity_cost: int = 0 # Cost to sanity when played
 @export var unique_resource_costs: Dictionary = {}
+
+func get_costs() -> Array[CardCost]:
+	if not costs.is_empty():
+		return costs
+	
+	# Fallback for non-migrated cards
+	var generated_costs: Array[CardCost] = []
+	if energy_cost > 0:
+		generated_costs.append(EnergyCost.new(energy_cost))
+	if sanity_cost > 0:
+		generated_costs.append(SanityCost.new(sanity_cost))
+	
+	return generated_costs
 
 # Card durability - number of times card can be played before being removed
 @export var base_durability: int = -1 # -1 = infinite, 0+ = limited uses

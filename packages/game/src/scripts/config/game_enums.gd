@@ -24,3 +24,19 @@ enum EnemyFaction {
 	LAWMAN,
 	MINING
 }
+
+enum ResourceType {
+	ENERGY,
+	SANITY,
+	GOLD,
+	CUSTOM
+}
+
+enum CustomResourceType {
+	NONE,
+	AMMO,
+	FAITH,
+	FEVER,
+	SCENT,
+	BREW
+}

@@ -226,11 +226,13 @@ func update_player_ui() -> void:
 		var resource_text = ""
 		# Display all class resources from unified custom_resources dictionary
 		if not p.custom_resources.is_empty():
-			for res_name in p.custom_resources:
+			for res_type in p.custom_resources:
 				if resource_text != "":
 					resource_text += ", "
-				var current = p.custom_resources[res_name]
-				var max_val = p.custom_resource_max.get(res_name, 0)
+				# Convert enum integer to human-readable name
+				var res_name = GameConstants.custom_resource_type_to_string(res_type)
+				var current = p.custom_resources[res_type]
+				var max_val = p.custom_resource_max.get(res_type, 0)
 				if max_val > 0:
 					resource_text += "%s: %d/%d" % [res_name, current, max_val]
 				else:

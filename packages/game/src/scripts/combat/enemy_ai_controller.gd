@@ -27,7 +27,16 @@ func get_playable_cards(enemy: EnemyState) -> Array[CardData]:
 	
 	for inst in enemy.enemy_hand.cards:
 		var cd: CardData = inst.card_data if inst else null
-		if cd and cd.energy_cost <= current_energy:
+		if not cd: continue
+		
+		# Check all costs (energy, resources, etc.)
+		var can_afford = true
+		for cost in cd.get_costs():
+			if not cost.can_pay(enemy):
+				can_afford = false
+				break
+		
+		if can_afford:
 			playable.append(cd)
 	
 	GLog.debug("Found %d playable cards with %d energy" % [playable.size(), current_energy], "enemy_ai_controller")

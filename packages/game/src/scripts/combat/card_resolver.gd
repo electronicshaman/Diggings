@@ -30,6 +30,8 @@ func _init(state: DuelState, manager: DuelManager = null) -> void:
 
 ## Card Validation Methods
 
+## Card Validation Methods
+
 func can_play_card(card_data: CardData) -> bool:
 	"""Check if a card can be played based on energy, sanity, and resource costs"""
 	if not duel_state or not duel_state.can_play_cards():
@@ -45,34 +47,36 @@ func can_play_card(card_data: CardData) -> bool:
 		GLog.error("CardResolver: can_play_card called with invalid player data")
 		return false
 	
-	# Check energy cost (with modifiers)
-	var actual_cost = player.get_actual_energy_cost(card_data.energy_cost, card_data.card_type)
-	if not player.can_afford_card(actual_cost, card_data.sanity_cost):
-		GLog.debug("CardResolver: Cannot afford card: %s (energy: %d/%d, sanity: %d/%d)" % [
-			card_data.card_name, actual_cost, player.stats.current_energy,
-			card_data.sanity_cost, player.stats.current_sanity
-		])
-		return false
+	# Check Unified Costs (Energy, Sanity, Resource, Custom)
+	for cost in card_data.get_costs():
+		if not cost.can_pay(player):
+			GLog.debug("CardResolver: Cannot afford cost: %s" % cost.get_description())
+			return false
 	
-	# Check resource costs (Faith and other custom resources)
+	# Check Legacy Effect Costs (Faith and other custom resources defined in effects)
+	# TODO: Migrate these to ResourceCost and remove this block
 	var resource_costs = _get_resource_costs(card_data)
 	for resource_name in resource_costs:
 		var cost = resource_costs[resource_name]
-		if not player.can_afford_resource(resource_name, cost):
-			GLog.debug("CardResolver: Cannot afford %s cost: %d (have: %d)" % [
-				resource_name, cost, player.get_resource(resource_name)
-			])
-			return false
+		var res_type = player._string_to_resource_type(resource_name)
+		if res_type != GameEnums.CustomResourceType.NONE:
+			if not player.can_afford_resource(res_type, cost):
+				GLog.debug("CardResolver: Cannot afford (Effect) %s cost: %d (have: %d)" % [
+					resource_name, cost, player.get_resource(res_type)
+				])
+				return false
 	
-	# Check additional custom resource costs
+	# Check additional custom resource costs (Legacy property support if any slipped through)
 	var custom_costs = _get_custom_resource_costs(card_data)
 	for resource_name in custom_costs:
 		var cost = custom_costs[resource_name]
-		if player.get_custom_resource(resource_name) < cost:
-			GLog.debug("CardResolver: Cannot afford custom resource %s cost: %d (have: %d)" % [
-				resource_name, cost, player.get_custom_resource(resource_name)
-			])
-			return false
+		var res_type = player._string_to_resource_type(resource_name)
+		if res_type != GameEnums.CustomResourceType.NONE:
+			if player.get_resource(res_type) < cost:
+				GLog.debug("CardResolver: Cannot afford custom resource %s cost: %d" % [
+					resource_name, cost
+				])
+				return false
 	
 	return true
 
@@ -84,74 +88,56 @@ func _get_resource_costs(card_data: CardData) -> Dictionary:
 	var costs = {}
 	
 	for effect in card_data.effects:
-		# Handle ResourceHandler for custom resources (including Faith)
-		if effect is ResourceHandler:
-			var res_effect = effect as ResourceHandler
-			if res_effect.resource_type not in ["gold", "energy", "sanity"]:
-				if res_effect.amount < 0:
-					var current_cost = costs.get(res_effect.resource_type, 0)
-					costs[res_effect.resource_type] = current_cost + (-res_effect.amount)
+		# Handle ResourceHandler for custom resources
+		if effect.has_method("get_resource_type"): # Duck typing check
+			# Assuming ResourceHandler has resource_type string and amount
+			# Accessing properties dynamically because class might not be globally named ResourceHandler in all contexts
+			var type = effect.get("resource_type")
+			var amount = effect.get("amount")
+			
+			if type and amount != null and type not in ["gold", "energy", "sanity"]:
+				if amount < 0:
+					var current_cost = costs.get(type, 0)
+					costs[type] = current_cost + (-amount)
 	
 	return costs
 
 func _get_custom_resource_costs(card_data: CardData) -> Dictionary:
-	"""Extract custom resource costs from card effects (negative amounts are costs)"""
-	if not card_data or not card_data.effects:
+	"""Extract custom resource costs from legacy property if used (Backwards Compat)"""
+	# Since we moved unique_resource_costs to CardCost in get_costs(), this might be redundant
+	# unless we are looking specifically for effect-based ones again?
+	# Original code looked at effects again. Let's keep strict to CardData structure.
+	if card_data.unique_resource_costs.size() > 0:
+		# These are now handled by get_costs() fallback, so we should ignore them here to avoid double counting
+		# IF get_costs() is used.
 		return {}
-	
-	var costs = {}
-	
-	for effect in card_data.effects:
-		if effect is ResourceHandler:
-			var res_effect = effect as ResourceHandler
-			# Check if it's a custom resource (not standard)
-			if res_effect.resource_type not in ["gold", "energy", "sanity"]:
-				# Both negative and positive amounts; negative = cost, positive = gain
-				if res_effect.amount < 0: # Only costs (negative amounts)
-					var current_cost = costs.get(res_effect.resource_type, 0)
-					costs[res_effect.resource_type] = current_cost + (-res_effect.amount)
-	
-	return costs
+		
+	return {}
 
 ## Cost Payment Methods
 
-func _pay_all_costs(player, card_instance: CardInstance) -> void:
-	"""Pay all costs for a card (energy, sanity, resources) with modifiers applied"""
-	if not player or not card_instance:
+func _pay_all_costs(source: Object, card_data: CardData) -> void:
+	"""Pay all costs for a card (energy, sanity, resources)"""
+	if not source or not card_data:
 		GLog.error("CardResolver: _pay_all_costs called with null parameters")
 		return
 	
-	var card_data = card_instance.card_data
+	# Pay Unified Costs
+	for cost in card_data.get_costs():
+		cost.pay(source)
+		# GLog.debug("CardResolver: Paid cost: %s" % cost.get_description())
 	
-	# Calculate and pay energy cost with modifiers
-	var actual_cost = player.get_actual_energy_cost(card_data.energy_cost, card_data.card_type)
-	player.pay_energy(actual_cost)
-	GLog.debug("CardResolver: Paid %d energy for %s (base: %d)" % [actual_cost, card_data.card_name, card_data.energy_cost])
-	
-	# Pay sanity cost
-	if card_data.sanity_cost > 0:
-		player.pay_sanity(card_data.sanity_cost)
-		GLog.debug("CardResolver: Paid %d sanity for %s" % [card_data.sanity_cost, card_data.card_name])
-	
-	# Pay resource costs (Faith and other resources from effects)
+	# Pay Legacy Effect Costs
 	var resource_costs = _get_resource_costs(card_data)
 	for resource_name in resource_costs:
-		var cost = resource_costs[resource_name]
-		if cost > 0:
-			player.spend_resource(resource_name, cost)
-			GLog.debug("CardResolver: Paid %d %s cost for %s (current: %d)" % [
-				cost, resource_name, card_data.card_name, player.get_resource(resource_name)
-			])
-	
-	# Pay custom resource costs
-	var custom_costs = _get_custom_resource_costs(card_data)
-	for resource_name in custom_costs:
-		var cost = custom_costs[resource_name]
-		if cost > 0:
-			player.modify_custom_resource(resource_name, -cost)
-			GLog.debug("CardResolver: Paid %d %s cost for %s (current: %d)" % [
-				cost, resource_name, card_data.card_name, player.get_custom_resource(resource_name)
-			])
+		var pay_amount = resource_costs[resource_name]
+		if pay_amount > 0:
+			var res_type = source._string_to_resource_type(resource_name)
+			if res_type != GameEnums.CustomResourceType.NONE:
+				if source.has_method("spend_resource"):
+					source.spend_resource(res_type, pay_amount)
+					GLog.debug("CardResolver: Paid (Effect) %d %s" % [pay_amount, resource_name])
+
 
 ## Card Resolution Methods
 
@@ -170,7 +156,7 @@ func play_player_card(card_instance: CardInstance) -> void:
 	var hand_size_before = duel_state.hand.size() - 1 # -1 because we're about to play this card
 	
 	# Pay all costs upfront to ensure consistent state
-	_pay_all_costs(player, card_instance)
+	_pay_all_costs(player, card_instance.card_data)
 	
 	# Increment counter for this turn
 	player.cards_played_this_turn += 1
@@ -193,9 +179,8 @@ func play_enemy_card(enemy: EnemyState, card: CardData) -> void:
 	"""Spend energy, stage, and resolve an enemy card with proper timing"""
 	GLog.info("CardResolver: Enemy plays: %s (Cost: %d)" % [card.card_name, card.energy_cost])
 	
-	# Spend energy upfront
-	if enemy.stats:
-		enemy.stats.current_energy -= card.energy_cost
+	# Pay all costs upfront (energy, resources, etc.)
+	_pay_all_costs(enemy, card)
 	
 	# Move card from enemy hand to battlefield temporarily
 	var staged_instance: CardInstance = null
@@ -403,7 +388,11 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 	if values.has("custom_resources"):
 		for resource_name in values.custom_resources:
 			var amount = values.custom_resources[resource_name]
-			source.modify_resource(resource_name, amount)
+			var res_type = source._string_to_resource_type(resource_name)
+			if res_type != GameEnums.CustomResourceType.NONE:
+				source.modify_resource(res_type, amount)
+			else:
+				GLog.warn("CardResolver: Unknown custom resource type: %s" % resource_name)
 	
 	# Gold goes to source
 	if values.has("gold") and values.gold != 0:

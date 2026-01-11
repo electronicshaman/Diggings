@@ -1,14 +1,21 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CardData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/defense_handler.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_3"]
 
 [sub_resource type="Resource" id="DefenseHandler_1"]
 script = ExtResource("2")
 amount = 10
 duration = 0
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_3")
+amount = 1
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Void Shield"
 energy_cost = 1

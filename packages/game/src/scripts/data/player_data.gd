@@ -38,8 +38,9 @@ const DEBUG_ENABLED: bool = true
 @export var damage_taken_this_turn: int = 0
 
 # Unified class resource system (Ammo, Faith, Fever, Scent, Brew, etc.)
-@export var custom_resources: Dictionary = {} # resource_name -> current_amount
-@export var custom_resource_max: Dictionary = {} # resource_name -> max_value (0 = no max)
+# Unified Class Resource System
+@export var custom_resources: Dictionary = {} # CustomResourceType (int) -> current_amount (int)
+@export var custom_resource_max: Dictionary = {} # CustomResourceType (int) -> max_value (int)
 
 # HOLD card persistence (cards that persist between turns)
 @export var hold_cards: Array[CardData] = []
@@ -92,30 +93,38 @@ func _forward_stats_change(change_type: String, old_value, new_value):
 	"""Forward stats changes to our listeners"""
 	_emit_change(change_type, old_value, new_value)
 
-# Unified Resource Management (supports all class resources: Ammo, Faith, Fever, Scent, Brew)
-func gain_resource(res_name: String, amount: int) -> int:
+# Unified Resource Management
+func gain_resource(res_type: GameEnums.CustomResourceType, amount: int) -> int:
 	"""Gain resource points, respecting max cap if defined. Returns actual amount gained."""
-	var old_value = custom_resources.get(res_name, 0)
-	var max_val = custom_resource_max.get(res_name, 0)
+	if res_type == GameEnums.CustomResourceType.NONE:
+		return 0
+		
+	var old_value = custom_resources.get(res_type, 0)
+	var max_val = custom_resource_max.get(res_type, 0)
 	var new_value = old_value + amount
 	if max_val > 0:
 		new_value = clamp(new_value, 0, max_val)
-	custom_resources[res_name] = new_value
+	custom_resources[res_type] = new_value
 	var actual_gain = new_value - old_value
 	if actual_gain > 0:
-		_emit_change("resource_gained", {"resource": res_name, "amount": actual_gain, "current": new_value})
+		var res_name = GameEnums.CustomResourceType.keys()[res_type].to_lower().capitalize()
+		_emit_change("resource_gained", {"resource": res_type, "amount": actual_gain, "current": new_value})
 		# Emit generic resource signal via EventBus
 		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
 		if event_bus and event_bus.has_signal("resource_gained"):
 			event_bus.resource_gained.emit(self, res_name, actual_gain)
 	return actual_gain
 
-func spend_resource(res_name: String, amount: int) -> bool:
+func spend_resource(res_type: GameEnums.CustomResourceType, amount: int) -> bool:
 	"""Spend resource points if available. Returns success."""
-	var current = custom_resources.get(res_name, 0)
+	if res_type == GameEnums.CustomResourceType.NONE:
+		return true
+		
+	var current = custom_resources.get(res_type, 0)
 	if current >= amount:
-		custom_resources[res_name] = current - amount
-		_emit_change("resource_spent", {"resource": res_name, "amount": amount, "current": current - amount})
+		custom_resources[res_type] = current - amount
+		var res_name = GameEnums.CustomResourceType.keys()[res_type].to_lower().capitalize()
+		_emit_change("resource_spent", {"resource": res_type, "amount": amount, "current": current - amount})
 		# Emit generic resource signal via EventBus
 		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
 		if event_bus and event_bus.has_signal("resource_spent"):
@@ -123,54 +132,72 @@ func spend_resource(res_name: String, amount: int) -> bool:
 		return true
 	return false
 
-func can_afford_resource(res_name: String, amount: int) -> bool:
+func can_afford_resource(res_type: GameEnums.CustomResourceType, amount: int) -> bool:
 	"""Check if player has enough of the specified resource."""
-	return custom_resources.get(res_name, 0) >= amount
+	if res_type == GameEnums.CustomResourceType.NONE:
+		return true
+	return custom_resources.get(res_type, 0) >= amount
 
-func reset_resource(res_name: String):
+func reset_resource(res_type: GameEnums.CustomResourceType):
 	"""Reset resource to 0."""
-	var old_value = custom_resources.get(res_name, 0)
+	var old_value = custom_resources.get(res_type, 0)
 	if old_value != 0:
-		custom_resources[res_name] = 0
-		_emit_change("resource_reset", {"resource": res_name, "old_value": old_value})
+		custom_resources[res_type] = 0
+		_emit_change("resource_reset", {"resource": res_type, "old_value": old_value})
 
 func reset_all_resources():
 	"""Reset all class resources to 0."""
-	for res_name in custom_resources.keys():
-		reset_resource(res_name)
+	for res_type in custom_resources.keys():
+		reset_resource(res_type)
 
-func get_resource(res_name: String) -> int:
+func get_resource(res_type: GameEnums.CustomResourceType) -> int:
 	"""Get current value of a resource."""
-	return custom_resources.get(res_name, 0)
+	return custom_resources.get(res_type, 0)
 
-func get_resource_max(res_name: String) -> int:
+func get_resource_max(res_type: GameEnums.CustomResourceType) -> int:
 	"""Get max value of a resource (0 = no max)."""
-	return custom_resource_max.get(res_name, 0)
+	return custom_resource_max.get(res_type, 0)
 
-func set_resource(res_name: String, amount: int):
+func set_resource(res_type: GameEnums.CustomResourceType, amount: int):
 	"""Set a resource value directly."""
-	var max_val = custom_resource_max.get(res_name, 0)
+	var max_val = custom_resource_max.get(res_type, 0)
 	if max_val > 0:
 		amount = clamp(amount, 0, max_val)
-	custom_resources[res_name] = amount
-	_emit_change("resource_changed", {"resource": res_name, "current": amount})
+	custom_resources[res_type] = amount
+	_emit_change("resource_changed", {"resource": res_type, "current": amount})
 
-func modify_resource(res_name: String, amount: int):
+func modify_resource(res_type: GameEnums.CustomResourceType, amount: int):
 	"""Modify a resource value (positive = gain, negative = spend)."""
 	if amount > 0:
-		gain_resource(res_name, amount)
+		gain_resource(res_type, amount)
 	elif amount < 0:
-		spend_resource(res_name, -amount)
+		spend_resource(res_type, -amount)
 
-# Legacy compatibility aliases
+# Legacy compatibility aliases (Deprecated)
 func set_custom_resource(res_name: String, amount: int):
-	set_resource(res_name, amount)
+	GLog.warn("Deprecated set_custom_resource used with string: " + res_name)
+	# Try to map string to enum
+	var res_type = _string_to_resource_type(res_name)
+	if res_type != GameEnums.CustomResourceType.NONE:
+		set_resource(res_type, amount)
 
 func modify_custom_resource(res_name: String, amount: int):
-	modify_resource(res_name, amount)
+	GLog.warn("Deprecated modify_custom_resource used with string: " + res_name)
+	var res_type = _string_to_resource_type(res_name)
+	if res_type != GameEnums.CustomResourceType.NONE:
+		modify_resource(res_type, amount)
 
 func get_custom_resource(res_name: String) -> int:
-	return get_resource(res_name)
+	var res_type = _string_to_resource_type(res_name)
+	if res_type != GameEnums.CustomResourceType.NONE:
+		return get_resource(res_type)
+	return 0
+
+func _string_to_resource_type(res_name: String) -> GameEnums.CustomResourceType:
+	var key = res_name.to_upper()
+	if key in GameEnums.CustomResourceType:
+		return GameEnums.CustomResourceType[key]
+	return GameEnums.CustomResourceType.NONE
 
 # Character class methods
 func set_character_class(new_class: CharacterClass):
@@ -192,12 +219,27 @@ func initialize_class_resources():
 	custom_resource_max.clear()
 
 	# Initialize resources from character class definition
-	for res_name in character_class.unique_resources:
-		var default_val = character_class.unique_resource_defaults.get(res_name, 0)
-		var max_val = character_class.unique_resource_max.get(res_name, 0)
-		custom_resources[res_name] = default_val
+	# Note: This checks for both string (legacy) and enum arrays in case CharacterClass is in transition
+	var resources_to_init = []
+	var defaults = {}
+	var maxs = {}
+	
+	# Handle legacy string arrays if they exist
+	if character_class.unique_resources.size() > 0 and character_class.unique_resources[0] is String:
+		for res_name in character_class.unique_resources:
+			var res_type = _string_to_resource_type(res_name)
+			if res_type != GameEnums.CustomResourceType.NONE:
+				resources_to_init.append(res_type)
+				defaults[res_type] = character_class.unique_resource_defaults.get(res_name, 0)
+				maxs[res_type] = character_class.unique_resource_max.get(res_name, 0)
+	
+	# Initialize initialized resources
+	for res_type in resources_to_init:
+		var default_val = defaults.get(res_type, 0)
+		var max_val = maxs.get(res_type, 0)
+		custom_resources[res_type] = default_val
 		if max_val > 0:
-			custom_resource_max[res_name] = max_val
+			custom_resource_max[res_type] = max_val
 
 	GLog.debug("Initialized class resources for %s: %s" % [character_class_name, str(custom_resources)])
 

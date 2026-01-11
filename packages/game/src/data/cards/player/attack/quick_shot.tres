@@ -1,14 +1,16 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://dbebu72mj3wkj"]
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://dbebu72mj3wkj"]
 
 [ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/types/card_manipulation_handler.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/handlers/core/handler_condition.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_5"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
 amount = 4
 ignores_defense = false
+
 
 [sub_resource type="Resource" id="FirstCardCondition_1"]
 script = ExtResource("4")
@@ -17,13 +19,20 @@ comparison_value = 0
 comparison_operator = "equal"
 invert = false
 
+
 [sub_resource type="Resource" id="CardManipulationHandler_1"]
 script = ExtResource("3")
 action = "draw"
 amount = 1
 activation_condition = SubResource("FirstCardCondition_1")
 
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("energy_cost_5")
+amount = 1
+
 [resource]
+costs = [SubResource("1")]
 script = ExtResource("1")
 card_name = "Quick Shot"
 energy_cost = 1
