@@ -172,7 +172,7 @@ func end_duel(winner: String):
 			duel_ended.emit(winner)
 		
 		if handler_result.scene_to_load:
-			await get_tree().create_timer(0.5).timeout
+			await get_tree().create_timer(GameConstants.TIMING_VALUES["scene_transition_delay"]).timeout
 			# Use intent-based loading if available
 			if handler_result.has("intent") and handler_result.intent:
 				SceneManager.load_scene_with_intent(handler_result.scene_to_load, handler_result.intent)
@@ -184,7 +184,7 @@ func end_duel(winner: String):
 			var next_config = sequence_handler.start_next_battle()
 			if next_config:
 				# Brief pause between battles
-				await get_tree().create_timer(1.0).timeout
+				await get_tree().create_timer(GameConstants.TIMING_VALUES["scene_transition_delay"]).timeout
 				
 				# Start the next duel using the config
 				flow_controller.start_duel_with_config(next_config)
@@ -212,11 +212,11 @@ func end_duel(winner: String):
 				GLog.info("DuelManager: Elite/Boss defeated! Curio reward will be offered")
 
 		# Load victory reward scene for card selection
-		await get_tree().create_timer(1.0).timeout # Brief pause before transition
+		await get_tree().create_timer(GameConstants.TIMING_VALUES["scene_transition_delay"]).timeout
 		SceneManager.load_scene("res://scenes/ui/victory_reward.tscn")
 	else:
 		# Player lost - go to game over or appropriate scene
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(GameConstants.TIMING_VALUES["scene_transition_delay"]).timeout
 		SceneManager.load_scene_by_name("game_over")
 
 	duel_ended.emit(winner)
@@ -299,7 +299,7 @@ func _execute_enemy_turn() -> void:
 	
 	# Execute AI turn asynchronously
 	ai_controller.execute_turn(enemy, card_resolver)
-	
-	# Wait a moment then end the enemy turn
-	await get_tree().create_timer(2.0).timeout
+
+	# Wait for enemy AI to complete before ending turn
+	await get_tree().create_timer(GameConstants.TIMING_VALUES["enemy_turn_end_delay"]).timeout
 	flow_controller.end_enemy_turn()

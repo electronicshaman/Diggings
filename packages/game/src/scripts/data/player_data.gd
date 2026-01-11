@@ -107,12 +107,11 @@ func gain_resource(res_type: GameEnums.CustomResourceType, amount: int) -> int:
 	custom_resources[res_type] = new_value
 	var actual_gain = new_value - old_value
 	if actual_gain > 0:
-		var res_name = GameEnums.CustomResourceType.keys()[res_type].to_lower().capitalize()
 		_emit_change("resource_gained", {"resource": res_type, "amount": actual_gain, "current": new_value})
 		# Emit generic resource signal via EventBus
 		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
 		if event_bus and event_bus.has_signal("resource_gained"):
-			event_bus.resource_gained.emit(self, res_name, actual_gain)
+			event_bus.resource_gained.emit(self, res_type, actual_gain)
 	return actual_gain
 
 func spend_resource(res_type: GameEnums.CustomResourceType, amount: int) -> bool:
@@ -123,12 +122,11 @@ func spend_resource(res_type: GameEnums.CustomResourceType, amount: int) -> bool
 	var current = custom_resources.get(res_type, 0)
 	if current >= amount:
 		custom_resources[res_type] = current - amount
-		var res_name = GameEnums.CustomResourceType.keys()[res_type].to_lower().capitalize()
 		_emit_change("resource_spent", {"resource": res_type, "amount": amount, "current": current - amount})
 		# Emit generic resource signal via EventBus
 		var event_bus = Engine.get_main_loop().root.get_node_or_null("EventBus")
 		if event_bus and event_bus.has_signal("resource_spent"):
-			event_bus.resource_spent.emit(self, res_name, amount)
+			event_bus.resource_spent.emit(self, res_type, amount)
 		return true
 	return false
 
@@ -430,6 +428,7 @@ func start_new_turn():
 	cards_played_this_turn = 0
 	damage_dealt_this_turn = 0
 	damage_taken_this_turn = 0
+	stats.defense = 0  # Reset defense at start of turn
 	stats.reset_energy()
 	_emit_change("turn_started", null, null)
 

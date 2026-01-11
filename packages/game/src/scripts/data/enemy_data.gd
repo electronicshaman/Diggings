@@ -201,6 +201,7 @@ func get_pattern_index() -> int:
 
 func start_turn() -> void:
 	"""Called at the start of enemy turn"""
+	stats.defense = 0  # Reset defense at start of turn
 	turns_alive += 1
 	_emit_change("turn_started", turns_alive - 1, turns_alive)
 

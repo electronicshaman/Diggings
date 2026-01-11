@@ -41,9 +41,9 @@ signal corruption_changed(amount: int)
 signal sanity_changed(amount: int)
 signal health_changed(current: int, max: int)
 # Generic class resource signals (Ammo, Faith, Fever, Scent, Brew, etc.)
-signal resource_gained(player: Object, resource_name: String, amount: int)
-signal resource_spent(player: Object, resource_name: String, amount: int)
-signal resource_changed(player: Object, resource_name: String, current: int, max_val: int)
+signal resource_gained(player: Object, resource_type: GameEnums.CustomResourceType, amount: int)
+signal resource_spent(player: Object, resource_type: GameEnums.CustomResourceType, amount: int)
+signal resource_changed(player: Object, resource_type: GameEnums.CustomResourceType, current: int, max_val: int)
 signal gambling_modifier_query(player_data: Object, context: Dictionary)
 
 signal enemy_intent_revealed(intent: String)
@@ -271,19 +271,19 @@ func emit_health_changed(current: int, max_val: int) -> void:
 	health_changed.emit(current, max_val)
 	# if VERBOSE_EVENTS: GLog.debug("Health changed: " + str(current) + "/" + str(max_val))
 
-func emit_resource_gained(player: Object, resource_name: String, amount: int) -> void:
-	resource_gained.emit(player, resource_name, amount)
+func emit_resource_gained(player: Object, resource_type: GameEnums.CustomResourceType, amount: int) -> void:
+	resource_gained.emit(player, resource_type, amount)
 	if VERBOSE_EVENTS:
-		GLog.debug("Resource gained: " + resource_name + " (" + str(amount) + ")")
+		GLog.debug("Resource gained: " + str(resource_type) + " (" + str(amount) + ")")
 
-func emit_resource_spent(player: Object, resource_name: String, amount: int) -> void:
-	resource_spent.emit(player, resource_name, amount)
+func emit_resource_spent(player: Object, resource_type: GameEnums.CustomResourceType, amount: int) -> void:
+	resource_spent.emit(player, resource_type, amount)
 	if VERBOSE_EVENTS:
-		GLog.debug("Resource spent: " + resource_name + " (" + str(amount) + ")")
+		GLog.debug("Resource spent: " + str(resource_type) + " (" + str(amount) + ")")
 
-func emit_resource_changed(player: Object, resource_name: String, current: int, max_val: int) -> void:
-	resource_changed.emit(player, resource_name, current, max_val)
-	# if VERBOSE_EVENTS: GLog.debug("Resource changed: " + resource_name + " " + str(current) + "/" + str(max_val))
+func emit_resource_changed(player: Object, resource_type: GameEnums.CustomResourceType, current: int, max_val: int) -> void:
+	resource_changed.emit(player, resource_type, current, max_val)
+	# if VERBOSE_EVENTS: GLog.debug("Resource changed: " + str(resource_type) + " " + str(current) + "/" + str(max_val))
 
 func emit_gambling_modifier_query(player_data: Object, context: Dictionary) -> void:
 	gambling_modifier_query.emit(player_data, context)
