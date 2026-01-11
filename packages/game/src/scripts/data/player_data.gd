@@ -428,6 +428,7 @@ func start_new_turn():
 	cards_played_this_turn = 0
 	damage_dealt_this_turn = 0
 	damage_taken_this_turn = 0
+	stats.defense = 0  # Reset defense at start of turn
 	stats.reset_energy()
 	_emit_change("turn_started", null, null)
 
