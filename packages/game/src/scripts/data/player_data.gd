@@ -48,6 +48,9 @@ const DEBUG_ENABLED: bool = true
 # Turn-end effects tracking
 @export var delayed_damage: int = 0
 
+# Status effects system
+var status_effects: StatusEffectManager
+
 # Curio system
 @export var curios: Array = [] # Array of CurioData resources
 @export var curio_stacks: Dictionary = {} # curio_name -> stack count
@@ -71,9 +74,14 @@ func _init():
 	# Initialize with default stats if none provided
 	if not stats:
 		stats = Stats.new()
-	
+
 	# Forward stats change notifications
 	stats.add_change_listener(_forward_stats_change)
+
+	# Initialize status effects manager
+	if not status_effects:
+		status_effects = StatusEffectManager.new(self)
+	status_effects.add_change_listener(_forward_status_change)
 
 func add_change_listener(callback: Callable):
 	"""Add a callback to be notified of player data changes"""
@@ -92,6 +100,11 @@ func _emit_change(change_type: String, old_value = null, new_value = null):
 func _forward_stats_change(change_type: String, old_value, new_value):
 	"""Forward stats changes to our listeners"""
 	_emit_change(change_type, old_value, new_value)
+
+
+func _forward_status_change(change_type: String, data: Dictionary):
+	"""Forward status effect changes to our listeners"""
+	_emit_change("status_" + change_type, null, data)
 
 # Unified Resource Management
 func gain_resource(res_type: GameEnums.CustomResourceType, amount: int) -> int:
@@ -466,6 +479,9 @@ func reset_duel_tracking():
 	# Reset all class resources to starting values
 	reset_all_resources()
 	hold_cards.clear()
+	# Clear all status effects
+	if status_effects:
+		status_effects.clear_all()
 
 # HOLD card management
 func add_hold_card(card_data: CardData):
@@ -611,7 +627,11 @@ func get_save_data() -> Dictionary:
 		if curio.resource_path:
 			curio_paths.append(curio.resource_path)
 	data["curio_paths"] = curio_paths
-	
+
+	# Save status effects
+	if status_effects:
+		data["status_effects"] = status_effects.get_save_data()
+
 	return data
 
 func load_from_data(data: Dictionary):
@@ -666,6 +686,12 @@ func load_from_data(data: Dictionary):
 	}).duplicate()
 	reputation_tier = data.get("reputation_tier", "neutral_wanderer")
 	reputation_events = data.get("reputation_events", []).duplicate()
+
+	# Load status effects
+	if data.has("status_effects"):
+		if not status_effects:
+			status_effects = StatusEffectManager.new(self)
+		status_effects.load_from_data(data.get("status_effects", {}))
 
 # ============================================================================
 # KARMA SYSTEM METHODS

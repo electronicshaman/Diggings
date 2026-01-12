@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://buy2yq5gd7d47"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_recovery"]
+
+[resource]
+script = ExtResource("1_recovery")
+effect_id = "recovery"
+display_name = "Recovery"
+description_template = "Heal {stacks} health at the start of your turn. Decays by 1."
+is_buff = true
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "on_trigger"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "turn_start"
+effect_type = "heal"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.2, 1.0, 0.4, 1.0)

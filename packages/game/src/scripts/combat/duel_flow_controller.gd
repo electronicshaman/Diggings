@@ -136,35 +136,57 @@ func start_duel_with_config(config: DuelConfig) -> void:
 func start_player_turn() -> void:
 	"""Increment turn count, draw cards, emit signal"""
 	GLog.info("DuelFlowController: Starting player turn %d" % (duel_state.player_turn_count + 1))
-	
+
 	duel_state.start_player_turn()
-	
+
+	# Process status effects that trigger at turn start (Poison, Dread, Recovery, Surge)
+	if duel_state.player_data and duel_state.player_data.status_effects:
+		var effects := duel_state.player_data.status_effects.process_turn_start()
+		for effect in effects:
+			_apply_status_effect_result(duel_state.player_data, effect)
+
 	# Draw cards for turn (except first turn which already drew initial hand)
 	if duel_state.player_turn_count > 1:
-		var cards_per_turn_draw = 1 # Standard card draw per turn
-		var drawn = duel_state.draw_cards(cards_per_turn_draw)
+		var base_draw := 1 # Standard card draw per turn
+		var draw_mod := 0
+
+		# Apply Clarity/Confusion draw modifiers
+		if duel_state.player_data and duel_state.player_data.status_effects:
+			draw_mod = duel_state.player_data.status_effects.get_draw_modifier()
+
+		var actual_draw := maxi(1, base_draw + draw_mod) # Minimum 1 draw
+		var drawn := duel_state.draw_cards(actual_draw)
 		if drawn.size() > 0:
-			GLog.debug("DuelFlowController: Drew %d card(s) for turn" % drawn.size())
-	
+			GLog.debug("DuelFlowController: Drew %d card(s) for turn (base: %d, modifier: %+d)" % [drawn.size(), base_draw, draw_mod])
+
 	turn_started.emit(true)
 
 func end_player_turn() -> void:
 	"""Process end-of-turn effects, emit signal"""
 	GLog.debug("DuelFlowController: Ending player turn")
-	
+
+	# Process status effects that trigger at turn end (Burn, Resolve)
+	if duel_state.player_data and duel_state.player_data.status_effects:
+		var effects := duel_state.player_data.status_effects.process_turn_end()
+		for effect in effects:
+			_apply_status_effect_result(duel_state.player_data, effect)
+
+		# Decay effects that decay at turn end
+		duel_state.player_data.status_effects.decay_effects("per_turn_end")
+
 	# Process player end-of-turn effects (like delayed damage)
 	if duel_state.player_data:
 		duel_state.player_data.end_turn()
-	
+
 	duel_state.end_player_turn()
 	turn_ended.emit(true)
-	
+
 	# Check for win/loss conditions
 	var winner = check_win_loss_conditions()
 	if winner != "":
 		duel_ended.emit(winner)
 		return
-	
+
 	# Check if duel is over before starting enemy turn
 	if not is_duel_over():
 		# Brief pause before transitioning to enemy turn
@@ -174,25 +196,42 @@ func end_player_turn() -> void:
 func start_enemy_turn() -> void:
 	"""Increment turn count, emit signal"""
 	GLog.info("DuelFlowController: Starting enemy turn %d" % (duel_state.enemy_turn_count + 1))
-	
+
 	duel_state.start_enemy_turn()
+
+	# Process status effects that trigger at turn start (Poison, Dread, Recovery, Surge)
+	if duel_state.enemy_data and duel_state.enemy_data.status_effects:
+		var effects := duel_state.enemy_data.status_effects.process_turn_start()
+		for effect in effects:
+			_apply_status_effect_result(duel_state.enemy_data, effect)
+
 	turn_started.emit(false)
-	
+
 	# Note: Enemy AI execution will be handled by EnemyAIController
+
 
 func end_enemy_turn() -> void:
 	"""Emit signal, check for next turn"""
 	GLog.debug("DuelFlowController: Ending enemy turn")
-	
+
+	# Process status effects that trigger at turn end (Burn, Resolve)
+	if duel_state.enemy_data and duel_state.enemy_data.status_effects:
+		var effects := duel_state.enemy_data.status_effects.process_turn_end()
+		for effect in effects:
+			_apply_status_effect_result(duel_state.enemy_data, effect)
+
+		# Decay effects that decay at turn end
+		duel_state.enemy_data.status_effects.decay_effects("per_turn_end")
+
 	duel_state.end_enemy_turn()
 	turn_ended.emit(false)
-	
+
 	# Check for win/loss conditions
 	var winner = check_win_loss_conditions()
 	if winner != "":
 		duel_ended.emit(winner)
 		return
-	
+
 	# Check if duel is over before starting next player turn
 	if not is_duel_over():
 		# Brief pause before transitioning to player turn
@@ -200,6 +239,50 @@ func end_enemy_turn() -> void:
 		start_player_turn()
 
 # Helper methods
+
+func _apply_status_effect_result(entity: Resource, effect: Dictionary) -> void:
+	"""Apply the result of a status effect trigger to an entity"""
+	var effect_type: String = effect.get("type", "")
+	var value: int = effect.get("value", 0)
+	var effect_id: String = effect.get("effect_id", "")
+	var bypasses_defense: bool = effect.get("bypasses_defense", false)
+
+	match effect_type:
+		"damage":
+			if bypasses_defense and entity is EnemyState:
+				entity.take_damage(value, true)
+			else:
+				entity.take_damage(value)
+			GLog.debug("DuelFlowController: %s dealt %d damage from %s" % [_get_entity_name(entity), value, effect_id])
+		"heal":
+			entity.heal(value)
+			GLog.debug("DuelFlowController: %s healed %d from %s" % [_get_entity_name(entity), value, effect_id])
+		"sanity_damage":
+			if entity.stats:
+				entity.stats.lose_sanity(value)
+			GLog.debug("DuelFlowController: %s took %d sanity damage from %s" % [_get_entity_name(entity), value, effect_id])
+		"sanity_heal":
+			if entity.stats:
+				entity.stats.restore_sanity(value)
+			GLog.debug("DuelFlowController: %s restored %d sanity from %s" % [_get_entity_name(entity), value, effect_id])
+		"energy_gain":
+			if entity.stats:
+				entity.stats.restore_energy(value)
+			GLog.debug("DuelFlowController: %s gained %d energy from %s" % [_get_entity_name(entity), value, effect_id])
+
+	# Emit status triggered event
+	EventBus.status_triggered.emit(entity, effect_id, float(value))
+
+
+func _get_entity_name(entity: Resource) -> String:
+	"""Get display name for an entity"""
+	if entity is EnemyState and entity.enemy_name:
+		return entity.enemy_name
+	if entity is PlayerData:
+		return "Player"
+	return "Entity"
+
+
 func _draw_initial_hand() -> void:
 	"""Draw initial hand of cards"""
 	var initial_hand_size = 5 # Standard initial hand size

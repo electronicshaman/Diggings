@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://cmw4pj9yw6ux7"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_thorns"]
+
+[resource]
+script = ExtResource("1_thorns")
+effect_id = "thorns"
+display_name = "Thorns"
+description_template = "Reflect {percent} of damage taken back to attacker. {stacks} turns remaining."
+is_buff = false
+stackable = true
+max_stacks = 20
+stack_behavior = "add_stacks"
+decay_type = "per_turn_end"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "on_damage_taken"
+effect_type = "reflection"
+value_per_stack = 0.05
+is_percentage = true
+percentage_cap = 1.0
+effect_color = Color(0.6, 0.3, 0.1, 1.0)

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://bpv3qk7zw8vx8"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_disarmed"]
+
+[resource]
+script = ExtResource("1_disarmed")
+effect_id = "disarmed"
+display_name = "Disarmed"
+description_template = "Cannot play Attack cards. {stacks} turns remaining."
+is_buff = false
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "per_turn_end"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "on_card_play"
+effect_type = "card_blocker"
+value_per_stack = 0.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.4, 0.4, 0.4, 1.0)

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://ctm5qj9xw3rv4"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_weak"]
+
+[resource]
+script = ExtResource("1_weak")
+effect_id = "weak"
+display_name = "Weak"
+description_template = "Deal 25% less damage with attacks. {stacks} turns remaining."
+is_buff = false
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "per_turn_end"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "passive"
+effect_type = "damage_modifier"
+value_per_stack = 0.25
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.6, 0.4, 0.2, 1.0)

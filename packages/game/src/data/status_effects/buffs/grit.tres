@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://cpt7tl0bz2yy2"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_grit"]
+
+[resource]
+script = ExtResource("1_grit")
+effect_id = "grit"
+display_name = "Grit"
+description_template = "+{stacks} damage to all attacks. {stacks} turns remaining."
+is_buff = true
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "per_turn_end"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "on_attack"
+effect_type = "damage_modifier"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(1.0, 0.6, 0.2, 1.0)

@@ -32,8 +32,10 @@ signal damage_dealt(target: Node, amount: int, source: Node)
 signal damage_taken(target: Object, amount: int)
 signal damage_blocked(target: Node, amount: int)
 signal healing_received(target: Node, amount: int)
-signal status_applied(target: Node, status: String, stacks: int)
-signal status_removed(target: Node, status: String)
+signal status_applied(target: Object, status: String, stacks: int)
+signal status_removed(target: Object, status: String)
+signal status_triggered(target: Object, effect_id: String, value: float)
+signal status_stacks_changed(target: Object, effect_id: String, old_stacks: int, new_stacks: int)
 
 signal energy_changed(current: int, max: int)
 signal gold_changed(amount: int)
@@ -233,15 +235,45 @@ func emit_healing_received(target: Node, amount: int) -> void:
 	if VERBOSE_EVENTS:
 		GLog.debug("Healing received: " + str(amount) + " by " + target.name)
 
-func emit_status_applied(target: Node, status: String, stacks: int) -> void:
+func emit_status_applied(target: Object, status: String, stacks: int) -> void:
 	status_applied.emit(target, status, stacks)
 	if VERBOSE_EVENTS:
-		GLog.debug("Status applied: " + status + " (" + str(stacks) + ") to " + target.name)
+		var target_name := _get_target_name(target)
+		GLog.debug("Status applied: " + status + " (" + str(stacks) + ") to " + target_name)
 
-func emit_status_removed(target: Node, status: String) -> void:
+
+func emit_status_removed(target: Object, status: String) -> void:
 	status_removed.emit(target, status)
 	if VERBOSE_EVENTS:
-		GLog.debug("Status removed: " + status + " from " + target.name)
+		var target_name := _get_target_name(target)
+		GLog.debug("Status removed: " + status + " from " + target_name)
+
+
+func emit_status_triggered(target: Object, effect_id: String, value: float) -> void:
+	status_triggered.emit(target, effect_id, value)
+	if VERBOSE_EVENTS:
+		var target_name := _get_target_name(target)
+		GLog.debug("Status triggered: " + effect_id + " (" + str(value) + ") on " + target_name)
+
+
+func emit_status_stacks_changed(target: Object, effect_id: String, old_stacks: int, new_stacks: int) -> void:
+	status_stacks_changed.emit(target, effect_id, old_stacks, new_stacks)
+	if VERBOSE_EVENTS:
+		var target_name := _get_target_name(target)
+		GLog.debug("Status stacks changed: " + effect_id + " " + str(old_stacks) + " -> " + str(new_stacks) + " on " + target_name)
+
+
+func _get_target_name(target: Object) -> String:
+	"""Helper to get a display name for any target (Node or Resource)"""
+	if target == null:
+		return "Unknown"
+	if target is Node:
+		return target.name
+	if "enemy_name" in target and target.enemy_name:
+		return target.enemy_name
+	if "character_class_name" in target and target.character_class_name:
+		return target.character_class_name
+	return "Entity"
 
 func emit_phase_changed(new_phase: String) -> void:
 	phase_changed.emit(new_phase)

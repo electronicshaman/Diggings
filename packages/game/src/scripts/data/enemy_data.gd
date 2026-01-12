@@ -45,6 +45,9 @@ enum IntentType {UNKNOWN, ATTACK, DEFEND, SPECIAL, BUFF, DEBUFF}
 @export var custom_resources: Dictionary = {}
 @export var custom_resource_max: Dictionary = {}
 
+# Status effects system
+var status_effects: StatusEffectManager
+
 # Change tracking system
 var _change_listeners: Array[Callable] = []
 
@@ -56,16 +59,23 @@ func _init() -> void:
 		GLog.debug("EnemyState._init(): Created new default Stats")
 	else:
 		GLog.debug("EnemyState._init(): Using existing Stats - HP: %d/%d" % [stats.current_health, stats.max_health])
-	
+
 	# Initialize card manager if none provided
 	if not card_manager:
 		card_manager = EnemyCardManager.new()
-	
+
+	# Initialize status effects manager
+	if not status_effects:
+		status_effects = StatusEffectManager.new(self)
+
 	# Forward stats change notifications
 	stats.add_change_listener(_forward_stats_change)
-	
+
 	# Forward card manager change notifications
 	card_manager.add_change_listener(_forward_card_manager_change)
+
+	# Forward status effect change notifications
+	status_effects.add_change_listener(_forward_status_change)
 
 
 ## Change Listener System
@@ -95,6 +105,11 @@ func _forward_stats_change(change_type: String, old_value: Variant, new_value: V
 func _forward_card_manager_change(change_type: String, data: Dictionary) -> void:
 	"""Forward card manager changes to our listeners"""
 	_emit_change("enemy_" + change_type, null, data)
+
+
+func _forward_status_change(change_type: String, data: Dictionary) -> void:
+	"""Forward status effect changes to our listeners"""
+	_emit_change("status_" + change_type, null, data)
 
 
 ## Stats Convenience Methods (forward to Stats resource)
@@ -501,19 +516,23 @@ func reset_for_new_duel() -> void:
 	turns_alive = 0
 	damage_modifier = 1.0
 	defense_modifier = 1.0
-	
+
 	# Clear card piles via card manager
 	if card_manager:
 		card_manager.clear_all()
-	
+
 	# Clear player pattern memory
 	player_card_history.clear()
+
+	# Clear all status effects
+	if status_effects:
+		status_effects.clear_all()
 
 
 ## Serialization Support
 
 func get_save_data() -> Dictionary:
-	return {
+	var data := {
 		"stats": stats.get_save_data() if stats else {},
 		"card_manager": card_manager.get_save_data() if card_manager else {},
 		"enemy_name": enemy_name,
@@ -530,6 +549,12 @@ func get_save_data() -> Dictionary:
 		"ai_type": ai_type,
 		"player_card_history": player_card_history
 	}
+
+	# Save status effects
+	if status_effects:
+		data["status_effects"] = status_effects.get_save_data()
+
+	return data
 
 
 func load_from_data(data: Dictionary) -> void:
@@ -574,8 +599,14 @@ func load_from_data(data: Dictionary) -> void:
 			_: ai_type = GameEnums.AIType.AGGRESSIVE
 	else:
 		ai_type = loaded_ai
-		
+
 	player_card_history = data.get("player_card_history", [])
+
+	# Load status effects
+	if data.has("status_effects"):
+		if not status_effects:
+			status_effects = StatusEffectManager.new(self)
+		status_effects.load_from_data(data.get("status_effects", {}))
 
 
 ## Debug Methods
