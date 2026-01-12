@@ -1,0 +1,4782 @@
+YJ Complete with MY
+fh combat system, monster p) J
+
+“>> _ encounters and score sheet F
+Sy _ aes al 4 il —
+
+a See aa saeniemeeneeane ail
+t of Tak is the largest den of thieves, pirates and
+the civilized world has ever seen. In this city of
+there are two pirates known for their ruthless
+t daring raids and their countless skirmishes with
+of these infamous men is Abdul the Butcher. The
+JU!
+
+-you can be King of the Pirates, but who will it
+; made that the first to reach the distant Isle of
+1 the greatest amount of gold wins the crown. But
+
+seas are treacherous, and many horrible dangers
+
+a pencil and an eraser are all you need to embark
+rilling adventure. YOU decide which route to fol-
+h dangers to risk and which monsters to fight.
+BLE IN LAUREL-LEAF BOOKS:
+
+OF KETHER.
+id Jan Livingstone
+IR. lan Livingstone
+R. lan Livingstone
+OF FIRETOP MOUNTAIN.
+and Jan Livingstone
+7 CHAOS. Steve Jackson
+DOOM. lan Livingstone
+TELLER. Steve Jackson
+VES. lan Livingstone
+{(GEON. Jan Livingstone
+ARD KING. lan Livingstone
+2 Jackson and lan Livingstone
+NOW WITCH. Jan Livingstone
+ADES. Steve Jackson
+»ve Jackson and lan Livingstone
+Jackson and lan Livingstone
+Y SALES
+
+3 are available at special quantity discounts when pur-
+
+by corporations, organizations, and special-interest
+imprinting or excerpting can also be done to fit special
+.s write: Dell Publishing Co., inc., 1 Dag Hammarskjold
+k, NY 10017. Attn.: Special Sales Dept..or phone: (212)
+
+LSALES
+
+any Dell Books you want but cannot find in your local stores? If
+in order them directly from us. You can get any Dell book in
+yply include the book's title, author, and ISBN number, if you
+long with a check or money order (no cash can be accepted) for
+etail price plus 75¢ per copy to cover shipping and handling.
+Dell Readers Service, Dept. FM, P.O. Box 1000, Pine Brook,
+
+ion and Ian Livingstone present:
+
+Chapman
+
+» Bob Harvey
+
+oe
+
+<
+~ n
+
+E ben
+>
+F BOOKS bring together under a single imprint outstand-
+f fiction and nonfiction particularly suitable for young
+rs, both in and out of the classroom. Charles F. Rea-
+2ssor Emeritus of Children’s Literature and Reading,
+Jniversity, is consultant to this series.
+
+g Co., Inc.
+irskjold Plaza
+2w York 10017
+
+< was first published in Great Britain by Penguin Books
+
+Steve Jackson and Jan Livingstone
+ght © 1985 by Andrew Chapman
+s copyright © 1985 by Bob Harvey
+
+srved. No part of this book may be reproduced or
+any form or by any means, electronic or mechani-
+photocopying, recording, or by any information
+‘ieval system, without the written permission of the
+2pt where permitted by law.
+
+> Library ® TM 766734, Dell Publishing Co., Inc.
+
+97708-8
+
+in the United States of America
+
+1986
+4321
+to
+Keith and Ron
+E SHEET
+8
+
+AGER
+)
+
+ZAS OF BLOOD
+> captain of the pirate vessel Banshee.
+ith your band of seasoned cut-throats,
+scourge the lands of the Inland Sea,
+yr gold and slaves in a race against your
+al, Abdul the Butcher. The two of you
+swath of infamy across the civilized
+ure recognized as the two greatest pirate
+existence. Now, however, you must
+scover who is the greatest.
+
+you can begin your journey you must
+he strengths and weaknesses of yourself
+rew. For this you will require two dice
+] to record scores on the Adventure Sheet
+8-19. As it is possible that you will not
+our trip in one adventure, you may wish
+ypies of the Adventure Sheet for future
+
+r Crew
+
+ie. Add 6 to the result. Enter this total
+CREW STRIKE section of the Adventure
+; value will be used when you engage in
+battles using your crew (e.g. when
+lemy shipping).
+
+ice. Add 6 to the result. Enter this total in
+STRENGTH section of the Adventure Sheet.
+represents the manning level on board
+e and is used to determine how efficiently
+You will lose points from your CREW
+when you engage in large-scale battles.
+tions will allow you to recover lost CREW
+points, but you may never exceed the
+e. If your CREW STRENGTH ever reaches
+you and your crew have been wiped out.
+
+vilities
+y to fight, withstand damage and escape
+‘ situations is determined by your SKILL,
+ind LUCK. On your Adventure Sheet you
+
+ctions where these attributes are to be
+[hey are derived as follows:
+
+e. Add 6 to the result. Enter this total as
+[LL score.
+
+ice. Add 12 totheresult. Enter this total
+STAMINA score. If your STAMINA score
+ches zero, you have been killed.
+
+e. Add 6 to the result. Enter this total as
+CK score.
+g Luck
+
+m, you will be called upon to Test your
+n this occurs, roll two dice. If the result is
+28s than your current LUCK score, then you
+Lucky. If the result exceeds your current
+‘, then you have been Unlucky. Each time
+ur Luck, reduce your current LUCK score
+_ Thus, the more you use your LUCK, the
+ecomes. LUCK points may sometimes be
+but you may never exceed your Initial
+
+1 Combat
+
+combat is conducted the same as in other
+intasy books. It is used when you, the
+ght individual creatures. If you are
+riliar with this system, you can skip this
+rules. Otherwise:
+
+simultaneous. Individual combat is
+as a series of rounds in which one
+will inflict damage upon the other.
+ice. Add your opponent's SKILL score
+. The total 1s your opponent's Attack
+
+ce again. Add your SKILL score to the
+
+tal is your Attack Strength.
+
+onent’s Attack Strength is higher than
+opponent has inflicted damage on
+
+ct 2 points from your STAMINA.
+
+ttack Strength is higher than your
+
+, you have inflicted damage on your
+- deduct 2 points from your
+
+s STAMINA.
+
+ack Strengths are equal, both attacks
+
+d. Start the next Attack Round from
+
+re.
+
+this combat until either your or your
+
+s STAMINA is reduced to zero (death).
+
+e Battles
+
+the book says that your crew must fight,
+he opponent has STRIKE and STRENGTH
+tead of SKILL and STAMINA. then the rules
+cale combats must be used. They are as
+
+large-scale battles is simultaneous and
+in a very similar manner to individual
+is a series of rounds in which one force
+2 will inflict damage upon the other.
+ce. Add your opponents’ STRIKE score
+The total is your opponents’ Attack
+
+again. Add your CREW STRIKE score
+The total is your crew's Attack
+
+ents' Attack Strength is higher than
+they have inflicted damage upon
+deduct 2 points from your CREW
+
+Attack Strength is higher than your
+your crew have inflicted damage
+pponents - deduct 2 points from
+ats’ STRENGTH.
+
+have inflicted damage upon your
+| the option of escaping is given in
+n you may escape. Note, however,
+a penalty: whenever you choose to
+utomatically lose 2 points of CREW
+strengths are equal, both attacks are
+Start the next Attack Round from
+
+s combat until either your op-
+your crew's STRENGTH has been
+ro (unless you escape, of course).
+le is reduced to zero first has lost.
+
+r Log
+
+‘ecords how long you have been travel-
+a sheet of paper, you should keep a
+ir LOG as instructed in various passages
+You only have a limited amount of time
+complete your journey; the LOG will
+i see how you are progressing.
+g Stamina
+
+ome involved in any individual combat,
+almost certainly lose some points of
+There is only one way to recover these -
+the occasional instruction in the book -
+by resting. For every day that you add to
+r, you will be able to recover 1 point of
+Note, however, that your STAMINA score
+exceed its Initial value. Of course, the
+‘ you spend resting, the slower you will
+ards your destination - so, beware!
+
+y
+
+» course of your adventure, you will
+ainly capture some gold and slaves. This
+dere iS a section on the Adventure Sheet in
+can be recorded. You start the adventure
+0 Gold Pieces.
+
+Map
+
+a which you will be travelling is covered
+p opposite. It would pay you to become
+ith the names and places on this map, as
+juite frequent references to them in the
+
+EASTERN RIM
+
+REE SISTERS
+
+= O/ SS Y
+a
+
+ADVENTURE SbEET?
+J
+
+—~\
+
+ee
+R BOXES
+a= a=
+l=
+a= =
+a=
+= h=
+/ 7
+ter ——_/), K x
+
+AGER
+
+Tak, at the northern end of the Inland
+greatest den of thieves, criminals and
+
+he civilized world has ever seen. Every
+and illicit activity is not only permitted,
+
+ouraged, in this city of scum. This, your
+is where your adventure begins.
+
+nerous pirates drawn to Tak, you and
+s3utcher are recognized by all as being the
+ring and greed. However, neither of you
+larly wealthy, as your love of gambling
+ull the riches that you bring back from
+2ys against the enemy cities of Lagash,
+Kish.
+
+at the two of you have bred is also the
+sat rivalry; you each try to outdo the
+singly dangerous but breathtakingly
+Js. Your goal - the title of King of
+acker of Cities, which is never be-
+only earned.
+
+hile dicing against each other in one
+ling-pits, somebody suggests that
+should have a contest to determine,
+, who is the greatest pirate. The idea
+ly to your audacious spirits. "Yes,’
+et us have a race of speed and
+
+> upon the terms of the contest. Each will
+one ship and, sailing from Tak on an
+day, will head for the distant isle of
+vhich lies deep in the great Southern Sea.
+ey must be completed within fifty days
+»end, whoever has the greatest amount of
+the bet.
+
+aking of hands all round and much toasting,
+is sealed. Your journey is about to begin.
+
+{ OVER
+ppointed for the beginning of the race,
+Banshee out of the towering granite bay
+ito the Inland Sea. Abdul the Butcher's
+'§ quietly through the water beside you.
+st is the hostile but rich port of Lagash;
+3 the Scythera Desert, across which the
+2s to the cities of Kish, Calah and Assur
+outh is the mountainous isle of Enraki.
+
+ds Lagash fora
+s but daring raid
+
+yastal shipping? Turn to 55
+e Scythera Desert to
+he rich western
+? Turn to 20
+land Sea via the isle of
+
+Turn to 76
+
+el is too fast and you are too slow. It crashes
+with flailing scythes, bringing your adven-
+gory and untimely end.
+
+ast!’ cackles your creditor. 'Next time you
+e so quick to gamble with money you do
+' He and his sailors brush past you, going
+their prize. Without a ship, you cannot
+your journey. Your adventure ends here.
+your LOG. When you reach the nar-
+of the Channel of Goth, an extended
+ips appears on the horizon in your
+avel. As you approach closer, you see
+several hundred war galleys, with the
+shurrupak, heading through the chan-
+yrmation. They stretch from the shores
+Volcanoes almost to the shores of the
+Turning back north to avoid conflict
+2 force, you run into another long line
+s, this time from Marad. You realize
+city-states must be at war with each
+at you have quite inadvertently been
+e middle of what is about to be an
+val battle. Both forces are roughly
+, but the Marad galleys - reputed to
+‘N on every oar - are by far the larger
+_ you head for safety by trying to
+h the Marad lines (turn to 43) or the
+des (turn to 127)?
+
+roach the door, you stumble over an
+ywwire. Something snaps, causing a
+sound overhead and a deep upsetting
+ibrate through the surrounding stone-
+corridor suddenly collapses, crushing
+>veral tons of masonry. Your adventure
+
+1 the door, you manage to squeeze
+xh before the block crashes to the
+unately, the half of you thatis still on
+f the door gets wiped by the mono-
+nture ends here.
+ice. If the result is less than your CREW
+, turn to 387. If the result is equal to or
+your CREW STRENGTH, turn to 356
+
+yrint for the door, the monster slams you
+yw from its spiked tail. You are crushed
+e side of the pit. Your adventure is at an
+
+nble back in pain and terror as the poison
+
+ugh your eyes and into your brain. Your
+e is Over.
+
+0
+
+ds, passing the bleak red dunes of
+'s Sea of Fire - so named because of
+iring of the infertile earth. Roll three
+It is less than your CREW STRENGTH,
+yur LOG. If the result is equal to or
+tr CREW STRENGTH, add 6 days to
+‘evening, with the sun setting over
+west, you notice a phosphorescent
+ter to the side of the Banshee. Heav-
+p anchor and dive overboard for a
+i see a merchant vessel, lying in
+with two large holes smashed in its
+1e stern and the other in the bow.
+Swim into, the hole in the stern (turn
+7 (turn to 33)?
+
+1
+
+skeleton by the hand, intent on remov-
+. However, as soon as you touch the
+sts, the skeleton springs into action by
+ur hand in its own bony digits. It
+tly and holds you fast. All your efforts
++ in vain; the supernatural grip proves
+1 your mortal strength or human
+yur death comes slowly from hunger
+our adventure is over.
+
+manage to cut the Banshee free from the
+grapples, and slash its rigging. The
+sails crash to the deck, causing chaos and
+among the marines. Turn to 90.
+
+wing you for a day, the seas and wind
+skies begin to clear. Before you, on the
+the island of Trysta, so the storm has
+over and past the treacherous shoals. By
+- of good fortune, the Banshee escaped
+Will you land on the island ahead (turn
+1 south-east, towards the Channel of
+to 191), or sail south-west, either to-
+(turn to 223) or the Roc (turn to 27)?
+
+4
+!' cries the ghost. 'This is dreadful indeed.’
+a wrathful eye upon you and sweeps his
+espair. 'O bearer of such wretched news, I
+u.’ Lose 2 points of LUCK and | point of
+rn to 210.
+
+the Southern Sea, will you:
+
+1urrupak, to sell any
+u might have and to
+ore cre Turn to 301
+1e great Kish Delta
+‘l upstream to the
+y? Turn to 140
+h the centre of the
+Sea, aiming for
+Turn to 340
+as you exert pressure, the ring sinks into
+g and admits a torrent of water, which
+ou to the floor. The entrance door slams
+crypt fills rapidly with water, and you
+our adventure is over.
+
+'run to one side, to avoid the speeding
+t the snow is too deep. The ball hits and
+u. This is the end of your adventure.
+
+urries ferociously with a swift move-
+x arms, knocking your punching arm
+1 almost breaking it - lose 1 point of
+ou jump back, the Cyclops grabs you
+1 and then lifts you into the air. Will
+
+yen-handed chop on
+
+ft bow? Turn to 187
+sl ler? Turn to 251
+i the elbow? Turn to 145
+
+shee picks up pace as you trim the sails and
+he space between the two nearest galleys.
+try to run exactly between them (turn to
+eer off at the last moment to crash through
+r one of the galley's oars off (turn to 275)?
+0
+
+ice. If the result is Jess than your CREW
+dd 5 days to your LOG. If the result is
+reater than your CREW STRENGTH, add 6
+LOG. Eventually you arrive off the coast
+hera Desert, where you drop anchor,
+vith most of the crew and march inland
+Irning sands. You come to a busy little
+yunding an oasis - obviously a staging-
+rel through the desert. Will you attack
+turn to 143), or retreat into the nearby
+in ambush for any caravan that might
+turn to 79)?
+
+1
+1attack the Anemone, it folds a dozen
+ind your body, and the poison stings
+and consequently fatal dose into your
+You lose consciousness as the crea-
+yu slowly towards its circular mouth.
+re 1s Over.
+
+2
+
+marines are defeated and the warship
+irding and searching the enemy vessel,
+a chest in the master’s quarters which
+sold Pieces. From the survivors among
+
+you find 3 fine specimens for the
+s of the Eastern Rim. You scuttle the
+>ontinue towards Assur. Turn to 376.
+ver the sand for several hundred yards
+t warning, the beach collapses under
+e feet, revealing huge slime-covered
+ich seize some of your crew in their
+rry them out to sea. Deduct 2 points
+‘EW STRENGTH. Hysterical with fear,
+isist that you take them back to the
+1 you force them to continue along the
+to 86), or suggest that you all head
+1 (turn to 42)?
+
+lays, you wait in the village for hapless
+
+to fall into your ambush, but none
+rally, your patience snaps at this waste of
+ou decide to return to the Banshee to try
+ne elsewhere. Add 3 days to your LOG,
+0 35.
+5
+ice and care are not enough. With an
+
+‘aping sound, the Banshee's keel slides
+of silt. The ship comes to an unsteady
+arge poles to push, and throwing out all
+cargo, you attempt to refloat your ves-
+success. The water-level drops and the
+tles deeper into the sand-bar. In the
+rou find yourselves surrounded by
+liers who, from their nearby garrison,
+ast above the river-banks. You are cap-
+‘our adventure is over.
+
+6
+
+n, you dig into the soup and bread with
+ra while you start to feel quite sleepy, as
+‘w. Rubbing your eyes, you look down
+ble, at which you are all seated, and
+thing quite unusual: all of your pirates
+urned into farm animals - sheep, goats,
+ch. Alarmed at this turn of events, you
+wk. A squawk? When you look down at
+yu find you have been transformed into a
+me, my pretty little fellow,’ says the
+ttling you on her hand; ‘come and join
+
+No longer human, your adventure is
+
+to your LOG. The Roc is anisland formed
+
+enormous mountain jutting out of the
+peak is almost continually shrouded in
+ile the lower slopes are covered with
+‘ts. It is named after a species of gigantic
+| sometimes uses the higher slopes for
+it your Luck. If you are Lucky, turn to 67. If
+lucky, turn to 92.
+
+e cheap men have been lured away to the
+Varad, which promises enormous riches
+ining side. You are left with good, but
+, applicants to select from. For each point
+TRENGTH you wish to recover, you will
+pend 20 Gold Pieces. When you have
+your recruiting, turn to 180.
+vard, you deliver a swift elbow into the
+, causing it to double over - deduct 2
+‘Ss STAMINA. As it leans over, it delivers
+ed slap to your head, sending you
+ground-lose 2 points of STAMINA. The
+vers first, grabs you by the arm and lifts
+
+ir. Will you:
+thes. Ider? Turn to 251
+the arr :? Turn to 305
+d ithe elbow? Turn to 145
+
+comes again, rolling eerily down the moun-
+ses. You head up the ravine, towards the
+vf the sound. Will you take your crew with
+n to 160), or creep along alone (turn to 138)?
+!’ cries the ghost. "This is dreadful indeed.’
+a wrathful eye upon you and sweeps his
+lespair. 'O bearer of such wretched news, |
+u.’ Lose 2 points of LUCK and 1 point of
+rm to 210.
+
+2
+
+e sails into the only large bay that Nippur
+r crew are overjoyed that the journey is
+hree dice. If the result is less than your
+GTH, add 4 days to your LOG. If the result
+‘greater than your CREW STRENGTH, add 5
+tr LOG. Abdul the Butcher's Haveldar is
+red in the bay. The few members of his
+i board inform you that Abdul has gone
+the rendezvous point on the peak of
+igle mountain. If your LOG exceeds 50
+) 342. If your LOG is equal to or less than
+n to 213.
+
+3
+; large and rimmed with weed and bar-
+
+imming through into the interior of the
+brush against what you thought was a
+e of rags stuck to the hull. It unfolds into
+coloured flower of tentacles and rasping
+blocks your exit from the ship. You will
+sack to the surface for air at any moment,
+yu fight your way past the tentacled
+irn to 21), or try to find a way out through
+‘of the sunken ship (turn to 57)?
+
+d at speed towards the coast, but the
+are moving quite fast and soon cut you off.
+2 no option now but to try smashing your
+ugh the line. Turn to 19.
+ie Banshee, you weigh anchor and set
+If your crew have taken casualties,
+id for the neutral city of Assur to
+ore men (turn to 171). Alternatively,
+) the neighbouring city of Calah to try
+ie gambling-pits (turn to 211), or sail
+isle of Enraki (turn to 76).
+
+uu reach the summit, you find Abdul the
+and a few of his men waiting for you. ‘Ah,’
+when you appear, 'you made it. Now, let us
+h is the greater rascal!’ He drags an enor-
+‘st forward. 'I sacked Kish,’ he boasts, 'and
+tured a Marad war galley. The treasure is
+‘ove it.’ He opens his coffer, inviting you to
+ime with yours. To work out whether you
+re than Abdul, round the amount of gold
+: down to the nearest hundred (e.g. if you
+- Gold Pieces, round this figure down to
+en you have done this, divide the rounded
+7 two. The result is the number that you
+irn to. If the number you should turn to is
+n 400, then turn to 400.
+
+n screams as you swing at him, catches
+id pounds you in the head, knocking
+ise 2 points of STAMINA permanently
+our Initial score by 2). Upon recovering
+later, you discover that the money you
+etis gone-deduct it from your Booty. If
+already, you could try the Bataar races
+or the dice (turn to 236); otherwise, you
+turn to 262).
+
+8
+1 is like an enormous smooth granite boul-
+
+neither beaches nor foliage. Lowering the
+t, you go ashore with a few crew. Test your
+yu are Lucky, turn to 133. If you are Unlucky,
+0.
+
+X |
+
+u
+
+y
+
+yas
+9
+
+isting that you should eat, but, just as
+ler pressure and take a bowl of soup,
+ll at once, slump unconscious to the
+even more alarming is the transform-
+art to undergo - turning into sheep,
+'s. Dropping your bowl, you rush to
+rst mate awake. ‘Oink/ is the only
+can muster. The witch has fled into
+obably fearful because you're still in
+Pursuing her, you find yourself in a
+vhich leads into a large feasting-hall,
+ll fire-pit is blazing. A small side-
+ls from the lobby. The witch is not in
+u go into the hall (turn to 216), or take
+or (turn to 227)?
+
+0
+
+Men are forced back into the surround-
+Your crew manage to capture four of
+ires to sell as slaves; the little fellows gen-
+| quite a high price. The jungle has come
+the throat warbles and Tok-Tok stick
+he natives. Obviously, a larger force is
+inder nearby cover in preparation for a
+tack. Beating a hasty retreat, you return
+hee, weigh anchor and continue through
+Turn to 15.
+nto the cattle with ropes and knives.
+fter they start, a large force of heavily
+men appear over a nearby rise and
+' position. Drawing to a halt, the
+h a herald towards you, who says,
+1 pirates, that you have offended His
+ing of the Four Winds. You are in-
+e this island immediately, or suffer
+ynsequences!' Turn to 176.
+
+yur way through thejungle, you penetrate
+terior, coming face to face with the biggest
+t looking critter you have ever seen. Hun-
+ee-trunk legs support a body twice as long
+nshee, while its head - which is mostly
+; Stacked with knives for teeth. Will you
+0 54) or fight (turn to 70)?
+I sail to the Banshee and putting every man
+d ready on deck, you head at full speed
+ae line of Marad galleys, aiming between
+ig oars of two ships. As your boat hurtles
+us gap, one of the galleys fires its ballista
+catching the Banshee by the gunwale. It
+in like a harpooned whale. Your crew will
+rht.
+
+Y STRIKE 8 STRENGTH 12
+‘crew beat off the attack, turn to 208.
+
+4
+‘ads into the captain's quarters, where
+
+mt half a dozen Sea Sprites. These
+le creatures dart nervously from side to
+enter the vessel, then rush into the far
+e room where they whisper together in
+d squeaks. Finally, one of them swims
+itiously and says, 'We are magical crea-
+ive adventurer from the world above. If
+p us to recover a treasure, we will speak
+half to our cousins, the Wind Sprites,
+irely make your ship the fastest on the
+you help them (turn to 75) or not (turn
+5
+
+ls down the coast. Roll three dice. If
+
+than your CREW STRENGTH, add 5
+t. Ifthe resultis equal to or greater than
+NGTH, add 6 days to your LOG. You
+ore from Mount Martu-Amurru, a
+>red peak that towers over the small
+<irkuk. Will you:
+
+roats ashore and
+the townspeople
+iver most of their
+Turn to 102
+down the coast
+stile city of Kish? Turn to 223
+nland Sea to raid
+anes around the
+ta? Turn to 66
+
+our arm, you smash the monster in the
+1e knees. It staggers forward and, losing
+ollapses to the ground on to some sharp
+duct 2 points from its STAMINA. Will you:
+
+t in the ribs? Turn to 266
+tin the grou Turn to 224
+1 it in the jay Turn to 196
+
+reach the outskirts of the Kishian town,
+at there are no regular soldiers of any
+ng lined your men up under cover, you
+der to charge. With a mighty roar, they
+yard into the unprepared settlement, the
+a giving only piecemeal resistance.
+
+TA STRIKE 6 STRENGTH 10
+
+iu win, turn to 80.
+8
+‘Out arena is set under a sprawling tent,
+
+acked with shouting and roaring gam-
+lea of the game is that a challenger fights
+champion in a duel with spiked iron
+first to knock out the other wins and, if
+, collects double the money put up as an
+(ou decide to challenge the champion, an
+Jgre from Scythera. You may bet up to
+ces. In the following combat, the first to
+r wins the bout.
+
+MPION SKILL 11
+
+u win, turn to 370. If you lose, turn to 323.
+
+nchor in a steamy volcanic lagoon, you
+lore with your crew. The countryside is
+le, with thick foliage, exotic animals and
+f thousands of insects. Will you head for
+slopes of the central mountain (turn to
+y in the lowlands, searching through the
+1 to 184)?
+
+rw, says Abdul, looking at your markedly
+ile of gold, ‘it was hardly even a contest -
+call yourself a pirate?’ You have been
+y trounced. Abdul is, without a doubt, the
+rate. You have lost the wager.
+stops almost dead in the water, while
+neffectually to rehoist the sail. One of
+war galleys bears down on your craft,
+inshee on its ram, and breaks its back.
+r crew fall into the shark-infested
+idventure is over.
+
+‘pass, you look down the further slope,
+ver of the fortress some miles away. A
+anguish or fear flies out of a nearby
+yng, snow-filled ravine. Taking stock,
+1e of your crew are missing. The cry
+even more tortured and rending. Will
+k into the ravine to see what is causing
+‘n to 30), or ignore it and proceed down
+temple-castle (turn to 111)?
+ya
+
+3
+rge subterranean cavern, lit by the
+
+e of the rocks around. To one side,
+1 landing juts out into the water.
+is, you pull yourself from the water
+
+construction to a short corridor,
+ym the cavern to a massive stone
+1e door is a life-sized statue of a
+ag down the corridor at you. Will
+the door (turn to 69), or have a close
+> (turn to 88)?
+
+4
+
+rough the jungle like a herd of panic-
+als, you and your pirates dash to the
+our boats and back to the Banshee. If
+already, you sail to either the neat-
+d (turn to 386) or the palm-covered
+» 354).
+5
+dice. If the result is less than your CREW
+, add 5 days to your LOG and turn to 68. If
+is equal to or greater than your CREW
+add 6 days to your LOG and turn to 181.
+
+6
+
+with your spirit, Mog and Ogmog offer
+r party as crew members - add 3 points to
+STRIKE. If this takes your CREW STRIKE
+itial score, then the new total becomes
+/ score. The Giants inform you that the
+yund is a wasteland, occupied by hordes
+nd certainly never visited by anyone
+oureturn to the Banshee. Turn to 272.
+
+7
+n, you pass through an open hatchway
+
+ty hold. From here, you make your way
+ytting deck-cover and into the open see.
+pounding in your ears, you reach the
+1 gulp in air. Recovering your com-
+1 take another deep breath and dive
+hole in the stern of the ship. Turn to 44.
+
+wing their rams, the occupants of the
+ier side of the gate counter-attack by
+ve cauldrons of boiling oil on to them.
+ats from your CREW STRENGTH. De-
+his turn of events, your crew drop the
+, running at breakneck pace for the
+2 angry warrior priests burst from their
+irsuit. You reach the ship safely, hoist
+off down the coast. Turn to 123.
+9
+s extremely poor. By the end of the day,
+sold so few of your captives that you are
+sell the remainder to a dubious slaver for
+Id Pieces each. Multiply the number of
+| had by five and add the total to your
+sold Pieces. Turn to 279.
+
+/
+
+H
+
+\
+
+|
+
+0
+
+‘ap at the Cyclops, it protects its body by
+kick on its arms. Grabbing you by your
+x, it applies an extremely painful and
+p - deduct 2 points from your as well as
+[A. It gives up on trying to break your leg.
+rasps you by the ankle and dangles you
+1. Will you:
+
+i the elbo Turn to 235
+n upper cut to the groin? Turn to 177
+in the  »mach? Turn to 139
+‘or the beach, you run into several mem-
+‘our crew who had been searching the
+th the rest of your men, in the hope that
+still alive. You return to the Banshee and
+yourjourney. Turn to 15.
+
+2
+2ap men have already been hired by
+pak nobles to use on their war gal-
+lict with Marad. By a stroke of good
+rer, you find a pirate crew who have
+eprived of their ship through having
+ling-debt. Many of them are willing
+y you. For each point of CREW
+wish to recover, you will have to
+Pieces. When you have completed
+
+, turn to 180.
+
+‘ads you into a small ante-chamber,
+veird-looking cleric. The creature has
+anoid body, but the head and legs of
+ird. It hisses when it sees you, rattles
+red talismans and then attacks with a
+my staff. You fight it. Whenever the
+ou during the battle, roll one die. If
+_ or 2, deduct damage from your
+rmal; if the result is 3 or 4, deduct 1
+r SKILL; if the result is 5 or 6, deduct
+our LUCK.
+
+E SKILLS STAMINAS
+defeat it, turn to 125.
+
+Xx
+‘keel scrapes the bottom several times,
+ick. With an hour to dawn, you reach
+lere the river passes between the
+arbarian walls of Kish. These heavily
+Is, punctuated with high towers, run
+of leagues to either side of the river,
+circling the state of Kish. As you try to
+the towers that stand on either bank,
+e Banshee catches an enormous iron
+tretches across the entire width of the
+brought toa halt. Will you send a few
+re to unshackle the chain from where
+| to one of the towers (turn to 268), or
+ie sea (turn to 207)?
+
+nes' slashed bodies sink to the bottom of
+“he water, now still, is only a foot below
+of the abbot's chamber. Bloodied, you
+it of the pit. Turn to 225.
+
+C
+
+2e ploughs on towards the Shoals of
+
+three dice. If the result is less than your
+NGTH, add 4 days to your LOG. If the
+I to or greater than your CREW STRENGTH,
+9 your LOG. As you near the treacherous
+>island of Trysta, a vicious squall starts
+north and looks as ifit might turn into a
+1. Will you run with the storm by head-
+irn to 103), or tack north, into the wind,
+: foul weather (turn to 142)?
+
+7
+1 are sailing past the island, the ship
+alls into a very dark and sharply defined
+1ade. Looking up, you see an enormous
+»what like a buzzard, only several hun-
+; bigger. It circles above the Banshee a
+times, then descends in a steep dive to
+ur crew take up weapons to defend them-
+
+E 10 H4
+
+rcrew defeat it, turn to 117.
+8
+
+wards Lagash, on the Eastern Rim, keep-
+eye out for any of the numerous mer-
+that are attracted to this city. Fortune is
+ainst you, however. Two triangular red
+r on the horizon in front of the Banshee
+down towards you. They are Lagashian
+Jlecks crowded with marines, battle ban-
+ung in the wind. You heel the Banshee
+try to outsail the intruders. Roll three
+result is less than your CREW STRENGTH,
+If the result is equal to or greater than
+STRENGTH, turn to 175.
+
+large and heavy, but, by putting all your
+nstit, you manage to open it a fraction.
+the door gives, however, a tremendous
+sound echoes from above. A_ stone
+shing at least several tons, has tipped
+ce above the door and is falling to crush
+ur Luck. If you are Lucky, turn to 99. If
+ucky, turn to 6.
+0
+‘ears its head and opens its mouth in the
+rin ever seen by man or god. Hunger
+ts eyes. If you have the Crossbow of
+irn to 163; otherwise, turn to no.
+
+1
+have handed the gold over, el-Shazar
+
+i letter of free passage to Shurrupak. His
+inquish their grapples and let the Banshee
+Leaving the scene of the battle, will you
+‘ds Shurrupak (turn to 301), or sail out
+> middle of the Southern Sea, intent on
+is rapidly as possible to Nippur (turn
+
+‘k, if uninspiring. After a day's work in
+nanaged to sell every one of your cap-
+ind that you received, on average, 10
+for each. Multiply the number of slaves
+ten and add the total to your Booty as
+Turn to 279,
+
+3
+races are over for the day. If you haven't
+
+u could try punch-out (turn to 48) or dice
+9). Otherwise, you leave the city of Calah
+
+»).
+
+4
+ideways, you aim your blow, only to
+
+ight in mid-flight by one of the Cyclops'
+
+hands. It twists your arm savagely,
+locating it - lose 2 points of STAMINA.
+of your hand, it grabs you by the ankle
+‘s you upside down. Will you:
+
+in the elbo Turn to 235
+tin the che Turn to 122
+in the ribs? Turn to 372
+
+’ Krell, which inhabits a cave under this
+stolen the Skull of Salt,’ explains the
+is Our most precious relic, given to us
+2a, which, by its magic, keeps the sea
+‘aters of the world separate. We must
+.. The Sprites give you a magic potion
+les you to stay underwater without
+reathe, and then show you to the Krell's
+th the wreck. The entrance tunnel
+srtically into the sea-bed. Swimming
+iotice that the walls are heavily pocked
+deep holes. Will you continue swim-
+into the cave (turn to 105), or stop fora
+90k in one of the holes (turn to 89)?
+sails out into the Inland Sea. Roll three
+‘sult is less than your CREW STRENGTH,
+‘your LOG. If the result is equal to or
+your CREW STRENGTH, add 5 days to
+-resently, you arrive off the northern-
+he mountainous isle of Enraki, home
+or priests of Asswr sel Dablo. These
+y men, armed by the gods of war and
+the gods of stone, reside in a fortress
+lower slopes of the island's precipitous
+-capped mountain. They are very rich.
+iree options to deprive them of this
+
+ault on the fortress Turn to 231
+ry to the fortress via a
+
+_of some kind, then
+
+wh: oucan Turn to 315
+ray over the mountains
+
+e castle so as to
+
+e (most probably)
+
+fend ear Turn to 188
+
+f
+
+(AN
+
+{
+
+Sa
+= D
+= =
+
+i \j
+cross-country, a large body of heavily
+’ appears over a rise in front. They
+‘ald towards you, who says, 'Adven-
+hat you are in the land of the King of
+ds and that His Majesty requests the
+our company at his table.’ Will you
+‘rald towards the cavalry and then,
+o the King (turn to 215), or return to
+n to 176)?
+
+short distance down the tunnel, you come
+e bodies of half a dozen men. The marks on
+lies show that they have been badly mauled
+large avian - most probably the Roc that
+you. Will you search their bodies for loot
+229), or continue down the tunnel (turn to
+HORB
+
+‘$s, you and your crew lie under the
+the Scythera Desert, waiting for sight
+ring pack-animals common among
+us part of the world. Add 3 days to
+ou begin to run low on provisions and
+Nill you wait for just a few more days
+Junes (turn to 194), or give up on the
+irn to the Banshee (turn to 35)?
+
+0
+
+tia defeated and most of the townsfolk
+neighbouring countryside, you pro-
+to the local courts, to seize the public
+ting boldly through the chaotic mess
+1 have made of the building's interior,
+the vaults, whose locks your pirates
+ywharred free. When you open the
+
+doors, a ferocious black Sith Orb
+d attacks. You fight this terrible beast
+
+L 10 A 10
+
+defeat it, turn to 97.
+to the seven hells if I'll let you take her,
+' you cry, Swinging your scimitar at his
+lucks to the side as his sailors rush to his
+ou fight your foes one at a time.
+
+‘AMINA
+TE 8 4
+R ATE 8 6
+\TE 7 6
+‘AZOUK 9 6
+
+iu win, turn to 397.
+
+2
+clops tries to heave itself back to its feet,
+p and shoulder it in the face. Unfortu-
+ees you coming and bites you on the arm -
+nt of STAMINA. The monster regains its
+uunches into a crouched attack, intending
+uu in its arms. Will you:
+
+ring kick at its midriff? Turn to 60
+kick at its legs? Turn to 319
+| kick at its head? Turn to 290
+
+oic effort, your crew wrestle the mainsail
+lace, allowing the Banshee to pick up just
+ced to avoid the rams of the war galleys.
+nto the open seas, will you head towards
+, to sell slaves and hire crew (turn to 301),
+ut through the middle of the Southern
+t on sailing as rapidly as possible to
+rn to 340)?
+
+ated Nestafa, you search his body,
+ang in the rags he was wearing.
+had fallen on hard times. Afraid that
+>et more old adversaries, you leave the
+Vill you look for replacements in the
+n to 253) or in the slums and poorer
+_(turn to 293)?
+lead into a slimy darkness. The walls,
+vith moisture and covered with moss,
+ise on either side. Water trickles down the
+our feet, making your progress rather
+. Without warning, a ten-foot Leech,
+by anyone's standards, lunges from its
+and bites you on the shoulder. You hack
+enzy. For every round of combat that the
+ill alive, it will suck 2 points of STAMINA
+
+rT SKILLS STAMINAS
+defeat it, turn to 162.
+
+6
+1!' you say, unsheathing your scimitar.
+.ve more to worry about than monsters.’
+k. If you are Lucky, turn to 230. If you are
+n to 182.
+
+x
+nd skilful sailing puts one of the warships
+|. However, the other warship stays with
+>ventually pulls alongside with a shower
+s and arrows. You will have to fight.
+
+STRIKE 10 STRENGTH 8
+
+t to escape, remember the penalty and
+[you decide to fight on, and successfully
+varship, turn to 135.
+
+le is set about a foot above the ground,
+ircular dais. Looking closer, you see that
+; rollers built under it, so the statue has
+) be moved. There are wear-marks from
+on the left side of the statue but none
+t. Taking a firm grip of the gargoyle's
+you prepare to push. Which way will
+ilove the statue: to the left (turn to 114) or
+(turn to 165)?
+idomly into a hole, you disturb an
+l, which savages your arm. Lose 1
+.. Withdrawing quickly, you continue
+into the cave. Turn to 105.
+
+0
+hee, under full sail, pulls away from the
+nd leaves it far behind. Will you head back
+diand Sea, towards Enraki (turn to 76), or
+wn the coast of the Eastern Rim, towards
+3; of the Dead (turn to 197)?
+
+completely ineffective and results
+you open to a counter-attack. The
+its knee into your chest and then
+' the ground - lose 2 points of
+ling Over your pain-racked body, it
+e forearm and lifts you into the air.
+
+ithearn ? Turn to 305
+1 the wrist’ Turn to 276
+chop to the back of the
+
+? Turn to 187
+are sailing past the island, the ship
+alls into a very dark and sharply defined
+1ade. Looking up, you see an enormous
+what like a buzzard, only several hun-
+bigger. It circles above the Banshee a
+times, then descends in a steep dive to
+ooping, it catches you in its claws and
+back towards the island. Drawing your
+yu try to fight your way free.
+
+»KILL 11 STAMINA 10
+
+defeat it, turn to 124.
+
+3
+re is about half as high as the pit and
+, So will you take an athletic running leap
+s back in an attempt to springboard your
+the pit (turn to 352), or run around the
+d go through the door it came out of
+a real sucker to take your entire consign-
+slaves. The wizened old man, obviously
+to have seen the defects in your ailing
+seems to believe he has got a bargain. You
+) Gold Pieces for each slave. Multiply the
+if slaves you had by fifteen and add the
+ur Booty as Gold Pieces. Turn to 279.
+
+oitar cleaves into the cat and kills it - the
+ush. The witch clutches her chest and falls
+d. You step outside and find that all the
+nals and exotic birds have been turned
+human beings. Collecting your crew, you
+the Banshee and set sail for Nippur. Turn
+
+6
+
+says el-Shazar. 'But then, we were never
+friends.’ He signals to his men to con-
+issault upon the Banshee. The marines
+ship alongside their galley, then pour
+to your hapless pirates, whom they
+ither efficiently. The Banshee is captured,
+da few of your crew are taken as slaves.
+nture is Over.
+
+7
+, past the body of the Orb, you enter the
+yere you find 130 Gold Pieces - add this to
+sty. Will you let your men continue with
+king of the town (turn to 141), or beat a
+‘eat to the Banshee (turn to 113)?
+
+8
+
+pirates overwhelm the would-be
+m the survivors, you manage to find |
+will fetch a reasonable price in the
+s - add him to your Booty. You settle
+to the village to await the arrival and
+mbush of any unsuspecting caravans.
+. If you are Lucky, turn to 194. If you are
+1 to 24.
+
+a fraction of a second to spare, your
+irough the crack in the doorway. The
+‘k crashes to the ground behind, missing
++ minutest of distances. Turn to 179.
+
+0
+nto 50.
+
+1
+ck out the wild man, collect as many Gold
+you initially bet and then depart from the
+f you haven't already, you could try the
+aces (turn to 270) or dice (turn to 236).
+, you leave Calah (turn to 262).
+2
+
+ht into Kirkuk's harbour, you dis-
+
+most of your crew and order the
+vnsfolk to bring you their headman.
+y arrives, you demand that the towns-
+200 Gold Pieces, otherwise you will
+‘to the ground and carry its occupants
+
+This is a heavy tax, your lordship,’
+tened elder, 'but come with me to the
+and I will give you everything we
+id your men march with the town elder
+‘treets, arriving in a few minutes ata
+osing public building. As soon as he
+yw, a large number of soldiers, dressed
+blue robes and steel armour of the
+7, charge out and attack your crew.
+S appear from around neighbouring
+1 enormous melee starts.
+
+[ERS STRIKE 8 STRENGTH 8
+
+rcrew defeat them, turn to 121.
+3
+yicks up, howling menacingly through
+'s rigging and driving the rain that starts
+ieedles on your crew. The ship crashes its
+h the heavy seas. Test your Luck. If you
+urn to 13. If you are Unlucky, turn to 172.
+
+4
+vw overrun the two vessels, defeat the
+| marines and then search for loot. They
+total of 68 Gold Pieces and save 3 of the
+) sell as slaves - add these to your Booty.
+the Banshee free from the warship's
+Lagash is obviously a little too danger-
+vill you sail back into the Inland Sea,
+inraki (turn to 76), or journey down the
+e Eastern Rim, towards the Rivers of the
+1 to 197)?
+
+{t
+{, |
+\
+
+}
+Z
+
+5
+yrouts a large side-tunnel which dis-
+murky darkness in front of you, while
+rern continues straight down. Will you
+r direction and take the side-passage
+, or continue down (turn to 148)?
+
+6
+egins; the lizards pound down the track
+fresh Goblin. Basilisk streaks ahead and,
+y convincing bite, wins the race. If you
+winner, collect as much gold (or as many
+you initially bet. If your Bataar lost, then
+hatever you put up. Turn to 73.
+
+ship bears down quickly, intent on attack-
+en it is close, the marines on deck cast
+which seize the Banshee and draw it closer.
+e begins.
+
+SHIP STRIKE 10 STRENGTH 8
+
+nt to escape, remember the penalty and
+'. If you fight on and succeed in defeating
+p, turn to 287.
+8
+
+‘rashes through heavy seas to reach the
+ee dice. If the result is less than your
+ITH, add 4 days to your LOG. If the
+o or greater than your CREW STRENGTH,
+four LOG. The weather clears marked-
+* Kazallu, becoming almost pleasant.
+ach the island, you disembark with
+look for food and water to replenish
+ied supplies. Splitting your crew into
+, you wait on the beach, planning the
+leg of the journey. After a couple of
+your crew returns to tell you that they
+farm a short distance away. You go to
+se and meet the owner, a strikingly
+ng woman who runs the entire place
+er only company being many (and
+birds and the usual farm animals.
+
+rive she is busy feeding your crew with
+‘ad. 'I am so pleased to meet you,’ she
+‘ssly. ‘Can I offer you something to
+iu accept her offer and join your crew
+or decline and just take what you need
+inshee (turn to 39)?
+9
+3s the island of Trysta, a dark and sailless
+es ploughing through the sea towards the
+ts decks are crowded with soldiers, and
+listas are set fore and aft. This mysterious
+elled by magic, no doubt, is obviously
+ttacking your own vessel. As it nears, the
+>t fly, sending missiles which tear down
+ng. There is no escape; you will have to
+
+E STRIKE 10 STRENGTHS
+
+‘ur crew win, turn to 395.
+
+ast attacks you and your crew with insane
+
+STRIKE 12 STRENGTH 12
+
+rcrew defeat it, turn to 219.
+
+AS
+
+inds down the mountain slope, taking all
+
+rocky point overlooking the rear of the
+see that the walls are lowest at this point
+the possibility of launching a surprise
+1can also see right into the centre of the
+ye enormous wooden temple that domi-
+terior. Will you start the attack immedi-
+ming the low part of the wall (turn to
+to confuse the defenders first by setting
+temple with fire arrows (turn to 285)?
+
+2
+a stone, you throw it into the darkness
+creatures, where it lands with a crack.
+lytes are not fooled by this attempted
+‘hey spot you, unsling their spears and
+ie stairs. Drawing your sword, you dash
+et them halfway. Turn to 130.
+
+3
+x to the Banshee, will you set sail east, to
+Channel of Goth into the Southern Sea
+46), or enter this ocean via the Roc (turn
+‘rolls easily but squirts a viscous stream of
+liquid into your eyes from its flared
+toll three dice. If the result exceeds your
+turn to 9. If the result is equal to or less than
+AINA, turn to 129,
+
+| close to the monster, you punch it in the
+‘leg and send it crashing to the ground -
+points from its STAMINA. While the
+lying prone, will you:
+
+and down on its back? Turn to 361
+1 the groir Turn to 224
+ritin head? Turn to 82
+
+6
+
+iyfish will certainly satisfy all of your
+nents and, with the discovery of a
+ream a short distance away, all of your
+needs are fulfilled. Returning to the
+leave the Three Sisters on the last leg of
+»Nippur. Turn to 7.
+7
+| crashes into the ocean and sinks from
+‘ill you land on the island (turn to 49), or
+‘on your way through the straits and into
+hern Sea (turn to 15)?
+
+8
+xins; the lizards pound down the track
+esh Goblin. To your utter amazement,
+favourites win. Deduct the gold (or
+dut up from your Booty. Turn to 73.
+
+e warship in hot pursuit, you head towards
+als of Trysta, the sound of surf and sight of
+ater telling you just how close they are. Roll
+>, If the result is less than your SKILL, turn to
+ie result is equal to or greater than your SKILL,
+[59.
+0
+
+Jer around the island, the members of
+ime with you light a small fire on the
+<a couple of fish they have caught. A
+through the island, then another. Sud-
+ycean around the island bubbles fer-
+normous limbs, tails and heads rise out
+The ‘island’ is a single living creature!
+> crashes on the deck of the Banshee as
+rolls over to put out the fire on its back.
+> and deduct the result from your CREW
+f you still have some crew left, when
+ister settles down, you return to the
+continue your journey. Will you sail
+‘ds the Channel of Goth (turn to 4), or
+Is the Roc (turn to 257)?
+soldiers, badly beaten, turn tail and
+aring down the surrounding maze of
+her down the street in which you were
+u can see a large number of Kishian
+ssars mustering into deeply packed
+
+to make an exit! Will you lead your
+«neck pace back to the Banshee (turn to
+ze through the streets of the town with
+caping into the forests of Mount Martu-
+nto 355)?
+
+2
+ywards the Cyclops, you deliver a nasty
+your free leg. It squeals in pain and
+(oO the ground - deduct | point from its
+. Landing lightly, you stand to face your
+Mill you:
+
+houlder? Turn to 91
+midriff? Turn to 18
+handinthe armpit? Turn to 337
+s sailing justoffthe southernmosttip of
+t from this island, the horizon is clear,
+ships nor clouds visible. The main
+2tween Kish and the Eastern Rim lie to
+ween Enraki and the Shoals of Trysta.
+trol this stretch in search of rich mer-
+rn to 318), or, if your crew have suf-
+‘s, you could sail to the neutral city of
+cuit some more men (turn to 171).
+if you're feeling lucky, you could try
+in the gambling-pits of Calah (turn to
+2ed to the Eastern Rim for a bit of
+2 (turn to 197).
+
+4
+
+yps you over the island. Falling only ten
+ou land in a large nest, occupied by three
+zs. In the bottom of the nest is a hole,
+a narrow, rough-hewn tunnel. Will you
+into the hole before the Roc (orits mate)
+the attack (turn to 78), or scurry down
+‘ the mountain, towards the lowland
+1to 61)?
+
+5
+feated the Awkmute, you may take its
+1 now on, whenever you fight an oppo-
+core a hit, roll one die; if the result is
+nn. deduct 1 point from your opponent's
+> result is 3, 4, 5 or 6, then deduct damage
+yponent's STAMINA as normal. The ante-
+is two exits: one is a simple corridor and
+s what appears to be a chimney with
+-grips cut init. Will you take the corridor
+5), or climb up the chimney (turn to 199)?
+
+6
+imitar cleaves straight through the brown
+does not harm it. Turn to 322.
+
+7
+| cut across the front of the line of ships,
+for the coast of the Eastern Rim (turn to 34),
+ill sail to the Banshee and try to speed your
+ugh the attacking vessels (turn to 19)?
+
+8
+‘ated your attackers, you decide to
+to the Banshee, just in case a general
+>en sounded through the countryside.
+
+9
+on infects your system but does not kill you
+your STAMINA to 6. Wiping the blinding
+> from your eyes, you see that moving the
+is caused the massive stone door to swing
+yu go through the opening. Turn to 179.
+
+0
+nto the midst of the creatures, slashing
+to side with your curved blade.
+
+AMINA
+JDYTE 9 6
+GLODYTE 8 6
+AODYTE 7 4
+GLODYTE 7 4
+
+defeat them, turn to 307.
+begins; the lizards pound down the track
+a fresh Goblin. It is a close finish, and the
+are called in. They decide in favour of Wazi
+ou backed the winner, collect as much gold
+ny slaves) as you initially bet. Ifyour Bataar
+you lose whatever you put up. Turn to 73.
+
+2
+
+in close, you throw your arm against the
+back, without any visible effect. The
+pins about, kicking with its leg as it does
+ow strikes you on the shoulder - lose 1
+TAMINA. You grasp the Cyclops’ leg and
+sideways twist, sending the creature
+o the ground. Will you:
+
+and down on its back? Turn to 361
+rt ribs? Turn to 266
+ritin head? Turn to 82
+
+x
+er around the island, completely circum-
+it within a couple of hours. Not finding
+of any interest, you head back to the
+Will you sail south, towards the Channel
+urn to 4) or west, towards the Roc (turn
+
+re to coax your crew into attempting the
+ough the treacherous reefs. The Banshee
+allow passage surrounded by foaming
+g water. Taking down most of your sail,
+
+forward, eventually reaching what
+de a split in the channel. Will you follow
+ranch (turn to 170) or the narrower one
+
+)?
+ship defeated, you board and search
+find no gold, but 5 excellent captives
+he marines to sell in the slave-markets
+1 Rim. Returning to the Banshee, you
+y vessel to the torch. Will you head
+Inland Sea, towards Enraki (turn to
+down the coast to the Rivers of the
+
+197)?
+
+6
+
+nel winds for a long way into the
+ne stretch you notice that the walls,
+yor of the passage are covered entirely
+Ils and other bones of a variety of
+ng-snouted skulls, thigh bones as big
+‘leg and other, more human, remains
+itifiable. One skull, which looks like a
+ands out especially white and clean.
+»ve this from its place in the wall (turn
+ve the skulls alone and continue along
+rn to 168)?
+7
+
+you chose to sell your slaves for you is an
+
+skilled salesman. Even though business
+1 most of your slaves are sickening from
+voyage, he manages to fetch an average
+2 Gold Pieces for each slave. Multiply the
+f slaves you had by twelve and add the
+ur Booty as Gold Pieces. Turn to 279.
+
+8
+is long, twisting and covered in snow.
+p it slowly, listening to the increasingly
+loser screams. Suddenly, several large,
+ite beasts rise from cover some distance
+oll a huge ball of packed snow, ice and
+the ravine towards you. Roll two dice. If
+less than your SKILL, turn to 209. If the
+il to or greater than your SKILL, turn to 17.
+
+9
+ch it in the stomach, it bites you on the
+‘you howl with pain, and the Cyclops
+on your head when it relinquishes its
+t 2 points of STAMINA from each of you.
+| shaky legs, you face your opponent.
+
+litinthec t? Turn to 18
+v itin the rit Turn to 29
+af = igkick atits chest? Turn to 206
+0
+ee heads along the west coast, bringing
+<ish Delta. Roll three dice. If the result is
+sur CREW STRENGTH, add 4 days to your
+‘esult is equal to or greater than your CREW
+add 5 days to your LOG. Under the cover
+s, you sail up one of the mouths of the
+s, edging your way through the shallow
+avoid hitting any sand-bars. Test your
+tare Lucky, turn to 64. If you are Unlucky,
+
+1 riot, setting fire to buildings and
+1g the town to pieces. Before long,
+ge troop of Kishian cavalry appears
+ts of the settlement and proceeds to
+. The attack takes your pirates by
+the ensuing combat, deduct 2 from
+-e rolls.
+
+ALRY STRIKE 11 STRENGTH 6
+
+ccrew defeat them, turn to 128.
+2
+tinto the wind. Roll one die. If the result is
+add 2 days to your LOG. If the result is 4, 5 or
+laystoyourLOG. IfyourLOGisnowaneven
+
+turn to 255; if your LOG is an odd number,
+12.
+
+3
+rew sweep into the tiny village like a
+
+ie defenceless occupants by surprise
+most within minutes. However, a
+2scaped and fled to a nearby military
+y unknown to you), for a small de-
+‘rcenary cavalry appears within half
+yceeds to counter-attack.
+
+STRIKE 9 STRENGTHS
+
+r crew defeat them, turn to 98.
+
+4
+
+says el-Fazouk, 'the Banshee is mine.’ Will
+the Banshee over peacefully (turn to 3) or
+way out of this mess (turn to 81)?
+
+and deliver the blow as sharply as you can
+yclops' elbow - deduct 2 points from its
+. With a gasp, it drops you to the ground,
+u land heavily - lose 2 points of STAMINA.
+on all fours, you scuttle behind it. Will
+
+inthes +? Turn to 132
+
+in the back of the knee? Turn to 46
+
+inth dneys? Turn to 347
+6
+
+we full of farmers, soldiers, bureau-
+ats and slaves, but next to no sailors
+er non-seafarers willing to learn the
+. There are a few souls prepared to
+ver, but the price is steep. For every 20
+‘ent, you will be able to recover | point
+VGTH. You learn from some of the new
+ere is a wealthy but unwholesome
+ited to the gods of pestilence, built
+the main river which flows to the side
+| you make a short detour upriver to
+2 out (turn to 335), or leave Assur and
+outh-east, into the Inland Sea (turn to
+down the western coast (turn to 45)?
+
+ed horde turns tail and runs. Giving
+follow the surviving Goblins back to
+dus lair, where your crew start up the
+igain. During the battle through the
+ern, you become separated from your
+imbling through the dim light, fall into
+an rapid. You are swept under jutting
+lown waterfalls and, finally, into a
+Il pool - miles from where you started.
+
+8
+
+ally narrows quite considerably into a
+bout ten feet long and two feet wide -
+to squeeze through. The murky water
+v you to see what lies beyond. Will you
+ay through the slit (turn to 398), or go
+cave and down the side-passage you
+turn to 136)?
+u and your crew approach the rear wall
+ghold. Then, with arush, you all charge;
+
+s fly and the crew scrabbles for the
+ou sweep over the wall and into the
+srior, taking the warrior priests com-
+urprise. They still put up a bit of a fight,
+
+TS STRIKE 8 STRENGTH 10
+
+Ir crew wins, turn to 274.
+
+n to 50.
+
+0
+
+1
+
+rds the mountain peak, you stumble
+‘mous nest constructed from tree-
+Iders. It contains three eggs, each as
+
+It is obviously a Roc nest. Looking
+-over the narrow opening to a rough-
+ading into the mountain-side. Just as
+lone, to have a closer look, a terrible
+| fills the air. The Roc is returning to
+‘ew, Still outside the tunnel, scatter in
+at full pelt towards the jungle. The
+nest with a squawk. You decide to
+1el down. Turn to 78.
+2
+
+our LOG. You heave to in a sheltered
+orth coast. Disembarking with your
+ceed inland, crossing wide, carefully
+In one of these you come upon a large
+quietly grazing on thick clover. Your
+hat, as the Banshee is running low on
+'y should slaughter some of the cattle
+\s the fields are devoid of human life,
+your crew the go-ahead to steal the
+41), or refuse and continue to explore
+nto77)?
+
+iwshee passes between two ships in the
+one of them spews forth a viscous black
+hat covers the Banshee's decks and rig-
+ys of fire arrows follow, setting the black
+alight. Your vessel and many of your
+ne instant torches. Diving overboard,
+ur surviving crew save yourselves - but
+irney. Your adventure ends here.
+4
+'S were, of course, burying their treasure.
+
+e chest out of the hole into which it had so
+een put, you discover that it contains 112
+2s - add this to your Booty. Searching their
+u find enough provisions and water to see
+gh the last leg of your journey to Nippur.
+n to the Banshee and set sail to the south.
+
+logs, there's not a pirate among you,’
+ing your scimitar. ‘I'll run through the
+is back upon this land of opportunity.’
+main unimpressed - so unimpressed,
+ne of them raises his crossbow and lets
+ch strikes you in the chest. 'T'll not die
+ir greed,’ says your murderer, as you
+> ground. Your adventure is over.
+clops grabs you, you let fly a swift punch
+igle large eye - deduct 2 points from its
+Screaming in pain, the monster lifts you
+ir by one of your legs. Hanging upside
+| you:
+
+intk ‘omach? Turn to 139
+
+the ribs? Turn to 372
+the elbov Turn to 235
+
+7
+S west, towards the coast. Roll three
+
+It is less than your CREW STRENGTH,
+uur LOG. If the result is egual to or
+ir CREW STRENGTH, add 6 days to
+1 reach the coast at a point just off
+.murru, a giant forest-covered peak
+- the small fishing town of Kirkuk.
+
+‘throats ashore and
+en the townspeople
+z over most of their
+Turn to 102
+ig the coast towards
+of Kish? Turn to 223
+
+ches, you and your companions ease
+to the tunnel and edge down through
+ra few hundred yards the tunnel ends
+oorway - this one is blocked. Leaning
+test its strength, you are surprised to
+1 beneath you flip open, dropping you
+of your equally surprised companions
+rrow chute. You tumble down this for a
+before dropping into an open space
+in a subterranean lake. Spluttering to
+»f the water, you look around. Turn to
+
+v are extremely reluctant to approach the
+; reefs, and when a horrible grating and
+passes through the Banshee, their worst
+realized. Your ship is stuck on the rocks.
+an marines, seeing your plight, ease up a
+ll prepare to board - their shallower keel
+em to approach the Banshee with some
+safety. Your crew stand fast as the first
+ome over the gunwale.
+
+RSHIP — STRIKE 10 STRENGTHS
+
+‘ur crew win, turn to 234.
+is long, twisting and filled with deep
+rou and your crew climb up it, the
+| howls increase in intensity and fre-
+Idenly, an enormous ball of ice, snow
+omes careering down the ravine at a
+peed. You manage to leap safely to one
+eral of your crew are less fortunate and
+
+Deduct 2 points from your CREW
+. Further up the mountain, you can see
+gy white beasts constructing more of
+“ous missiles to roll down at you. Will
+and attack these snow creatures before
+nplete their weapons (turn to 220), or
+| the ravine and continue along the path
+
+1ard metallic clinks against the boulder,
+‘olling out on to the stairs. The Troglo-
+ng all the commotion, run up towards
+quite fortunate for your plan, as it takes
+‘s away from the safety of the side-
+ven they see the boulder crashing down
+m, they turn tail and try to run. The
+00 quick, however, and crushes them
+tairs. Turn to 307.
+
+2
+drops from its lair and lies quivering at
+You notice that the hole it came from is
+le, with rough-cut handholds cut into its
+iould be possible to climb into, and up,
+|. Will you continue down the stairs (turn
+climb up the Leech's hole (turn to 199)?
+
+e bow to your shoulder, you aim and fire,
+>] singing from the weapon and striking
+between the eyes. The missile explodes
+ight blue flash. The monster collapses to
+id, headless. Hearing distant roars and
+| the jungle, you decide to return to the
+Turn to 219.
+
+id the shoals, you head for Trysta. Roll
+If the result is less than your CREW
+idd 1 day to your LOG. If the result is
+ater than your CREW STRENGTH, add 2
+LOG. Then turn to 152.
+> rolls easily to the side, causing some
+echanism to grind into life, which opens
+e stone door with a hollow boom. You go
+. Turn to 179.
+
+he wheel, turning the Banshee just
+ss a fatal collision. As you cruise past
+ain, the fog lifts momentarily, allow-
+-a large galley which is resting on the
+indred yards in from the water-line.
+‘re to and approach the ice mountain in
+t (turn to 221), or steer away from the
+continue on your journey south (turn
+
+-e cuts through the Southern Sea towards
+isters. Roll three dice. If the result is less
+-REW STRENGTH, add 4 days to your LOG.
+t is equal to or greater than your CREW
+
+add 5 days to your LOG. As you
+the three islands, you see they are
+zether quite closely. The nearest island is
+oks fertile, with neatly tended orchards
+illages of thatched huts. The next island
+' an extinct volcano, its cone rising
+of feet into the air, while the lower slopes
+‘timbered. The other island is, like the
+
+low, but is dominated by palms and
+-h will you land on:
+
+x island? Turn to 386
+isla Turn to 369
+red island? Turn to 354
+
+L
+
+8
+| ends quite suddenly in a large rocky
+sitting on the irregular floor, its insanely
+d limbs folded about a spiked shell, is the
+stalked eyes consider you, while it toys
+der in its claws. 'Food,' it says. 'Mmmm,
+food.’ With a kick ofits legs, it attacks.
+
+KILLS STAMINA 12
+
+defeat it, turn to 374.
+
+imbly to one side, and the wheel spins
+Shes harmlessly against the other side of
+zors carving deep gashes in the door
+e niche from which the wheel came is a
+affording no exit from the pit. ‘Very
+wily fox,’ says the abbot, watching your
+. ‘Won't you try another?’ Which door
+en now:
+
+ta star-burst? Turn to 380
+th an upside-down
+Turn to 327
+th a horizontal
+Turn to 249
+0
+
+ing of tiller and sail takes you into the
+el safely. Suddenly, the boat grinds to
+d not by rocks but by some enormous
+ing in the centre of the passage. Large
+w tentacles arch out of the water and
+of the Banshee, coiling around you and
+yu battle this new horror.
+
+STRIKE 9 STRENGTH 6
+
+defeat it, turn to 267
+
+‘or the neutral city of Assur, the Banshee
+steadily through the still waters of the
+. Roll three dice. If the result is less than
+STRENGTH, add 5 days to your LOG. If the
+ial to or greater than your CREW STRENGTH,
+; to your LOG. If your LOG is an odd
+rn to 376; if your LOG is an even number,
+urs, the storm drives you straight on
+eth of the Shoals of Trysta. The stones
+rals of this godforsaken reef tear the
+2ces as the huge seas and relentless
+forward. Shipwrecked, you cannot
+adventure.
+
+3
+or leads into a deep gloom, but ahead you
+yut the dim shape of a door. Test your Luck.
+ucky, turn to 289. If you are Unlucky, turn
+
+d with the parasites, there is no hope of
+a matter of minutes they have reduced
+npty shell, and they lay their eggs in
+s, to hatch when the next unsuspecting
+sns along. Your adventure is over.
+
+5
+too slow. The warships cut rapidly
+
+| and pull abreast, one on either side.
+with arrows and cast grappling-irons
+e'srigging. You will have to fight.
+
+STRIKE 10 STRENGTH 14
+
+rcrew defeat them, turn to 104.
+
+6
+
+ry following at a reasonable distance,
+he Banshee and put out to see. As soon
+ar of the cove, however, a strange and
+vind starts up from the south. This
+squall, obviously a sign of the King of
+ads' displeasure, blows progressively
+stronger, whipping up a wild water all
+up. Unable to navigate in this mael-
+2 swept along wherever the wind cares
+{tera week, the storm abates, and you
+back at the northern end of the Inland
+hore from your starting-point of Tak.
+ssible for you to win the wager, your
+aver.
+
+7
+
+a the monster's grip, you deliver a savage
+S$ groin, achieving little and badly bruis-
+aand - lose 1 point of STAMINA. The
+sufficiently distracted, however, to relin-
+rip on your leg. You fall to the ground.
+p, you face your opponent. Will you:
+
+hec tt? Turn to 18
+k-handed blow in the
+
+Turn to 337
+he rit Turn to 29
+
+ie southernmost point of Trysta and
+; the Channel of Goth. Some fifty
+re from the city of Marad, you see an
+s not indicated on any of your charts.
+on this island (turn to 38), or continue
+turn to 4)?
+
+9
+
+: door is a long narrow hall, whose walls
+side are regularly punctuated with
+> floor is strewn with a large number of
+‘tones, each about two feet in diameter.
+snd of the chamber is another massive
+7ou look in one of the alcoves (turn to
+closer look at the stones (turn to 190), or
+thing alone and make your way to the
+turn to 248)?
+
+0
+
+ren't already, you can sell any slaves you
+(turn to 349); otherwise, you return to the
+urn to 238).
+iY ) “By
+
+Wei ba “ip 7 f x
+
+eaiuainigad
+
+———
+
+———
+ee
+
+; Lagash, on the Eastern Rim, arriv-
+day. You take the Banshee into the
+arine River, which flows under the
+he city, and head inland. As the
+iend in the river, you see a stately
+ahead, rowing lethargically up-
+shee pulls alongside and, withacry,
+crew against the small number of
+d guards.
+
+E S H6
+
+iu win, turn to 280.
+
+captain,’ they scream. 'We're sick of all the
+u keep taking us to. We're going back to
+east our enemies there are human!’ They
+down the beach, seize the ship's boat and
+the Banshee. Sailing off to the north, they
+stranded. Your adventure is over.
+
+the stairs end in a large mausoleum.
+ophagi and even loose bodies, covered
+hrouds, crowd the crypt. You walk
+Jimy floor and stand by one of the
+ding whether or not to open it. A low
+through the chamber, followed by a
+ig Slowly, you see the glowing white
+2at warrior, resplendent in armour, but
+‘he ghost beckons to you with a white
+ring, whispers, ‘Which. . . which way
+lowing, these days, on Enraki?’ Para-
+ar, what will you answer: north (turn to
+imn to 259), south (turn to 31) or west
+s \
+
+SN eas 4
+
+\
+
+4
+urs of fruitless wandering, you are
+large contingent of pygmy Lizard
+rocious creatures, similar to their
+welling brethren in general physi-
+d with short spears and bows. There
+prize more highly than human flesh.
+‘their swords to meet the rush of the
+res.
+
+D STRIKE 7 STRENGTH 8
+
+‘ur crew win, turn to 40.
+
+‘y to Assur is short and uneventful - add 1
+“LOG. Uponarrival, you head straight for
+1 market, hunting for some sailors to
+yrates. Test your Luck. If you are Lucky,
+'. If you are Unlucky, turn to 146.
+6
+i-eyed occupant of the town must have
+iu and your crew as you entered the
+When you reach the edge of the town,
+several hundred armed militiamen pre-
+efend their property. As you all emerge
+aver of the corn, the Kishians charge,
+
+STRIKE8 STRENGTH 10
+
+r crew defeat them, turn to 128.
+
+ts grip, you manage a bit of spin to
+would normally be an arm-breaking
+yack of its elbow. The Cyclops, defi-
+d by this manoeuvre, drops you to the
+ict 1 point from its STAMINA. Landing
+print around behind the monster. Will
+
+tin the leg’ Turn to 115
+tinthes >? Turn to 132
+lying kick into the middle
+
+back? Turn to 384
+8
+
+f your crew ashore, you begin explor-
+_ through the mountains behind the
+s - add 2 days to your LOG. Eventu-
+1 a likely path and proceed up it,
+, scrub and finally snow. As you and
+id your way towards the high point of
+see the unique II shape of an Enraki
+yn a nearby ridge; its red-wood struc-
+rily in the wind. Will you detour to
+rine (turn to 359), or continue along
+to 52)?
+
+9
+bad and your slaves, sickening from
+ment in the hold of the Banshee, are not
+lality. You receive, after the dealer has
+cut, 8 Gold Pieces on average for every
+ply the number of slaves you had by
+1 the total to your Booty as Gold Pieces.
+1, you reach across to roll one of the
+1expectedly, your hands sink into the
+ising the ‘stone, to shriek loudly and
+cid at you - one strikes you on the
+uct 2 points from your STAMINA. The
+‘§ to shriek and spit. You draw your
+id yourself.
+
+» BA SKILL 9 STAMINA 6
+defeat it, turn to 205.
+
+1
+ide of the hostile city of Marad. Roll
+If the result is less than your CREW
+idd 4 days to your LOG. If the result is
+ater than your CREW STRENGTH, add 5
+LOG. As you get to within fifty leagues
+inel of Goth, your look-out spies an
+is not indicated on any of your charts.
+id on this island (turn to 38), continue
+Channel of Goth (turn to 4), or head
+
+south of Trysta on your way to the Roc
+?
+‘the village have been annihilated, and
+and children have fled inland. Your
+at being imprisoned for no particular
+the village to the torch. You return to the
+hich is still safely anchored offshore.
+
+to avert tragedy. The Banshee ploughs
+mountain, snapping its masts and rip-
+_ open. Taking in massive amounts of
+unfortunate vessel sinks beneath the
+the loss of all hands. Your adventure is
+25
+_
+<z
+
+4
+e day, a caravan of enormous ochre-
+ypedal beasts shambles over a ridge
+. The heavy pack-animals are guarded
+izard Men who, high in their wooden
+ey the surroundings with some sus-
+ing your men out of sight, you allow
+» approach within striking range, then
+rack. As your crew surge out, uttering
+, the Lizard Men calmly draw long
+ws and let fly; the three-foot arrows
+through your force. Deduct 2 points
+‘EW STRENGTH. Eventually, hand-to-
+begins.
+
+STRIKE 8 STRENGTH 6
+
+crew defeat the guards, add 1 day to your
+id then turn to 329.
+t, obviously constructed by a magical
+gh potency, drives the vicious Brain-
+your body before they can do any more
+caving the other bodies, you continue
+innel. Turn to 240.
+
+6
+p to the creature's head, you punch it
+c force in the jaw - deduct 2 points from
+A. The Cyclops staggers to its feet, hold-
+1. Recovering slightly, it launches into a
+ttack, running to catch you in its arms.
+
+in the eye Turn to 156
+‘ways and deliver an
+smas  ) its arm? Turn to 74
+
+ing kick at its midriff? Turn to 60
+
+7
+
+wards, to the Rivers of the Dead. Roll
+
+If the result is less than your CREW
+add 5 days to your LOG. If the result is
+xreater than your CREW STRENGTH, add 6
+r LOG. Dropping anchor by the mouth of
+river in the group, you disembark with
+ur crew and march inland, looking for
+; or caravans to raid. After a few hours
+to a small range of steep stony hills,
+1 gullies, narrow valleys and dry water-
+you climb over these hills (turn to 239), or
+ugh a few of the gullies in case they are
+‘hing (turn to 226)?
+
+8
+dice. If the result is less than your CREW
+turn to 277. If the result is equal to or
+your CREW STRENGTH, turn to 341.
+
+9
+
+ib takes you out of the shrine and on to the
+tu wave at your crew skulking in the foliage
+‘tance away and then look to see which way
+xt. The only way forward is to climb down
+chimney - of which there are several. Pick-
+at random, you descend into a small closet-
+m. There are two doors leading from it.
+ill you take, the left (turn to 264) or the right
+289)?
+n to 50.
+
+1
+the skull by its single horn, you pull with
+rce. Test your Luck. If you are Lucky, turn to
+uare Unlucky, turn to 243.
+
+ce has sixteen lizards entered, but your
+hittles this down to a competition be-
+favourites: Omar Shazi, Basilisk, Wazi
+Savak. You must place a bet of 20 Gold
+slaves, whichever you prefer, on one of
+yse which Bataar you will back, then
+. If the result is 1 or 2, turn to 118; if the
+‘4, turn to 131; if the result is 5 or 6, turn
+nitar cleaves straight through the red cat,
+not harm it. Turn to 322.
+
+4
+lice. If the result is less than your CREW
+add 3 days to your LOG. If the result is
+rreater than your CREW STRENGTH, add 4
+tr LOG. Then turn to 27.
+
+5
+to shreds, lies quivering on the floor,
+ing deep marks in the paving-stones.
+already, you can look in one of the
+) 218); otherwise, you make your way
+or (turn to 248).
+
+hort run up, you jump in the air and kick
+Cyclops’ chest, striking it a heavy blow -
+points from the creature's STAMINA. It
+ort grunt and stumbles back, lashing out
+e paw as it does so. Grabbing you by the
+lifts you into the air. Will you:
+
+d i the elbow? Turn to 145
+
+the arm Turn to 305
+
+the wris Turn to 276
+7
+
+g the tricky Kish Delta, you return to
+1 Sea. Will you head for the island of
+earch for provisions (turn to 108), or
+ar of the Kishian coast and sail out into
+the Southern Sea (turn to 340)?
+
+8
+nshee pulls free of the galley, you see a
+e coming in from Marad. Will you con-
+7 to break through the Marad lines (turn to
+‘y your luck with the smaller Shurrupak
+stead (turn to 127)?
+9
+
+inder a protective finger of rock, you let
+yall crash past and disappear down the
+hen it has passed safely by, you rise from
+run back down the ravine to the path and
+ing crew - watching furtively over your
+is the snow beasts roll more missiles into
+n to 111.
+
+0
+
+; the spirit. ‘Leave through there.’ He
+1 low arch. Going through this, you find
+t the foot of a high spiral staircase which
+s into the gloom overhead. 'Go!' you hear
+implore. ‘Go!’ You climb the winding
+into the shrine, until they reach a door.
+9,
+
+1
+nshee towards Calah. Roll three dice.
+ess than your CREW STRENGTH, add 5
+3.If the result is equal to or greater than
+RENGTH, add 6 days to your LOG.
+(ling, grotty seaport, second only to
+m of Tak for seediness and criminal
+_ arrival, you head straight to the
+nbling-pits. Which game will you
+
+? Turn to 48
+ng? Turn to 270
+Turn to 236
+
+{ {
+V4
+4y fl
+
+a
+\
+_»
+
+i<
+
+—_—
+
+1 abates, leaving clear skies and a still sea in
+‘Cap'n,’ cries the look-out, pointing south,
+t vessel that way; looks like it’s been dam-
+he storm.’ Heeling the Banshee about, you
+
+the large ship which, you see, has lost a
+most ofits canvas. Will you board and sack
+| (turn to 302), or try to frighten the ship's
+to handing over all his gold without a fight
+26)?
+g with a few of your crew and all of
+>, you head inland, towards the central
+pur. Halfway up the mountain, you
+igh wall which seems to completely
+interior of the island. You follow the
+until you come to a break flanked by
+us stone statues. These statues have
+ised in the air, supporting a large beam
+the gap between them. From the beam
+ies of several sailors, twisting slowly in
+. short wizened creature, dressed in
+obes, appears and says, ‘So, you have
+he mountain. One of you will have to
+per, if you want to see the mountain.’ It
+adopts an expectant pose. Will you
+it the 'keeper’ (turn to 298), or just
+hreat and head straight through the
+vall (turn to 389)?
+
+crashes open to reveal a small shrine
+tral feature is a wooden figure of a great
+ing in repose upon a raised dais. The dais
+1 with the following:
+
+N
+\AINT
+RAGONS
+
+has a crossbow of ebony slung from one
+“aking this, you notice that the weapon,
+1 one bolt, seems to be in working order.
+have time to examine it too closely,
+s the fire, spreading rapidly through the
+reatening to cut you off. Time to leave.
+
+5
+
+lead you to an impressive castle, be-
+banners and guarded by hundreds of
+. Revelries are in progress in the central
+eaving your crew here to partake of the
+ng, you are conducted into the main
+here the King of the Four Winds sits
+tainers and courtiers. With a welcom-
+he King bids you be seated only a few
+us throne. He engages you in a rather
+ation (as the feast-hall is noisy with the
+out the weather and your journey. Will
+<ing about the true nature of your trip
+or not (turn to 312)?
+6
+
+enter the hall, the flames in the fire-pit
+ceiling, and a groan creaks throughout
+Wait,’ breathes a voice, ‘wait.’ Looking
+mes, you see a tenuous lizard-like crea-
+d with a short trident, beckoning you
+almost human eyes twinkle as it asks,
+Albion would you find that which lies
+yve and below?’ If you know the answer
+to 308. If you don't, turn to 317.
+
+vay from the icy monolith, you continue
+u will have to take on some provisions and
+er to be able to reach Nippur. You can
+dy landing either at the island of Kazallu
+L08) or the islands of the Three Sisters
+7).
+! i is py! 1 egg
+
+Oils mer
+
+er not ul
+~H i ne:
+
+Ha
+ii
+
+ee
+
+\t {\!' well es, ,
+
+f° y
+
+tie @
+
+ct
+
+Moy i
+
+a (Ne
+
+a3
+
+f'tn
+ae
+
+ra
+
+7.
+
+8
+ve into which you look is shallow, covered
+>bs and occupied by an ancient human
+This relic is dressed in rotting rags and the
+> of once proud armour. Now it lies in
+(lapse upon the stone floor. You see that it
+ral gold rings on one hand. Will you take
+rn to 11), or, leaving the alcove alone, go to
+at the end of the hall (turn to 248), or, if you
+ilready, inspect the ovoid stones (turn to
+
+i't already, you sail to either the neat
+0 386) or the palm-covered island (turn
+_ your crew charge up the mountain, the
+ts give that weird scream that had
+ou into the ravine, then turn and dis-
+run into the bleak reaches above. You
+e chase for a while, hunting around for
+ous creatures, before being interrupted
+her large snowball rolling into the midst
+-w, and crushing several men. Deduct
+m your CREW STRENGTH. Once again the
+>treat into the cover of the snow further
+untain. You decide to return to the
+the fortress. Test your Luck. If you are
+to 244, If you are Unlucky, turn to 373.
+
+» to the icy shore and disembark. The
+about two hundred yards away in the
+eep valley ofice. Will you approach it by
+the middle of the valley (turn to 273), or
+
+as close to one of the steep sides as
+rn to 288)?
+2
+
+ie Hydra's carcass on board, you cut it
+
+find the grisly remains of sailors mixed
+odd shark and other scraps. The beast’s
+‘contains some 52 Gold Pieces, which you
+ir Booty. You throw everything else back
+a. Will you continue to patrol the Inland
+iding towards the Shoals of Trysra (turn to
+ange course and travel either to the west
+1 to 157) or the Eastern Rim (turn to 10) for
+astal raiding”?
+
+3
+lice. If the result is less than your CREW
+add 5 days to your LOG. If the result is
+xreater than your CREW STRENGTH, add 6
+r LOG. As you approach the city of Kish,
+sightings of heavily armed but sluggish
+; on the horizon impress upon you the
+of a raid on the city. Instead, you steer
+2 Kish Isthmus, a wide peninsula of land
+ry sheer, unbroken cliffs. These cliffs
+-scale invasions into the rich lands
+it a small force, such as you and your
+it be able to scale them to conduct a
+aid inland. Dropping anchor when you
+sthmus, you take your crew on the long
+ous climb up the cliffs. Roll two dice. If
+; less than your SKILL, turn to 263. If the
+tal to or greater than your SKILL, turn to
+T
+
+4
+vantage of the Cyclops’ prone position,
+orward and kick it in the groin with all
+it, spraining your ankle rather badly - lose
+[ STAMINA. The monster does not seem to
+distressed by your blow; it rises to its feet
+aunches into a crouched attack, running
+ju in its arms. Will you:
+
+¢ kick atits head? Turn to 290
+in the eye Turn to 156
+ways and deliver an
+sma 0 the arm? Turn to 74
+
+the surprised abbot and his equally sur-
+sndant monk. Whipping your scimitar
+cabbard, you rush the pair, cutting the
+m before he can defend himself and then
+vords with the master.
+
+SKILL1O STAMINA 8
+
+defeat him, turn to 390.
+ys are long, tortuous and diverse. You
+ind them for a few hours before stopping
+ywever, just as your crew put canteens to
+1 ferocious shouting starts up behind the
+; to either side, followed by the slapping
+ng of hobnailed boots on stony ground. A
+mber of angry desert Goblins, with flared
+trils, bat-like ears and flashing swords,
+
+the edges of the gully and leap into the
+our men. A ferocious battle starts up.
+
+NHORDE E9 H12
+
+rcrew defeat them, turn to 147.
+
+/
+\\
+\ 3
+
+the door, you step into a small room
+by a single Basilisk. This hideous little
+which has its back to you when you enter,
+ind slowly. Testyour Luck. Ifyouare Lucky,
+8. If you are Unlucky, turn to 247.
+
+; easily raised from its pedestal and,
+leavy, presents no real difficulties as
+outside, down the stairs and into the
+waiting crew. Returning to Assur, you
+yr 105 Gold Pieces - leaving the ruby for
+w owner to recover. On the Banshee
+yu go raiding south, down the western
+n to 45), or sail south-east, into the
+1 search of merchantmen (turn to 318)?
+1earest body, you are horrified when
+mn worms burst from the man's chest
+eir way into your arm. Lose 2 points
+.. Yourecognizethemas being parasitic
+which chew through their victim's
+»s on their way towards the unfortun-
+you have the Helmet of Ut-Napishtim,
+herwise, turn to 174.
+
+0
+
+reluctance, your crew calm down and
+itinue. Around the next curve in the
+yme across a wrecked galleon, its empty
+‘d by time and weather. Hunting
+‘ever, you find 16 Gold Pieces lodged in
+‘t lying in the sand - add these to your
+you turn inland (turn to 42), or return to
+
+and - if you haven't already - sail to
+sat-looking island (turn to 386) or the
+disland (turn to 354)?
+
+1
+anchor in a bay ten miles from the fort,
+
+2d ashore with your entire crew - each
+ly armed and most bearing grappling-
+Iders. When you arrive at the castle, you
+> stone walls are about twenty feet high,
+nain gates are solid iron and flanked by
+wers. Will you launch your assault over
+turn to 367) or through the gates (turn
+
+breaks free from the skull, which stays
+ibedded in the wall. A Unicorn's horn is a
+1 at any time, but here, under the ocean, it
+so. Restore 2 points to your LUCK. You
+along the tunnel. Turn to 168.
+3
+
+great rows of sailors’ inns that line
+arbour. In one of these, you feel a
+tp you on the shoulder. Turning, you
+rily, the face of one of your oldest
+hamit Gawel Nestafa. He punches
+, knocking you to the floor. 'Youdog!'
+rawing his sword. 'I lost my ship -
+vith my own hands - because of you.’
+1e attack.
+
+GAWEL
+A SKILL 9 STAMINA 6
+
+defeat him, turn to 84.
+
+tughter the marines, saving 10 for sale
+\ve-markets of Shurrupak. In time, the
+-s the Banshee from her place on the
+1g you to retreat to deeper water. Will
+nd the shoals to the island of Trysta
+, or head south-west, either towards
+223) or the Roc (turn to 204), or travel
+owards the Channel of Goth (turn
+
+5
+you deliver a sharp kick to the Cyclops’
+ssibly inducing a hairline fracture. It
+nd drops you to the ground - deduct 2
+n its STAMINA. Getting to your feet, you
+stricken opponent. Will you:
+
+int) houlder? Turn to 91
+n the rib: Turn to 29
+g kick at its chest? Turn to 206
+6
+‘-dens, you have the misfortune to meet
+‘or, Jiamil el-Fazouk, to whom you owe
+sand Gold Pieces from a past gambling-
+well.,’ says el-Fazouk, upon seeing you,
+bdul's foe in wager. He said you might
+sists that you must gamble with him for
+t owe. 'Roll these two dice,’ he says. 'If
+7 you can keep your ship; otherwise,
+ou refuse to play, my men will kill you.’
+‘dy pirates rise to el-Fazouk's side to
+statement. You take the dice. Roll two
+esult is 7, turn to 330; otherwise, turn to
+
+7
+
+?e 18 grappled as it passes a large war
+tis drawn towards the vessel, a vaguely
+ure appears among the crowd of marines
+vale. ‘You there,’ he shouts, pointing at
+yw you. Didn't we meet at a game of
+once?’ Straining to place his face, you
+Itis Ali Mitok sen el-Shazar, a wealthy
+lurrupak. "Yes, you say, ‘you beat me
+six teeth!’ He laughs at the memory and
+le marines to cease dragging the Banshee
+now how you got caught up in this little
+lys, Waving vaguely at the raging battle a
+d yards away, ‘but for old time's sake, I
+go fora small ransom - 200 Gold Pieces!’
+illing and able to pay this, turn to 71. If
+ant to (or can't), turn to 96.
+
+il and weighing anchor, you head out of
+S port and into the Southern Sea. Will
+ng the coast and then to the Three Sisters
+7), or head for the open sea and speed
+ppur (turn to 378)?
+the crumbling surface of these devas-
+yu stumble across a corner-stone froma
+1umental masonry. Getting your crew
+irth and rocks away from around this,
+incient stone entrance to what may be a
+, temple or mansion. Pulling away the
+slock the portal reveals a narrow but
+1el, plunging at a steep angle into the
+| go down this tunnel with a few of your
+rn to 158), or close the entrance up and
+ir march over the hills (turn to 316)?
+
+0
+
+warning, some massive and unseen crea-
+ps you by the neck and starts to strangle
+| slash out with your sword, and the beast
+startled shriek and drops you. When you
+90k, you can see nothing but the tunnel.
+creatures strikes again, smashing you in
+vith its invisible fist. For the duration of this
+‘educe your SKILL by 2 points.
+
+IKER SKILL 7 STAMINA 6
+defeat it, turn to 381.
+1
+t crew manage to slash the warship's
+the rest cut the Banshee free from the
+s - all the while fighting a rearguard
+he marines. The Banshee heels about,
+vind and races away, leaving the
+in a state of confusion. The route to
+| cut off, so you head south-east into
+
+Turn to 318.
+
+2
+yu have chosen to lead your men up is
+
+serous, resulting in fatal falls for several
+v-lose | point of CREW STRENGTH. Turn
+
+3
+pops free from the wall and opens an
+fissure along the tunnel. Boulders,
+dones and dirt fly around as the passage-
+ses, burying you hundreds of feet under
+|. Your adventure is over.
+
+4
+| return to the path safely. Turn to 111.
+
+5
+inquiries and a bit of haggling, you find a
+r willing to sell your slaves for you. Test
+
+If you are Lucky, turn to 137. If you are
+irn to 189.
+
+dice. If the result is less than your CREW
+add 5 days to your LOG. If the result is
+greater than your CREW STRENGTH, add 6
+ur LOG. If your LOG is now an even
+rn to 109; if your LOG is an odd number,
+
+7
+; the Basilisk full in the eyes. Its pupils
+ito slits and transform you to stone. Your
+e 1S over.
+8
+massive stone affair with an ornately
+set in its exact centre. Under this block
+ion in a language which is so archaic
+> difficulty deciphering it. What you
+is this: 'To greet Ut-Napishtim you
+push (pull?) the handle into (out of?)
+cing the carved block in hand, will you
+he door (turn to 258) or pull it away
+r (turn to 281)?
+
+{
+\
+
+\
+A
+
+9
+
+2ns to reveal an almost impenetrable
+nost, for you can make out the barely
+es of two large eyes considering you
+rous rage. You back off, as a truly
+t pulls itself through the doorway and
+Jorns sprout from its wide head, down
+-and on to its tail. It growls. Will you
+eature (turn to 399), or attempt some
+rasive action (turn to 93)?
+n to 50.
+
+coming from a difficult angle, only
+inst the monster's shoulder. Impervious
+ick, it swings you around and casts you
+of the walls of the cavern. Landing well,
+serious injury - lose 1 point of STAMINA.
+on all fours, you scuttle behind the
+
+il you:
+in the back of the knee? Turn to 115
+inth  dneys? Turn to 347
+
+inthe s}  :? Turn to 132
+
+passengers of the merchantman,
+/arlock for provoking you so, rush
+Trussing his arms with a stout rope,
+overboard into the sea, leaving him
+> taken by the sharks. The captain
+rigging and shouts, 'Forgive us for
+-h an unworthy fellow. We place
+ur bountiful mercy!’ His crew and
+orously agree. Boarding the mer-
+seize 120 Gold Pieces and, ina fit of
+only 2 of his passengers as slaves -
+s to your Booty. Returning to the
+low the merchantman to continue its
+ou continue to patrol the Inland Sea
+ards the Shoals of Trysta (turn to 66),
+e and travel towards either the west
+'7) or the Eastern Rim (turn to 10) for
+aiding?
+
+place certainly draws all types, so you
+no difficulty in finding some men to
+ir Luck. If you are Lucky, turn to 62. If
+cky, turn to 28.
+
+X
+4
+
+1e door, you find a hastily deserted bed-
+-lothes, empty chests and religious arte-
+attered over the floor and canopied bed. A
+*h reveals a small coffer, overlooked by
+; fleeing occupant, which contains 98
+s. Hefting this under one arm, you leave
+Turn to 291.
+| blows over, leaving the skies clear and
+‘alm. While you are bringing down the
+uw and preparing the Banshee for fair-
+ailing, your look-out spots the distinctive
+yattle banner of a Kishian warship to the
+closing fast. Your only hope of escape is
+to navigate through the Shoals of Trysta,
+ynly a short distance to the south. Will you
+course (turn to 119), or stand and fight
+
+7)?
+
+imitar cleaves straight through the white cat,
+s not harm it. Turn to 322.
+t, you pass between the garden island of
+e north and the Isle of Volcanoes to the
+three dice. If the result is less than your
+INGTH, add 3 days to your LOG. If the
+il to or greater than your CREW STRENGTH,
+o your LOG. If your LOGis now an even
+rn to 109; if your LOG is an odd number,
+
+is you start to push, the block explodes
+ttering roar. Roll two dice and subtract the
+1 your STAMINA. If you have survived the
+1 to 281.
+
+9
+
+xd news indeed,’ says the ghost. 'I am
+_ bestow upon you what little blessing I
+ifter all these centuries.’ He approaches
+n icy but weightless hand upon your
+‘rom now on, whenever you roll three
+t your CREW STRENGTH, you may deduct
+result of the dice roll. Turn to 210.
+0
+
+says the King, 'Abdul the Butcher and his
+nember them well, as they were here but
+ago. Very poor table manners but a lively
+(Ing waves a servant over, whispers in his
+nds him away. When the servant returns,
+ng two very large sacks. These,’ says the
+mtain the north and south winds.
+the east and west winds to Abdul, I think
+ir I should give these to you. Open the
+ining the north wind on your journey to
+id open the other bag when you wish to
+- the end of the feast, you gather your men
+‘e to return to the Banshee. Your crew are
+interested in the sacks and don't believe
+you tell them that they contain 'only air’.
+ve the King has filled them with treasure
+ou are simply being greedy. ‘Share it with
+say, ‘or we won't go on. We'll stay here.’
+open the sacks now, so will you give your
+Gold Pieces to keep them quiet (turn to
+imply insist to them that they are being
+to believe you (turn to 396)?
+
+]
+a relatively safe distance, you are sur-
+1 a missile from a ballista mounted on
+zalleys crashes into your mast, bringing
+1 down on to the deck in a confusion of
+is. Roll three dice. If the result is less than
+STRENGTH, turn to 83. If the result is
+greater than your CREW STRENGTH, turn
+
+the Banshee, you hear from the port
+ere is an extremely wealthy temple,
+the Priests of the Dead, up the river
+through Assur. Will you raid inland to
+isures of this shrine (turn to 335), or
+iformation and either head to Assur to
+crew (turn to 185), or set sail into the
+hunt for merchantmen (turn to 318)?
+3
+
+the top of the cliffs and look across the
+lands of the Kish Isthmus, dotted with
+ements and forests. A few miles away isa
+|. Will you approach this via the cover ofa
+est (turn to 353) or by a stealthy march
+ie wide cornfields that lie between the
+he town (turn to 328)?
+
+4
+
+‘ads into a small room whose high walls
+ato a glowing vaporous mass above you.
+radiance which this casts fills you with
+d a feeling of well-being. You recover 4
+TAMINA and 2 points of LUCK. There is no
+rom this chamber, so you return to the
+id take the other door. Turn to 289.
+
+5
+er you go along the ledge, the narrower
+uncertain it becomes. A stone collapses as
+on it, sending you sprawling out into the
+of the cavern. Test your Luck. If you are
+n to 365. If you are Unlucky, turn to 334.
+
+iort run up, you deal the monster a
+in the ribs, undoubtedly cracking some,
+your own foot - deduct 2 points from
+STAMINAS. The Cyclops rises to its feet
+‘ully, then launches into a crouched
+ing to catch you in its arms. Will you:
+
+ly kick atits legs? Turn to 319
+ring kick at its midriff? Turn to 60
+| in the eye Turn to 156
+7
+
+‘east dead, you continue through the
+ventually leaving the white water,
+ves and warship behind. You have suc-
+gotiated the shoals and there, ahead, is
+f Trysta. Will you proceed towards it
+2), or head south-west, towards either
+o 223) or the Roc (turn to 27), or south-
+ls the Channel of Goth (turn to 191)?
+8
+p's boat, six of your crew row towards
+10re, disappearing into the pre-dawn
+7minutes pass, then a scream, followed
+d the sounds of fighting, shatters the
+m fires spring up on the nearest towers;
+A few moments later, the sounds of
+e and alone crewman, badly wounded,
+to the Banshee. 'Guarded, captain,’ he
+gasp out before collapsing. Deduct 2
+rour CREW STRENGTH. Having no other
+‘urn back down the river and head for
+to 207.
+
+empty space in the bazaar, you parade
+ves before the prospective buyers who are
+trolling about, inspecting the various
+wes. Roll one die. If the result is 1 or 2,
+If the result is 3 or 4, turn to 72. If the
+wr 6, turn to 59.
+0
+
+aces are conducted on a long sandy
+*n the wharfs and the city. The enor-
+lizards are restrained at one end of the
+until the start of the race, when they
+ards a staked Goblin at the other end.
+aar to set teeth into the unfortunate
+clared the winner. From the field of
+'s, you narrow the favourites down to
+|, Awkspeed and el-Savak. You must
+20 Gold Pieces or 2 slaves, whichever
+n one of these. Choose which Bataar
+then throw a die. Ifthe result is 1 or 2,
+‘the result is 3 or 4, turn to 348. If the
+, turn to 362.
+
+ravelled only a short distance, when a
+fish scuttles out of the sea and up the
+it on grabbing one of your crew as a tasty
+ig about twenty feet long, armed with
+aws and protected by thick skin, it is a
+foe. Your crew defend themselves.
+
+SH = STRIKE 9 STRENGTH 8
+
+ur crew win, turn to 116.
+
+2
+will you head out into the Inland Sea,
+rich merchantmen (turn to 318), or
+1 down the coast of the Eastern Rim
+3
+
+up the middle of the valley. When you are
+2 to the galley, the ground collapses under
+, plunging you into a deep crevasse. Roll
+ind deduct the result from your STAMINA.
+still alive, you drag yourself from the hole
+nue towards the galley, carefully testing
+d ahead as you go. Turn to 288.
+
+it of the priests, your over-exuberant
+the temple part of the castle: the blaze
+of the booty that you might have
+ors. Searching around, however, you
+d 85 Gold Pieces and 10 surviving
+aS Slaves - add these to your Booty.
+umphant to the Banshee and set sail
+of Enraki. Turn to 123.
+
+5
+ssels attempt to take the Banshee out with
+but your cunning manoeuvre takes them
+surprise. Test your Luck. If you are Lucky,
+. Ifyou are Unlucky, turn to 382.
+6
+
+rself up, you set your teeth into the
+ick, scaly wrist, but succeed only in
+e of your molars. The monster shakes
+side to side then dashes you to the
+ing in a kick for good measure - lose 2
+AMINA. The monster, thinking you are
+, turns away for a moment. Climbing
+egs, will you:
+
+in the back of the knee? Turn to 46
+
+tin the leg’ Turn to 115
+
+‘lying kick into the middle
+
+back? Turn to 384
+7
+
+e squeezes through the very narrow
+thout mishap, eventually leaving the
+, crashing waves and warship behind.
+‘uccessfully negotiated the shoals and
+|, is the island of Trysta. Will you pro-
+S$ it (turn to 152), or head south-west,
+er Kish (turn to 223) or the Roc (turn to
+
+th-east, towards the Channel of Goth
+)?
+
+8
+ation that it is a Basilisk, and that one
+m it will turn you to stone, induces suf-
+lic to get you out of the room and to the
+of the door fast enough not to be seen.
+2d into the feast hall instead. Turn to 216.
+9
+n't already, you can try to hire more crew
+1); otherwise, you return to the Banshee
+shurrupak (turn to 238).
+
+0
+
+ates overwhelm the guards, the rest of
+rew and occupants leap overboard and
+re, preferring the risk of crocodiles to
+red by your men. Thick black smoke
+curl from the interior of the richly
+ressel - it has been set alight by its
+vners. Youjump on board, determined
+me loot before it all goes up in flames.
+wn into the smoke-filled interior, you
+two locked doors. Will you force the left
+9 214) or the right door (turn to 254)?
+
+1
+loor opens into a large crypt, occupied
+massive sarcophagus. All around the
+id is an inscription, repeated over and
+reads:
+
+M KEEPER OF THE WATERS OF
+N
+
+empt to open the sarcophagus (turn to
+e it be (turn to 358)?
+fi <4
+— arene MN
+CO BS ee z= |\
+i =H
+
+iN
+
+2
+ough the palms, you come upon an
+sight. In the centre of the island is a
+1 with a narrow entrance from the sea on
+Je of the island. Anchored in the centre
+on is a small pirate vessel, the crew of
+rather busy burying something on the
+you attack these competitors (turn to
+
+irn to the beach to search for provisions
+)?
+
+ous bargaining in the markets leaves
+conviction that most willing and able-
+‘e unattracted by the razzle-dazzle of
+vay of life. However, by a stroke of
+you come across a slave-dealer who is
+verstocked with captured pirates-
+and who is willing to part with them
+revery 10 Gold Pieces spent, you will
+yver | point of CREW STRENGTH. This
+Iso lets slip a casual remark about a
+e built some miles up the main river
+o the side of Assur. Having restocked
+u could make a small excursion up-
+the place out and possibly seize some
+urn to 335). Alternatively, you could
+nd either patrol south-east, into the
+im to 318), or head south, down the
+ine (turn to 45).
+
+OB
+
+Jlown for some considerable distance
+2 a light below. Creeping forward, you
+iglodytes emerging from a small side-
+to the stairs. They are all armed with
+two are also carrying a heavy chest
+m. You slide behind a large boulder to
+of sight. The chest looks as though it
+n something valuable, so will you:
+
+ebbles further
+aircase, to distract
+ytes and split them
+tt ng? Turn to 112
+‘ord and charge the
+Turn to 130
+
+‘dasa lever to roll
+you are hiding
+yn to the stairs and
+
+h the Trogs? Turn to 161
+shoot fire arrows into the castle com-
+1e land on the temple and start a blaze. In
+however, the watchful priests of the
+Jablo have not only rushed to put out the
+ve rung alarm bells and lined the walls of
+ghold with archers and spearmen. At
+, the crew of the Banshee stream with a
+low part of the castle's walls. The battle
+
+STS STRIKE 10 STRENGTH 16
+
+ur crew win, turn to 274.
+
+‘pirates discovers a loose bar which,
+1 continuously by four or five men at
+omes out completely. Still armed, you
+the enclosure and fall upon the un-
+illage. Resistance to your lusty pirates
+
+STRIKE 7 H 6
+
+ur crew win, turn to 192.
+| Marines are routed and their vessel set
+on't have much time in which to loot the
+, sO you concentrate mainly on collect-
+among the survivors of the marines.
+many, but you manage to find 11 that
+h selling - add them to your Booty. Will
+und the shoals to the island of Trysta
+!) or head south-west, towards either
+9 223) or the Roc (turn to 204), or travel
+towards the Channel of Goth (turn to
+
+AN) \ = MEO
+tH ( os —
+
++
+if
+af
+
+8
+' stranded vessel, you climb up on its
+me face to face with a large, shaggy
+that is busy feeding on one of the
+crew. It growls at you and bares its
+y to edge away, but the beast decides to
+ring huge claw-studded paws at your
+wing your sword, you defend yourself.
+
+SKILL 9 STAMINA 10
+
+defeat it, turn to 320.
+
+9
+
+ns into a large, heavily buttressed hall,
+centre-piece is a small hideous statue
+yw obsidian pillar. Standing on either
+idol are two acolytes garbed in the
+rocodile skins of the servants of the
+y. They take a menacing pace forward
+ng dirks from their thigh scabbards.
+' says one, 'we shall hasten your
+2 land of perpetual sleep.’ They attack.
+tthem one at a time.
+
+‘AMINA
+ILYTE 8 6
+f COLYTE 7 6
+
+defeat them, turn to 388.
+0
+to meet the charging monster, you leap
+ur, aiming a kick at its head. It ducks
+o your boot only grazes its skull - deduct 1
+\its STAMINA. As you fly past, it grabs you
+ikle and dangles you in the air, upside
+Il you:
+
+it in the ches Turn to 122
+tint ribs? Turn to 372
+n upper cut to the groin? Turn to 177
+
+1
+the pleasure-barge is now a roaring
+ng off any hope of further salvage.
+anshee, you find your crew have only
+' Slaves from the survivors of the
+rn the Banshee around and head back
+yast Lagash and into the Inland Sea.
+1e river, a red-sailed warship from the
+ss your path. Roll three dice. If the
+in your CREW STRENGTH, turn to 90. If
+equal to or greater than your CREW
+
+cn to 309.
+
+lifficulty, you manage to slide the lid
+ce and on to the floor, where it lands
+nding crash, which echoes through the
+ut into the caverns beyond. The sar-
+empty except for a stout-looking helmet
+ontaining, at a quick count, no Gold
+put the helmet on and sling the bag over
+r. Turn to 358.
+
+3
+
+‘Shurrupak are very poor and willing to
+nything to earn a few shekels. However,
+of the individuals you hire here is rather
+. For every 50 Gold Pieces that you
+ring these unfortunate folk into a life of
+one die. The result is the number of
+‘EW STRENGTH that you recover. When
+
+mmpleted your recruiting, turn to 180.
+4
+
+g and wide hull of a merchantman
+‘ horizon. It is a large vessel, heavily
+ssibly well armed, ploughing its way
+Eastern Rim to the city of Kish. Will
+s ship (turn to 391), or leave it be and
+‘olling, looking for something a bit
+0 66)?
+
+imitar cleaves straight through the black cat,
+; not harm it. Turn to 322.
+
+proach, both the galleys make a sudden
+vards you. You avoid one, but impale the
+ipon the ram of the other. Your stricken
+iks in two, scattering its unhappy sailors
+n into the ocean where the sharks - never
+| sea-battle - are hungrily gathering. Your
+is Over.
+
+bursts open as you turn the handle, reveal-
+assive, spinning wheel hanging in the
+2cess behind. The wheel drops from its
+yuts whirling razors on its rim and flies
+u, cutting a deadly arc through the air.
+Luck. If you are Lucky, turn to 169. If you
+ky, turn to 2.
+ae
+
+as = r f- 3 -
+¢ : —“~ > ~~
+
+e
+ire \"
+~
+zs *
+
+KF
+
+“"
+
+8
+
+ay, says the aged creature, showing you
+yr at the base of one of the statues. 'You
+wn there. If you return, you may pass
+the mountain.’ You open the trapdoor
+own into the darkness. When you reach
+you see that you are ina dimly lit cavern
+7a Cyclops. This large one-eyed huma-
+‘our sheathed sword from you and casts
+he high up in the cavern wall. 'Now,’ it
+ill fight.’ You will have to fight it using
+ymbat. Write down the number 311 ona
+per; this is where you should turn to if
+the monster in the ensuing combat - i.e.
+ts STAMINA reaches zero. Also note that
+NA is 16. Now decide on your opening
+you:
+
+ig kick atits chest? Turn to 206
+nt shoulder? Turn to 91
+‘lose and elbow it in the
+
+Turn to 29
+
+9
+were given the two bags by the King of the
+1s, did you give your inquisitive crew 100
+2s to stop them looking in the bags (turn
+ot (turn to 379)?
+
+nto 50.
+
+1
+s a large, fair city, with sympathetic
+ds the Inland Sea's pirates, who, there-
+tack Shurrupak's main rivals. Roll three
+esult is less than your CREW STRENGTH,
+o your LOG. If the result is egual to or
+your CREW STRENGTH, add 6 days to
+Upon arrival in Shurrupak, will you sell
+
+first (turn to 349), or hire more crew
+?
+
+2
+ulongside, your crew cast grapples and
+vo vessels together. With a single roar,
+across at the pitifully small number of
+
+TCREW STRIKE 6 H 6
+defeat them, turn to 392.
+
+3
+
+hop down a couple of local trees to use
+rams. The noise alerts the warrior
+our presence and intentions, and the
+ywers become lined with archers and
+4ventually, you launch your attack,
+the gates with your crew screaming
+1 a resounding boom, your rams smash
+s. Arrows, spears and stones crash into
+- deduct 2 points from your CREW
+Test your Luck. If you are Lucky, turn to
+-e Unlucky, turn to 58.
+
+4
+
+u reach the top of the cliffs, your crew
+complain loudly. This is sheer madness,
+says the first mate. 'We've already lost four
+t in the climb, and the gods know how
+diers are lurking up here. We've got to get
+e ship, where we stand a chance.’ Will you
+is pressure from your crew (turn to 113),
+> their lack of spirit and force them on (turn
+5
+g all your energy, you swing violently
+the creature in the armpit with your foot.
+_it drops you to the ground and then
+s wound -- deduct 2 points from its
+Landing lightly, you run nimbly behind
+1 Cyclops. Will you:
+
+inth dneys? Turn to 347
+in the back of the knees? Turn to 46
+ying kick into the middle
+
+rack? Turn to 384
+
+a
+
+spans
+
+) the midst of a large amount of drift-
+it wreckage from some unfortunate
+h of the floating planking is shattered
+vith huge teeth marks. You find only a
+vorth salvaging, scattered among all the
+One of these contains an excellent
+, when served out to the crew, boosts
+considerably - restore 2 points to your
+(GTH. Will you continue to patrol the
+y heading towards the Shoals of Trysta
+or change course and travel to either the
+urn to 157) or the Eastern Rim (turn to
+of coastal raiding?
+7
+
+oglodytes defeated, you split open their
+nding exactly 100 Gold Pieces. Carrying
+ooty with some difficulty, you turn up
+sage and emerge, after a few hundred
+sunlight. You are outside, in the forests
+Heading for the beach, you run into
+mbers of your crew who had been
+ne island, with the rest of your men,
+that you were still alive. You return
+to the Banshee and continue your
+rn to 15.
+
+8
+ext to yourself,’ you say, remembering
+the ring. ‘Yes,’ says the Salamander,
+. ‘You may pass.’ The flames die
+ross the hall, leaving through a door at
+. Turn to 339.
+
+9
+too fast! It rushes alongside, catches
+ith grappling-irons and draws you
+ting marines. You will have to fight.
+
+STRIKE 10 STRENGTH 8
+
+ant to escape, turn to 12. If you fight on and
+ie warship, turn to 135.
+moves with a solid click. In response, a
+one of the crypt's walls falls out, revealing
+‘ising staircase. Running up this, you find
+ack in the outside world, standing at the
+e line of hills you left so long ago. You
+the point where you left the Banshee, and
+your crew had waited, just in case you
+alive. Turn to 272.
+
+drops to the ground, unconscious.
+ou climb back up the ladder and
+trapdoor, to face the wizened old
+sent you down in the first place. He
+_ you appear and then ushers you
+ap in the wall, indicating the path you
+o reach the summit of Nippur's
+rn to 36.
+Stover, the King bids you farewell. You
+' Banshee and leave the cove where you
+‘ed. If you were given the sacks contain-
+h and south winds, then from now on,
+yu are instructed to roll three dice and to
+2 result with your CREW STRENGTH,
+ots from the result of the diceroll. Which
+i head: south-east, towards the Channel
+rm to 191), or south-west, towards the
+27)?
+
+smashes through the warship's oars, but
+veral volleys of arrows from the Shurru-
+2s crowding the other vessel's decks -
+ss of CREW STRENGTH. Breaking through
+war galleys, you see a second, smaller
+slowing up behind. Will you go with the
+n front of these vessels and head for the
+to 261), or try to break through, as you
+2 first line (turn to 237)?
+*r to the volcanic island (turn to 369) or
+ered island (turn to 354).
+
+ior in a Sheltered cove of the island,
+travel to the temple-fortress of the
+with only a few crew as companions.
+‘your destination, but before you are
+nstruct your companions to wait in
+return and then proceed to the main
+sing as an emissary from the city of
+uin entrance and then audience with
+great abbot of illustrious Asswr sel
+of truth and wisdom in the northern
+you greetings and news from an
+d,’ you say. ‘You are too kind. Sit,
+speak of the news,’ he replies. You do
+‘er a suitably polite time has passed,
+e heard that there is to be an assault
+by the Wazi of Lagash, whose mas-
+ig him for increased revenue. I have
+ds, O master, and - fora suitable fee -
+attack to be misdirected.’ You bow.
+5
+
+ighs, then whispers to his attendant
+pportunist.' He presses a carbuncle on
+floor around you falls away and drops
+2p, open pit-lose 2 points of STAMINA.
+irate,’ laughs the abbot, looking down
+ge of the pit. "You must meet your
+igh one of these.’ He points at four
+each of the four walls of the pit. Each
+ifferent symbol carved into it. Which
+1:
+
+with a star-burst carved
+
+Turn to 380
+th an upside-down
+
+Turn to 327
+th ~—syheel? Turn to 297
+
+th a horizontal
+Turn to 249
+
+RN e
+
+wis
+‘a.
+
+i
+ak
+
+nb the hill, you hear a faint sound of
+ing above, then a large boulder comes
+f the void and lands with a crash in front
+yther equally large rock follows. 'Halt!'
+voice from up the hill. 'None shall cross
+-he Muzzelmirs unbidden. 'Two Giants,
+eir brethren's standards, no doubt, but
+y yours, step over the ridge ahead. They
+vith small tree-trunks and dressed in the
+ld animals. Will you charge them with
+(turn to 325), or deal with them by
+rn to 336)?
+
+YY
+
+7
+the Salamander, leaping from the
+will die because of your stupidity!’
+it stabs at you with its flaming trident.
+to fightit.
+
+SKILL 10 STAMINA 6
+defeat it, turn to 377.
+ee cuts through the quiet waters of the
+your look-outs keep a continuous watch
+r horizon for any sign of shipping. Roll
+
+If the result is less than your CREW
+add 4 days to your LOG. If the result is
+greater than your CREW STRENGTH, add 5
+ir LOG. If your LOG is an even number,
+; if your LOG is an odd number, turn to
+
+zap at the Cyclops, it dodges easily to
+Swipes you with an open-handed blow
+s you fly past- lose 1 point of STAMINA.
+, the monster grabs you by the ankle
+1 into the air. While you are hanging
+1, will you:
+
+1 upper cut to the groin? Turn to 177
+in tk tomach? Turn to 139
+) the che Turn to 122
+beast dead, you search the ship at leisure,
+
+over masses of frozen crates, but no
+
+other than a flame-red jewel set in a gold
+
+ring is inscribed on one side with a riddle:
+on would you find that which lies
+ind below?
+
+the other side is what you presume is the
+
+d, next to yourself.
+
+you find nothing else, you return to the
+Turnto217.
+
+(
+\)
+
+3; are released! They fly hungrily down the
+rds the doomed goblin - Awkspeed beats
+a tooth. If you backed the winner, collect
+ld (or as many slaves) as you initially bet.
+et on the Bataars again (turn to 202), or - if
+'t already - try punch-out (turn to 48) or
+to 236)?
+
+2
+cats cease their circling while you are
+their comrade, and dive at you, tearing
+ur flesh with long razor-sharp claws -
+ynts from your STAMINA. If you are still
+1cat will you strike at next:
+
+cat? Turn to 295
+=cat? Turn to 256
+at? Turn to 203
+ncat? Turn to 126
+cat? Turn to 95
+
+1endous whack, the Ogre knocks you
+x and into the audience - lose 2 points of
+rmanently (i.e. your Initial score is re-
+The money you put up as a bet is also
+t it from your Booty. Will you have
+tpunch-out, but with a different cham-
+) 385), or - if you haven't already - try
+ices (turn to 270) or dice (turn to 236)?
+re with most of your crew, you find
+being feted by the exuberant natives.
+yund you all the while, they lead you
+tre of their village, where they set out a
+ast. When you inquire of the elders
+y can assist you in stocking the Banshee,
+1 laugh, saying you will certainly get all
+i need. After the feast, the villagers ply
+ine and make you dance along to the
+gorous drumming. Eventually, you all
+m exhaustion. On awakening the next
+id yourselves locked in a large open-air
+est your Luck. If you are Lucky, turn to
+re Unlucky, turn to 345.
+
+J
+
+‘aw their swords and charge, while the
+their tree-trunks in preparation. The
+
+NS) STRIKE 9 STRENGTH 6
+
+defeat them, turn to 344.
+
+nshee up beside the wallowing vessel,
+thalantly on the gunwale and call
+captain, ‘Hey! You there, fathead!
+ind 1 mean all, your gold and I won't
+enslave you and your crew or steal
+ie captain, with a bit of prompting
+ous crew, agrees to this generous
+over a small boat with his gold - 117
+vhich you add to your Booty. You
+shantman. The Shoals of Trysta lie
+tance to the south, so will you sail
+) the isle of Trysta (turn to 164), or
+'t, towards either Kish (turn to 223)
+n to 204), or sail south-east, towards
+Goth (turn to 191)?
+
+7
+
+‘ashes out at you when you turn the
+thousands of gallons of water pour
+opening and into the pit, rapidly filling
+‘truggle to keep on the surface of the
+aters, you notice a couple of dark ser-
+es slide through the doorway. They are
+lverines - blind and grossly distorted
+fresh-water serpents. Smelling your
+listinctive odour, they rush to attack.
+em one at a time.
+
+‘AMINA
+ER NE 8 6
+LVERINE 7 4
+
+defeat them, turn to 65.
+
+dark pack-wolves through the high
+of corn, you advance towards the
+1. Test your Luck. If you are Lucky, turn
+are Unlucky, turn to 186.
+‘ds overcome, you and your crew loot
+. §tripping boxes, sacks and skins of
+e great pack-beasts. The amount of
+rer, is not large. You find 63 Gold
+rall chest and only | of the surviving
+in fit enough condition to be traded as
+tle disappointed, you gather up your
+crew and return to the Banshee. Turn
+
+0
+et,’ says el-Fazouk, gloomily. 'Your debt
+. You leave the dicing-dens before he
+mind. If you haven't already, you could
+rtune at Bataar racing (turn to 270) or
+‘turn to 48); otherwise, you leave the city
+1m to 262).
+
+1
+x in good but rapid order, you reach the
+ore the Hussars. However, you don't have
+yard the Banshee before the cavalry come
+out of the town and down towards the
+. Your crew will have to fight.
+
+SARS STRIKE 11 STRENGTH 6
+
+ur crew win, turn to 346.
+
+sring the warship's mainsail down and
+thee free of the grapples. Heeling aside,
+y as fastas the wind will carry you. Will
+uund the shoals to the island of Trysta
+I), or head south-west, towards either
+9 223) or the Roc (turn to 204), or travel
+owards the Channel of Goth (turn to
+arning, the Banshee crashes to a halt,
+1 and your crew spilling across the deck.
+yus bubbling froth boils around the ship.
+emerge several reptilian heads on long
+tached to one bloated black body. It is a
+uths snapping, it arches over the deck,
+rour terrified crew.
+
+A STRIKE 9 STRENGTH 8
+
+rcrew defeat it, turn to 222.
+
+ending in a jumble of sharp boulders, is
+» kill you. Your adventure is over.
+5
+ind, you seek out the rumoured shrine
+
+to your LOG. Eventually you find it,
+osy dell and surrounded by vegetation.
+k is monolithic, rising forty or fifty feet
+and lavishly decorated with human
+tortured poses. Your crew refuse to
+iny closer than bow-shot range.
+their superstitious cowardice, you pro-
+s the structure alone, and climb the
+the entrance with forced nonchalance.
+tmosphere is dark and oppressive, but
+d of life. Before you is a wide, straight
+a very steep and narrow set of stairs
+n into the bowels of the shrine. Which
+:, the corridor (turn to 63) or the stairs
+
+6
+
+vs, you say, stepping forward, ‘as we
+re that the esteemed Muzzelmirs were
+1is land, let us resolve our differences
+sompetition. If you win, we will return
+f we win, however, then you will allow
+ige through your lands.’ Being simple
+
+simple tastes, they agree whole-
+he shortest of the two steps forward. 'T
+id this is Ogmog,’ he says. ‘Let the
+be a wrestling match between you and
+te what you'd planned. Will you agree
+Irn to 366), or suggest that you compete
+ing else, such as staves (turn to 351)?
+7
+ow from your flying hand causes the
+
+howl with pain and clasp its injured
+Juct 1 point from its STAMINA. Recover-
+hat, it lashes out with its huge paws,
+y the left forearm and hauls you into the
+UL:
+
+the wrist Turn to 276
+n the back of the elbow? Turn to 187
+thes} Ider? Turn to 251
+
+!' cries the ghost. This is dreadful indeed.’
+a wrathful eye upon you and sweeps his
+espair, 'O bearer of such wretched news, I
+1.’ You lose 2 points of LUCK and | point of
+irn to 210.
+urself in a large room, empty but for the
+is standing in a circle on the floor. She
+ger in one hand and black cat in the
+e you,’ she says. ‘Why didn't you eat
+ike the others? Now I must kill you, a
+- relish.’ She tosses the cat in the air and
+m with the dagger. Instantly, the cat
+ito five, each a different colour; the five
+cher mysteriously in the air. They circle
+
+feinting and howling. Which animal
+ke at:
+
+cat? n to 295
+
+>cat? nto256
+
+at? nto203
+
+ncat? n to 126
+
+cat? nto95
+0
+
+dice. If the result is less than your CREW
+
+add 2 days to your LOG. If the result is
+
+greater than your CREW STRENGTH, add 3
+
+rLOG. Then turn to 378.
+‘are not up to the task you have set them.
+zee grinds against a small but dangerous
+[ rocks, and one of the grey fingers rips
+ie hull, flooding the interior and sinking
+“our adventure is over.
+
+2
+rew also remind you that, as you have
+re than fifty days to reach Nippur, you
+the wager - regardless of how many Gold
+1 may have. The adventure is over; you
+
+3
+wing again, this time causing a splinter-
+rom the gates as they are torn from their
+th a mighty cheer, your men draw their
+nd rush into the fortress - coming face
+th the determined defenders. The battle
+
+[S. STRIKE 9 STRENGTH 12
+
+i win, turn to 274.
+
+———
+
+f
+\
+XK \ ,
+
+f
+j
+fj
+g
+
+4
+ercome the Giants, you continue with
+
+yver the hills, until you reach the edge of
+of sand which stretches to the horizon.
+d with the limited possibilities of looting
+landscape implies, you turn about and
+2 Banshee. Add 3 days to your LOG, then
+
+) way out of the cage. The village elders
+wards noon and explain to you that, as
+d is sacred, they cannot let strangers -
+fane eyes have beheld it - live. Therefore,
+kill you. Next, the rest of the villagers
+rying bows, and proceed to open fire on
+sur crew. Your adventure ends here.
+
+6
+
+e routed, fleeing with the rest of the
+town and down the coast towards
+ately, they had the same idea as you,
+ped the town of all its wealth. So,
+you settle for slaves. Roll two dice:
+§ the number of slaves you manage
+among the now impoverished towns-
+to the Banshee with your booty, will
+he coast towards Kish (turn to 223),
+nd Sea towards the Shoals of Trysta
+7
+close, you land a couple of short but
+
+abs above the Cyclops’ kidneys - deduct 2
+n its STAMINA. Enraged and in severe
+nonster spins about, flailing its enormous
+triking you in the face - lose 2 points of
+You both stagger back, and the Cyclops
+) the ground. Will you:
+
+ritin head? Turn to 82
+in the ja Turn to 196
+1 the ribs? Turn to 266
+
+are released! They fly hungrily down the
+ds the unfortunate Goblin; Fazima beats
+d Awkspeed by a bite or two. If you
+winner, collect as much gold (or as many
+you initially bet. Will you bet on the
+ain (turn to 202), or - if you haven't
+7 punch-out (turn to 48) or dice (turn to
+9
+crewmen and all of your slaves, you
+
+narkets. The scene is hectic. A recent
+no Shurrupak and Marad has resulted
+of Maradian prisoners being taken -
+iem have been brought here to be sold
+
+a consequence, competition is very
+es are low. Will you entrust the busi-
+your slaves to an agent (turn to 245),
+> transactions yourself (turn to 269)?
+
+very close in size, making it difficult to
+is the most. You sit down to count each
+
+and find, after over an hour, that
+e edge. He declares triumphantly him-
+er and pirate of the century. You have
+T.
+en,’ agrees Mog. 'Do you want Ogmog's
+-or have you got your own?’ You borrow a
+a one of your crew, then suggest to the
+t you each stand on one of the sandstone
+‘valent in these parts and take turns trying
+h other. The first to knock the other off
+: Giant agrees, adding, 'As you're such a
+> critter - no offence meant - you can have
+it.’ You take your places, facing each other
+31x-foot space. Will you aim at his head
+75) or his feet (turn to 394)?
+
+2
+and dive at the beast's head, grasping it by
+
+s and flipping yourself on to its back. It
+}a ferocious jump in an attempt to dislodge
+actually gives greater impetus to your leap
+dge of the pit. With only inches to spare,
+>ed in grasping the rim. With the abbot still
+
+at your expected demise on the horns
+east below, you crawl out and into the
+. Turn to 225.
+your men through the thick, untamed
+Idenly, a sticky tendril flies from what
+ssumed was a dead tree, and attaches
+ur body. It grows taut and starts to drag
+1s the bole of the tree, which, you notice,
+m the tips of its branches and mouths
+id closing in its trunk. More tendrils fly
+ab you. Drawing your sword, you try to
+f free.
+
+B) SKILL 9 STAMINA 8
+defeat it, turn to 47.
+
+to a short distance from the shore, you
+k with most of your crew. The beach is
+sandy, but the interior consists of clumps
+it palms. Will you head along the beach
+71) or inland (turn to 282)?
+ur crew make it through the town to the
+es of the mountain, where, in the thick
+Hussars cannot follow. Circling around
+the northern beaches, you see that the
+vas pulled away from the town and
+nchor a safe distance out to sea. You
+vour crew on board, letting them know
+ire still alive. Will you retreat into the
+‘orest, to await the possible departure of
+n forces, which are quite some distance
+ir normal location on the walls of Kish
+4), or return to the Banshee and sail either
+coast towards Kish (turn to 223) or out
+
+land Sea towards the Shoals of Trysta
+)?
+
+6
+ows up out of the south, making the
+
+cult. When the weather clears, you find
+‘e unsure of your position. You continue
+there you expected Nippur to be but,
+manage not to find it. Hopelessly lost,
+ie target day for arrival and thus lose the
+idventure is over.
+nly a day’s sailing from Assur, your
+a speck on the horizon ahead. It
+1, and then a ship - sharp prow and
+as bearing down on you with speed.
+‘flutters from the mainmast. It is a
+p. You pull about in attempt to
+‘utter has the wind and the speed to
+e the Banshee. Grappling-irons and
+ps ready to board. You will have to
+
+SHIP STRIKE 10 STRENGTH 8
+
+at to escape, remember the penalty and
+. If you fight on and defeat the warship,
+
+8
+
+ircophagus, in the ceiling, is a large
+rounded by a circular inscription,
+same archaic language as that on the
+crypt. It says: Tush (pull?) this key to
+mse?) life (death?), or suffer Ut-
+trial.’ Standing on the sarcophagus,
+of the ring. Will you pull it down (turn
+sh it up (turn to 16)?
+
+overlooks a bleak valley. As you lean
+structure to take in the view, you are
+vith a sense of dread and despair. The
+of this inhospitable and alien place robs
+confidence - lose 2 points of LUCK. You
+our waiting crew and, fearfully, lead
+ds the pass. Turn to 52.
+
+grasp the jewel, your hand freezes in
+slowly, the tongue retracts further back
+lol's mouth, dragging your arm into a
+g of razor-sharp blades set in the statue's
+1 are cut badly - lose 4 points of STAMINA
+t of SKILL. Eventually you manage to
+You decide to leave the jewel where it is
+nent, and take the whole statue instead.
+n to the monster's rather hard back and
+» pound up and down, producing dis-
+ints from it - deduct 2 points from its
+The Cyclops brushes you off, rises to its
+then launches into a crouched attack,
+catch you in its arms. Will you:
+
+g kick atits head? Turn to 290
+y kick atits leg? Turn to 319
+‘ways and deal it an
+sma) its arm? Turn to 74
+2
+
+; fly from the start, but your favourite
+rashes to the ground halfway down the
+
+lose the money (or slaves) that you put
+Will you bet on the Bataars again (turn to
+if you haven't already - try punch-out
+) or dice (turn to 236)?
+
+3
+2mains monotonously flat and devoid
+
+2st your Luck. If you are Lucky, turn to
+Unlucky, turn to 333.
+
+—
+
+v
+
+‘
+| \
+K
+
+4
+‘ur crew retreat into the forest, while the
+Is up the coast, to return for arendezvous
+ys. Add 3 days to your LOG. From your
+osition, you see the remnants of the
+‘ces pack up and leave Kirkuk, heading
+irds their homeland. Gathering your
+2scend once again on the town. Unfortu-
+Kishian army, which evidently had the
+as you, has stripped the town of all its
+tead of gold, you settle for slaves. Roll
+1e result equals the number of slaves you
+extract from among the now impover-
+‘folk. When the Banshee returns, will you
+he coast towards Kish (turn to 223), or
+
+land Sea towards the Shoals of Trysta
+)
+
+‘ down the side of the cavern, bumping
+cks and stones on the way, but hitting the
+a slow enough pace not to injure yourself
+
+. You are some way down the staircase
+‘r chose not to follow. You stand up and
+grime of the fall from your clothes before
+g down the stairs. Turn to 284.
+
+6
+drawn on the ground, into which you and
+. The Giant paces forward, spreads his
+then swings a mighty fist at your head -
+you clean out of the circle and into the
+yond. Your adventure is over.
+
+7
+mal, your men charge one of the walls
+shty roar. Suddenly, men armed with
+bows appear on the parapets and open
+crew cast their grapples and place their
+en climb towards the defenders. The
+yeguN.
+
+TS STRIKE 11 STRENGTH 16
+
+ur crew win, turn to 274.
+
+nd over the gold to your men. Deduct 100
+eces from your Booty. Turn to 312.
+9
+anchor in a quiet lagoon, you head
+
+h most of your crew. The island has a
+-h completely encircling it, while inland
+hore is a blanket of dense jungle foliage.
+>ad along the beach (turn to 23) or into the
+nto42)?
+
+blow, the Ogre staggers defeated from
+ollect as many Gold Pieces as you put up
+Will you have another go at punch-out,
+ith a different champion (turn to 385), or
+ven't already - try your luck at either the
+‘§ (turn to 270) or dice (turn to 236)?
+1
+ou seek out replacements for the crew
+
+Turn to 233
+-pla Turn to 253
+nd poorer areas of
+
+Turn to 293
+
+2
+your body against the monster's,
+rather ineffectually. The Cyclops, not
+at this rather pathetic effort, swings
+yead and throws you to the ground -
+1 STAMINA. Wincing, you regain your
+your opponent. Will you:
+
+ntt  houlder? Turn to 91
+yack-hand to the armpit? Turn to 337
+g kick at its chest? Turn to 206
+
+3
+retreat, you realize that you are unsure
+
+1 way you should go (other than down).
+f through a likely ravine, you are sur-
+he appearance of hundreds of the snow
+ig the ridges on either side. Your crew
+run as scores of enormous ice balls are
+wn the slopes above, gathering speed
+as they come. An avalanche starts,
+ill before it, and burying you and your
+Your adventure is over.
+
+4
+ed the Krell, you search its cave, until
+
+hat you were looking for - the Skull of
+ung to the Sea Sprites with their prize,
+warded with a blessing to make your
+apid one. Whenever you are instructed
+< to roll three dice against your CREW
+you need only roll two dice. You surface,
+yn board the Banshee and set sail. Which
+u go, south towards Marad (turn to 191),
+‘st, out into the Inland Sea, towards the
+ysta (turn to 66)?
+
+Nt
+
+A
+iv |
+1 v\ y |
+
+| {
+
+\ v
+
+g
+
+—
+
+\
+
+ghty swing, you hit the Giant a blow on
+of his head. ‘Ouch,’ he says, not batting
+‘My turn now.’ He hefts his tree-trunk
+air and swings it in a ferocious arc,
+you from your boulder and depositing
+ground several yards away. Roll two dice
+the result from your STAMINA. If you are
+you concede defeat, and your crew re-
+ing your crippled body back to the Ban-
+to 272.
+
+6
+7 to Assur is uneventful; the horizon
+w of ships and foul weather until your
+> city. You disembark and head straight
+‘al market area, to look for some sailors
+pirates. Test your Luck. If you are Lucky,
+If you are Unlucky, turn to 146.
+
+nder disappears with a flash as you deal
+y blow. Alone now, you cross the hall
+fhrough a door at the other end. Turn
+GSE COCCRCCESU( US RE
+
+ito the Southern Sea, heading south of
+wards Nippur - add 2 days to your
+‘ther you go south, the rougher the sea
+nore unpredictable the weather. One
+na supernatural and freezing fog has
+lown to mere yards, you see a glowing
+ce floating in the sea. The Banshee is
+il and heading straight towards this
+h. Test your Luck. If you are Lucky, turn
+are Unlucky, turn to 193.
+
+9
+
+‘crew, still believing that the bags
+isure which you were unwilling to
+2m, sneak into your cabin while you
+7inding the bag containing the south
+2n it - to discover why you had kept it
+south wind leaps out, howls around
+en escapes out of a window. Blowing
+whips up a terrifying storm which
+inshee back to the north. For three
+e blows, tossing your ship before it.
+rs out, depositing the Banshee just
+| the city of Tak, your starting-point.
+2 enough time to sail to Nippur again,
+ist the bet. Your adventure is over.
+0
+gs open as you turn the handle, and
+netal spikes from the recess behind,
+you against the opposite wall. Your
+taneous.
+
+1
+unseen, ceases its attacks, so you
+| repulsed. Continuing down the
+to a dark cavern. Rough-hewn
+nto impenetrable gloom; beside
+s-looking ledge climbs upwards
+ye cavern, also disappearing into
+u inch your way along the ledge
+ilk down the stairs (turn to 284)?
+
+smashes through the warship's oars, but
+close to the towering enemy vessel that
+ipak marines have no difficulty in snag-
+‘anshee with their grapples. Brought to a
+it, you can only watch in despair as the
+ar galley draws up on the other side.
+irines pour into your ship and overwhelm
+2s. Your adventure is over.
+
+rse for you, then,’ says the Sprite. 'We
+nd call upon our father, the sea, to hold
+with cloying fingers of barnacle and
+it never catch the wind!’ At the end of
+, a great bubble of air bursts from the
+ers at your feet and carries you out of the
+ssel and back to the water's surface. You
+yard the Banshee. From now on, when-
+> instructed by the book to roll three dice
+ir CREW STRENGTH, then do not roll the
+int the result as always being greater than
+STRENGTH. Which way will you sail, out
+land Sea, towards the Shoals of Trysta
+6), or south, along the Eastern Rim
+arad (turn to 191)?
+into the air, you smash the Cyclops in the
+f its back with your foot. The monster
+inder the blow and falls to the ground -
+om you! Both of you lose 2 points of
+. Crawling out from under the creature,
+
+1 it in the jay Turn to 196
+and down on its back? Turn to 361
+tin the gro Turn to 224
+
+ou choose to fight is against a hairy
+ired in the lands to the west of Kish
+i gladiator-slave. Decide how much
+, then begin the duel.
+
+) MAN SKILL 12
+
+u win, turn to 101. If you lose, turn to 37.
+‘aw near the island, several hundred vil-
+_down to the shore, beating drums and
+yral garlands in the air. They are a fair-
+2ople, with both men and women wear-
+ong flaxen hair in a single plait down the
+ems they are quite happy to see you. Will
+and ask these people for provisions (turn
+press on to another island (turn to 314)?
+
+7
+
+ows up out of the south, making the
+sult. Your crew, however, are equal to
+eeping the Banshee on course. When the
+ars, you see your destination, the isle of
+the horizon. Were you given, earlier in
+ure, two bags by the King of the Four
+>, turn to 299; if not, turn to 32.
+
+8
+
+‘feated the acolytes, you approach the
+1 ugly depiction of one of the lords of
+lized carrion hang from its toothed beak
+al of its numerous insectoid limbs are
+ding various creatures to death. Its beady
+to penetrate straight through you. Look-
+you see that the idol has a huge ruby - cut
+de of a forked tongue - inside its gaping
+| you reach in to grab the jewel (turn to
+‘to lift the statue from its pedestal to carry
+O your waiting men (turn to 228)?
+
+iss between the statues, the ground col-
+our feet, dropping you and your compan-
+deep pit. Stunned by the fall, you can do
+hen somebody unseen slips a rope about
+. Struggling to get to your feet, you are
+long with your pirates, into the air, to
+th the other sailors between the statues.
+;nture is over.
+0
+ie abbot's chamber and discover a chest
+ns no Gold Pieces. The abbot's sword
+hy prize, being forged from the finest
+it will add 2 to your SKILL whenever
+a hand-to-hand combat. Searching the
+, you find a trapdoor under the abbot's
+opens on toa spiral staircase. Descend-
+arrive at a rough-hewn corridor, which
+a point outside the castle walls. You
+waiting crew, return to the Banshee,
+‘and head down the coast. Turn to 123.
+
+1
+il to the Banshee and bring her rapidly
+sluggish merchantman. Your crew
+scimitars and crossbows as you lean
+wale, shouting to the other vessel's
+‘w, ‘Surrender your cargo and pas-
+will lose your lives as well as your
+ings an unexpected response. A
+»bviously a Warlock or Magus, steps
+gaggle of frightened passengers and
+rt spell, which summons a hellish
+ds it like a smoky cloud across the
+‘he ships to attack you, the captain.
+
+E SKILL 11 STAMINA 6
+
+defeat it, turn to 252.
+
+2
+1 of the vessel, seeing his crew being
+has run through the hold of his craft and
+t hull timbers at random. The merchant
+» sink. Finally, in a paroxysm of fear, the
+tching his bags of gold close to his chest,
+oard into the briny depths. All you get
+ubles are 5 of the crew to sell as slaves.
+of Trysta lie some short distance to the
+ill you sail around them to the isle of
+1 to 164), or head south-west, towards
+(turn to 223) or the Roc (turn to 204), or
+ast, towards the Channel of Goth (turn
+
+Ir weapons, you and your men sneak
+suspecting pirates. With a shout, you
+w ina charge.
+
+Ss STRIKE10 STRENGTH 6
+
+defeat them, turn to 154.
+ll your strength, you swing your staff at
+feet, but miss his toes and strike the
+ays Mog. 'Missed!’ However, the sand-
+_ already overstressed by the Giant's
+weight, cracks from your blow and
+s into dust as Mog prepares to swing his
+n off balance, he falls to the ground.
+1ys, shrugging, 'I guess you win.' Test
+f you are Lucky, turn to 56. If you are
+nto 344,
+
+5
+zated the attacking craft, you waste no
+
+‘ing it. However, being a simple assault
+ries no gold, so you settle for claiming 5
+vors as slaves. You also take possession
+‘s tiller which, you suspect, is behind its
+propulsion. This acquisition, while not
+the Banshee, has a beneficial influence
+»w's morale - restore 2 points to your
+1 were heading towards the Roc, turn to
+were heading towards the Channel of
+o 178.
+g them a bit of verbal abuse, they mutter
+beards and look down at the ground,
+. Discipline has been restored. Turn to
+
+-pit around you is a wreck. The bodies of
+and his men lie at your feet. The occu-
+e unaffected parts of the den stop watch-
+hat the battle is over, and return to their
+Just an everyday brawl in this hive of
+arching your old foe, you discover a bag
+© 55 Gold Pieces - add this to your Booty. If
+'t already, you could try punch-out (turn
+‘ataar racing (turn to 270); otherwise, you
+ity of Calah (turn to 262).
+8
+swim through the crack, it snaps shut,
+‘ou tight some twenty fathoms under the
+litis actually the heavily encrusted mouth
+t clam. The creature holds you fast long
+yr the effects of the magic potion you drank
+ff. Your adventure is over.
+
+your scimitar, you rush at the beast and hit
+the middle of its head. The blade shatters.
+‘unt, the creature charges - impaling you
+| of its bony horns and then crushing you
+e walls of the pit. Your adventure is over.
+
+0
+say to Abdul, flinging your coffer open
+amount of gold substantially greater
+a, ‘I am the victor. I am the greatest
+est sacker of cities!’ Abdul bows his
+ing your victory. You have won.
+
+an
+cine reader is is the her
+
+FANTASY
+
+3on, Peter Andrew Jones, lan Livingstone. -
+
+aperbacks-part story, part game-combine
+of Dungeons and Dragons and Choose Your
+They feature score sheets, monster encoun-
+2 combat systems played with a pair of dice
+
+— OF FIRETOP MOUNTAIN . 99381-4-26 5
+— FCHAO _...... eS 91280-6-25 )
+— FDOOM.. —........5 92679-3-22 5)
+ae TRAVE iw eee ee 98241 -3-28 5)
+— WEVES... 91374-8-30 3
+_ PID Be eo 91717-4-10 )
+a ARD KING.......; 94027-3-19 5)
+= |SWAMP  _....... 97676-6-24 )
+— SNOW WITCH. ... . | 91126-5-15 5)
+ne) HADES..  —............. | 93686-1-39 5)
+__.,* I OF DE ——i....... . . se 98515-3-19 5
+moran 2 SASSIN... ww wee 98149-2-13 5
+eens’ 9 FIGHTER =—e—s—st..... 92715-3-10 }
+_. 4 FTERF .........5 98590-0-25 5)
+—_ 5 KETHER,  ~—......... . 97407-0-12 )
+
+lable in Canada
+cal bookstore or use this handy coupon lor ordering:
+SERVICE-DEPT. B1158A
+INE BROOK. N.J. 07058
+
+snd me the above titles]. |am enclosing $____ e add 75c per copy to cover
+ind handling] Send check or money order-no cash or CODs. Please allow 34 weeks lor shipment.
+
+d with danger, suspense, and intrigue, RACE
+TIME pits teenage Stephen Lane and his hand-
+ielor uncle, Richard, against ruthless enemies in
+s. Chased, trapped, and pushed to the edge of
+/ a/ways Survive, due in no small part to their
+\pon-a pair of Kronom KD2 computer watches.
+Fortune $2.25 each
+3E IN THE SILENT TOMB
+f FROM RAVEN CASTLE
+O T OF THE DEADLY DIAMONDS
+{ FOR MAD JACK’S CROWN
+>R THE SAMURAI SWORD
+0 PARADISE
+3ECRET OF THE THIRD WATCH
+0 ED IN THE U.S.S.R.
+=Y TO ATLANTIS
+
+NOC ON FW HFOA
+
+ical bookstore or use this handy coupon tor ordering:
+
+) SERVICE-DEFT. B1158B
+INE BROOK. N.J.07058
+nd me the above title[s]. |am enclosing $_______ e add 75c per con to com
+
+nd handling] Send check or money order-no cash or CODs. Please allow 3-4 weeks for shipment.
+N-ORDERS: please submit in U.S. dollars.
+
+Part story, part game,
+this is a book with a difference—
+one in which YOU become the hero!
+The city of Tak, at the northern end of the
+Inland Sea, is the largest den of thieves, pirates
+and cut-throats that the civilized world has
+ever seen. In this corrupt city there are
+two pirates known for their ruthless greed, their
+daring raids and their countless skirmishes with
+death. One of these infamous villains is
+Abdul the Butcher. The other is YOU!
+
+: Only one of you can become King of the Pirates.
+A wager is made and the race is on. But which one
+of you will win?
+Two dice, a pencil and an eraser are all you need
+to make your journey. YOU decide which route
+to take and which dangers to risk.
+
+0 *"71009"00250 | | |
+
+ISBN O-440-9??04-86
+
+COVER PRINTED IN USA
