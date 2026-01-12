@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://brv9vn2da4a14"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_surge"]
+
+[resource]
+script = ExtResource("1_surge")
+effect_id = "surge"
+display_name = "Surge"
+description_template = "Gain {stacks} energy at turn start. All stacks consumed."
+is_buff = true
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "on_trigger"
+decay_amount = 0
+consumed_on_trigger = true
+trigger_phase = "turn_start"
+effect_type = "energy_gain"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(1.0, 1.0, 0.3, 1.0)

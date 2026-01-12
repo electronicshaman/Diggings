@@ -33,16 +33,22 @@ func can_play_card(card_data: CardData) -> bool:
 	if not duel_state or not duel_state.can_play_cards():
 		GLog.debug("CardResolver: Cannot play cards - duel state invalid or cards disabled")
 		return false
-	
+
 	if not card_data:
 		GLog.error("CardResolver: can_play_card called with null card_data")
 		return false
-	
+
 	var player = duel_state.player_data
 	if not player:
 		GLog.error("CardResolver: can_play_card called with invalid player data")
 		return false
-	
+
+	# Check Disarmed status for Attack cards
+	if card_data.card_type == GameConstants.CardType.ATTACK:
+		if player.status_effects and not player.status_effects.can_play_attack():
+			GLog.debug("CardResolver: Cannot play Attack cards while Disarmed")
+			return false
+
 	# Check Unified Costs (Energy, Sanity, Resource, Custom)
 	for cost in card_data.get_costs():
 		if not cost.can_pay(player):
@@ -359,20 +365,61 @@ func _track_player_card_for_enemy_memory(card: CardData) -> void:
 
 func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCounted) -> void:
 	"""Apply a single result's values to the appropriate game state"""
-	# Damage goes to target
+	# Damage goes to target with status modifiers
 	if values.has("damage") and values.damage > 0:
 		var ignore_defense = values.get("ignores_defense", false)
 		var hits = int(values.get("damage_hits", 1))
+
 		for i in range(max(1, hits)):
-			# EnemyState supports ignore_defense parameter, PlayerData doesn't
+			var final_damage := int(values.damage)
+
+			# Apply source status modifiers (Grit bonus, Weak penalty)
+			if source and "status_effects" in source and source.status_effects:
+				# Grit: +1 damage per stack (flat bonus)
+				final_damage += source.status_effects.get_damage_bonus()
+				# Weak: -25% damage (multiplicative)
+				final_damage = int(final_damage * source.status_effects.get_damage_multiplier())
+
+			# Apply target status modifiers (Wounded)
+			if target and "status_effects" in target and target.status_effects:
+				# Wounded: +50% damage taken (multiplicative)
+				final_damage = int(final_damage * target.status_effects.get_damage_taken_multiplier())
+
+			final_damage = maxi(0, final_damage)
+
+			# Apply damage
+			var actual_damage := 0
 			if target is EnemyState:
-				target.take_damage(values.damage, ignore_defense)
+				actual_damage = target.take_damage(final_damage, ignore_defense)
 			else:
-				target.take_damage(values.damage)
-	
-	# Defense goes to source
+				actual_damage = target.take_damage(final_damage)
+
+			# Post-damage status effects: Thorns reflection
+			if actual_damage > 0 and target and "status_effects" in target and target.status_effects:
+				var reflect := target.status_effects.get_reflection_damage(actual_damage)
+				if reflect > 0 and source:
+					source.take_damage(reflect)
+					GLog.debug("CardResolver: Thorns reflected %d damage back to attacker" % reflect)
+
+			# Post-damage status effects: Drain lifesteal
+			if actual_damage > 0 and source and "status_effects" in source and source.status_effects:
+				var lifesteal := source.status_effects.get_lifesteal_amount(actual_damage)
+				if lifesteal > 0:
+					source.heal(lifesteal)
+					GLog.debug("CardResolver: Drain healed %d from damage dealt" % lifesteal)
+
+	# Defense goes to source with status modifiers
 	if values.has("defense") and values.defense > 0:
-		source.gain_defense(values.defense)
+		var final_defense := int(values.defense)
+
+		if source and "status_effects" in source and source.status_effects:
+			# Guard: +1 defense per stack (flat bonus)
+			final_defense += source.status_effects.get_defense_bonus()
+			# Rattled: -25% defense (multiplicative)
+			final_defense = int(final_defense * source.status_effects.get_defense_multiplier())
+
+		final_defense = maxi(0, final_defense)
+		source.gain_defense(final_defense)
 	
 	# Heal goes to source
 	if values.has("heal") and values.heal > 0:
@@ -430,9 +477,42 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 	if values.has("exhaust_random") and values.exhaust_random > 0:
 		duel_state.exhaust_random_cards(values.exhaust_random)
 	
+	# Apply new status effect system
+	if values.has("apply_status"):
+		var status_data: Dictionary = values.apply_status
+		var effect_id: String = status_data.get("effect_id", "")
+		var stacks: int = status_data.get("stacks", 1)
+		var target_type: String = status_data.get("target_type", "enemy")
+
+		if effect_id and not effect_id.is_empty():
+			var effect_data := _load_status_effect(effect_id)
+			if effect_data:
+				var status_target = source if target_type == "self" else target
+				if status_target and "status_effects" in status_target and status_target.status_effects:
+					status_target.status_effects.apply_status(effect_data, stacks, source)
+					GLog.debug("CardResolver: Applied %d %s to %s" % [stacks, effect_id, target_type])
+			else:
+				GLog.warn("CardResolver: Could not load status effect: %s" % effect_id)
+
 	# Log warnings for unknown keys
 	for key in values.keys():
 		if key not in ["damage", "defense", "heal", "drawn", "custom_resources", "gold",
 					   "stun_enemy", "delayed_damage", "delayed_defense", "energy", "sanity",
-					   "sanity_damage", "discard_random", "exhaust_random", "ignores_defense", "damage_hits"]:
+					   "sanity_damage", "discard_random", "exhaust_random", "ignores_defense",
+					   "damage_hits", "apply_status", "enemy_debuff", "status"]:
 			GLog.warn("CardResolver: Unknown effect key: %s" % key)
+
+
+func _load_status_effect(effect_id: String) -> StatusEffectData:
+	"""Load a status effect resource by ID"""
+	var search_paths := [
+		"res://data/status_effects/%s.tres" % effect_id,
+		"res://data/status_effects/debuffs/%s.tres" % effect_id,
+		"res://data/status_effects/buffs/%s.tres" % effect_id,
+	]
+
+	for path in search_paths:
+		if ResourceLoader.exists(path):
+			return load(path) as StatusEffectData
+
+	return null

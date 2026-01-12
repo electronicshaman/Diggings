@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://cvz3zr6he8e58"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_drain"]
+
+[resource]
+script = ExtResource("1_drain")
+effect_id = "drain"
+display_name = "Drain"
+description_template = "Heal {percent} of damage dealt. {stacks} turns remaining."
+is_buff = true
+stackable = true
+max_stacks = 20
+stack_behavior = "add_stacks"
+decay_type = "per_turn_end"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "on_attack"
+effect_type = "lifesteal"
+value_per_stack = 0.05
+is_percentage = true
+percentage_cap = 1.0
+effect_color = Color(0.8, 0.2, 0.3, 1.0)

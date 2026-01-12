@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://cxr8nj5t2wqv2"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_curse"]
+
+[resource]
+script = ExtResource("1_curse")
+effect_id = "curse"
+display_name = "Curse"
+description_template = "Curse cards pollute your deck. {stacks} curse cards added."
+is_buff = false
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "none"
+decay_amount = 0
+consumed_on_trigger = false
+trigger_phase = "passive"
+effect_type = "card_blocker"
+value_per_stack = 0.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.5, 0.0, 0.5, 1.0)

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://csw0wo3eb5b25"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_focus"]
+
+[resource]
+script = ExtResource("1_focus")
+effect_id = "focus"
+display_name = "Focus"
+description_template = "Gain +{stacks} to next resource gain. All stacks consumed."
+is_buff = true
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "on_trigger"
+decay_amount = 0
+consumed_on_trigger = true
+trigger_phase = "on_resource_gain"
+effect_type = "resource_gain_modifier"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.8, 0.4, 1.0, 1.0)

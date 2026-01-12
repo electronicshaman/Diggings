@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://dqu8um1cz3zz3"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_guard"]
+
+[resource]
+script = ExtResource("1_guard")
+effect_id = "guard"
+display_name = "Guard"
+description_template = "+{stacks} block to all defense. {stacks} turns remaining."
+is_buff = true
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "per_turn_end"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "on_defend"
+effect_type = "defense_modifier"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.3, 0.6, 0.9, 1.0)

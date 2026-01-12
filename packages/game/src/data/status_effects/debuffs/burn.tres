@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://d2w3mqxp4s8y1"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_burn"]
+
+[resource]
+script = ExtResource("1_burn")
+effect_id = "burn"
+display_name = "Burn"
+description_template = "Deals {value} damage at the end of your turn. All stacks consumed."
+is_buff = false
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "on_trigger"
+decay_amount = 0
+consumed_on_trigger = true
+trigger_phase = "turn_end"
+effect_type = "damage"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(1.0, 0.4, 0.1, 1.0)

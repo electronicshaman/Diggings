@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://bns6sk9az1xy1"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_clarity"]
+
+[resource]
+script = ExtResource("1_clarity")
+effect_id = "clarity"
+display_name = "Clarity"
+description_template = "Draw {stacks} extra cards at turn start. {stacks} turns remaining."
+is_buff = true
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "per_turn_end"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "turn_start"
+effect_type = "draw_modifier"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.4, 0.8, 1.0, 1.0)

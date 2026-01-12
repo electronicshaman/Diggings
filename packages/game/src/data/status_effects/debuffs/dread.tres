@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3 uid="uid://dks6nj8xw5tx6"]
+
+[ext_resource type="Script" path="res://scripts/data/status_effect_data.gd" id="1_dread"]
+
+[resource]
+script = ExtResource("1_dread")
+effect_id = "dread"
+display_name = "Dread"
+description_template = "Deals {stacks} sanity damage at the start of your turn. Decays by 1."
+is_buff = false
+stackable = true
+max_stacks = 99
+stack_behavior = "add_stacks"
+decay_type = "on_trigger"
+decay_amount = 1
+consumed_on_trigger = false
+trigger_phase = "turn_start"
+effect_type = "sanity_damage"
+value_per_stack = 1.0
+is_percentage = false
+percentage_cap = 1.0
+effect_color = Color(0.3, 0.1, 0.4, 1.0)
