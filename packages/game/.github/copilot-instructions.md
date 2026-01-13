@@ -1,30 +1,103 @@
 # Copilot Instructions
 
 ## Project Snapshot
-- Godot 4.5 roguelite card battler blending Australian gold rush + Lovecraft; combat scenes live under `scenes/game/` while data lives in `data/` and logic in `scripts/`.
-- Read `CLAUDE.md` and `docs/high_level_summary.md` for current pillars before touching systems with narrative impact.
+Godot 4.5 roguelite card battler: Australian gold rush meets Lovecraftian horror. 1v1 card duels with dual health/sanity failure states. **Early-stage/greenfield** — prioritize clean code over backward compatibility; refactor freely.
 
-## Architecture & Autoloads
-- Core MVC split: `scripts/combat/MainGameController.gd` orchestrates duel nodes, `scripts/managers/game_controller.gd` wraps DuelState, `scripts/managers/ui_controller.gd` drives UI binding, and `scripts/managers/input_controller.gd` owns inputs—respect those boundaries.
-- Autoload order in `project.godot` matters (GameSettings → EventBus → SaveSystem ... → CurioManager → CharacterGenerator); never reorder without confirming dependencies listed in `CLAUDE.md`.
-- `EventBus` is the sanctioned communication layer; use `connect_safe` helpers and emit wrappers documented in `CLAUDE.md` instead of ad-hoc signals.
+Key docs: `CLAUDE.md` (primary reference), `docs/high_level_summary.md`, `docs/architecture/SYSTEM_ARCHITECTURE.md`.
 
-## Effects & Data-Driven Content
-- All gameplay content is Resource-based: cards (`data/cards/**`), characters (`data/characters`), encounters (`data/encounters`), curios (`data/curios`). When adding new content, copy folder templates to keep inspector exports consistent.
-- Ongoing migration to a unified GameEffect system (`GENERIC_EFFECT_SYSTEM.md`, `docs/GAMEEFFECT_REFACTOR.md`): new work should prefer `scripts/effects/core/*` patterns (GameEffect + EffectContext + EffectResult) and wrappers over legacy card/curio-specific effect scripts.
-- Card mechanical categories (Attack/Skill/Power/Fortune + Status/Curse) stay theme-agnostic; tie theme flavor via upcoming ThemeManager (`docs/theme_agnostic_core.md`). Avoid hardcoding theme colors/symbols in logic.
+## Architecture
 
-## Systems to Know
-- Map/hex exploration: start with `scripts/hexmap/MapController.gd`, `scripts/hexmap/hex_system/HexGrid.gd`, and docs in `docs/ENCOUNTER_PLAN.md` for wildlife + hazard flow. Keep Poisson sampling + Delaunay triangulation assumptions intact when altering layout code.
-- Curios: follow `data/curios/README.md` + `docs/CURIOS_INTEGRATION_PLAN.md`; stack behavior, trigger events, and class synergy fields must be populated so `CurioManager` can broadcast via EventBus.
-- Logging: every script defines `const DEBUG_ENABLED`; route output through `GLog` API (`docs/GLOG_USAGE_GUIDE.md`). Never `print()` from runtime scripts—tests rely on log filtering.
+### MVC with Autoloads
+Controllers live in `scripts/managers/`: `GameController` (model), `UIController` (view), `InputController` (input routing), `DuelManager` (duel rules/state machine). Combat orchestration is in `scripts/combat/duel_scene_controller.gd`.
 
-## Workflows & Debugging
-- Preferred tooling is the GDAI MCP plugin (`addons/gdai-mcp-plugin-godot/README.md`); typical commands: `mcp__godot-mcp__open_scene`, `mcp__godot-mcp__play_scene`, `mcp__godot-mcp__get_godot_errors`, and `mcp__godot-mcp__view_script`. Use these instead of manual editor descriptions in reviews.
-- Seeded runs: toggle `GameSettings.show_seed_in_ui` and use SeedManager for reproducible repros; mention seed + path when filing issues.
-- Testing is scene-driven (see `scenes/debug/**`); no automated test runner yet, so document manual reproduction steps in PRs.
+### Autoload Order Matters
+Defined in `project.godot` — dependencies flow downward:
+```
+GameSettings → EventBus → SaveSystem → ResourceManager → SeedManager → GLog → GameManager → DeckManager → SceneManager → CurioManager → CharacterGenerator → RunHistoryManager → DebugHUD → HandlerRegistry
+```
 
-## Contribution Tips
-- Before editing major controllers, scan `PROJECT_IMPROVEMENTS.md` and `docs/project_structure_review.md` to align with planned refactors (e.g., splitting MainGameController responsibilities, resource pooling goals).
-- When wiring new features that span systems, define EventBus signals + payload first, then update autoload subscribers; this avoids circular dependencies and keeps the GLog traces readable.
-- Cite relevant docs (`docs/Card_design_structure.md`, `docs/CURIOS_INTEGRATION_PLAN.md`, etc.) in commit/PR notes so future contributors can trace design intent.
+### EventBus Communication
+All cross-system communication via `EventBus` autoload. Use safe helpers:
+```gdscript
+EventBus.connect_safe("damage_dealt", _on_damage_dealt)  # Idempotent connect
+EventBus.emit_duel_started(enemy_data)                   # Use emit wrappers
+EventBus.card_played.emit(card)                          # Or emit signals directly
+```
+Signals are documented in `docs/architecture/EVENT_BUS_REFERENCE.md`.
+
+## Data-Driven Design
+
+### Resources Structure
+All content as `.tres` Resources for hot-reloading:
+```
+data/cards/player/{attack,skill,power,fortune}/  # Player cards by type
+data/cards/enemy/                                 # Enemy cards
+data/cards/curse/                                 # Curse/status cards
+data/curios/{common,rare,legendary,corrupted}/   # Curios by rarity
+data/characters/                                  # Character class definitions
+data/character_generation/                        # Procedural generation pools
+```
+
+### Card Types (Theme-Agnostic)
+- **Attack**: Direct damage + secondary effects
+- **Skill**: Utility (defense, buffs, draw) — no direct damage
+- **Power**: Persistent combat-long upgrades
+- **Fortune**: Randomized risk/reward effects
+- **Status/Curse**: Deck pollution (Status clears end-of-combat; Curse persists)
+
+### Character Classes
+| Class      | Resource | Max | Playstyle               |
+|------------|----------|-----|-------------------------|
+| Bushranger | Ammo     | 6   | Tactical gunfighter     |
+| Prospector | Fever    | 10  | Gold madness/corruption |
+| Tracker    | Scent    | 5   | Primal hunting          |
+| Publican   | Brew     | 8   | Hospitality/support     |
+| Preacher   | Faith    | 10  | Religious fervor        |
+
+### Handler System
+Effect processing via `HandlerRegistry` autoload (`scripts/handlers/`):
+```gdscript
+var handler = HandlerRegistry.new_by_type("damage")  # Types: health, damage, stat, sanity, resource, defense, card, karma, status
+```
+
+## Logging
+Every script must define `const DEBUG_ENABLED: bool`. Use `GLog` API — never `print()`:
+```gdscript
+const DEBUG_ENABLED: bool = true
+GLog.debug("Message")  # Automatically respects DEBUG_ENABLED
+GLog.warn("Warning")
+GLog.error("Error")
+```
+Control logging via `GLog.set_min_level()` or `GLog.set_file_debug("ClassName", false)`.
+
+## Workflows
+
+### MCP Plugin (Preferred for AI Agents)
+Use GDAI MCP commands for editor control:
+```
+mcp__godot-mcp__play_scene(scene_type: "main")
+mcp__godot-mcp__get_godot_errors()
+mcp__godot-mcp__get_scene_tree()
+mcp__godot-mcp__view_script(file_path: "res://scripts/managers/game_controller.gd")
+mcp__godot-mcp__get_editor_screenshot()
+```
+
+### Testing
+Scene-driven testing in `scenes/debug/` — no automated test runner. Debug HUD toggled via "HUD" input action. Seeded runs via `SeedManager` for reproducible repros.
+
+## Adding Content
+
+### New Curio
+1. Copy `data/curios/template_curio.tres` to rarity folder
+2. Set trigger events: `"combat_start"`, `"turn_start"`, `"card_played"`, `"damage_dealt"`, etc.
+3. Configure class synergy scores (0.5-2.0) and gold costs by rarity
+
+### New Card
+1. Create `.tres` in appropriate `data/cards/player/{type}/` folder
+2. Define effects as data arrays — `CardResolver` processes them
+3. Use `HandlerRegistry` types for effect implementation
+
+### Cross-System Features
+1. Define EventBus signal + payload first
+2. Update autoload subscribers
+3. Use `connect_safe` to avoid duplicate connections

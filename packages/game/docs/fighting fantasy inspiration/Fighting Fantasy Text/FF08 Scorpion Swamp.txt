@@ -1,0 +1,5241 @@
+ADVENTURE r
+GAMEBOOKS camesoox &
+
+STEVE JACKSON
+and IAN LIVINGSTONE
+
+PRESENT
+
+Steve Jackson
+Tan Livingstone
+
+PRESENT
+
+Scorpion Swamp
+
+Steve Jackson
+Ulustrated by Duncan Smith
+
+Puffin Books
+
+Puffin Books, Penguin Books Ltd, Harmondsworth, Middlesex, England
+Viking Penguin Inc., 40 West 23rd Street, New York, New York 10010, U.S.A.
+Penguin Books Australia Ltd, Ringwood, Victoria, Australia
+Penguin Sooks Canada Limited, 2801 John Street, Markham, Ontario, Canada L3R 1B4
+Penguin Books (N.Z.) Ltd, 182-190 Wairau Road, Auckland 10, New Zealand
+
+First published 1984
+Reprinted 1984 (three times), 1985 (three times)
+
+Concept copyright © Steve Jackson and Ian Livingstone, 1984
+Text copyright © Steve Jackson, 1984
+Illustrations copyright © Duncan Smith, 1984
+All rights reserved
+
+Printed and bound in Great Britain by
+Cox & Wyman Ltd, Reading
+Filmset in 11/13pt Linairon Palatino
+
+Except in the United States of America,
+this book is sold subject to the condition
+that it shall not, by way of trade or otherwise,
+be lent, re-sold, hired out, or otherwise circulated
+without the publisher's prior consent in any form of
+binding or cover other than that in which it is
+published and without a similar condition
+including this condition being imposed
+on the subsequent purchaser
+CONTENTS
+
+HOW TO FIGHT THE CREATURES OF
+SCORPION SWAMP
+1
+
+EQUIPMENT
+16
+
+MAGIC
+7
+MAPPING
+21
+HINTS ON PLAY
+23
+ADVENTURE SHEET
+24
+BACKGROUND
+27
+SCORPION SWAMP
+30
+HOW TO FIGHT THE CREATURES
+OF SCORPION SWAMP
+
+Before embarking on your adventure, you must first
+determine your own strengths and weaknesses.
+You have in your possession a sword and a chain-
+mail shirt, as weil as a few pieces of gold for inciden-
+tal expenses. You have been preparing for your
+quest by training yourself in swordplay and exercis-
+ing vigorously to build up your stamina.
+
+To see how effective your preparations have been,
+you must use the dice to determine your initial
+SKILL and STAMINA Scores. On pages 24-5 there is
+an Adventure Sheet which you may use to record the
+details of an adventure. On it you will find boxes for
+recording your SKILL and STAMINA scores.
+
+You are advised to either record your scores on the
+Adventure Sheet in pencil, or make photocopies of
+the page to use in future adventures.
+
+Skill, Stamina and Luck
+
+Roil one die. Add 6 to this number and enter this
+total in the sK1LL box on the Adventure Sheet.
+
+Roll both dice. Add 12 to the number rolled and
+enter this total in the STAMINA box.
+There is also a LUCK box. Roll one die, add 6 to this
+number and enter this total in the LtucK box.
+
+For reasons that will be explained below, SKILL,
+STAMINA and LUCK scores change constantly dur-
+ing an adventure. You must keep an accurate record
+of these scores and for this reason you are advised
+either to write small in the boxes or to keep an eraser
+handy. But never rub out your Initial scores.
+Although you may be awarded additional skILL,
+STAMINA and Luck points, these totals may never
+exceed your Initial scores.
+
+Your SKILL score reflects your swordsmanship and
+general fighting expertise; the higher the better.
+Your sTAMINA score reflects your general constitu-
+tion, your will to survive, your determination and
+overall fitness; the higher your sTAMINA score, the
+longer you will be able to survive. Your Luck score
+indicates how naturally lucky a person you are.
+Luck — and magic - are facts of life in the fantasy
+kingdom you are about to explore.
+
+Battles
+
+You will often come across pages in the book which
+instruct you to fight a creature of some sort. An
+option to flee may be given, but if not — or if you
+choose to attack the creature anyway — you must
+resolve the battle as described below.
+
+First record the creature’s SKILL and STAMINA
+scores in the first vacant Monster Encounter Box on
+
+10
+your Adventure Sheet. The scores for each creature
+are given in the book each time you have an encoun-
+ter.
+
+The sequence of combat is then:
+
+1. Roll both dice once for the creature. Add its SKILL
+score. This total is the creature’s Attack Strength.
+
+2. Roll both dice once for yourself. Add the number
+rolled to your current SKILL score. This total is
+your Attack Strength.
+
+3. If your Attack Strength is higher than that of the
+creature, you have wounded it. Proceed to step
+4. If the creature’s Attack Strength is higher than
+yours, it has wounded you. Proceed to step 5. If
+both Attack Strength totals are the same, you
+have avoided each other’s blows — start the next
+Attack Round from step 1 above.
+
+4. You have wounded the creature, so subtract 2
+points from its stamina score. You may use
+your Luck here to do additional damage (see
+over).
+
+5. The creature has wounded you, so subtract 2
+points from your own sTaMINA score. Again you
+may use LuCKat this stage (see over).
+
+6. Make the appropriate adjustments to either the
+creature’s or your Own STAMINA scores (and
+your LUCK score if you used LUCK ~ see over).
+
+7. Begin the next Attack Round by returning to
+your current SKILL score and repeating steps 1-6.
+This sequence continues until the srAMINA score
+of either you or the creature you are fighting has
+been reduced to zero (death).
+
+wm
+Escaping,
+
+On some pages you may be given the option of
+running away from a battle should things be going
+badly for you. However, if you do run away, the
+creature automatically gets in one wound on you
+(subtract 2 STAMINA points) as you flee. Such is the
+price of cowardice. Note that you may use LUCK on
+this wound in the normal way (see below). You may
+only Escape if that option is specifically given to you
+on the page. If you Escape, do not discard the records
+for the monster(s) you were fighting. Should you
+return to that clearing, it is possible that your foe(s)
+will still be there - and you may have to take up the
+combat where you left off.
+
+Fighting More Than One Creature
+
+If you come across more than one creature in a
+particular encounter, the instructions on that page
+will tell you how to handle the battle. Sometimes
+you will treat them as a single monster; sometimes
+you will fight each one in turn.
+
+Luck
+
+At various times during your adventure, either in
+battles or when you come across situations in which
+you could either be lucky or unlucky (details of
+these are given on the pages themselves), you may
+call on your LUCK to make the outcome more favour-
+
+12
+able. But beware! Using Luckisa risky business and
+if you are urlucky, the results could be disastrous.
+
+The procedure for using your LUCK is as follows: roll
+two dice. If the number rolled is equal to or less than
+your current LUCK score, you have been Lucky and
+the result will go in your favour. If the number
+rolled is higher than your current LUCK score, you
+have been Unlucky and you will be penalized.
+
+This procedure is known as Testing your Luck. Bach
+time you Test your Luck, you must subtract one point
+from your current LUCK score. Thus you wil! soon
+realize that the more you rely on your Luck, the
+more risky this will become.
+
+Using Luck in Battles
+
+On certain pages of the book you will be told to Test
+your Luck and will be told the consequences of your
+being Lucky or Unlucky. However, in battles, you
+always have the option of using your LUCK either to
+inflict a more serious wound ona creature you have
+just wounded, or to minimize the effects of awound
+the creature has just inflicted on you.
+
+If you have just wounded the creature, you may Test
+your Luck as described above. If you are Lucky, you
+have inflicted a severe wound and may subtract an
+extra 2 points from the creature’s STAMINA score.
+However, if you are Unlucky, the wound was a
+mere graze and you must restore 1 point to the crea-
+ture’s STAMINA (i.e. instead of scoring the normal
+2 points of damage, you have now scored only 1).
+
+a3
+If the creature has just wounded you, you may Test
+your Luck to try to. minimize the wound. If you are
+Lucky, you have managed to avoid the full damage
+of the blow. Restore 1 point of STAMINA (i.e. instead
+of doing 2 points of damage it has done only 1). If
+you are Unlucky, you have taken a more serious
+blow, Subtract 1 extra STAMINA point.
+
+Remember that you must subtract 1 point from your
+LUCK score each time you Test your Luck.
+
+Restoring Skill, Stamina and Luck
+Skill
+
+Your SKILL score will not change much during your
+adventure. Occasionally, a page may give instruc-
+tions to increase or decrease your SKILL score. A
+Magic Weapon may increase your SKILL, but re-
+member that only one weapon can be used ata time!
+You cannot claim 2 skrLt bonuses for carrying two
+Magic Swords. Your SKILL score can never exceed
+its Initial value. A SKILL spell (see later) will restore
+lost SKILL points.
+
+Stamina and Provisions
+
+Your STAMINA score will change a lot during your
+adventure as you fight monsters and undertake
+arduous tasks. As you near your goal, your STAMI-
+NA level may be dangerously low and battles may be
+particularly risky, so be careful!
+
+4
+Remember also that your STAMINA score may never
+exceed its Initial value. A SrAMINa spell (see later)
+will restore lost STAMINA points.
+
+Luck
+
+Additions to your Luck score are awarded through
+the adventure when you have been particularly
+lucky. Details are given in the pages of this book.
+Remember that, as with skrL and STAMINA, your
+LUCK score may never exceed its Iiitial value. A
+LUCK spell (see later) will restore lost LUCK points.
+EQUIPMENT
+
+You will start your adventure with a bare minimum
+of equipment, but you may find or buy other items
+during your travels. You are armed with a sword
+and are dressed jn chainmail. You have a backpack
+to hold any treasures you may come across.
+MAGIC
+
+You will play a fighter in Scorpion Swamp. However,
+you will almost certainly find yourself given the
+power to cast magical spells before the adventure is
+over. If you deal with a wizard, he may give you
+Spell Gems. Each gem gives its owner the power to
+cast one spell one time. Then the gem vanishes.
+
+There are twelve different magic spells that you may
+be able to use; they are described below. When you
+acquire a Spell Gem, mark it on your Adventure
+Sheet. If you have the chance to choose which spells
+you get, you may choose any kind of spell more
+than once - for instance, you could choose four Fire
+spells if you wanted to. Once a spell is used,
+though, you must mark it off on your Adventure
+Sheet. If you choose four Fire spells, you can cast Fire
+four times, but no more — unless you meet another
+helpful wizard later and acquire more Spell Gems.
+
+Magic spells are divided into three types: Good,
+Evil, and Neutral. Anyone may use Neutral spells.
+However, good wizards may not cast Evil spells,
+and vice versa. You may use any spell that you can
+get... but you will not be able to get Good spells
+from an evil wizard, or Evil spells from a good
+wizard.
+
+17
+Neutral Spells
+
+skit, When you cast this spell on yourself, it
+restores Jost SKILL points equal to half your Initial
+SKILL score, rounded up. It cannot raise your
+SKILL score past its Initial level.
+
+STAMINA. When you cast this spell on yourself, it
+restores lost STAMINA points equal to half your
+Initial STAMINA score, rounded up. It cannot raise
+your STAMINA score past its /ifial level.
+
+Luck. When you cast this spell on yourself, it res-
+tores lost LucK points equal to half your Initial
+LUCK score, rounded up. It cannot raise your
+LUCK score past its Initial level.
+
+FIRE. This spell will set one medium-sized object
+(like a torch) on fire, The more inflammable the
+object, the better the spell will work.
+
+Ice. This spell works by freezing water (or water
+vapour) into ice. It works best where there is
+water already present to be frozen.
+
+ILLUSION. This spell will let you create one small,
+short-lived illusion. If you act in a way contrary to
+the illusion, the illusion will cease to fool anyone
+else and will be dispelled.
+
+18
+Good Spells
+
+FRIENDSHIP. This spell will make one creature bet-
+ter disposed towards you. But it will not work on
+anyone or anything that cannot understand the
+idea of friendship.
+
+GRowTH. This spell will accelerate the growth of one
+large plant or several smaller ones. It will not
+affect anything but plants.
+
+BLESS. This spell may only be cast on another being
+— you cannot Bless yourself. It restores lost SKILL,
+LUCK, and sTAMINA points to the creature that
+you Bless. Three points are added to each, but in
+no case may the spell increase anyone’s points
+past their Initial level.
+
+Evil Spells
+
+FEAR. This spell will make one creature fear you —
+provided thatit is a creature capable of feeling fear!
+
+WITHERING. This spell will cause one large plant, or
+several small ones, to wither. It will not affect
+anything but plants.
+
+curse. This is a very powerful spell, and not to be
+used lightly. When you cast a,Curse, you im-
+mediately roll one die and lose that many sTaMi-
+NA points. However, something terrible — there is
+no telling what — will immediately befall your
+enemy, too.
+
+19
+When to Cast Spells
+
+You may cast one of your SKILL, STAMINA, Or LUCK
+spells upon yourself at any time except during combat.
+You may cast a spell on yourself just before a battle
+starts .. . but once the first blow has been struck,
+
+you may not use magic until the fight is over.
+
+Other spells may only be cast when a paragraph
+specifically gives you the option of doing so.
+MAPPING
+
+As you play, you will travel along the network of
+pathways that make up Scorpion Swamp. You will
+want to draw a map as you go. Unlike most adven-
+tures, Scorpion Swamp allows you to retrace your
+steps. A good map may spell the difference between
+life and death!
+
+Most of your adventures will take place in clearings
+within the swamp. Each clearing has a number to
+aid you in mapping. Each clearing connects to one
+or more paths leading out. Paths may lead to the
+north, south, east or west. A path may bend about,
+but it will always keep the same general direction.
+This is important. It means that if you leave one
+clearing by the southern path, you will enter the
+next clearing from the north, and vice versa. This
+will keep you from doubling back accidentally.
+When you reach a clearing, make a note of the
+direction in which you are travelling; it might be
+useful later.
+
+In some of the clearings, you will meet people and
+creatures. Some of them can help you; others will
+
+“attack you or hinder you in some way. Itis up to you
+to decide how to handle each encounter.
+
+It may happen that, in your wanderings, you will
+return to the same clearing again. In that case, you
+
+21
+may find instructions in italic type. These instruc-
+tions tell you what to do if you have already visited
+that clearing.
+
+If there are no special instructions, you will proceed
+in the usual way each time you come to that clear-
+ing.
+
+Here is a map of an imaginary part of the swamp, to
+give you some help in making your own maps:
+
+? 2
+
+b)
+mq
+A
+
+Guant Ants
+
+Dgerous!
+To
+
+As you can see, this player has marked the number
+of each clearing, and made notes about what he
+found there. He has also indicated the paths out of
+each clearing, so if he returns later he will know in
+advance in which direction he will be able to travel.
+
+22
+HINTS ON PLAY
+
+There are three possible quests in Scorpion Swamp.
+For each of the quests, there is one true path that is
+the best to follow. Make notes and keep your map
+faithfully. It may save your life ... and, in any
+event, it will be invaluable in future adventures,
+enabling you to progress rapidly through to unex-
+plored sections.
+
+Notall clearings contain treasure; some merely con-
+tain traps and creatures which you will no doubt fall
+foul of. Many wrong turnings are possible. . . and
+even if you reach your ultimate destination, you
+may not find what you are searching for.
+
+It will be realized that entries make no sense if read
+in numerical order. It is essential that you read only
+the entries you are instructed to read.
+
+The one true way on each quest involves a mini-
+mum of risk and any player, no matter how weak on
+initial dice rolls, should be able to get through fairly
+easily once the best path has been discovered.
+
+May the luck of the gods go with you on the adven-
+ture ahead!
+
+23
+ADVENTURE
+
+ShEEC
+
+SKILL STAMINA LUCK
+Initial Initial Initial
+Skill = Stamina = Luck =
+
+ITEMS COLLECTED
+
+SPELL GEMS AND SPELLS
+
+MONSTER ENCOUNTER BOXES
+
+<f ——
+
+Skill = Skill = Skill =
+Stamina = Stamina = Stamina =
+Skill = Skill = Skill =
+Stamina = Stamina = Stamina =
+Skill = Skill = Skill =
+Stamina = Stamina = Stamina =
+Skil] = Skill = Skill =
+Stamina = Stamina = Stamina =
+
+~~
+
+BACKGROUND
+
+Hardy adventurer that you are, you have never
+been known to quail at a little danger. But you're no
+fool. You've always been far too wise to venture into
+Scorpion Swamp. All your life you've heard tales of
+that awful marsh and its disgusting denizens. But
+the real danger of the swamp, so the tales go, is not
+the creatures that inhabit it, nor even the magicians
+and wicked men who haunt its paths.
+
+No, the reason that so few return from Scorpion
+Swamp is very simple. The swamp is criss-crossed
+by numerous trails that twist and turn in all direc-
+tions. No one has ever mapped them and lived to
+tell the tale. An evil fog hides the sky, so no one can
+set a course by the stars. Once you're well into the
+swamp, even compasses are unreliable. They may
+point north, west, or south-by-south-east, leading
+you around in circles until you drop from exhaus-
+tion,
+
+So you've stayed well away from the swamp-lands.
+But although you don’t know it yet, something is
+about to happen to change your fortunes. . .
+
+As you walk along the King’s highway, you come
+upon an old woman, crumpled in the dust. You
+carry her into the shade and give her a drink from
+your water-skin. She soon revives, but you walk
+
+27
+with her to the next town, just to make sure that she
+will be all right.
+
+You take your leave of her in the town market-place.
+‘Bless you for your kindness,’ she says, when you
+part. ‘Wear this with my good wishes, and may you
+never lose your way.’ With that, she gives you a
+plain-looking Brass Ring. When you slip it on your
+finger, smiling your thanks, it feels loose. An hour
+later, as you walk down the highway again, you
+realize that it has altered its shape to fit you perfect-
+ly. You have a magic ring!
+
+As you travel, you learn more about the Brass Ring’s
+powers. The old woman must have beena powerful
+Witch, and she meant her blessing seriously. While
+you are wearing the Brass Ring, you will always
+know which way is North. Even in the deepest
+forest or in the twistiest town street, you will never
+be lost. Furthermore, the Brass Ring grows warmon
+your finger in the presence of evil, even when you
+are greeted ina friendly fashion. You spend a week
+with the forest bandits . . . rough men, but honest
+in their way ... and the Ring is cool. But in the
+caverns, it warns you of evil magic and of foul
+undead. And in the towns, you find that no clever
+thief or lying merchant can fool you. The old
+woman's gift is valuable indeed to an adventurer
+like you!
+
+Now you feel as though you ought to put the Brass
+Ring to some use worthy of its magic. Exploring
+Scorpion Swamp, with its unmapped maze of trails,
+
+28
+might be the perfect task. And it might be profitable,
+too! So, with your mind set on glory and treasure,
+you set off towards the bogs and fens of Scorpion
+Swamp.
+
+NOW TURN OVER
+1
+The path that you must travel is a long one, for
+Scorpion Swamp lies to the far west of the kingdom.
+As you travel, you have many experiences that a
+less seasoned traveller would call adventures. To
+you, fighting Orcs and Goblins, defying evil
+wizards, and slaying giant wolves are all in a day’s
+work. As you travel farther west, the mountains
+around you turn to hills, the hills to plains, and the
+plains to damp lowlands. You know that Scorpion
+Swamp cannot be far away.
+
+When you enter the little town of Fenmarge, no one
+finds you remarkable. Many travellers pass through
+here. Your sturdy helmet and sharp sword indicate
+you are a fighter not to be trifled with, but this is not
+uncommon.
+
+But when, sitting in the local tavern, you announce
+your plan to explore the swamp, the listeners are
+dumbfounded. They cluster around you, pushing
+back the battered benches to make room. The
+swamp, they tell you, holds the bones of many such
+as you! Not only is it trackless and infested with
+vermin, monsters and starving bandits, but a group
+of wizards calling themselves the Masters have
+recently claimed Scorpion Swamp for their own.
+One of them ~ a big, burly man escorted by two
+great grey wolves - visited this very tavern last
+week. He didn’t say much, they tell you, but he
+didn’t seem the sort to welcome trespassers on his
+
+property!
+2
+
+As the conversation continues, you realize that the
+villagers are sure you will die in the swamp. ‘We
+can’t let you go!’ they say. One even makes so bold
+as to put his calloused hand on your shoulder to
+restrain you as you start to walk out the door. Will
+
+you:
+
+Challenge them for their
+
+impertinence? Turn to 48
+Politely explain that you
+are determined? Turn to 95
+
+He is fascinated by your story. Rising heavily to his
+feet, he walks to a small table on which a globe is
+standing. He spins the globe and it opens, revealing
+a pile of gold coins. Poomchukker smiles, as your
+eyes bulge. ‘Will you sell it to me?’ he asks. ‘T will
+give you a hundred pieces of fine gold.’ If you accept
+his offer, turn to 4g. If you turn him down, turn to
+
+173.
+Less than a mile from the edge of the swamp, you
+accidentally step into a hole. Muck oozes up around
+your leg. You cannot pull yourself out. You put
+down your sword and reach for a vine and try to
+lever yourself up. The vine breaks and you sink in
+deeper. Then you hear a chittering noise behind
+you. You reach for your sword, but tiny, sharp teeth
+sink into your hand. . . then the rats are upon you.
+You cannot run or fight. Soon, as the villagers
+predicted, only your bones are left, gleaming in the
+dim light that filters down between the trees. Your
+adventure is over. Next time, take some more magic
+with you.
+
+Wy ENTE S
+4 1
+
+4-6
+
+4
+The wizard laughs evilly. ‘I see no need to waste my
+strength on such as you,’ he sneers. ‘But you may
+prove your mettle against this, my servant.’ He
+waves his hand at a STATUE OF A GOBLIN that
+stands in a niche against the wail. The statue moves
+towards you, raising its stone sword. If you fight it,
+turn to 284. If you attack Grimslade himself, turn to
+123.
+
+5
+Test your Luck. If you are Lucky, turn to 273. If youare
+Unlucky, turn to 297.
+
+You return to Selator’s hut. A merry fire is crackling
+in the kitchen, and something is cooking that smells
+delicious. He greets you warmly and asks, ‘Have
+you got the berry?’ If you have got the purple berry
+of the Antherica plant, turn to 175. If not, turn to 52.
+
+The evil wizard’s brow darkens and the designs on
+his robe writhe ominously. ‘Well,’ he mutters, ‘it’s
+better than nothing. Give me what you have, and I
+will give you 250 gold pieces.’ If you choose to
+accept his offer, turn to 266. If you remind him that
+he had promised you more, turn to 207.
+
+‘Well, that’s too bad,’ he sighs. ‘I'll have to find
+someone else. If you have any of my magic gems
+left, I'l trade some healing potion for them.’ Will
+you:
+
+Trade your remaining spell
+
+gems for the potion? Turn to 141
+Explain that you have used
+them all? Turn to 316
+
+Attack Poomchukker? Turn to 341
+9-10
+
+9
+
+You are on the southern edge of Scorpion Swamp.
+Thanks to the Brass Ring, you will always know
+which way is north . . . but you must still make a
+map! You decide to map each path you follow, and
+each clearing you enter, so that you will know
+which way to go if you return to a clearing. (For
+hints on mapping, see page 21.)
+
+You quickly find a path leading north into the
+swamp. A huge sign, crudely painted on a boulder,
+reads: ‘stop! SCORPION SWAMP! TURN BACK!’ A
+skull and cross-bones completes the grisly picture.
+Bravely, you stride past the warning and enter the
+swamp. You can see that it would be foolish to step
+off the path into the muck, so you follow the trail
+where it leads. Turn to 195.
+
+10
+The knotted trees give way before you and you
+enter another clearing. This is Clearing 5. If you have
+been here before, turn to 142. If you have not been here
+before, keep reading. You realize immediately that
+there has been a battle here. The ground is torn up;
+blood is splashed over the dank swamp-grass, and
+you can see two arrows sticking in a tree not far
+away. If you examine the clearing to see what you
+can find, turn to 59. If you decide to leave as quickly
+as possible, turn to 227.
+| a
+be
+
+As you walk west, the swamp becomes even grim-
+mer. Just as you think that you can stand it no
+longer, the path begins to widen, and you find
+yourself in a long, narrow opening. This is Clearing
+6. If you have been here before, turn to 210. If you have not
+been here before, keep reading. You look around and see
+no other paths; you appear to have come to a dead
+end. You walk towards a large grey boulder, hoping
+to rest on it for a minute. Suddenly, the boulder
+moves! You are not looking at grey stone at all, but
+coarse grey hair. Red eyes glare at you, and a DIRE
+BEAST with six clawed legs moves towards you.
+Will you:
+
+Fight it? Turn to 176
+Run for your life? Turn to 102
+Try a magic spell? Turn to 374
+
+12-13
+
+12
+The Giant bellows angrily as he fights. He is enor-
+mously strong. Luckily for you, he is not very
+nimble. His club rarely hits you. When it does,
+though, it does double damage. Look out!
+
+GIANT SKILLQ STAMINA 12
+
+If you reduce the Giant's sTAMINA to 6, turn to 61.
+You may also try to Escape during the fight, but
+remember that the Giant's blows are double-
+strength. If you try to Escape you will lose 4 sTAMI-
+Na points. If you Escape alive, turn to 161.
+
+13
+‘lama fighter ona quest,’ you reply. Your ring is not
+warning you of evil, so you feel safe speaking to the
+Master of Frogs. Are you in the service of:
+
+Selator? Turn to 212
+Grimslade? Turn to 287
+Poomchukker? Turn to 376
+14-16
+
+14
+
+The trail takes you toa small open spot where, years
+ago, a great tree fell and dragged down several
+others. This is Clearing 32. If you have been here before,
+furn to 338. If you have not been here before, keep reading.
+As you approach, you hear the sound of fighting.
+You step round a tree to see a GIANT SCORPION
+fighting a Dwarf who is wearing leather armour.
+The Dwarf is in trouble. As you rush towards the
+fight, the Scorpion catches the Dwarf’s neck in one
+of its claws and throws him to the ground, where he
+lies still. You doubt that you have any magic spells
+which would be worth using on this enemy. If you
+leave the clearing while the monster feasts on the
+Dwarf, turn to 88. If you attack the Giant Scorpion,
+turn to 312,
+
+15
+What bribe will you offer him?
+A Golden Magnet? Turn to 63
+An Amulet belonging to one of
+the other Masters? Turn to 198
+A huge Violet Jewel? Turn to 276
+None of these? Turn to 212 and
+
+choose again.
+
+16
+Something in your voice betrays you. His hands
+move in front of him and he looks at you quizzically.
+Is he reading your mind? Turn to 198.
+
+17-18
+
+7
+
+If this man is evil, you want nothing to do with him.
+You stride past him towards an exit. As you leave
+the clearing, a garrotte whips around your neck.
+You struggle, but the Thief chokes you with the
+garrotte and you fall unconscious. Lose 3 STAMINA
+points. When you awake, you feel sick and dizzy.
+All your spell gems and other magic items are gone,
+and there is no sign of the Thief. Turn to 179.
+
+18
+
+When they see you charging towards them, waving
+your sword, their nerve breaks. All five of the
+Brigands dive into the trees at the side of the clear-
+ing. You do not stop for an instant; you run through
+the clearing shouting and out on to the pathway at
+the other end. The Brigands are too stunned to think
+of pursuing you. Turn to 49.
+19-22
+
+49,
+There are two paths leading out of the clearing. The
+northern one is much wider and more distinct, as
+though many had travelled along it. Will you go:
+
+North? Turn to 280
+East? Turn to 137
+
+20
+The berry tastes delicious. You feel a sense of well-
+being run through your body. Regain 2 stAMINA
+points and 1 LUCK point. You find nothing else of
+interest here. Turn to 342.
+
+21
+You relax for a few minutes. Regain 1 STAMINA
+point. Then you hear a whuffling sound coming from
+the tree. If you want to see who or what is in the
+tree, turn to 55. If you would rather not know, turn
+to 390.
+
+22
+
+Even as you pocket the seeds, you see new growth
+stirring at the base of the trees. You leave quickly.
+Will you go:
+
+North? Turn to 320
+South? Turn to go
+West? Turn to 14
+23-24
+
+23
+The Brass Ring feels cold; you know that the Mis-
+tress of Birds is a good wizard. You explain your
+quest and ask for her help. She shakes her head.
+‘That merchant is very foolish. Even if he gets his
+map of the swamp, some of my brother wizards are
+evil and will try to plunder his caravans. But you are
+brave, and I wili help you to avoid the worst part of
+your journey.’ Turn to 248.
+
+24
+
+The Will-o’-the-wisp dances ahead of you, and you
+follow. The ground gets wetter and wetter. Sudden-
+ly, you fall into a mud-hole! Abruptly, the Will-o’-
+the-wisp vanishes. It exists only to lure unwary
+travellers into danger. Test your Luck. If you are
+Lucky, you get out of the mud-hole safely. If you are
+Unlucky, you lose 2 points of STAMINA in your
+struggles, but eventually you are standing on solid
+ground. If it were not for your Brass Ring, you
+would be hopelessly lost. As it is, you know which
+way to walk to find the clearing. Turn to 249.
+25-26
+
+The Eagle gives a great cry and circles the clearing
+once; then it flies to its nest. You are happy to leave
+itin peace! Turn to 202.
+
+26
+
+You sense that the Master of Spiders is wholly and
+foully evil, and you attack him with your sword. He
+counter-attacks with a gleaming wand. You see that
+its tip is sharply pointed, and smeared with a foul
+greenish substance. Each time the wand strikes
+you, it does 1 extra point of damage to your sTAMI-
+NA score.
+
+MASTER OF
+SPIDERS  skILLg STAMINA 6
+
+If you kill him, turn to 354.
+
+27-28
+
+27
+Gronar tells you to seek out Poomchukker in the
+village market. As soon as you enter the tangle of
+streets and shops, you are lost. You ask for direc-
+tions several times, and eventually a group of
+laughing young boys escorts you to a large house on
+the edge of the market. You knock on the door-and
+itis answered by a Goblin! Not a Goblin warrior like
+those whom you have fought, but a Goblin serving-
+girl. She escorts you to a library where Poomchuk-
+ker sits. He is one of the oddest men you have ever
+seen .. . very tall and immensely fat, with an ela-
+borately braided beard and bright red skin! You tell
+him your story and ask if he is looking for someone
+like you. ‘Yes, Iam,’ he rumbles. ‘But what makes
+you think you can live in Scorpion Swamp when so
+many others have died there?’ If you tell him about
+the old woman and the powers of the Brass Ring
+you wear, turn to 2. If you simply smile and say you
+are a skilled fighter, turn to 173.
+
+28
+There are several Sword Trees, but you may fight
+them as a single opponent. You are lucky in that
+they cannot see you — they attack by sound. How-
+ever, there are several trees, each with many bladed
+branches.
+
+SWORD TREES SKILLQ STAMINA 12
+
+If you defeat them, turn to 362. Otherwise, you will
+no doubt become fertilizer for the trees. . .
+29-30
+
+29
+You know that it would be foolish to tell this man
+that you serve an evil wizard. ‘I serve the forces of
+Good,’ you reply, ‘but right now I only want to find
+my way out of this swamp. I am looking for one of
+the wizards called the Masters.’ Test your. Luck. If
+youare Lucky, turn to 185. If you are Unlucky, turn to
+
+378.
+
+30
+Itis a long way down, and you jump as carefully as
+you can. You throw your boots and your pack down
+first; then you dive. To your horror, you find that
+the water is shallow and the bottom is muddy. You
+are stuck! You manage to struggle free, but when
+you reach the surface you see the open jaws of a
+Crocodile, ready to take you in. You grab your
+sword, but it’s too late: the jaws are the last thing
+you see. Your adventure is over.
+31-33
+
+31
+As you walk along, you sense that you are far to the
+east of the point where you entered the swamp. You
+wonder if you have taken the right paths. Suddenly,
+you step into a grassy glade. This is Clearing 21. If you
+have been here before, turn to 364. If not, keep reading.
+There is a crystalline pool in the middle of the
+clearing, with an inviting sandy beach to one side.
+There are no other paths leading out. Will you:
+
+Leave and go back to the west? Turn to 47
+
+Watch a while for danger? Turn to 394
+
+Drink from the pool? Turn to 77
+32
+
+You chop at the flowers with your sword, but there
+are more of them than you can destroy, You are
+rapidly exhausting yourself. Lose 2 STAMINA points
+and 1 SKILL point. If you give up and run away, turn
+to 269. If you try a magic spell, turn to 80.
+
+3,
+You hurry across the clearing, hoping to forestall
+another attack by the Crab Grass. But it grows up in
+front of you even faster this time, blocking your
+way. The green nippers reach out hungrily for you.
+If you chop at it with your sword, turn to 134. If you
+use magic, turn to 167.
+347-35
+
+p\
+
+ae
+
+NS
+7
+
+3
+Which spell will you use against the Pool Beast?
+
+Wither? Turn to 237
+Fire? Turn to 291
+Fear? Turn to 356
+None of these? Turn to 209 and
+
+choose again.
+
+35
+These two arrows are also badly aimed — but they
+curve around and hit your backpack! Only one
+penetrates, doing little harm. You lose 1 STAMINA
+point. You realize that the Golden Magnetis cursed,
+and attracts arrows. . . you are lucky that you putit
+in your pack instead of wearing it! Will you:
+
+Attack with your sword? Turn to 281
+Use a magic spell? Turn to 399
+Run for your life? Turn to 309
+
+36-39
+
+36
+You tell the Master of Gardens about your quest. If
+you have already found the Antherica bush, turn to
+283. If you have not found it, turn to 396.
+
+37
+If you tell the truth about your quest, turn to 292. If
+you make up a story and chat for a while, turn to
+220.
+
+38
+The Slime is dead; its remains melt and putrefy
+while you are watching. The smell is unbearable.
+Turn to 153.
+
+39
+You cast the Friendship spell on the Unicorn. It
+gazes at you warily; it has little trust in humans. But
+the spell evidently has some effect, for the Unicorn
+eventually lowers its head and starts to crop the
+grass in the clearing. Turn to 348.
+40-41
+
+4o
+
+You control your fear and approach the gloomy
+tower. Bats circle around the upper storey. As you
+step towards the great iron door, you see a hideous
+face sculpted on it. Then the door swings open
+before you! Grimslade stands waiting. He is tall and
+skeletally thin. The crimson designs on his black
+robe seem to glow. He greets you pleasantly, but
+your ring, hot on your finger, continues to warn you
+that you are in the presence of evil. ‘I know all about
+you,’ he says. ‘You want to explore the swamp. That
+meddling fool Gronar sent you here. But what
+makes you think you are worthy of my time? I need
+a hero who is afraid of nothing.’ Will you:
+
+Challenge him to a combat? Turn to 4
+Explain that you are a hardy
+
+warrior and that your magic
+
+ring will prevent you from
+
+losing your way? Turn to 50
+Smile and say that you fear
+nothing? Turn to 97
+41
+
+You enter a flat clearing surrounded by trees co-
+vered in ivy. This is Clearing 30. If you have been here
+before, turn to 382. If you have not been here before, keep
+reading. There seems to be nothing of interest here,
+so you walk towards the other exit - when you
+realize you are sinking into Quicksand! Test your
+Luck. If you are Lucky, lose 2 STAMINA points and
+turn to 270. If you are Linlucky, turn to 87.
+eh
+
+42
+
+You look through the belongings of the unfortunate
+Dwarf to see if there is anything that you can use.
+His armour, of course, is too small for you, but in his
+pouch you find a small vial of potion. If you drinkit,
+turn to 253. If you leave it, turn to 88.
+
+43
+Test your Luck. If you are Lucky, turn to 339. If you are
+Unlucky, turn to 313.
+
+44
+
+You are not attacked as you wade across, but when
+you reach the other side, you are disgusted to find
+several large Leeches on your legs, drinking your
+blood! Roll two dice and lose as many STAMINA
+points as shown on the lower of the two. You may
+travel north or south from here. If you go north,
+turn to 157. If you go south, turn to 398.
+
+45-48
+
+45
+You are wary of anything that seems so simple. The
+bridge must be a trap of some kind! You turn and go
+back the way you came. If you came from the north,
+turn to 331. If you came from the south, turn to 303.
+
+46
+There is nothing more you can do here unless you
+can get into the hut — but it appears to be magically
+locked, and you can find no way to open it. You
+decide to leave. Turn to 314.
+
+You come upona small, overgrown clearing. You are
+in Clearing 3. You look around, but you see nothing.
+There are three exits. Will you go:
+
+South? Turn to 290
+
+East? Turn to 31
+
+West? Turn to 118
+48
+
+You clap your hand to your sword and issue a
+ringing challenge. They are not frightened, or even
+especially impressed; they merely laugh at you. ‘We
+are not fighting folk, only simple villagers,’ they
+say. ‘But one such as you, with your ready sword,
+indeed belongs in the great swamp, among the
+other seekers of trouble. We shall detain you no
+longer.’ You feel somewhat embarrassed. Lose 1
+LUCK point for behaving aggressively towards these
+peaceful folk, and go to 95.
+49-50
+
+49
+
+Greedily, you pull the Brass Ring off your finger and
+throw it on to the table. He counts a hundred gold
+pieces into a leather bag and hands it to you. You
+now have enough money to live on for several
+years, or to carouse wildly for a month or so. . . but
+you have traded it for your magic ring. You know
+that without its protection you dare not enter Scor-
+pion Swamp. Your adventure is over.
+
+50
+
+He listens to your story with great interest. ‘A magic
+ring, you say?’ You nod and extend your hand so
+that he can see the Brass Ring gleaming on your
+finger. His eyes widen and he steps back from you,
+moving one hand in a strange pattern. You suspect
+that he is casting a spell! Will you:
+
+Leap to attack him? Turn to 373
+Wait to see what he is doing? Turn to 222
+Turn and flee? Turn to 315
+
+51-52
+
+51
+A pit opens in front of you, but you leap over it. You
+charge at full speed through the entrance hall,
+straight-arming another Statue as it reaches for you.
+You kick the door open. The hideous face upon it
+howls and attempts to bite you, but you are too
+swift. If you want to run for the swamp, turn to 296.
+If you head for the village, turn to 5.
+
+52
+Sadly, you have no berries to give him. You explain
+what happened in the swamp. Selator’s face falls.
+‘Well, I’m sure you did your best,’ he says. Seeing
+him so downcast, you offer to go back and try again,
+but he will not hear of it. ‘The danger,’ he says, ‘is
+too great.’ You did what you could, but it was not
+enough. Your adventure is over.
+53-54
+
+53
+
+As you follow the path southward, you hear the
+croaking of thousands of frogs . . . tiny ones, huge
+ones, and all sizes in between. The path leads into a
+clearing dotted with little pools. This is Clearing 8. If
+you have already been here, turn to 329. If you have not
+been here before, keep reading. At first, all you see is a
+number of huge mushrooms. Then you realize that
+there is a man sitting on one of them. He is very
+short, but stout, with snapping black eyes and a
+wide mouth. Around his neck there hangs a silver
+Amulet in the shape of a frog, and sitting on the
+ground on either side of him are two huge green
+bullfrogs. ‘I am the MASTER OF FROGS,’ he
+greets you. ‘What brings you to my home?’ If you
+greet him in return, turn to 13. If you attack him,
+turn to 62.
+
+His face contorts with rage, and he screeches at you,
+‘How dare you return empty-handed?’ Test your
+Luck, If you are Lucky, go to 109. If you are Unlucky,
+go to 285.
+55-56
+
+55
+Warily, you step over to the tree. Before you reach
+
+it, arank odour warns you that it is the den of some
+large animal. You step backwards as an enormous
+BEAR pokes his shaggy head out of the hollow tree.
+If you run away, turn to 390. If you want to fight the
+Bear, turn to 200.
+
+You make your way across the fields and along the
+winding roads, towards the village market-place.
+There stands the house of Poomchukker, just as you
+left it. You knock on the door, and the Goblin girl
+admits you. She takes you to Poomchukker’s lib-
+rary. There he sits, swathed in a silken robe. ‘Well,
+how did it go?’ he booms. ‘Did you bring me a map
+of the path to Willowbend?’ If you reached Willow-
+bend in your travels, turn to 158. If you did not get to
+Willowbend, turn to 8.
+57-58
+
+57
+None of the spells you have seem quite right for this
+
+situation. You draw your sword and charge at the
+evil wizard. Turn to 124.
+
+Test your Luck. If you are Lucky, you pick your way
+through to the exit you choose. If you are Unlucky,
+you make it, but only after tripping over a protrud-
+ing root and banging your leg ona stone- subtract 1
+from your STAMINA. You may now leave the clear-
+ing. Will you travel:
+
+West? Turn to 398
+East? Turn to 105
+South? Turn to 208
+59
+
+59
+
+You decide to look around the clearing. Perhaps
+there is someone who needs your help — or some-
+thing that can help you? Almost immediately you
+stumble over the body of aSwamp Orc. Quickly you
+search the loathesome carcass, but you find nothing
+of value. Then you see a wounded man leaning
+against a tree. You hasten to help him, but when
+you reach his side you find that he is already dead:
+three arrows have pierced his chest. Two more Orcs
+lie at his feet; they paid dearly for his life. You see no
+packs or weapons; the surviving Orcs must have
+looted the scene before leaving. You decide to give
+the fallen fighter what burial you can. As you do so,
+you see a golden pendant shaped like a small Mag-
+net hanging round his neck. You may leave it, or
+add it to your possessions. Turn to 227.
+
+60-61
+
+60
+
+You decide to try an Illusion spell. Thinking quickly,
+you create the illusion of a helpless villager ranning
+for the trees in front of the Dire Beast. The blood-
+thirsty creature turns towards the easier prey, and
+you let the illusion vanish again. While the Dire
+Beast is preoccupied, you slip quietly down the trail
+back the way you came. Turn to 279.
+
+61
+‘It’s not fair,’ the Giant cries angrily. ‘First you little
+people steal from me, and then you come here and
+attack me! I never meant anybody any harm!’ If you
+believe him, turn to 229. If you want to press the
+attack, you may fight to the death. If you kill the
+Giant, turn to 366.
+62-63
+
+62
+
+You rush towards him with your sword raised. His
+eyes bulge in surprise, and he leaps off his
+mushroom. His jump carries him several feet back-
+wards. He gestures towards you, and his two Frogs
+jump in your direction. If you run back the way you
+came, turn to 323. If you fight the Frogs, turn to 146.
+
+63
+
+You reach into your pack and offer him the Golden
+Magnet that you took from the dead fighter. He
+laughs. ‘Sorry, but I don’t want that. It has a curse
+on it! Why don’t you just throw it into the pool
+there?’ Feeling foolish, you do so. If you have
+another item you would like to offer him, turn to 15.
+Ifyou have nothing else to offer him, turn to 212 and
+try another tactic.
+
+64
+
+64
+You cast the Fire spell on the Wolves, hoping to
+drive them away. It works! The fur of the closest one
+blazes up, and both Wolves flee in panic. But the
+Master of Wolves is not intimidated by your spell.
+‘So!’ he growls, ‘a fighter playing with magic, eh?
+See how you like this.’ He shakes his clenched fist at
+you, and you feel as if a great blow has struck your
+sword arm. Lose 3 SKILL points and 1 STAMINA
+point. You can see that if it comes to a duel of spells,
+you would be the loser. . . so you draw your sword
+and attack.
+
+MASTER OF SKILL 11 STAMINA 10
+WOLVES
+
+If you find yourself losing, you may Escape; turn to
+314. If you kill the Master of Wolves, turn to 154.
+65
+
+6
+The trail winds about, but you keep to it faithfully.
+Skirting a great shelf-fungus and the tiny creatures
+dining on it, you approach another clearing. This is
+Clearing 10. If you have been here before, turn to 343. If
+you have not been here before, keep reading. You can hear
+the sound of voices ahead of you. Cautiously, you
+peer round a tree. You see a group of five men, you
+guess they are BRIGANDS from their dress and
+rough speech. The Brass Ring is not warm, so you
+know that these men are not really evil. On the
+other hand, there is no need to be foolish, Will you:
+
+Turn around and go back the way
+
+you came? Turn to 137
+Charge out at them, shouting
+
+and waving your sword? Turn to 231
+Cast a spell from your hiding
+
+place? Turn to 387
+Step out confidently and greet
+
+them? Turn to 163
+
+id
+66-69
+
+66
+
+You enter a rather pleasant glade surrounded by
+gnarled oaks. You are in Clearing g. If you have been
+here before, turn to 192. If you have not been here before,
+keep on reading. Leaning against a tree, eating lunch,
+is a small, cheerful man in dark clothes. His food is
+in a picnic basket. He has no visible weapons,
+except for the knife with which he is cutting his
+cheese. He notices you standing there and hails
+you. ‘Good day, fighter, will you share my meal?’
+As he speaks, you fee] the Brass Ring grow hot,
+warning you of evil. You realize that the man is a
+THIEF. Will you:
+
+Attack him? Turn to 267
+
+Ignore him? Turn to 17
+Accept his invitation and
+
+sit down? Turn to 147
+67
+
+Sure enough, it is a healing mixture. You use it all,
+and feel your strength return. Gain 2 sTAMINA
+points. Turn to 19.
+
+68
+If you know a secret word taught to you by the
+niaster of Wolves, turn to 302. If not, turn to 215.
+
+69
+You have slain the Bear. You search its den, but you
+find nothing of value. Turn to 390.
+70-72
+
+70
+Your reactions are quick. You have time to decide
+how to deal with the Scorpions. Will you:
+
+Stamp on them and strike with
+
+your sword? Turn to 216
+Cast a Fire spell? Turn to 110
+Leap over them to safety? Turn to 377
+
+71
+Afraid that the noisy bird will give the alarm, you
+whip out your sword and behead the Parrot. It falls
+to the ground without a cry. From its tail you pulla
+few of its brightly coloured feathers. You continue
+forward cautiously. Turn to 149.
+
+72
+
+The ground beneath you is sticky, but you keep
+your footing. The Will-o’-the-wisp is still dancing in
+front of you. If you turn back, turn to 249. If you
+follow it further west, turn to 24.
+. 73-74
+
+73
+Test your Luck. Lf you are Unlucky, you fall down,
+losing 2 STAMINA points, but you climb back up to
+the nest. If you are Lucky, you get to the nest safely.
+Looped about one of the branches you find a heavy
+Gold Chain; you may take it if you wish. You climb
+down and leave. Turn to 202.
+
+74
+You decide to combat the evil Master of Spiders with
+a spell. Which one will you use?
+
+Friendship? Turn to 361
+Curse? Turn to 261
+Fire? Turn to 113
+None of these? Turn to 144 and
+
+choose again.
+
+75-76
+
+75
+You cast a Fire spell on the Sword Trees. They
+writhe in anger, but are not badly hurt. Turn to 28
+and fight, subtracting 2 from the STAMINA of the
+Sword Trees before you start.
+
+76
+
+You know that a Ranger is a fighter on the side of
+Good, and no doubt familiar with the swamp. He
+can be trusted with your story. He has heard of
+Selator, and would like to help. He offers you some
+healing herbs which clear your head and restore 1
+lost skILL point. If you have already found the
+Antherica bush, turn to 166, If not, turn to 333.
+
+77-78
+
+77
+You feel revitalized. The water in the pool has
+healing properties. Regain 3 sTaAMINA points. You
+leave and go back to the west. Turn to 47.
+
+78
+
+The Bent Spear is a pleasant, roomy inn. You pay
+the innkeeper a Gold Piece and go to your room. As
+soon as your head hits the pillow, you fall asleep.
+You wake up the next morning feeling refreshed;
+regain 2 STAMINA points. When you are about to
+leave, the innkeeper hails you. He knows that you
+came through Scorpion Swamp, and that you in-
+tend to return the same way. ‘You must bea mighty
+fighter to have come through the swamp,’ he says,
+‘and perhaps this is none of my business . . . but
+there is a wizard in the next street who might be able
+to sell you some spells to help you get back.’ Thank-
+ing the innkeeper for his kind suggestion, you ask
+for directions to the wizard and leave. If you visit the
+wizard, turn to 150. If you strike off south across the
+swamp again, turn to 343.
+79-81
+
+79
+You agree that a single combat, fought to first blood
+only, would be an honourable way to settle the
+question. You and the Brigand Leader square off.
+The other men crowd around you, but they do not
+seem treacherous — merely excited.
+
+BRIGAND SKILL9 STAMINA 10
+LEADER
+
+You fight only until one of you hits the other. If you
+hit the Brigand Leader first, turn to 360. If he hits
+you first, turn to 128.
+
+80
+Which spell will you use against the Fear Flowers?
+Fire? Turn to 307
+Wither? Turn to 196
+Neither of these? Turn to 204 and
+choose again.
+81
+
+You have destroyed the Crab Grass; you have no
+doubt that it is dead. You search the clearing. On a
+tree, you find some scorched lettering: ‘Beware of
+Ores!’ That is all. You leave; turn to 187.
+82-84
+
+82
+The jewel looks valuable, so you draw your sword
+and attack the beast. It strikes at you with its rub-
+
+bery tentacles.
+POOL BEAST SKILL8 STAMINA 10
+
+If you want to Escape and run back to the west, turn
+to 330. If you kill the beast, turn to 308.
+
+83
+Test your Luck. If you are Lucky, turn to 35. If you are
+Unlucky, turn to 357.
+
+84
+Confident that the Master of Gardens is a friend,
+you tell him your business. He wishes you well, but
+can do little to help you. He leads you around his
+glade, and you see that the only path out is the one
+that brought you there. You take your leave of the
+Master of Gardens and go back to the west. Turn to
+
+363.
+85-87
+
+85
+You flee. You must go back the way you came, Turn to
+153 and choose the path from which you entered this
+clearing.
+
+86
+Test your Luck. If you are Lucky, turn to 189, If youare
+Unlucky, you find nothing; turn to 348.
+
+87
+
+You are trapped in the Quicksand. You can feel
+yourself being slowly drawn down. Your only hope
+is to shed your armour. Working quickly, you pull it
+off and abandon it. Now you can pull yourself out of
+the Quicksand, but you must lose 2 SKILL points and
+reduce your Initial sx1Lt level by 2, because you
+have lost your armour. Turn to 270.
+88-89
+
+88
+You leave the clearing. If you go north, turn to 121.
+If you go east, turn to 331.
+
+89
+You use your Ice spell to form a bridge across the
+river. But the river is very wide and warm, so the
+bridge is very slender! If you want to cross it, turn to
+325. If you would rather not trust yourself to a
+magical bridge of ice, turn to 295 and choose again.
+
+go
+
+90-91
+
+You have crossed several shallow streams, but now
+you are faced with a deeper one. This is Clearing 34.
+You see movement in the water below, and you are
+not sure that you care to wade across. Will you:
+
+Use the Ice spell?
+Use the Wither spell?
+Wade across, very carefully?
+
+bs} [
+eA
+
+Turn to 370
+Turn to 254
+Turn to 44
+
+Roll two dice. If the result is equal to or less than
+your STAMINA, you made the jump. Otherwise,
+you fell short, caught your leg in the mire, and
+twisted your arm slightly when you landed. Sub-
+tract 1 point from your SKILL. You may now leave
+
+the clearing. Will you travel:
+West?
+
+East?
+South?
+
+Turn to 398
+Turn to 105
+Turn to 208
+92-93
+
+92
+The path leads you northward, and gradually up-
+ward. The ground around you is somewhat drier
+now, and the swamp trees have been replaced by
+deep forest. The trees thin out ahead of you, and
+you see a large clearing dotted with low bushes. This
+is Clearing 11. If you have been here before, turn to 108. If
+you have not been here before, keep on reading. You stop
+and listen, but hear nothing. You step out into the
+clearing to search for more paths, suddenly you
+realize that you are being watched by two huge
+WOLVES. If you have the Wolf Amulet, turn to 344.
+Tf not, turn to 68.
+
+93
+
+You throw your Curse spell at the Master of Wolves.
+He clutches his throat in pain, but raises his sword
+nevertheless. Then you feel the effect of the Curse
+upon you. Roll one die and lose that many STAMINA
+points. If you live, you must still fight the Master of
+Wolves, but you can subtract 2 points from both his
+SKILL and STAMINA scores when you do. Turn to
+120.
+
+94-95
+
+4
+
+The trail dips down and you see swirling mist. The
+smell is vile and you hold your breath. But before
+you get out of the mist, you are forced to breathe.
+Lose 2 STAMINA points from the effect of the swamp
+fog. If you travel to the north, turn to 295. Ifyou are
+going south, turn to 320.
+
+95
+
+The villagers shake their heads as you turn towards
+the door, but make no further attempts to dissuade
+you. But, before you reach the door, a villager
+blocks your path. He is a short, middle-aged fellow
+with a black beard cut square across the bottom. At
+first you take him for a farmer, but he seems more
+interested in you than any farmer should be! He
+takes your arm and leads you toa table in the corner
+of the tavern. The others have gone back to their
+chatting, and you find yourself willing to hear what
+this quiet man will say to you. He introduces him-
+self as Gronar. ‘If you really intend to brave the
+terrors of the swamp,’ he says, ‘you ought to have
+some purpose, rather than random mapping and
+beast-slaying.’ If you agree with him, turn to 240. If
+you disagree, turn to 122.
+96~98
+
+96
+Somehow, you cannot keep a secret from this good
+man. You find yourself telling him all about the
+Brass Ring and its powers. Turn to 371.
+
+97
+
+‘Fine,’ he replies, smiling. You see that his teeth are
+pointed. He waves his hand at the wall, where a
+STATUE OF A GOBLIN is standing. It quivers and
+moves towards you, brandishing a stone sword. If
+you want to run away, turn to 315. If you choose to
+fight the Statue, turn to 284.
+
+“ws
+
+ay
+
+98
+
+You feel a dull, heavy blow land on the back of your
+head. You collapse at the wizard’s feet, dropping
+your sword. Looking up, you see that he seems to
+have grown enormously. But in fact it is you who
+has shrunk to the size of an insect! You flee, tripping
+over your own legs as you run. He laughs and lets
+you go. You run up the wall and hide in a crack, and
+Grimslade goes about his business. Eventually, you
+become hungry. You spina web and hope fora tasty
+fly. Already you are forgetting your former life.
+Your adventure is over.
+
+99-102
+
+99
+
+You hand Grimslade the Amulets for which you
+braved Scorpion Swamp. He takes them from you,
+smirking nastily. Stepping out of the room, he
+returns with a small but heavy pouch. He tosses it to
+you, and you hear the clink of coins. ‘Begone,’ he
+says, ‘and do not return, for I am done with you.’
+Turn to 242.
+
+100
+
+Tired and battered, you leave Poomchukker’s man-
+sion and head for the inn. You did not succeed in
+your quest, but at least you escaped with your life.
+Perhaps you will return another day. For now, your
+adventure is over.
+
+101
+
+The bridge is old but in good repair. If you choose to
+travel north, turn to 350. If you would rather go
+south, turn to 118.
+
+102
+
+Although you have a head start, you soon hear the
+Dire Beast gaining on you. Lose 1 point of STAMINA.
+Turn back to 11 and choose another tactic.
+103-104
+
+103
+You explain your quest. The Giant nods his head.
+“We are close to the north side of the swamp now,’
+he tells you, ‘but the town of Willowbend lies many
+miles to the west of here. You should travel west.’
+You thank him and take your leave. Turn to 161.
+
+104
+
+The Master of Frogs hops down off his mushroom
+and reaches into the pool. He brings up a handful of
+water. It does not run between his fingers, but stays
+in his hand. He moulds it between his fingers and it
+turns into a Crystal Ball. He gazes into it for a while,
+murmuring to himself. Then he tosses it back into
+the pool. ‘The plant you seek is directly to the
+north,’ he tells you. ‘But the way is not straight, and
+there are many dangers. Beware of my brother
+Masters, for not all of them are friendly. And be
+kind to the Giant.’ With those words, he jumps
+straight up, and vanishes in the trees. The clearing
+is empty. Turn to 352.
+105-107
+
+105
+Ahead of you is a clearing. Unlike the last one you
+found, the ground seems to be solid. This is Clearing
+12. Lf you have been here before, turn to 330. If you have
+not been here before, keep reading. You see several large
+flat stones, a huge hollow tree, and two other paths
+leading out. Will you:
+
+Sit down and rest ona stone? Turn to 21
+
+Investigate the hollow tree? Turn to 55
+
+Leave the clearing immediately? Turn to 390
+106
+
+A garrotte drops over your neck from behind.
+The Thief has fooled you! Luckily, you are much
+stronger than he is. You loosen his grip and flip him
+over your shoulder! Escaping from the garrotte has
+cost you 2 STAMINA points, but you are free. If you
+attack the treacherous Thief, who is now bran-
+dishing a dagger, turn to 267. If you turn and dash
+down one of the paths, turn to 179.
+
+107
+You cast your Curse spell on the closest Brigand. He
+screams and falls to the ground. His companions
+rush to his side. Then they, too, scream, and go
+running north out of the clearing. The fallen Bri-
+gand is dead, his features are contorted, he looks as
+if he has died from an awful disease. Then you feel
+the effect of the Curse. Roll a die and lose that many
+points of stAMINA. If you are still alive, you can
+proceed. Turn to 19
+108-109
+
+108
+You re-enter the clearing where you met the
+Wolves. It is quiet; you see nothing unusual. The
+bush is still in the middle of the clearing; it has no
+berries on it now. There is nothing of interest here.
+You leave and go back southward, towards the
+Giant's clearing. Turn to 342.
+
+109
+
+He mutters and blusters, but he has seen you fight,
+and he is not quite angry enough to attack you. Will
+you:
+
+Leave with what you have? Turn to 349
+Attack him? Turn to 124
+Casta spell? Turn to 256
+110-1122
+
+110
+You know that the only magic likely to help you
+against the crawling multitude is a Fire spell. Quick-
+ly, you cast it. A ring of fire blooms in the grass
+around your feet. It spreads for a moment and then
+goes out, but the Scorpions have been driven back.
+You dash out of the clearing before they can attack
+you again. Turn to 319.
+
+411
+You are unwilling to attack the Mistress of Birds, but
+you are determined to get what you want. You cast
+your Friendship spell on her. She laughs. ‘Foolish
+Warrior! Do you not know that a good wizard is a
+friend to ali? You have wasted your spell.’ Turn to
+184.
+
+112
+You are curious about the great nest. If you would
+like to climb up and examine it, turn to 73. If you
+would rather leave, turn to 202.
+
+113-115
+
+113
+It occurs to you that spider-webs are very inflamm-
+able. You cast the Fire spell on the Master of Spid-
+ers. Instantly his robes catch fire. He screams horr-
+ibly and falls to the ground. The flame spreads
+throughout the clearing. Sheets of fire rush up the
+trees, incinerating the foul creatures that lurk there.
+The heat is so intense that you abandon any idea of
+collecting loot. Your only thought is to escape. You
+loose 3 STAMINA points due to burns as you rush
+from the clearing. Turn to 165.
+
+114
+You cast the Growth spell on the trees. Maybe they
+will grow so tall that they will be unable to reach
+you. You soon realize your mistake. The trees grow
+more branches and continue their attack. Turn to 28
+and fight, but double the sramina of the Sword
+Trees.
+
+115
+The Ranger laughs; he appreciates your honesty.
+‘Well, then you need to find Willowbend,’ he says.
+‘Go south, then west at the crossing of paths. From
+there, just stay on the path and you will come to the
+town. But don’t stray off the path!’ You thank him
+and go on. Turn to 234.
+116-117
+
+116
+
+You do your best to ignore the noise of the roisterers
+carousing below, but it gets worse. Long after mid-
+night, you fall into a fitful sleep, but you are
+awakened early the next morning by the sounds ofa
+market-place outside your window. Angrily, you
+collect your belongings and stalk southward out of
+town, towards the swamp. Turn to 343.
+
+117
+You cast the Friendship spell that you found in the
+glade of the Unicorn. The Master of Gardens smiles
+broadly; ‘What can I do for you, my friend?’ You ask
+him for his Flower Amulet. He takes it from around
+his neck and drops it over your head. When it
+touches you, you are paralysed! He looks deep into
+your eyes and commands you to tell him the truth
+about yourself, and you cannot disobey. He shakes
+his head. ‘You are not a bad person, but you serve a
+bad master. The kindest thing I can do for you is to
+advise you to be on your guard.’ He takes the
+Amulet back and walks away. Eventually you re-
+gain control of your limbs and leave, going west.
+Turn to 363.
+118-119
+
+118
+
+You can see that ahead of you two other paths join
+yours in a small clearing. You are in Clearing 13. If you
+have been here before, turn to 303. If you have not been
+here before, keep reading. You feel a prickling sensa-
+tion around your Brass Ring. Looking down, you
+see dozens of smali scorrrons scuttling towards
+you. Test your Luck. If you are Lucky, turn to 79. If
+you are Unlucky, turn to 182.
+
+119
+
+Which spell will you cast on the Unicorn?
+Friendship? Turn to 39
+Fear? Turn to 293
+Bless? Turn to 381
+Fire? Turn to 337
+None of these? Turn to 320 and
+
+choose again.
+120-121
+
+120
+The Master of Wolves gestures, and his two
+WOLVES run towards you. You must fight each of
+them in turn. If you kill them both, you must fight
+the Master of Wolves himself.
+
+First WOLF SKILL7 STAMINA 5
+Second WOLF SKILL6 STAMINA 6
+MASTER OF
+
+WOLVES SKILL 11 STAMINA 10
+
+If you find yourself losing, you may Escape; turn to
+314. If you kill the Master of Wolves and his pets,
+turn to 154.
+
+121
+
+You find yourself at a crossing of paths. Which way
+will you go?
+
+North? Turn to 170
+South? ~ Turn to 14
+East? Turn to 275
+
+West? Turn to 218
+122-123
+
+122
+
+He counters your argument deftly. ‘Not only is a
+mission worth while, my friend, but there is a great
+deal of strong magic now in Scorpion Swamp. You
+look like a doughty fighter, and you may havea little
+magic about you as well, but without the aid of a
+wizard, I fear that you will never see the sun again if
+you set foot in the swamp.’ You realize that he is
+sincere. If you want to hear more from this man,
+turn to 240. If you would prefer to leave and go into
+the swamp on your own, turn to 296.
+
+123
+
+The sorcerer’s eyes widen and he leaps backwards,
+losing his tall hat and knocking over a vase as he
+does so. An evil-smelling vapour curls up from the
+broken vase. The animated statue freezes in its
+tracks; you have broken the wizard’s concentration
+and spoiled the spell he was using! If you want to
+press your attack, turn to 225. If you want to flee
+while he is preoccupied, turn to 315.
+
+124-125
+
+124
+The evil wizard is every bit as angry as you are. He
+plucks his wand from his robes. As he takes up the
+stance of a swordsman, the wand shimmers and
+changes into a jagged blade. It glows as he wields it,
+and you realize that it must be magical. One way or
+another, this will be the last battle of your adven-
+ture!
+
+GRIMSLADE SKILL 13 STAMINA 18
+
+This is a fight to the death; you may not try to
+escape. If you kill Grimslade, turn to 340.
+
+125
+You have slain the Dire Beast. You cut off a few of its
+rock-like claws as mementoes of your great battle.
+You search the clearing for other exits, but find
+none, so you turn round and leave by the way you
+came, heading east. Turn to 279.
+
+126-127
+
+126
+
+You cast your spell on the Giant while he stands
+there. Frost forms on his beard and eyebrows, and
+he shivers for a second. ‘Getting cold around here!’
+he rumbles to himself. But he shows no other effect.
+Turn back to 145 and make another choice.
+
+127
+
+He doesn’t seem like a bad fellow at all; he’s just
+shy. You decide to try: the Friendship spell on him.
+Instantly, his face lights up. ‘You know, | don’t get
+many visitors out here,’ he says. ‘I can tell you
+whatever you need to know — I'ma very powerful
+wizard! But first, sit down and talk to me.’ You chat
+for a while with the Master of Frogs, and then bring
+the subject back to the plant you are seeking. Turn
+to 104.
+128
+
+128
+
+Although you are skilful, the Brigand Leader is also
+a fine swordsman. His blade raps you sharply on
+the ribs. You have lost. Your opponent, a good
+sport, congratulates you ona fine fight, and spreads
+out his own cloak so that you can sit down and rest.
+‘And now, to settle our little wager,’ he says. ‘What
+have I won?’ You must give him any one gem,
+jewel, or magical artefact that you possess. If the
+only such item you have is your Brass Ring, turn to
+180. If you have any other suitable item or items,
+you may give him whichever one you like (make
+sure you mark it off on your Adventure Sheet). You
+part in friendship from the Brigands and go on your
+way. Turn to 19.
+
+129-130
+
+129
+if you killed the Bear, turn to 268. If you ran from it,
+turn to 183,
+
+130
+
+Which spell wiil you try?
+Curse? Turn to 260
+Friendship? Turn to 111
+Fear? Turn to 201
+None of these? Turn to 288 and
+
+choose again.
+
+o
+»
+
+Culp. 2
+lex
+
+ar
+es
+
+a)
+
+131-133
+
+131
+
+The Parrot fixes you with a beady eye. ‘Just walk
+forward. She knows that you are coming.’ You go
+through a screen of low palm trees, and find your-
+self in a beautiful glade. Thousands of coloured
+birds fill the air and the surrounding trees. Great
+Herons and Eagles stalk about. Seated on a low
+pedestal in the midst of this splendour is a lovely
+woman, who you know must be the Mistress of
+Birds. She greets you by name and asks you your
+business. Your reply, of course, depends on your
+patron. Is it:
+
+Poomchukker? Turn to 23
+
+Selator? Turn to 164
+
+Grimslade? Turn to 288
+132
+
+You have killed the Eagle. If you would like to climb
+up.and examine its nest, turn to 73. If you would
+rather leave now, turn to 202.
+
+133
+There is no sign of the Ranger now; he has melted
+into the woods. Turn to 234.
+134-137
+
+134
+You hack at the CRAB GRASS with your sword.
+The nippers are easy to cut down, but more keep
+growing up around you. Fight the hungry lawn as
+though it was a single opponent:
+
+CRAB GRASS SKILL 6 STAMINA 16
+
+If you Escape, turn to 187. If you cut down the Crab
+Grass, turn to 81.
+
+135
+
+You search the bodies of the dead Swamp Orcs.
+Their weapons are of poor quality, and their provi-
+sions are too disgusting to touch. However, one of
+them has a few gold pieces which you add to your
+store, and another one has a crude map! Comparing
+it with your own, you soon find your present loca-
+tion, but you learn little that is new. However,
+directly to the south, there is a picture of a frog with
+a crown over its head. Turn to 309.
+
+136
+You cast the Fire spell on the Master of Gardens, but
+he waves a hand and deflects the flame. You decide
+to attack instead. Turn to 379.
+
+137
+This is the place where you met the Slime. If you
+killed it, go to153. If you did not kill it, it blocks your
+path as before, and any damage you did to it has
+been healed. Turn back to 336 and decide how you
+will deal with it.
+138-139
+
+138 °
+
+Ahead of you there is an opening in the trees. You
+investigate. You are in Clearing 35. You can see the
+wide Foulbrood River, running east and west. A
+great stone bridge crosses the river. It looks totally
+deserted. If you go on to the bridge, turn to 101. If
+you distrust the bridge and would rather turn
+around, turn to 45.
+
+139
+You decide that this is not for you, and travel back
+towards the village as fast as you can. The warmth
+fades from your finger as you put the threatening
+tower behind you. If you want to go and see the
+good wizard Selator, turn to 335. If you would
+rather visit the mysterious Poomchukker, turn to
+
+27.
+140
+
+140
+Your blade sinks deep into his chest. He looks at you
+in disbelief and starts to speak . . . then he dies. The
+jagged blade slips from his fingers. Curious about
+its strange design, you pick it up. Instantly you
+realize that it is one of the Magic Swords of great
+power, which adds 2 to the sxILu of its user. No
+wonder he was such a good swordsman! You start
+to search the rest of the wizard’s sinister tower, to
+see what treasures he might have hidden away. . .
+but the air is becoming thick and oppressive. Your
+ring is still warning you of evil - more, if possible,
+than before. You smell brimstone. Will you:
+
+Stay and see what you can find? Turn to 375
+Return to the village and look
+for Selator, the good wizard? Turn to 335
+
+Return to the village and seek
+out the mysterious
+Poomchukker? Turn to 27
+
+141-143,
+
+141
+
+The offer sounds reasonable to you. You reach into
+your pouch and take out the magical jewels that you
+did not use. He rings for the serving-girl, and she
+brings a draught that refreshes you and heals your
+wounds. Your adventure is over. You did not suc-
+ceed, but you learned a great deal, and maybe you
+will conquer the swamp some other day.
+
+142
+You see few signs of the earlier battle. The bodies of
+the Orcs have gone. A foot-long Scorpion glares at
+you from a pool as you hurry through the clearing.
+Turn to 227.
+
+143
+As soon as you enter the clearing, you hear the
+horrible snorting of the Dire Beast. It failed to eat
+you before, and now it wants to have another go! If
+you want to use magic against it, as you did last
+time, turn to 374. If you want to fight it this time,
+turn to 176.
+144
+
+144
+
+You notice that your path is criss-crossed by spider-
+webs. There is a clearing ahead. Even before you
+enter it, you can see that the surrounding trees are
+thickly festooned with webs, and that there are
+many spiders there. You are in Clearing 17. If you have
+been here before, turn to 345. If you have not been here
+before, keep reading. In the centre of the clearing there
+is a sumptuous pavilion, which seems to float above
+the marshy ground. Itis silver-grey and it shimmers
+like woven spider-silk. Seated in the pavilion is a tall
+man. His thick beard and eyebrows are white, and
+his robe is as silver-grey as his tent. Around his neck
+hangs a gleaming silver Spider Amulet. You know
+that you are in the presence of the MASTER OF
+SPIDERS. As he regards you from his burning
+green eyes, you feel your Brass Ring warning you of
+evil. Will you:
+
+Cast a magic spell? Turn to 74
+Attack immediately? Turn to 26
+Talk to him ina friendly
+
+fashion? . Turn to 332
+
+145-146
+
+145
+Itseems to you that using magic is a pretty good way
+to deal with an angry Giant. Will you try:
+
+Curse? Turn to 252
+Friendship? Turn to 328
+Fire? Turn to 211
+Ice? Turn to 126
+None of these? Turn to 275 and
+choose again.
+
+146
+
+There are two huge Frogs. They attack you at the
+same time. To your surprise, you see that their
+mouths are filled with tiny, sharp teeth!
+
+First GIANT FROG SKILL 5 STAMINA 6
+Second GIANTFROG skILL6 STAMINA 5
+
+Both Frogs will have a separate attack on you in each
+Attack Round, but you must choose which of the
+two you will fight. Attack your chosen Frog as in a
+normal battle. Against the other, even if your Attack
+Strength is greater you will not wound it. You must
+just count this as though you have defended your-
+self against it. However, if its Attack Strength is
+greater, it wil] have wounded you in the normal
+way. If you win, turn to 230.
+147-148
+
+147
+You sit down opposite him. ‘What do you do?’ you
+ask. ‘Oh,’ he answers, ‘I rob travellers. When peo-
+ple enter by that path over there, my net falls down
+and catches them.’ He points upward, and your
+gaze follows his finger. Test your Luck. If you are
+Lucky, turn to 213. If you are Unlucky, turn to 106.
+
+148
+
+You wonder what sort of Illusion would be best to
+fool the Brigands. They are a scruffy-looking lot;
+they all look as though they could do with a good
+meal. You smile; you have a good idea. You create
+an Illusion of a fat pig, which wanders out into the
+clearing and then down a path. The Brigands fall all
+over themselves in their haste to capture it. They
+pass your hiding-place without noticing you. You
+smile and hurry across the clearing. Turn to 19.
+149-150
+
+149
+The clearing is full of brightly coloured birds, but
+there is no sign of any humans. The Mistress of
+Birds must have gone elsewhere. You search the
+clearing but find nothing except feathers. Turn to
+217.
+
+150
+The street leading to the edge of town is full of little
+shops, and one sign catches your eye instantly:
+“HALICAR DEALERIN POTIONS AND SPELLS’. Yougo
+in, Halicar proves to be a pleasant young man. He is
+a Neutral wizard, and can sell only Neutral spells.
+You do not have enough Gold Pieces to deal with
+him, but some of the items that you picked up in the
+swamp will interest him. You lay them on his table.
+Each of the following, if you have it, can be ex-
+changed for one magical gem containing a Neutral
+spell: a Violet Jewel; a Gold Chain; any of the silver
+Amulets from the Masters; a Golden Magnet or the
+Horn of a Unicorn. Halicar can sell you no more
+than three spells. Decide which spells you want, list
+them on your Adventure Sheet, and mark off the
+items you traded for them. Then you leave the shop,
+going south, back into Scorpion Swamp. Turn to
+
+343.
+151-153
+
+151
+You dodge to the side. One arrow misses you; the
+other nicks your arm. Lose 1 SKILL point. Will you:
+
+Attack with your sword? Turn to 281
+Use a magic spell? Turn to 399
+Run for your life? Turn to 309
+
+152
+Which spell will you cast at the Master of Gardens?
+Fire? Turn to 136
+Wither? Turn to 264
+Ilusion? Turn to 347
+Friendship? Turn to117
+None of these? Turn to 334
+
+153
+
+You leave the clearing as quickly as possible. If you
+go north, turn to 218. If you go west, turn to 65.
+154-155
+
+154
+The only thing of interest that the Master of Wolves
+had was his Wolf Amulet. You take it and then go
+and investigate his hut. Turn to 46.
+
+555
+
+You sound sincere; Gronar nods and smiles broad-
+ly. ‘There are those in the world,’ he says, ‘who
+seem rough or simple, but always fight for the right.
+The good Selator is one - . . and you, Paladin, are
+another, though you have much to learn.’ Some-
+how, Gronar seems to be much Jarger now. fs thata
+cross embroidered on his robes? And where did that
+sword come from? You start to speak, to ask him
+who he is, but he reaches across the table and
+touches your brow. You feel dizzy. ‘Bless you,
+young Paladin. Seek ye Selator.’ Then he is gone.
+You could not tell whether he walked out of the
+door, or simply vanished ... but the dizziness
+passes quickly, and you feel very good indeed.
+Raise your Initial Luck score by 2. Turn to 335.
+156
+
+156
+You are breathing heavily, but you are still alive.
+Your opponent has been reduced to a heap of gravel
+which is scattered over the floor. You laugh at
+Grimslade and toss the table leg over your shoulder.
+Tt lands with a thump amid the remains of a book-
+case knocked over in the fight. Grimslade is eyeing
+the wreckage of his parlour.
+
+If you were not wounded in the fight, turn to 241.
+
+If you were wounded, but lost 5 or less STAMINA
+points, turn to 193.
+
+If you lost 6 or more sTAMINA points in the fight,
+turn to 326.
+
+157-158
+
+157
+
+The path narrows menacingly. You wonder for a
+second if you have reached a dead end. Then it
+becomes wider again. You step into a very small
+clearing. You are in Clearing 18. If you have been here
+before, turn to 279. If you have not been here before, keep
+reading. You see several unusual trees around you.
+They are dark green and rather small, with snaky
+limbs. Suddenly you realize that each limb ends ina
+sword, and they are moving! You are being attacked
+by the dreaded SWORD TREES! They are all
+around you now. If you want to fight them with
+your own sword, turn to 28. If you want to try a
+magic spell, turn to 203.
+
+158
+You smile broadly and pulla tattered piece of parch-
+ment out of your pocket. It is the map you faithfully
+kept of your journey. Clearly marked on it are the
+paths on which you travelled and clearings where
+you fought. Each hazard is indicated. As you ex-
+plain it to Poomchukker, he is more and more
+delighted, Finally he claps you on the back - and,
+although you are strong, you stagger. ‘Wonderful!’
+159-160
+
+he says. ‘Perfect!’ He reaches into a drawer and
+brings out a huge emerald. ‘Cal! it a bonus!’ he
+laughs. ‘My first caravan will leave tomorrow. You
+will be my guest here for as long as you like. . .and
+half of my savings for a year are yours, just as 1
+promised.” You smile and thank him. You are
+pleased to find out that the mysterious Poomchuk-
+keris an honourable man; maybe some day you will
+know him better. But, for now, your quest is a
+success and your adventure is at an end.
+
+159
+You feel that you have done all you can, Now you
+must return to your patron and report your success
+or your failure. Did you undertake your quest for:
+
+Selator? Turn to6
+
+Grimslade? Turn to 226
+
+Poomchukker? Turn to 56
+160
+
+It occurs to you that this creature would make a
+good ally, so you cast the Friendship spell on it.
+Unfortunately, a Dire Beast has no friends! Its
+charge does not slacken, and you must fight it. Turn
+to 176.
+161-162
+
+161
+You leave the Giant's clearing and continue your
+journey. Which way will you travel?
+
+North? Turn to 92
+South? Turn to 41
+West? Turn to 121
+
+He believes your story and starts to chat with you.
+He tells you that the Masters are a group of powerful
+wizards. Some are Good, some are Evil, and some
+are Neutral, but their destinies are tied together by
+the Amulets they wear. They may fight with one
+another, but no Master may slay another while he
+(or she} wears the Amulet. He also tells you that the
+Amulets grant great power, but only when worn by
+a wizard. You find this all very interesting, and
+thank him for his patience. Then you take your
+leave . . . but you walk only as far as the beginning
+of the path. As soon as he can no longer see you,
+you ponder over your next move. Will you:
+
+Give up and leave? Turn to 352
+Use an Illusion and attempt to
+steal the amulet? Turn to 245
+
+Attack him with your sword? Turn to 62
+163
+
+163
+
+You stride along the path and into the clearing.
+They are surprised to see you, and even more
+surprised when you hail them casually and keep on
+walking. ‘Where do you think you're going?’ they
+ask. ‘North,’ you reply. They are impressed by your
+coolness. The Brigands are accustomed to deman-
+ding payment from passers-by, but they are not
+murderers. Although they could attack you, the
+odds would be five to one, they do not fee] that
+would be very sporting. Finally, the leader suggests
+a solution. You and he will fight. The first one to hit
+the other will be declared the winner. If the Brigand
+Leader draws the first blood, you must give him
+something of value. If you draw first blood, he and
+his men will let you go. If youagree to this plan, turn
+to 79. If you will not agree, turn to 353.
+
+164
+
+164
+
+The Brass Ring is cold; you know that the Mistress of
+Birds is a good wizard. You explain your quest and
+ask for her help. She claps her hands in glee, and for
+amoment she lvoks like a young girl. ‘Is there really
+an Antherica bush left?’ She is overjoyed. She
+knows that your quest, if it succeeds, will help the
+cause of Good everywhere. She gives you a magic
+potion which restores any one of your scores (you
+choose which one) to its Initial level. Then she
+motions to you to be silent. She holds out her hands
+and several small birds fly to her. She talks to them
+for a time. Then she tells you, ‘Selator was right!
+There is, indeed, a bush of Antherica to the north-
+east. If you like, I can help you to get there.’ You
+accept gratefully. Turn to 248.
+
+165-167
+
+165
+There are only two exits from this clearing. If you go
+north, turn to 388. If you go south, turn to 105.
+
+166
+
+The Ranger approves of your bravery. ‘Now all you
+have to do is get out of Scorpion Swamp again.
+Good luck! Travel south from here, then east, then
+south again at the Eagle’s nest, then west and south,
+and you will be close to the southern edge of the
+swamp.’ You thank him for his help, making a note
+of his directions, and leave. Turn to 234.
+
+167
+Few spells seem appropriate for this situation. Will
+you try:
+
+Wither? Turn to 322
+Fire? Turn to 310
+Neither of these? Turn to 134
+168-169
+
+168
+This is the clearing where you met the Pool Beast. If
+you killed it, there is nothing for you to do here; turn
+to 330. If you did not kill the Pool Beast, it is still
+waiting, with whatever sTAMINA it had when you
+left it. Turn to 209 and take one of the three choices
+there.
+
+169
+
+You use your Illusion spell to create an image of a
+poisonous snake between yourself and the Ores,
+But they do not seem upset. They advance on you
+
+. -and when one of the Orcs bends over, smacking
+his lips, and tries to grab the snake, you know that
+you picked the wrong Illusion. Turn to 281 and
+fight.
+170-171
+
+170
+
+The path is narrow here, and winds about to avoid
+some huge boulders. Itis foggy, and you cannot see
+far. Suddenly the fog lifts and you see that you have
+entered another clearing. You are in Clearing 19. If
+you have been here before, turn to 363. If you have not been
+here before, continue reading. From the top of a boul-
+der, aman hails you. Heis tall and bronzed, dressed
+allin green, and you know he must be a RANGER.
+‘Ho, fighter!’ he challenges you. ‘Do you serve
+Good or Evil?’ Who is your patron?
+
+Grimslade? Turn to 29
+Poomchukker? Turn to 262
+Selator? Turn to 76
+
+47
+The Slime is very strong, but almost mindless.
+
+SLIME SKILL 5 STAMINA 17
+
+You can Escape at any time; turn to 153, but eave on
+the path by which you entered. If you kill the Slime, turn
+to 38.
+172-173
+
+172
+You talk for some time. The Master of Wolves
+advises you, ‘Take the easy way across the river.
+Don’t took for traps where none exist.’ He also
+teaches you a word that you can pronounce when
+threatened by Wolves, which will make them
+friendly. Finally you must leave. Turn to 314.
+
+473
+
+He gives a deep rumbling laugh, and you are certain
+that you see the bookshelves quiver. He is not at all
+offended by your reticence. In fact, he is now con-
+vinced that you are the fighter he needs. ‘I will tell
+you my secret,’ he explains. ‘Iam not a wizard at all,
+but merely a merchant from another land. I have
+bought many powerful spells and artefacts. Thus
+people believe that lama mighty magician, and I let
+them think so because they treat me with more
+respect.’
+
+You ask what Poomchukker wants in Scorpion
+Swamp. ‘Information,’ he replies. ‘If I had a map of
+the path through the swamp, I could send caravans
+through, and save weeks and weeks of time in my
+173
+
+trading. If you can bring me a map showing a clear
+path to the town of Willowbend, on the north side of
+Scorpion Swamp, I will pay you half the money that
+I save during the first year.’ You realize that this
+could amount to hundreds of gold pieces, but you
+are still wisely cautious. ‘If you are not a wizard,
+what magic can you give me to help me survive the
+swamp?’ you ask. He laughs deeply. ‘Ttold you that
+I buy many magic spells. Each of these gems here
+will let you cast one spell.’ He spills a box of glitter-
+ing gems on to the table. You may pick any five to
+take. I do not think you should need that many, but
+Tam generous.’ Turn to the Magic Spells section in
+the front of the book and pick any five spells. . . but
+choose only from the Netra! list, because that is the
+only sort of spell that Poomchukker has been able to
+buy. List the spells on your Adventure Sheet.
+
+You shake hands with Poomchukker — his grip is
+surprisingly strong - and the Goblin girl takes you
+downstairs. You walk through the busy market and
+across Fenmarge towards the swamp. Your quest is
+this: find your way north across the swamp, to the
+town of Willowbend, and return to Poomchukker
+with a map. Turn to 9 to start your journey.
+
+174-175,
+
+174
+You stare coldly at Grimslade over the corpse of his
+servant. He mutters angrily to himself; he hasn’t
+decided what to do. If you attack him, turn to 225. If
+you invite him to discuss your business ina civilized
+fashion, turn to 193.
+
+175
+
+You reach carefully into a pocket and remove the
+gleaming berry. ‘Oh, wonderful!’ the old man cries,
+overjoyed. He plucks it from your hand and carries
+it out into his garden. Placing it gently in the
+ground, he begins to huma spell. Almost instantly,
+asmall plant sprouts. . . and grows into a vigorous
+bush like the one which you saw in the swamp.
+Blossoms open, filling the air with fragrance, and
+clusters of purple berries form. Selator plants some
+of the new berries, and they, in turn, begin to
+sprout. Then he looks up at you. ‘I’m so sorry!’ he
+says. ‘I was so happy that I forgot fora moment that
+you were here. Now these bushes will grow up, and
+V'll send carrier-birds to my fellow wizards with lots
+of berries. Soon everyone will have Antherica again,
+and honour you for it. You have done a great deed
+this day.” He offers you healing potions and a hot
+meal, and you accept gratefully. Over dinner, you
+speak of many things both great and small. Then
+you are on your way again, feeling well and happy.
+You have succeeded in your quest.
+176-177
+
+You are facing a fearsome creature indeed. The Dire
+Beast has a tough hide and huge claws. It is also
+faster on its feet than you are! You cannot escape;
+you must battle to the finish.
+
+DIRE BEAST SKILL 9 STAMINA 10
+
+If you destroy the Dire Beast, turn to 125.
+
+177
+Unfortunately, you cannot help the Giant. But he no
+longer seems disposed to attack vou, so you walk
+past him. Turn to 161.
+ij 178-179
+178
+
+Unfortunately, you are not a wizard. What is good
+for magicians may not be good for you. Subtract +
+from your LUCK after tasting the mushroom. Turn to
+352.
+
+179
+There are three paths leading away from the clear-
+ing. The northern one seems to slope downwards.
+
+Will you go:
+North? Turn to 183
+South? Turn to 10
+
+East? Turn to 118
+
+180-182
+
+Your Brass Ring is the only item of value that you
+have. You are unwilling to give it up, but you feel
+that you have no honourable alternative. Sorrowful-
+ly, you remove it from your finger. The Brigand
+Leader sees that you are upset, and asks what the
+problem is. When you explain, he insists that you
+take the ring back! ‘You are truly honest,’ he says,
+‘and it would be a shame to take from you the only
+thing that you have left, when you need itso much.’
+He claps you on the back. You have earned the trust
+and friendship of the Brigands. Turn to 214.
+
+181
+You see the Bear again. . . and it has already seen
+you. You must fight it. If you wounded it earlier, it
+has recovered 1 STAMINA point. Otherwise, it is
+fresh. Turn to 200,
+
+182
+Before you can react, the Scorpions swarm on to
+your boots and up your trousers. They begin to
+sting you. Roll one die and lose that many points of
+srAMINA. Angrily, you leap over the rest of the
+Scorpions and leave the clearing. Turn to 319.
+183-184
+
+183
+
+As you walk along, the ground becomes rocky and
+the path slopes upwards. Instead of dismal trees,
+you see the sky ahead of you! You emerge on top of
+a high cliff overlooking the murky Foulbrood River.
+You are in Clearing 20. It is at least twenty metres
+down to the river, and the cliff is too steep for you to
+climb down. Below, you can see huge crocodiles
+sunning themselves in the water. Far to the east you
+can see a bridge which appears to cross the river, but
+no trail leads along the riverbank in that direction.
+Two trails leave the clearing. Will you:
+
+Walk south into the swamp? Turn to 66
+Walk west along the river? Turn to 295
+Dive into the river and swim
+north? Turn to 30
+Dive into the river and swim
+east? Turn to 321
+184
+
+You cannot bring yourself to attack her. You tell her
+about your quest and the evil wizard who sent you.
+She shakes her head pityingly. ‘I should not help
+you at all,’ she says, ‘for you are doing the work of
+an evil wizard. But you are not evil yourself, or you
+would not have been honest with me.’ She ponders
+for a moment. Then she smiles. ‘This is what I will
+do. I will make a false Bird Amulet. Anyone who
+sees it will believe it to be a true amulet. Thus,
+Grimslade will be deceived, and you will not have to
+trouble my brother wizards. Though, in truth, ifyou
+185-186
+
+meet the Master of Spiders you should slay him
+quickly, for he is evil.’ She waves her hand, and an
+Amulet, seemingly the twin to her own, lies in your
+palm. You thank her for her kindness and leave.
+Turn to 217.
+
+185
+Luckily for you, he believes your story. ‘Well, you
+are heading in the right direction,’ he says. ‘Just to
+the east is the abode of the Master of Gardens, who
+isa good wizard and very powerful.’ You thank him
+for his information and go on. Turn to 234.
+
+186
+You killed the two Cutpurses. You do not even take
+time to search their bodies; you sheathe your sword
+and leave Willowband as quickly as possible, before
+you find yourself in any more trouble. Turn to 343.
+187-190
+
+187
+There are three exits from the clearing. Will you go:
+South? Turn to 144
+East? Turn to 290
+West? Turn to 10
+
+188
+
+You cast the Fire spell. Unfortunately, there is no-
+thing for it to burn; the Slime is a creature of water. If
+you want to try another spell, turn to goo. If you
+want to try another tactic entirely, turn to 336 and
+choose again.
+
+189
+At the base of a tree near the edge of the clearing,
+you notice a spot that seems to have been disturbed.
+You dig and find two Spell Gems — one for
+Friendship, and one to restore Luck. Add these
+Spells to your Adventure Sheet and turn to 348.
+
+190
+You back off and take a running jump. Test your
+Luck. If you are Lucky, you make it across safely. If
+you are Unlucky, you fall a bit short and lose 2
+STAMINA points fighting your way to safe ground.
+Turn to 270.
+191-193
+
+191
+Which spell will you use against the Master of
+Wolves?
+
+Fear? Turn to 224
+Friendship? Turn to 294
+Curse? Turn to 93
+Fire? Turn to 64
+None of these? Turn to 398 and
+choose again.
+
+192
+
+You are back in the clearing where you met the
+Thief. If you did not kill the Thief, turn to 267. If you
+killed him, turn to 179.
+
+193
+
+Grimslade scowls, looking at the destruction. Then
+he shrugs and laughs. ‘Let's talk business.’ He leads
+you into another room — then vanishes for a second
+and reappears, holding several potions. ‘Drink
+these — they'll put you right.’ Warily, you study the
+glinting bottles — then, slowly, you drink one. He
+Jaughs at your concern, but you do, indeed, feel
+better. The bottle was a healing potion. You drink
+up the rest of the bottles, and conceal your sigh of
+relief when you find yourself hale and hearty. Your
+scores are all up to their Initial values now. Turn to
+206.
+194-195
+
+194
+He laughs gleefully. ‘Excellent! I knew you would
+not fail. Give them to me.’ Will you hand them over,
+or ask for your payment first? If you hand them
+over, turn to 9g. [f you want your money right now,
+turn to 207.
+
+You are in Clearing 1. Actually this is no more than a
+wide spot where three trails meet. The ground is
+very shaky and wet, and huge insects flit over the
+pools of water that dot the ground. If you want to
+step carefully across to another trail, turn to 58. If
+you would rather just jump over the soft part, turn
+tog1.
+
+196-198
+
+196
+You cast the Wither spell on the Fear Flowers. Lo
+and behold ... they shrivel and die! You look
+around to see if there is anything of use here; you
+find nothing but the bones of a less lucky traveller.
+Turn to 367.
+
+197
+
+In the centre of the clearing lies the body of the
+Giant. Kneeling beside him, weeping, is an enor-
+mous woman. You realize that she must be his wife.
+The Giantess looks up at you with tears in her eyes.
+She does not threaten you, and you don’t want to
+attack her and add to her misery. You are now sorry
+that you killed the Giant. Lose 2 LUCK points. You
+vow never to return to this clearing again unless you
+have to, Turn to 161.
+
+198
+‘Help!’ he croaks, ‘A wizard-slayer!’ His face con-
+torts with fear and he bounds ten feet straight
+backwards. ‘Kill him!’ he says, pointing his finger at
+you. His Frogs croak loudly and hop towards you.
+You must fight them. Turn to 146.
+199-200
+
+199
+There are two Brigands resting in the clearing,
+which seems to be their meeting-place. Recognizing
+you, they smile and wave. You call a greeting and
+pass by. Turn to 19.
+
+200
+You have killed many beasts and monsters; a Bear
+doesn’t frighten you. You shout a taunt at it and
+raise your sword.
+
+BEAR SKILLZ STAMINA 8
+
+If the Bear starts to get the better of you, you can
+Escape and run for any of the pathways; turn to 390.
+If you kill it, turn to 69.
+
+201-203
+
+201
+You try your Fear spell, hoping to frighten her into
+giving you the Bird Amulet. She looks at you and
+shrieks in terror. Then hundreds of flashing birds
+surround you~ not toattack you, but to protect their
+mistress. You can see nothing. Soon they fly away,
+but the Mistress of Birds is gone. Turn to 217.
+
+202
+You have no reason to linger. You have a choice of
+three paths. Will you travel:
+
+South? Turn to 138
+East? Turn to 41
+West? Turn to 14
+
+203
+Against these uncanny enemies, you decide to use
+magic. Will you try:
+
+Fire? Turn to 75
+Wither? Turn to 393
+Growth? Turn to 114
+None of these? Turn to 28
+
+and fight.
+204-205
+
+204
+The path becomes wider by degrees, and you see
+flowers growing here and there. This is Clearing 23. If
+you have been here before, turn to 250. If you have not been
+here before, keep reading, But you feel the hairs on the
+back of your neck begin to stand up. Something is
+wrong! Your Brass Ring is warning you of evil. You
+look around and see nothing but the pretty flowers,
+growing thickly along the path. Then you remem-
+ber the old stories of the FEAR FLOWERS. You
+know that the Flowers themselves are frightening
+you. Their pollen induces terror. You are shaking
+now; lose 1 SKILL point. Will you:
+
+Try to run past the flowers? Turn to 269
+
+Attack them with your sword? Turn to 32
+
+Cast a magic spell? Turn to 80
+©
+
+205
+Gronar orders another pitcher of ale and settles back
+in his chair. ‘Selator is the good wizard,’ he says.
+‘Grimslade appears to serve the forces of evil,
+though a simple man like myself cannot be sure
+about such things. And Poomchukker is a very
+strange fellow indeed. No one knows much about
+him, but he is powerful. Each of them has made it
+known that he seeks a champion to enter the
+swamp. More than that you will not learn without
+visiting them.’ Will you:
+206
+
+Help the good wizard Selator? Turn to 335
+Risk aiding the forces of evil
+if the profit is right, and
+
+visit the sinister Grimslade? Turn to 255
+Take your chances with the
+mysterious Poomchukker? Turn to 27
+
+206
+
+You are seated in Grimslade’s study. An ornate
+mirror hangs on one wall - at least, it looks like a
+mirror, but the scene it shows is constantly chang-
+ing. The walls are covered with dusty shelves, full of
+huge books, odd-looking bottles, strange objects
+that might be mummified animals, and other weird
+objects.
+
+‘Lamacollector,’ Grimslade tells you, ‘of knowledge
+and artefacts. Not long ago, something strange
+happened. Several wizards moved into Scorpion
+Swamp — wizards whom I know nothing about!
+Their powers are great but limited, and they seem to
+be involved with nature. One, I know, controls
+wolves. Another seems to be a master of plants. My
+mirror cannot get a clear view of the swamp, but I
+have spied on them as much as I could. Their
+powers seem to come from the silver Amulets they
+wear.”
+206
+
+‘Well, what exactly do you want me to do?’ you ask.
+‘And what will you pay me?’ He replies, ‘I want
+those Amulets. | want at least three of them; if you
+can get more, so much the better! I don’t care how
+you get them. 1 will pay you five hundred gold
+pieces for each one you bring back.’
+
+‘And what magical aid can you give me?’ you ask.
+Grimslade laughs. ‘I can make you a wizard ~ well,
+almost. I will give you six enchanted Spell Gems —
+no more. But that should be enough to see you
+through, considering the sword arm you've shown
+
+me.
+
+You talk with Grimslade about the spells you will
+use. Refer to the Magic Spells list in the front of the
+book and pick six spells; you must pick from the Evil
+and Neutral lists, and not from the Good list. You
+may choose a spell more than once, as long as the
+total is six. Write the spells down on your Adventure
+Sheet.
+
+You take your leave of Grimslade, and head to-
+wards the marsh. Scorpion Swamp seems cheery
+and inviting after the evil wizard’s tower! Your
+quest is this: get the Amulets of at least three of the
+Masters, and bring them back to Grimslade. Turn to
+g to begin your journey.
+207-208
+
+207
+Grimslade scowls at you. ‘You are clever - insolent,
+but clever.’ Before your watchful eyes, he counts
+out five hundred gold pieces for each amulet. It
+takes a while! Finally, he sweeps them into a pouch
+and hands them over. Turn to 358.
+
+208
+
+lt seems to become lighter as you walk along--
+Through the trees above you, you suddenly catch a
+glimpse of blue sky! A few minutes later, you see an
+opening in the trees — and when you step through,
+you realize that you have left the swamp! If you are
+not ready to leave Scorpion Swamp, you may re-
+trace your steps and walk back the way you came
+until you reach the first clearing. Turn to 195. If you
+are ready to return and report the outcome of your
+quest, turn to 159.
+209-211
+
+209
+
+You continue to walk eastward for some time.
+Ahead, you see a clearing with a small pool. You are
+in Clearing 25. Ifyou have been here before, turn to 168. If
+you have not been here before, keep on reading. You walk
+closer to investigate . . . and a great, brown, rub-
+bery creature rears up from the pool and lashes at
+you with a tentacle! You jump backwards. The
+POOL BEAST shambles after you. You see a beauti-
+ful Violet Jewel glinting in its forehead. Will you:
+
+Run away? Turn to 397
+
+Attack with your sword? Turn to 82
+
+Cast a magic spell? Turn to 34
+210
+
+This is the clearing where you encountered the
+vicious Dire Beast. If you slew the creature, turn to
+243. If you did not slay it, turn to 143.
+
+211
+
+You wonder whatyou should seton fire. Perhaps the
+Giant's club? No. . . his greasy beard! You cast your
+spell. Instantly his beard is alight. He bellows and
+beats it with his hand until it goes out. Now the
+Giant is furious. Your spell has reduced his sK1L1,
+but he is still very strong, and he will not let you
+escape.
+
+GIANT SKILL 6 STAMINA 12
+If you kill the Giant, turn to 366.
+212-214
+
+212
+You teil the Master of Frogs about the plant for
+which you are searching. ‘Ah, yes,’ he says. ‘I did
+not know there were any of those plants left. They
+are no good to me, though, for I am Neutral, and
+only Good wizards can use that plant, Why should I
+help you?’ Will you:
+
+Threaten him with your sword? Turn to 62
+Cast a spell on him? Turn to 258
+Offer him a bribe? Turn to 15
+ag)
+Sad
+7
+
+213
+The sudden warmth of the Brass Ring reminds you
+that this man is evil. Instinctively, you drop to the
+ground. The Thief, who was trying to strangle you
+with a garrotte, is taken by surprise. You jump to
+your feet. Turn to 267.
+
+214
+Now that the Brigands are well-disposed towards
+you, you ask them where you are. They tell you that
+the town of Willowbend is only a little way to the
+north. They add that, of the three inns in town, the
+Bent Spear is by far the best, and that you can trust
+the innkeeper. You say goodbye to the Brigands and
+leave. Turn to 19.
+215-217
+
+215
+
+The Wolves growl and spring at you. There is no
+time to use magic. You swing your sword lustily,
+and strike the first one in mid-leap and cut off its
+head. Its companion circles you warily. You must
+fight it.
+
+WOLF SKILL7 STAMINA 6
+If you killit, turn to 247.
+
+216
+There are too many of them for you to fight. They
+swarm on to your boots and up your trousers, and
+begin to sting you. Roll one die and lose that many
+points of staMINA. Angrily, you leap over the rest
+of the Scorpions and leave the clearing. Turn to 319.
+
+217
+
+The only way to leave the clearing is by the path on
+which you entered. Your footsteps turn south once
+again. Soon you will be in the glade of the Fear
+Flowers. Turn to 250.
+218-219
+
+218
+
+The path widens into another clearing. You are in
+Clearing 15. You see that there is one other path
+leading out. Then, off to the side, you see a dim
+glow. Itis a ball of dancing light, or WILL-O’-THE-
+WISP. It hovers at the western edge of the clearing,
+and then moves back a few metres. You can now see
+what may be another path, somewhat murky and
+overgrown, where the Will-o’-the-wisp is dancing.
+It seems to want to show you something. Will you
+follow it, or go on?
+
+Follow it to the west Turn to 72
+
+Ignore it and go south Turn to 336
+
+Ignore it and go east Turn to 121
+219
+
+You have slain the Ranger, though it was not an
+easy fight. Searching his body, you find a sharp
+dagger and some provisions. You also take his
+helmet, which is finely made and adds 1 to your
+SKILL. Turn to 234.
+
+220-221
+
+220
+You chat for a while, but don’t get a chance to seize
+the Amulet or even to turn the conversation in a
+useful direction. If you simply tell the Master of
+Gardens the truth and ask him for his Flower
+Amulet, turn to 292. if you want to try another tactic
+entirely, turn to 334.
+
+221
+
+You draw your sword and await the Unicorn’s
+charge.
+
+UNICORN SKILL 1 STAMINA 4
+
+You are fortunate that the creature is already badly
+wounded. You must fight it for two rounds. Then, if
+you choose, you may Escape; turn to 348. If you slay
+the Unicorn, turn to 277.
+222-223
+
+222
+
+A huge horned DEMON, covered with green, brist-
+ly fur and hideous warts, appears between you and
+Grimslade. Itis the ugliest thing you have ever seen.
+The wizard points his emaciated hand at you. ‘Kill
+this fool. Give me the ring he wears; you may eat the
+rest.’ You were terribly careless in your dealings
+with this evil man, and now you must pay the price.
+
+DEMON SKILL 16 STAMINA 12
+
+You cannot run away, for the Demon is very fast on
+its feet. Fortunately, it has no weapons except its
+huge, knobbly hands, so you have a chance against
+it. If you kill the Demon, turn to 174. If not, your
+adventure ends here, before you ever reach the
+swamp. The evil wizard gloats over his new posses-
+sion, and a huge, warty demon smacks its lips over
+your body. . .
+
+223
+You decide to turn around and take another path.
+Turn to 270, but leave this clearing by the same path
+on which you entered it.
+
+| 224-225
+224
+
+You cast the Fear spell on the Master of Wolves. He
+turns and runs into his house — but the two Wolves
+attack you. You must fight them both.
+
+First WOLF SKILLZ STAMINA 5
+Second WOLF SKILL 6 STAMINA 6
+
+If you find yourself losing, you may Escape; turn to
+314. If you kill the Wolves, turn to 46.
+
+225
+‘Impudent fool!’ the sorcerer screams. ‘You will die
+by my own hand!’ He produces an ebony wand
+from his robes. As he brandishes it, it becomes a
+jagged sword that glows red. You have no choice,
+you must fight him.
+
+GRIMSLADE SKILL STAMINA 10
+
+Should he kill you, perhaps in your next incarnation
+you will be more careful when dealing with evil
+wizards. If you kill him, turn to 1go.
+226-228
+
+226
+
+Astone’s throw from the swamp’s edge you find the
+tower of Grimslade, still reeking with evil. Once
+again you see the great iron door with its hideous
+expression — but it has changed somehow. You
+shiver and start to knock, but the door opens in
+front of you. Grimslade is there, quivering with
+eagerness. ‘Did you get them? What have you
+brought me? Where are they?’ He holds out his
+hand. What do you tell him you have?
+
+No Amulets at all? Turn to 54
+
+One or two Amulets? Turn to 7
+
+Three or more Amulets? Turn to 194
+227
+
+There are three paths leading out of the clearing.
+The one that leads east is somewhat narrower and
+darker than the others. Will you go:
+
+North? Turn to 66
+
+East? Turn to 388
+
+West? Turn to 320
+228
+
+You knew those Sword Tree seeds would come in
+handy! You scatter them in front of you and cast the
+Growth spell on them. Instantly they grow into a
+dense barrier, waving their swords menacingly. The
+Dire Beast attacks them furiously, knocking down
+one tree almost immediately. You realize that the
+other trees will not last long, so you hurry back
+down the trail, towards the east. Turn to 279.
+jj 229-231
+229
+
+‘Iam sorry, Sir Giant,’ you say. ‘I did not know I was
+trespassing. Please tell me, what is the matter?’
+Abruptiy, the fight goes out of him. He sits dawn
+and sniffles. Finding nothing to wipe his eyes with,
+he rubs his hand across his face. You feel sorry for
+him. . . he is so big and so sad. ‘Somebody stole my
+new handkerchief!’ he says. ‘My wife made it for
+me, and I've lostit, and she'll be so upset! I can’t find
+it anywhere, and I can’t go home without it!’ You
+ask him what it looks like, and he tells you that it
+was bright red, and very beautiful. If you havea Red
+Cloak in your pack, turn to 286. If not, turn to 177.
+
+230
+
+You have slain the Giant Frogs, but their Master is
+nowhere in sight. He must have hopped off into the
+swamp. Fastidiously, you wash the blood and slime
+off your blade before you search the clearing, ex-
+pecting him to appear and attack you from behind.
+You find nothing. Turn to 352.
+
+231
+Test your Luck. If you are Lucky, go to 18. If you are
+Unlucky, go to 259.
+
+232-234
+
+232
+
+Carefully you remove the berry from the bush and
+putitin your pack. If you are serving Selator, turn to
+389. Otherwise, you leave the clearing and turn
+southward again. Turn to 342.
+
+233
+The Eagle lands on a branch of the tree and watches
+you. Its gaze is fierce, and its great hooked beak
+opens and closes threateningly. If you attack it, turn
+to 392. If you back away cautiously, turn to 25.
+
+234
+There are two paths leading out of the clearing. If
+you go east, turn to 305. If you go south, turn to 121.
+235-237
+
+235
+You stand with your back to a great tree, so that only
+one Brigand can approach you at a time. Although
+there are five of them, only the three largest line up
+to fight with you.
+
+BRIGAND LEADER SKILL STAMINA 10
+Second BRIGAND SKILL 8 STAMINA 8
+Third BRIGAND SKILL8 STAMINA 11
+
+Because you are trapped against the edge of the
+woods, you cannot escape. If you kill these three
+Brigands, the other two will flee. Turn to 19.
+
+236
+
+After your journey through the swamp, this is more
+than you can bear. You rush downstairs, waving
+your sword, and warn the merry-makers to be quiet
+—or else! They laugh at you. You walk towards them
+angrily ... and the tavern-keeper brings a chair
+down on your arm from behind, knocking your
+sword to the ground. Your arm is bruised; lose 2
+SKILL points. You realize that you cannot fight
+everyone there. You turn around and go back to
+your room. Turn to 116.
+
+237
+You cast the Wither spell on the Pool Beast, but it
+has no effect. The beast is an animal, not a plant.
+Turn to 82 and fight.
+238-240
+
+238
+You are in the glade of the Master of Gardens. It is as
+beautiful as ever, but there is nobody to be seen.
+You ga back to the west. Turn to 363.
+
+239
+You are in the clearing of the Master of Wolves. The
+hut is locked tightly, and there is no sign of anyone.
+Turn to 314.
+
+240
+You agree with Gronar. Your journey would be
+much more interesting if you had a mission to
+accomplish, as well. He nods. ‘There are three men
+in this village now,’ he tells you, ‘who cannot go
+into the swamp themselves. But each one has need
+of a strong fighter willing to venture there. The first
+of the three is an old wizard devoted to the cause of
+Good.’ He stops to quaff a long draught from his
+mug. If you want to hear him out, turn to 205. If you
+want to interrupt him to say that you wiil serve only
+Good, turn to 155.
+241-242
+
+241
+
+Grimslade is impressed with you. He claps you on
+the back. ‘You're the one I’ve been looking for,
+truly. Come with me, and we shall discuss how we
+can make ourselves rich. But first, here's a gift.’ He
+reaches into his robes and withdraws a miniature
+sword, which grows to full size when he hands it to
+you. It is a magic sword; add 1 to your SKILL
+whenever you use it. As you examine the sword,
+Grimslade touches you with his wand. If you had
+used up any LucK during your fight, it is now back
+to its Iitial level. Turn to 206.
+
+242
+
+As you cross the threshold, you realize that the
+pouch is not as heavy as it should be ~ not even by
+half! After you risked your life for him in the
+swamp, Grimslade has cheated you. Will you:
+
+Run back and attack? Turn to 124
+Run back and cast a spell? Turn to 256
+Take what you have and leave? Turn to 358
+eee
+
+243-245
+
+243
+There is nothing to be seen here except for the huge
+bones of the Dire Beast and a horde of crab-like
+scavengers feasting on the remains. You do nat
+wish to get too close, so you turn eastwards and
+leave the clearing. Turn to 279.
+
+244
+You describe your quest. The Giant laughs merrily.
+He tells you that he saw a bush like that not long
+ago, ina little clearing just to the north. ‘But look out
+for Wolves!’ he warns. You thank him and bid him
+good day. Turn to 161.
+
+245
+
+You cast an Illusion spell on yourself, changing your
+appearance to that of a medium-sized Frog. You go
+unnoticed among the other Frogs as you hop across
+the clearing and behind the mushroom where the
+Master of Frogs sits. You are unwilling to strike him
+down, since he was friendly towards you. Instead,
+you quickly lift the silver Frog Amulet from around
+his neck. As you do so, you push him into the pool!
+He spiutters and bellows, but his mouth is full of
+water and he cannot cast a spell. You run for the
+path. Turn to 352.
+246-247
+
+246
+You search the bodies of the dead Brigands. One of
+them has a jar of powder. It smells like bitter herbs.
+if you leave it alone and continue, turn to 19. If you
+try a little of it on your wounds, turn to 67.
+
+247
+You search carefully and find nothing of interest
+except one unusual! bush, growing near the centre
+of the clearing. It has dense dark-green leaves and
+white flowers. Near the top of the bush you see one
+large purple berry. Will you:
+
+Eat the berry? Turn to 20
+Pick the berry and save it? Turn to 232
+Ignore it and go back south? Turn to 342
+
+248-249
+
+248
+
+She gives a strange, piercing cry. It seems to echo
+among the trees. ‘I have just summoned a great
+Eagle, whom I ride when I travel. He will not carry
+you like a common steed, but if 1 command it, he
+will take you back to his nest, which is on the other
+side of the Foulbrood River. It will save you many
+hours of dangerous travelling.’ When she finishes
+speaking, you hear a beating of wings, and an
+enormous Eagle lands beside you. You cannot
+understand what she says to it, but abruptly it
+springs into the air. Its talons clutch you firmly
+around the waist, and its wings beat thunderously.
+Inan instant the clearing is far below you. The Eagle
+flies north-east. Below, you see other clearings, and
+then the wide, greenish expanse of the Foulbrood
+River. Great crocodiles are visible, and other mons-
+ters. Then the Eagle flies down, into a clearing
+where there is a single tall tree containing a huge
+nest made out of branches. The Eagle deposits you
+on the ground and flies away. You are in Clearing 16.
+Turn to 202.
+
+249
+Test your Luck. If you are Lucky, you make it back to
+the clearing safely. If you are Unlucky, you trip in the
+darkness and hurt your arm; lose 1 point of SKILL.
+You may now leave. If you go south, turn to 336. If
+you go east, turn to 121.
+j 250-252
+250
+
+You are in the clearing where you met the Fear
+Flowers. If you killed them all, turn to 367. If you left
+them alive, you know that you need to run quickly
+to get past them without being consumed by terror.
+Turn to 269.
+
+251
+You have slain the Master of Gardens. He was a
+good wizard and meant no one harm, you begin to
+regret your deed. Subtract 3 from your Luck. You
+take the Flower Amulet from around his neck and
+turn towards the only exit from this clearing, travell-
+ing west. Turn to 363.
+
+252
+Summoning your courage, you cast a Curse spell on
+the Giant. What will happen? You see him stagger
+and roar. He wipes furiously at his eyes. The Giant
+has been blinded! He staggers past you and falls into
+the mire. You hurry away before he recovers. Then
+you feel the spell’s effect on you. Roll one die and
+lose that many stTaMiNa points. If youare still alive,
+turn to 161.
+
+253-255
+
+253
+
+You drink the potion. Immediately you begin to feel
+very strange. It was a potion to make you handsome
+- .. but it was designed for dwarves! For the next
+hour, you will be somewhat shorter and stockier
+than usual, and your nose will be very big. After
+that the effects will wear off. Reduce your SKILL by
+1, for your next combat only. Turn to 88.
+
+254
+You cast the Wither spell ata huge tree on the bank.
+It falls, forming a bridge by which you quickly cross.
+As you reach the other side, the tree decays com-
+pletely and collapses into the stream. You may
+travel north or south from here. If you go north,
+turn to 157. If you go south, turn to 398.
+
+255
+
+Grimslade lives by himself in a tower very near the
+swamp. When you ask for directions, no one wants
+to talk to you; one old lady makes the sign of the evil
+eye at you, and a young girl flees. Eventually, a
+skinny ruffian in the market-place gives you direc-
+tions, and you set off to meet the wizard whom
+everyone fears. As soon as you see his tower, your
+Brass Ring begins to get hot. Grimslade is evil— very
+evil indeed! The feeling grows stronger as you
+approach the dark, jagged tower, with its strange
+arches and its gruesome statuary. If you go on up to
+the door, turn to qo. If you turn back and return to
+the village, turn to 139.
+256-257
+
+256
+You are brave — or maybe just foolhardy - daring to
+cast spells at the evil sorcerer. Which spell will you
+try?
+
+Curse? Turn to 274
+Fear? Turn to 365
+Fire? Turn to 385
+Illusion? Turn to 351
+None of these? Turn to 57
+
+257
+Roll two dice. If their sum total is less than or equal
+to your SKILL, you jumped right over the disgusting
+Slime. Add 2 Luck points, and turn to 153. If the
+sum is greater than your Sk1LL, you landed on top of
+the Slime. Turn to 311.
+
+258-260
+
+258
+Using spells against a wizard is risky. What spell
+will you try?
+
+Fear? Turn to 198
+Friendship? Turn to 127
+Neither of these? Turn to 212 and
+
+choose again.
+
+259
+The Brigands jump in fright, but they recover and
+turn to face you. When they see that you are alone,
+they are angry. They curse you ~ then, in turn, they
+charge at you. You must fight them. Turn to 235.
+
+260
+
+You cast the Curse spell on the Mistress of Birds. For
+a second, it seems to have no effect at all. Then her
+face hardens. Your Curse has done a terrible thing
+to her... it has turned her Evil! She screams in
+anger and waves her hand, and hundreds of birds
+plunge towards you. Suddenly, the birds fly away.
+The Mistress of Birds has shaken off your Curse and
+regained her senses. But it is too late. The last thing
+you ever behold is her sorrowful face; then you die.
+Your adventure is over.
+
+261~263
+
+261
+
+‘An Evil spell is the best weapon to use against an
+evil person!’ you think, and cast your Curse spell on
+the Master of Spiders. He screams as the Curse
+strikes him, and falls writhing to the ground. He
+seems to move and change; then he rises. The Curse
+has changed him into one of his own creatures. . .a
+giant grey Spider with a human face! Then you feel
+the effects of the Curse on you. Roll one die and lose
+that many points of sramrna. If you are still alive,
+the Giant Spider attacks you viciously.
+
+GIANT SPIDER SKILL 8 STAMINA 9
+
+You cannot escape. If you kill the Giant Spider, turn
+to 354.
+
+262
+‘I serve the merchant Poomchukker,’ you reply. ‘I
+don’t know if he is very good or very evil. I am
+trying to make a map of the path through the
+swamp.’ If you have already been to Willowbend,
+turn to 166. If not, turn to 115.
+
+263
+You recognize the spot where you were attacked by
+the Crab Grass. If you killed it, turn to 187. If you did
+not kill it, turn to 33.
+i 264-266
+264
+
+You cast the Wither spell on the Master of Gardens.
+Since he is nota plant himself, it has no effect — but
+he is angry when the spell travels past and kills a
+tree behind him. He gestures and throws a fire spell
+at you. Your hair bursts into flame. Quickly, you
+slap at yourself until the fire goes out; lose 2 STAMI-
+Na points from the effect of the burns. Then you
+attack the Master of Gardens with your sword. Turn
+
+to 379.
+
+This is the glade where you met the Unicorn, but
+there is nothing here now. Turn to 348.
+
+266
+He tosses you a pouch of gold. You catch it in
+mid-air and turn on your heel. Sullenly you walk
+down the dark hallway towards the awful door.
+Turn to 242.
+
+267-269
+
+267
+You hear a hiss of anger and the Thief is upon you.
+He has only a dagger, but he fights viciously.
+
+THIEF SKILL 10 STAMINA 9
+
+You may not escape, for the Thief is attacking you
+furiously. If you kill the Thief, turn to 386.
+
+268
+You see nothing in the clearing this time except fora
+few gnawed bones. You hurry on your way. Turn to
+
+269
+The fear intensifies as you run away from the Fear
+Flowers; lose another sxrti point. When you are
+past the bulk of the flowers, the fear subsides a little.
+Turn to 367. .
+d
+
+270-272
+
+270
+There are two exits. If you travel north, turn to 275.
+If you go west, turn to 331.
+
+271
+As you pass the Master of Wolves, you draw your
+sword and slash at him. Lose 1 LvcK point for this
+cowardly attack. Then turn to 120 and fight, but
+subtract 2 points from the Master's STAMINA.
+
+272
+
+Somehow, you make it back to the village. You are
+exhausted and soaking wet from falling into a mud-
+hole. Subtract 2 from your Luck and give thanks
+that you are alive at all. After a hot bath at the inn,
+you feel somewhat better. Seeking out Gronar, you
+apologize for your earlier impetuousness. He
+shakes his head and smiles slowly. ‘Well, you are
+strong and lucky, or you would not have come back
+atall,’ he says. Turn to 205.
+
+273274
+
+273
+As you hurry along the path towards the village,
+you feel your Brass Ring tingling. You look over
+your shoulder and see a black shape fly from the
+tower. Quickly, you hide in some bushes. You
+never make out exactly who or what is searching for
+you — but eventually you see it return to the tower.
+You run the rest of the way to the village, arriving
+panting and bedraggled. You had better pick
+another patron! If you want to talk to the good
+wizard Selator, turn to 335. If you want to learn
+about Poomchukker, the man of mystery, turn to
+
+27,
+
+274
+
+You cast a Curse on the evil wizard . . . the Curse
+that he gave you himself. He screams and clutches
+at his throat. Of all spells, his own Curse has the
+most potent effect on him! He falls to the floor,
+dead. Then you feel the Curse’s effect on you. Roll
+one die and lose that many points of stamina. If
+you are still alive, you start to search his sinister
+tower to see what treasures he might have hidden
+away . . . but the air is becoming thick and oppres-
+sive. Your ring is still warning you of evil — more, if
+possible, than before. You smell brimstone. If you
+want to stay for a few minutes and see what you can
+find, turn to 375. If you choose to leave immediate-
+ly, turn to 298.
+275-277
+
+275
+
+As you walk along, you stumble over a dip in the
+ground. Looking down, you see that it is actually
+the half-metre footprint of a huge hobnailed boot!
+You are entering Clearing 7. If you have been here before,
+turn to 342. If you have not been here before, keep reading.
+Rounding the bend, you see a tremendous GIANT!
+He looks angry, and he brandishes a great spiked
+club. Your ring is not warning you of evil. . . but,
+although the Giant may not be an evil creature, he is
+obviously dangerous. He bellows at you ‘YOU MAY
+NOT PASS! Will you:
+
+Attack him? Turn to 12
+
+Try to reason with him? Turn to 229
+
+Try a magical spell? Turn to 145
+276
+
+You reach into your pack and offer him the great
+Violet Jewel that you took from the head of the
+creature in the pool. He smiles broadly, looking
+more like a Frog than ever. ‘All right,’ he says,
+‘that’s a good enough reason for me!’ He takes the
+jewel. Turn to 104.
+
+277
+The Unicorn is dead. Knowing that the horn of a
+Unicorn has great magical powers, you cut off its
+horn and put it in your pack. If you would like to
+leave now, turn to 348. If you choose to stay and
+search the clearing, turn to 86.
+278-280
+
+278
+
+You want to frighten the Brigands away without
+hurting them, so you use the Fear spell. A second
+later, you step out from behind the trees, shouting
+and waving your sword. The Brigands are terrified.
+They think you must be part of an invading army,
+and they scatter, diving into the trees around the
+clearing. They cower in the mire while you run past
+them and away. You may go on, unmolested. Turn
+to1g.
+
+279
+To your dismay, the deadly Sword Trees have
+already grown back! If you want to fight with your
+sword, turn to 28. If you would prefer to use magic,
+turn to 203.
+
+280
+
+You follow the path northward. Gradually, it be-
+comes wider and the swamp less dismal. The marsh
+slowly turns into forest, and before long you see a
+sign ahead of you: ‘THIS WAY TO WILLOWBEND’. If
+you have been to Willowbend before, turn to 355. If
+you have not been here before, keep on reading. A few
+281
+
+minutes later you hear human voices and meet a
+party of Foresters, You walk with them to the town
+of Willowbend. After your adventures you only
+want to find an inn and geta good night’s sleep. The
+Foresters tell you that there are three inns in Willow-
+bend. Will you go to:
+
+The Black Bear? Turn to 395
+
+The Bent Spear? Turn to 78
+
+Tancred’s Flying Horse? Turn to 289
+281
+
+You charge the Swamp Orcs. They are surprised at
+your bravery, but they drop their bows and grasp
+their own weapons. You are fortunate that they are
+not skilled fighters, because they all attack you at
+once.
+
+First SWAMP ORC SKILL 6 STAMINA 7
+Second SWAMP ORC skiLL7 STAMINA 7
+Third SWAMP ORC - skILL6 STAMINA 5
+
+Each Swamp Ore will have a separate attack on you
+in each Attack Round, but you must choose which
+of the three you will fight. Attack your chosen Orc
+as in a normal battle. Against each of the other two
+you must throw for your Attack Strength in the
+normal way, but even if your Attack Strength is
+greater you will not wound it. You must just count
+this as though you have defended yourself against
+its blow. However, ifits Attack Strength is greater, it
+will have wounded you in the normal way. If you
+win, turn to 135.
+282-283
+
+282
+You cast the Ice spell on the Slime. Instantly you
+know you made the right choice; the Slime is a
+creature of water, and the spell freezes it solid. It is
+dead. Turn to 38.
+
+283
+
+The Master of Gardens is delighted. You promise to
+ask Selator to send him some Antherica berries, and
+you describe the path to the place where you found
+the bush. He gives you a magic gem containing one
+Good spell (you choose the type). Then you resume
+your travels. There is only one path leading from
+this clearing; you take it, going back to the west.
+Turn to 363.
+
+284-285
+
+284
+
+As the sorcerer laughs, his stony creature shuffles
+towards you. You realize that your sword will be of
+little use against a creature made of living rock.
+Thinking quickly, you bring your sword down on
+the wizard’s table, instead! Your blade cleaves the
+wood, cutting off one of the table’s legs. You scoop
+up the improvised club, dropping your sword, and
+face the statue with this much more appropriate
+weapon. Grimslade, impressed by your strength
+and quick wits, has stopped his evil laughter, and
+watches attentively as you fight.
+
+GOBLIN STATUE  sxtLL7 STAMINA 6
+
+If you destroy the Statue, turn to 156. If the fight
+goes against you, you may Escape; turn to 315.
+
+285
+
+The wicked mage is furious, and decides to exter-
+minate you right then and there. ‘Prepare to die,
+insolent worm!’ He waves his hand and casts a spell
+of weakness on you. Cut your sTAMINa in half. You
+must fight now, or die. If you want to attack with
+your sword, turn to 124. If you try to use magic
+against the wizard, turn to 256.
+286-287
+
+286
+
+Suddenly, you have an idea. You almost laugh out
+loud, but you don’t want to offend the poor Giant.
+You reach into your pack and pull out the Red
+Cloak. ‘Is this your handkerchief?’ you say, offering
+it to him. The Giant seizes it joyfully. ‘Where did
+you getit?’ he asks. You tell him about your meeting
+with the Thief. He must have been the one who
+stole it from the Giant! The Giant is crying again, but
+now with tears of happiness. He swears he will be
+your friend for ever. ‘Why have you come here?’ he
+asks. ‘Is there any way I can help you?’ You tell him
+about your quest. Are you serving:
+
+Selator? Turn to 244
+
+Grimslade? Turn to 317
+
+Poomchukker? Turn to 103
+287
+
+He does not seem dangerous, but you are not sure
+whether you should tell him your true quest. If you
+tell him you have come to collect the Amulets be-
+longing to the wizards of the swamp, turn to 198. If
+you make up a story, go to 359.
+
+288-289
+
+288
+
+Your ring is cold; you know that the Mistress of
+Birds is a good wizard. Around her neck you see the
+silver Bird Amulet you have been sent to steal. Will
+you:
+
+Attack her? Turn to 391
+Ask if she will give you the
+Amulet? Turn to 184
+Casta spell? Turn to 130
+289
+
+The Foresters said that Tancred’s Flying Horse was
+the least costly of the inns, so you go there. Indeed,
+they offer you lodging for only half a gold piece. You
+go upstairs to your room and fall asleep as soon as
+your head hits the pillow. In the middle of the night
+you are awakened by a burning sensation on your
+finger. The Brass Ring is warning you of evil! You
+leap from your bed, grabbing your sword, and a
+shadowy figure flees from the room. Barring the
+door, you go back to bed. You awake the next
+morning, feeling rested; regain 2 sTaMINA points.
+But you find that the Thief you frightened away had
+stolen some of your belongings. Lose any two
+magical gems, artefacts, or other items, except your
+Brass Ring. Test your Luck. If you are Lucky, turn to
+150. If you are Unlucky, you simply stalk southward
+out of town, towards the swamp. Turn to 343.
+290~292
+
+290
+
+You can see signs that others have walked this way
+recently. Ahead is another clearing. This is Clearing
+26. If you have been here before, turn to 323. If you have
+not been here before, keep reading. As you enter the
+clearing, an arrow whizzes past your head. You see
+three mangy-looking SWAMP ORCS armed with
+bows. The other two let their arrows fly, If you have
+the Golden Magnet charm, turn to 83. If you do not
+have it, turn to 151.
+
+291
+You cast the Fire spell on the Pool Beast, but the
+creature is slimy and wet. It does not burn at all!
+Turn to 82 and fight.
+
+292
+You explain your quest to the Master of Gardens.
+He shakes his head sadly and removes the Flower
+Amulet from around his own neck, and places it
+around yours. When it touches you, you are para-
+lysed! He looks deep into your eyes and commands
+you to tell him the truth about yourself, and you
+cannot disobey. He shakes his head. ‘You are not a
+bad person, but you serve a bad master. The kindest
+thing I can do for you is to advise you to be on your
+guard,’ He takes the Amulet back and walks away.
+Eventually you regain control of your limbs and
+leave, going west. Turn to 363.
+293-295
+
+293
+You cast the Fear spell on the Unicorn. It whinnies
+and turns quickly. In a moment it is lost from sight.
+Turn to 348.
+
+294
+You cast the Friendship spell on the Master of
+Wolves, and wait anxiously. Will it work? Sudden-
+ly, he starts to laugh. ‘Come in! Come in!’ He ushers
+you into his home, and the Wolves stand aside. If
+you would like to launch a surprise attack, turn to
+271. If you follow him and talk to him, turn to 172.
+
+295
+You find yourself in a small opening on the bank of
+the Foulbrood River. You are in Clearing 33. The
+opposite bank is at least two hundred metres away.
+You see crocodiles and other creatures in the water.
+Will you:
+
+Walk east along the river bank? Turn to 183
+Turn to the south? Turn to 94
+Cast an Ice spell to freeze
+
+the river? Turn to 89
+
+296-297
+
+296
+
+Bravely you strike out into the swamp. But, though
+youare brave, you are also very foolhardy. Though
+the magic of your Brass Ring stops you getting lost,
+you are soon tired and wounded, harried by crea-
+tures both familiar and strange. You realize that
+without more magical aid you have little hope of
+escaping from the swamp, and no chance at all to
+learn its secrets. Test your Luck. If you are Lucky, turn
+to 272. If you are Unlucky, turn to 3.
+
+297
+
+As you flee, you heara rushing sound. You turn, to
+see Grimslade coming up behind you on a flying
+carpet. You whirl round, raising your sword, Too
+late! He has cast a Strength spell upon himself. He
+catches you by the scruff of your neck and carries
+you into the air. You scream as the carpet rises
+higher. Then he drops you. You fall down, down
+. .. Then everything goes black. Your adventure is
+over.
+298-300
+
+298
+
+You hurry out of the room, down the dim hallway
+and through the awful door. Soon the tower of evil
+is behind you. You fought against men and animals,
+you risked your life ... and for what? An evil
+wizard is a dangerous and ungrateful master. And
+you realize that you were lucky to escape from
+Grimslade’s clutches so lightly. At least you still
+have your life! You know that, though your quest
+was misguided, you have done the world a service
+by ridding it of the evil wizard. You resolve that in
+the future you will be more careful about whom you
+serve. Your adventure is over.
+
+299
+
+You decide to try casting a Fear spell. Perhaps fear
+will make the creature turn aside. Quickly you cast
+the spell. The effect is amazing! The Dire Beast skids
+toa halt—then, whimpering piteously, it runs to the
+other side of the clearing and hides behind the
+boulders. If you go and attack it there, turn to 176. If
+you would rather turn and leave by the path on
+which you entered, turn to 279.
+
+300
+There is no sign of the huge Giant; he must have left.
+You continue your journey. Turn to 161.
+301
+
+301
+There are two Brigands resting in the clearing,
+which seems to be their meeting-place. When they
+see you, they scramble to their feet and attack. You
+must fight them both.
+
+First BRIGAND SKILL 8 STAMINA 10
+Second BRIGAND _ sxkILL8 STAMINA 11
+
+Both Brigands will have a separate attack on you in
+each Attack Round, but you must choose which of
+the two you will fight. Attack your chosen Brigand
+as ina normal battle. Against the other, even if your
+Attack Strength is greater you will not wound him.
+You must just count this as though you have de-
+fended yourself against his blow. However, if his
+Attack Strength is greater, he will have wounded
+you in the normal way. You may try to Escape at any
+time. If you escape, turn to 19. If you kill the two
+Brigands, turn to 246.
+
+302-303
+
+302
+You pronounce the mystic word taught to you by
+the Master of Wolves. The great beasts fawn upon
+you, their tongues lolling out. You scratch them
+behind the ears and command them to lie down.
+Turn to 247.
+
+303
+You have returned to the clearing where you met
+the horde of Scorpions. You look around anxiously
+to see whether they are still about. Yes . . . there
+they are, coming towards you from all sides! You are
+ready for them this time. Turn to 70.
+
+304
+
+304
+
+As you continue north, the swamp seems to change
+in character. It becomes less gloomy, and more like a
+tropical jungle. Brightly coloured birds flit through
+the trees. This is Clearing 14. If you have been here
+before, turn to 149. If you have not been here before, keep
+reading. Ahead of you, ona low branch, sits a huge
+red and yellow Parrot. As you come nearer, it
+speaks to you! ‘Who are you, and what is your
+business with the Mistress of Birds?’ it asks. Will
+you:
+
+Attack the Parrot? Turn to 71
+Ask to meet its mistress? Turn to 131
+
+305-307
+
+305
+
+The eastward path is well tended; the trees and
+bushes do not grow across the trail, but are trimmed
+back. Before long you reach a pleasant clearing. You
+are in Clearing 27. If you have been here before, turn to
+238. If you have not been here before, keep reading.
+Everywhere different sorts of plants are growing
+
+. . some are flowering, and they all look healthy
+and attractive. The entire glade looks too beautiful
+to be natural, and too natural to be a garden. As you
+look around, a middle-aged man approaches you.
+He is tall and broad-shouldered, and he wears
+work-stained clothes. But you know from the silver
+Flower Amulet around his neck that he is no labour-
+er, but the MASTER OF GARDENS. Your Brass
+Ring tells you that he is friendly. Are you serving:
+
+Selator? Turn to 36
+
+Poomchukker? Turn to 84
+
+Grimslade? Turn to 334
+306
+
+The Ranger is angrily waiting there. While you were
+gone, he cast the stamina spell on himself and
+regained all his stamina points. You must fight
+him again. Turn to 378.
+
+307
+You cast your Fire spell on the Fear Flowers. Many
+of them are burnt, but many more are unharmed.
+You must try to escape. Turn to 269.
+j
+
+308-311
+
+308
+Atlast the Pool Beast is dead. You use your sword to
+cut the great Violet Jewel from its forehead. Then
+you leave the clearing. The only exit takes you back
+to the west. Turn to 330.
+
+309
+You have a choice of three exits from this clearing.
+Will you go:
+
+North? Turn to 47
+
+South? Turn to 53
+
+West? Turn to 388
+310
+
+You cast the Fire spell on the Crab Grass. It is not
+dead, but it draws back, giving you a chance to leave
+safely. Turn to 187.
+
+311
+The Slime clutches at you, and its touch burns like
+acid. You scramble back. The burns reduce your
+SKILL by 2. If you run back the way you came, turn
+to 85. If you want to fight, turn to 171.
+
+312-314
+
+The Giant Scorpion lifts its claws menacingly. It is
+not badly wounded. Evidently the Dwarf was not a
+very skilled fighter.
+
+GIANT SCORPION skIL19 STAMINA 10
+
+If you decide to Escape, turn to 88. If you kill the
+Giant Scorpion, turn to 324.
+
+333
+The river is warm, and you see your chunk of ice
+melting away beneath you. All too soon it falls
+apart. You grab your sword and swim desperately
+for the river-bank, but your gear is too heavy. You
+sink to the bottom, choking on the river slime. Your
+adventure is over.
+
+314
+You have two choices. If you go north, turn to go. If
+you go east, turn to 195.
+cob ee
+
+345
+
+Test your Luck. If you are Lucky, turn to 51. If you are
+Unlucky, a section of flooring opens in front of you,
+and you fall into the hole. When you wake up, you
+find that you are bound by heavy chains. Grimslade
+is smiling at you, but it is not a pleasant smile. You
+shudder to see what he is holding in his hand. Your
+adventure is over.
+
+316
+Unfortunately, you have none of the magical gems
+left to trade. ‘Too bad,’ he says. ‘I would like to help
+you, but healing draughts are expensive, and I have
+already lost enough on this enterprise.’ If you
+would like to leave now, turn to 109. If you are angry
+enough to attack Poomchukker, turn to 341.
+
+317
+You describe your quest. The Giant scratches his
+head thoughtfully. He has heard of the wizards
+called the Masters, but he has had no dealings with
+them. When you describe them in more detail,
+though, he says, ‘I once saw a beautiful garden in
+the middle of the swamp . . . north of here and a
+little to the west, but there is no direct path, Perhaps
+that clearing belongs to the Master of Gardens?’ You
+thank him and leave. Turn to 161.
+318-319
+
+318
+‘Maybe they can help me,’ you think, and cast the
+Friendship spell on their leader. Then you step out
+and greet them. A couple of the Brigands want to
+rob you, but their leader stops them, saying that he
+likes your looks. He asks if there is any way in which
+he can help you. Turn to 214.
+
+319
+Hurriedly, you choose an exit. Will you go:
+North? Turn to 138
+East? Turn to 47
+
+West? Turn to 66
+
+320-323
+
+320
+The path dips slightly downwards and leads into a
+grassy Clearing. This is Clearing 29. If you have been
+here before, turn to 265. If you have not been here before,
+keep on reading. In the middle of the clearing lies a
+white creature. At first you think it is a horse, but
+when it turns to face you, you realize that it is a
+UNICORN. It appears to be wounded; great claw
+marks score its flank. Butit gets to its feet and lowers
+its horn at you, snorting a challenge. Will you:
+
+Run away? Turn to 368
+
+Fight it? Turn to 221
+
+Cast a spell? Turn to 119
+321
+
+Perhaps, you think, you can reach the bridge by
+swimming down the river—or maybe you will finda
+trail you can take east. Itis a long way down, so you
+prepare for it carefully. Turn to 30.
+
+322
+The Wither spell turns the Crab Grass as dry as dust.
+You knock down the dead stalks. Turn to 81.
+
+323
+You are in the clearing where you met the Swamp
+Ores. If you slew them, turn to 309. If you did not
+slay them, turn to 281 and fight them as they were
+when you escaped from them.
+324-326
+
+324
+The monster is dead. You look at the Dwarf. He
+does not seem to be breathing. Will you:
+
+Leave the clearing immediately? Turn to 88
+
+Use a Bless spell on the Dwarf? Turn to 383
+
+Search the body of the Dwarf? Turn to 42
+325
+
+You dash across before the bridge can melt. You're
+too slow! You see it dissolving beneath you, break-
+ing into sections. If you have another Ice spell, turn
+to 369. If not, turn to 43.
+
+326
+
+He looks at the broken table, the scattered books,
+the smashed crockery . . . the wreckage of the Sta-
+tue, strewn across the floor . . . and then he looks
+again at you. His face twists with anger and disdain.
+‘Why should I bother with you?’ he asks. ‘You were
+barely good enough to defeat one little Statue, and
+you've wrecked my parlour.’ Will you:
+
+Crawl to his feet to apologize? Turn to 98
+Turn and run? Turn to 315
+Remind him that /ie was the one
+
+who wanted to stage a battle
+
+in his parlour in the
+
+first place? Turn to 225
+327-328
+
+327
+
+He is much,.more dangerous than you had guessed.
+Who would have thought that such a fat and funny-
+looking man could fight so well? You turn and dive
+out of the window, hoping to escape. Alas, a crowd
+has gathered below. Your fall knocks the breath
+from your body. Before you can recover, two burly
+guards have tied your hands behind your back. You
+will spend a long time in the dungeons for your
+treachery. Your adventure is over.
+
+328
+
+The Giant does not seem such a bad fellow; he is just
+angry about something. You cast your Friendship
+spell. The Giant shakes his head. Then he laughs
+and tosses his club to the ground. ‘What am I
+saying?’ he asks. ‘It’s not your fault! I’m sorry,
+forgive me; J was angry about someone else. What
+brings you here? IfI can help you, I will.’ Happy that
+your spell avoided bloodshed, you tell him of your
+quest. Are you serving:
+
+Selator? Turn to 244
+Grimslade? Turn to 317
+Poomchukker? Turn to 103
+
+379-332
+
+329
+The clearing where you met the Master of Frogs is
+empty. In the dim light, you see a faint glow coming
+from the mushroom where he had been resting.
+You examine it closely. It seems different from the
+others. You notice human teeth-marks along one
+edge of the mushroom. You sniff it; it smells good.
+You can eat a little of the mushroom; turn to 178. Or
+you can leave and head north once again; turn to
+
+352.
+
+330
+You are in the clearing with the great hollow Jog. If
+you saw a creature here earlier, turn to 129. If you
+did not see what lived in the log, turn to 268.
+
+331
+You are back in the clearing where the great Eagle
+nested. All you see is the old tree and the nest. If you
+fought the Eagle turn to 202. If you did not fight the
+Eagle, turn to 112.
+
+332
+Ignoring the warning signal from your ring, you
+speak to the Master of Spiders in a friendly fashion.
+He answers very politely, asking you your business.
+As you start to reply, you feel a sharp pain at the
+back of your neck. The Master of Spiders laughs
+gleefully. You spin around, and see a black spider,
+as big as your hand, dangling behind you. As its
+poison courses through your veins, you slump to
+the ground, unable to move. You see the Master of
+333-334
+
+Spiders rummaging through your pack to see what
+loot he has captured. Then you feel yourself seized
+from behind. You are dragged up a tree, coated with
+spider-silk, and left to hang. In a week or two you
+will make a tasty meal for the spiders. Your adven-
+ture is over.
+
+333
+‘Lhave studied plant lore,’ replies the Ranger, ‘and I
+have heard of that plant, but I did not know it grew
+here. If you go east, you will find the abode of a
+good wizard called the Master of Gardens. If anyone
+knows where it grows, it will be him.’ You thank
+him and go on. Turn to 234.
+
+334
+Around the neck of the Master of Gardens you see
+one of the Amulets you have been sent to find. Will
+you:
+
+Attack him with your sword? Turn to 379
+Cast a magic spell? Turn to 152
+Talk to him peacefully? Turn to 37
+335
+
+335
+Ducking under a heavy cast-iron lantern, you leave
+
+the tavern. The light is unexpectedly bright outside,
+and you blink for a moment in the glare. You start
+off down the road, but realize you don’t know
+where you are going. Hailing an old man who is
+leaning out the window of his shop, you ask where
+you might find the good wizard Selator. The shop-
+keeper is suspicious at first, but soon warms to you
+and gives you directions. Soon you are lost again,
+but a ruddy-cheeked woman sets you right. Itseems
+that everyone knows where Selator lives! Eventual-
+ly, you come to a small house on the edge of the
+village. Selator, a small, stout man in a white tunic
+and linen breeches, is pottering in his garden as you
+come up the path. You tell your story. He smiles,
+and asks how you think you can get through the
+uncharted swamp. If you tell him about your ring,
+turn to 371. If you would rather keep ita secret, turn
+to 96.
+
+336-338
+
+336
+
+You are in a particularly marshy area. The ground
+squishes under your feet. The path bends slightly
+and runs alongside a Jarge pool. You can see that
+there is one other exit from this clearing. You are in
+Clearing 28. If you have been here before, turn to 137. If
+you have not been here before, keep reading. The surface
+of the pool ripples nastily, and green slime coats the
+water. You would never drink out of tis pool, you
+are sure! Suddenly the scum on top of the pool
+seems to pull together. To your amazement, it
+heaves itself out of the water and on to the path,
+blocking your way. It is a viscous lump of SLIME,
+two metres wide, which gives off a fetid odour as it
+oozes slowly towards you. Will you:
+
+Run away? Turn to 85
+Try to jump over it? Turn to 257
+Attack with your sword? Turn to 171
+Use a magic spell? Turn to 400
+
+You cast the Fire spell on the Unicorn. Its mane
+blazes briefly, but the Unicorn’s own magic soon
+negates the spell. You must fight. Turn to 221,
+
+338
+You recognize the clearing where you met the Scor-
+pion and the Dwarf. There is nothing left now but a
+few scraps of bone and leather armour. Turn to 88.
+339-340
+
+339
+
+As the bridge breaks up, you climb on to the largest
+piece you can find. It forms a sort of boat on which
+you float eastward down the river. Both banks are
+covered by thick jungle. Then, ahead of you, you
+see a huge, old bridge made of stone! If you try to
+catch it and climb up as you float beneath, turn to
+384. If you would rather float along and look for
+another means of escape, turn to 313.
+
+340
+
+Your blade sinks deep into his chest. He looks at you
+in disbelief and starts to speak. . . then he dies. The
+jagged blade slips from his fingers. Curious about
+its strange design, you pick it up. Instantly you
+realize that it is one of the Magic Swords of great
+power, which adds 2 to the sxizt of the user. No
+wonder he was such a good swordsman! You start
+to search the rest of the wizard’s sinister tower, to
+see what treasures he might have hidden away. . .
+but the air is becoming thick and oppressive. Your
+ring is still warning you of evil - more, if possible,
+than before. You smell brimstone. If you want to
+stay for a few minutes and see what you can find,
+turn to 375. If you would rather leave immediately,
+turn to 298.
+
+tad
+341-342
+
+344
+
+His casual attitude towards you, after you risked
+your life on his mission, is more than you can bear.
+You draw your sword and attack. He is surprised,
+but dodges your first blow, moving very nimbly for
+a man of his great bulk. He plucks a sword from
+behind his desk and defends himself well. You soon
+realize that he is a dangerous opponent.
+
+POOMCHUKKER | skiLLg STAMINA 14
+
+His back is to the door, so if you want to Escape, you
+must dive out of the window. To do that, turn to 327.
+Otherwise, when you reduce Poomchukker’s sta-
+MiNA to 6 or less, turn to 372.
+
+342
+You recognize the clearing where you met the
+mighty Giant. If you killed the Giant, turn to 197. If
+you did not kill him, turn to 300.
+343-345
+
+343
+You see that you are approaching the spot where
+
+you first met the Brigands. If you parted from them
+in friendship, turn to 199. If you fled from them,
+tricked them, or killed some of them, turn to 301.
+
+344
+The Wolves flatten their ears and whine; then they
+
+slink away. Turn to 247.
+
+345
+As you approach the spot where you defeated the
+
+evil Master of Spiders, you begin to feel very hot.
+Entering the clearing, you see it is full of roaring
+flames. You cannot pass. Lose one STAMINA point
+from the effect of the choking smoke. Turn to 165
+and leave the clearing by the same path on which you
+entered.
+
+346-347
+
+346
+You cast the Fear spell on the Swamp Orcs. One of
+them screams and dropping his weapons, flees into
+the marsh. The other two advance on you. Turn to
+281 and fight these two,
+
+You cast an Jllusion spell, making yourself look like
+a plant. The Master of Gardens is astounded! He
+starts to walk towards you. When he gets closer you
+try to snatch his Amulet, but the motion breaks the
+spell, and the Master of Gardens jumps away. If you
+attack him with your sword, turn to 379. If you flee
+from the clearing, turn to 363.
+348-349
+
+348
+There are four exits. Will you go:
+North? Turn to 94
+South? Turn to 157
+East? Turn to 10
+West? Turn to 204
+349
+
+You shrug your shoulders and walk out of the room,
+down the dim hallway and through the awful door.
+Ahead of you lies the village. Behind you lies the
+tower of evil. You fought men and animals, you
+risked your life . . . and for what? Evil, it seems, isa
+dangerous and ungrateful master. And you realize
+that you were lucky to escape so lightly from Grim-
+slade’s clutches. You still have your life! You resolve
+that in future you will be more careful about whom
+you serve. Your adventure is over.
+
+350-352
+
+350
+
+You are in a clearing where one huge tree rises from
+the hard, bare ground. In the tree is a gigantic nest
+made of sticks. You are in Clearing 16. If you have been
+here before, turn to 331. If you have not been here before,
+keep reading. You stop to look at the great nest. Then
+you hear a rushing of wings behind you. A huge
+EAGLE is hovering over the clearing, watching
+you. Do you have:
+
+Some Parrot Feathers? Turn to 392
+
+A silver Bird Amulet? Turn to 25
+
+Neither of these? Turn to 233
+351
+
+You are reluctant to use one of Grimslade’s own
+spells against him; it might be dangerous. Instead,
+you cast an Illusion spell — or you try to. Grimslade
+waves his hand and you feel the spell wavering and
+dying before it begins to take shape. ‘You cannot
+deceive me with those childish tricks!’ he sneers.
+‘Prepare to die, fool.’ Turn to 124.
+
+352
+The only exit from the clearing is the path you took
+to get there. You travel north, towards the place
+where a short time ago you fought the Swamp Ores.
+You grasp your sword, in case you have to fight
+again. Turn to 323.
+353-355
+
+353
+You have gravely offended the Brigands. They felt
+they were giving you a fair chance to prove yourself,
+but you would not agree to settle the matter honour-
+ably. Now you will have to fight ail of them. Turn to
+
+235.
+
+354
+Withdrawing your sword from the body of your evil
+
+foe, you sigh with relief. But all around you the
+Spiders are lurking, they start drawing closer and
+closer. You bend down and take the Spider Amulet
+from the body. When you pull it free, a spark seems
+to jump from it. Suddenly, the body bursts into
+flames! You leave hurriedly. Behind you, the flames
+are spreading, and you hope they will wipe out the
+evil Spiders as well. Turn to 165.
+
+355
+The trail towards Willowbend is now familiar. But
+when you enter the town again, something seems
+different. You feel people are watching you, and
+you hear whispering voices. You realize that the tale
+of your exploits has become common knowledge.
+You feel uneasy about the greedy glances cast in
+your direction. As you turn into a side street, you
+356-357
+
+are aware that you are being followed. You turn,
+and two ragged CUTPURSES set upon you, hoping
+to steal the treasure they are sure you have brought
+back from the swamp. There is no time for magic
+and nowhere to run to; you must fight them.
+
+First CUTPURSE SKILL7 STAMINA 5
+Second CUTPURSE sx 8 STAMINA 5
+
+Fight one, and then the other. If you kill them both,
+turn to 186.
+
+356
+You cast the Fear spell on the Pool Beast, but it does
+no good. The creature is too stupid to know the
+meaning of fear. It attacks you. Turn to 82.
+
+357
+These two arrows are also badly aimed . . . but they
+
+turn in flight and hit you in the chest! Lose 5 points
+of STAMINA. If youare still alive, you realize that the
+Golden Magnet charm you took from the dead
+fighter is actually cursed! It attracts arrows — it was
+the undoing of its last owner, and it has nearly killed
+you. The Orcs are reaching for more arrows. Will
+you:
+
+Attack with your sword? Turn to 281
+Use a magic spell? Turn to 399
+Run for your life? Turn to 309
+358-360
+
+358
+You take the money he has given you, and leave.
+Butyou wonder. . . did you do the right thing? You
+fear your money is tainted, but you know that you
+can do nothing about it. Next time you go wander-
+ing you will be more careful about whom you serve.
+Your adventure is over.
+
+359
+You doubt that the Master of Frogs would be as
+
+friendly if he knew your true mission, so you make
+upa story. ‘lamin the service of Sukumvit, Baron of
+Fang,’ you say. ‘He has sent me to Scorpion Swamp
+to seek out new beasts for his Deathtrap Dungeon.
+When I came to the village outside the swamp, I
+heard talk about the Masters, and I vowed to learn
+more. Who are you, and why did you come here?’
+Test your Luck. If you are Lucky, turn to 162. If youare
+Unlucky, turn to 16.
+
+360
+‘Well struck’ cries the Brigand Leader, clutching his
+arm where your blade nicked him. ‘That was a good
+fight.’ One of his companions binds up his wound,
+while another offers you water from his own flask.
+You all laugh and joke as though you are old
+friends. Turn to 214.
+361-362
+
+361
+
+You cast your Friendship spell. The Master of Spid-
+ers looks startled for a moment, then smiles. ‘Ah
+. . .Lsee that you are friendly!’ he says. You smile in
+return and begin to tell him about your quest. Then
+you feel a sharp pain at the back of your neck. The
+Master of Spiders laughs gleefully. You spin
+around, and see a black spider, as big as your hand,
+dangling behind you. As its poison courses through
+your veins, you slump to the ground, unable to
+move. You see the Master of Spiders rummaging
+through your pack to see what loot he has captured.
+Then you feel yourself seized from behind. You are
+dragged up a tree, coated with spider-silk, and left
+to hang. Ina week or two you will make a tasty meal
+for the spiders. Your adventure is over.
+
+362
+
+You skilfully wield your mighty sword. The Sword
+Trees are no match for your prowess, and soon each
+reaching limb has been lopped off. You look around
+the clearing. You find nothing except a few seeds
+that look as though they might have come from the
+Sword Trees. You pocket them and go on. Turn to
+22.
+363-365
+
+363
+You return to the clearing where you met the Ran-
+ger. Did you:
+
+Part from him in friendship? Turn to 133
+
+Slay him? Turn to 234
+
+Fight him and flee? Turn to 306
+364
+
+You are once again in the clearing with the healing
+pool. As you walk towards it, an arrow zips by your
+head — then another. You cannot see where they are
+coming from. You run back along the path the way
+you came. Turn to 47.
+
+365
+You decide that a Fear spell will give you your best
+chance in the battle ahead. You cast it on Grimslade,
+but he waves his hand and it rebounds on to you!
+The icy hand of terror grips your heart. Lose 1 SKILL
+point. Turn to 124,
+
+366-368
+
+366
+You have defeated the Giant. You search the huge
+body, but find nothing of value except his huge
+brass-bound club, which is too big for you to carry.
+Turn to 161.
+
+367
+There are two exits from the clearing. If you want to
+go north, turn to 304. If you want to go east, turn to
+265.
+
+368
+You must leave by the same path you took to reach
+this clearing. Turn to 348 and take that path.
+369-371
+
+369
+
+You realize that even with another Ice spell, the
+bridge will not hold you. Instead, you cast the spell
+beneath you, forming a chunk of ice on which you
+float eastward down the river. Both banks are co-
+vered by thick jungle. Then, ahead of you, you see a
+huge old bridge made of stone! If you try to catch it
+and climb up as you float beneath, turn to 384. If you
+would rather float along and look for another means
+of escape, turn to 313.
+
+370
+The Ice spell creates a solid bridge which you can
+cross easily. You may travel north or south from
+here. If you go north, turn to 157. If you go south,
+turn to 398.
+
+371
+He nods. ‘Yes, you are the one I have been waiting
+for. You can do what must be done.’ He smiles at
+you, and you feel very proud indeed. ‘I will tell you
+about the quest. Once upon a time, there grew a
+371
+
+plant called Antherica. It had many healing prop-
+erties, and was of great value to the makers of white
+magic. But it was of no value in Evil spells, and so
+the forces of Evil set out to destroy the plant every-
+where. It was thought that they had succeeded, But,
+through my studies and my crystal ball, I have
+learned that a single plant of Antherica survives,
+deep in Scorpion Swamp. It is a small dark-green
+bush, with sweet-smelling white flowers and pur-
+ple berries. If you can bring me back just one of
+those berries, through my magic I can cause the
+Antherica to bloom again for white magicians every-
+where.
+
+‘There is plenty of treasure to be found in the
+swamp,’ the little wizard goes on, ‘and you may
+keep all you win. All I need is a single berry of
+Antherica. But, although a fighter like you is well
+fitted to survive in the swamp, there are magic
+forces there against which a sword is of little use. I
+cannot teach you magic, but I can do the next best
+thing. I can give you six magic gems. Each of these
+will contain one magic spell, but when you have
+used them all, you must rely on your keen sword
+and your sharp wits.’
+
+4 we
+
+372
+
+You discuss with Selator which spells you should
+choose. You may pick six spells from the Magic
+Spells listed at the front of the book — but only from
+the lists of Neutral and Good spells. You may not pick
+any Evil spells! Write down your chosen spells on
+your Adventure Sheet.
+
+With the Spell Gems tucked safely in your pouch,
+you say farewell to Selator and strike off towards the
+swamp. Although your trip will be dangerous, you
+are buoyed up by the old wizard’s wisdom and
+kindness. Your quest is this: find an Antherica berry
+and bring it back to Selator. Turn to g and begin your
+adventure.
+
+372-374
+
+372
+
+You hear shrieks from below. The Goblin serving-
+maid is calling for help. ‘Guards! He is killing the
+master! Come quickly!’ While you are calculating
+your chances, a door bursts open behind Poom-
+chukker, and three guards in red chainmail run into
+the room with crossbows at the ready. They do not
+wait for orders, but fire at you immediately. The
+darts pierce your chest, and you sink to the floor.
+Your adventure is over.
+
+373
+Test your Luck. If you are Lucky, you attack so quickly
+
+that you wound the wizard. Turn to 225, but sub-
+tract 2 points from your foe's STAMINA before you
+start. If you are Unlucky, your first blow misses; turn
+to 225 and fight normally.
+
+374
+A monster like this, you realize, is best fought with
+
+magic. Which spell will you try?
+
+Fear? Turn to 299
+Hlusion? Turn to 60
+Growth? Turn to 228
+Friendship? Turn to 160
+None of these? Turn to 11 and
+
+choose again.
+375-376
+
+375
+You ignore the awful odour and search the tower,
+
+humming happily to yourself as you stuff books and
+gold statues into a sack. Suddenly you hear a hiss-
+ing sound. You spin around, and see a great black
+shadow. Two slitted, glowing eyes regard you from
+the darkness. ‘Thank you, mortal,’ says the hissing
+voice. ‘I have waited a long time for his soul. Now it
+is mine.’ You flee in fear as the shadow hovers over
+Grimslade’s body. But you don’t have time to
+escape. You have not yet reached the front door
+when the smell of brimstone becomes unbearable.
+Then the entire tower glows red-hot and explodes.
+Your adventure is over.
+
+376
+
+You tell him that you are only trying to get to
+Willowbend and back. A look of surprise appears on
+his froggy face. ‘Willowbend lies far to the north and
+west,’ he says. ‘You seem like a nice sort, though, so
+[will tell you something. Do not follow the Will-o’-
+the-wisp, or your life will be forfeit. Now, good-
+day, I have work to do.’ Abruptly, he vanishes. His
+Frogs croak loudly and hop away. You look around
+the clearing, but find nothing at all; the only path
+leads back to the north. You turn around and head
+back towards the place where you met the Swamp
+Orcs. Turn to 323.
+377-379
+
+Roll two dice. If the total is less than or equal to your
+STAMINA, you jump over them. If the total is greater
+than your sTAMINA, you do not leap quite far
+enough, and you are stung. Lose 3 points of stam1-
+nA. If you are still alive, turn to 319.
+
+378
+The RANGER is not a foolish man, and he senses
+you are in the service of an evil wizard. He jumps
+down from his boulder and challenges you.
+
+RANGER SKILL 10 STAMINA 10
+
+You can Escape at any time; if you do, turn to 234. If
+you slay the Ranger, turn to 219.
+
+379
+You draw your sword and slash at the Master of
+
+Gardens. He is amazed. ‘Why are you attacking
+me? he cries, and flees from you. Since he wears no
+armour, he runs quickly. He picks up a sickle and
+makes a stand at the other end of the glade. As you
+reach him, he waves his hand, casting a spell.
+Subtract 3 from your SKILL.
+
+MASTER OF
+GARDENS SKILL? STAMINA 10
+
+You may Escape at any time by running back to the
+west; turn to 363. If you slay the Master of Gardens,
+turn to 251.
+380-381
+
+380
+You use the Wither spell. The Slime changes colour
+when the spell strikes it, turning brown instead of
+green, butit shows no other effect. If you want to try
+another spell, turn to 400. If you want to try another
+tactic entirely, turn to 336 and choose again.
+
+381
+
+You do not want to attack the injured Unicorn; you
+have always heard that they are good creatures, You
+cast the Bless spell, instead. The creature quivers as
+the spell strikes it. Then it whinnies joyfully. The
+wounds along its side are almost healed, and the
+Unicorn is much stronger. It is still reluctant to
+approach a human, but it walks over to the side of
+the clearing and digs at the ground with its horn.
+Then it looks at you and walks away. You look at the
+ground where it had been digging. There are two
+Magic Gems there, like the ones Selator gave you.
+You recognize one as a Friendship spell and one asa
+spell to restore LUCK. You are certain the Unicorn
+can understand you as you thank it and go on your
+way. Turn to 348.
+382-384
+
+382
+
+You realize you are in the clearing with the pool of
+Quicksand. You will not blunder into it unprepared
+this time! You have thought of several things you
+can do. If you use an Ice spell, you can freeze the
+Quicksand and walk across, but the ice will quickly
+melt behind you. If you use a Growth spell, you can
+make the vines around the pool grow and give youa
+safe path, both now and at any time you return to
+this clearing! If you have either of these spells, you
+can use it to cross safely; turn to 270. If you have
+neither of these spells, will you:
+
+Try to jump across? Turn to 190
+Turn and take another path? Turn to 223
+
+383
+Hoping to save the Dwarf, you cast your Bless spell
+on him. His eyelids flutter, and for a moment you
+think you have succeeded. But this is not a powerful
+enough spell to bring someone back from the dead.
+Turn to 324 and make another choice.
+
+384
+You have no trouble scaling the side of the old
+bridge. The huge blocks of stone have wide cracks
+between them, which make it easy to climb. You
+draw yourself up and over the bridge’s railing and
+jump down on to it. Turn to 101.
+385-387
+
+385
+You are reluctant to use one of Grimslade’s own
+spells against him; it might be dangerous. Instead,
+you cast the Fire spel! on him. His tong robes burst
+into flame, but Grimslade is not hurt. He laughs
+maniacally at you, with his robes burning around
+him. Turn to 124.
+
+386
+
+The body of the Thief lies at your feet. He was notas
+clever as he thought he was! You examine his pack.
+The only thing you find that looks useful is a large
+Red Cloak, which you may add to your own posses-
+sions if you like. Munching a bit of cheese you took
+from his picnic basket, you continue on your way.
+Turn to 179.
+
+387
+You decide to cast a spell on them from your hiding-
+place. Which spell will you use?
+
+Curse? Turn to 107
+Fear? Turn to 278
+Illusion? Turn to 148
+Friendship? Turn to 318
+None of these? Turn to 65 and
+
+choose again.
+= <=
+SS Ss
+SSS f
+
+388-390
+
+388
+
+After a short walk, you enter a pleasant, grassy
+clearing. You see two other exits. This is Clearing 24.
+If you have been here before, turn to 263. If you have not
+been here before, keep reading. You stand still for a
+moment, looking around you. Then you realize that
+there is something strange about the grass. It is
+growing up around you, so fast you can see the
+movement. As you watch, you see nippers form at
+the end of the stalks. They snap at you. You are in
+the middle of a patch of CRAB GRASS! If you attack
+it with your sword, turn to 134. If you want to use
+magic, turn to 167.
+
+389
+You have no doubt, from Selator’s description, that
+you have found the Antherica plant. Half your
+mission is completed. Now you must return to the
+village with the precious berry. The only path leads
+back to the south. Turn to 342.
+
+390
+You have a choice of three paths. They all seem
+
+rather swampy and hazardous. Will you go:
+
+North? Turn to 144
+East? Turn to 209
+West? Turn to 195
+j
+
+391-392
+
+39t
+You draw your sword and step towards her. She
+regards you, not with fright, but with sorrow. Sud-
+denly your view is obscured by hundreds of birds
+flashing past. When you can see again, she is gone.
+Lose 2 LUCK points. Turn to 217.
+
+392
+The Eagle knows that you are an enemy and attacks.
+You have no chance to escape, for it is larger and
+faster than you. You must trust your sword.
+
+EAGLE SKILLZ STAMINA 6
+
+If you slay the Eagle, turn to 132.
+393-394
+
+393
+You are certain that the Wither spell was intended
+
+for just such a situation. Quickly, you cast it on the
+Sword Trees. To your delight, they immediately
+turn brown and collapse. You look around the
+clearing. You find nothing except a few seeds which
+look as though they might have come from the
+Sword Trees. You pocket them and go on. Turn to
+22.
+
+394
+By now you have learned caution. You watch the
+
+pool and the clearing. A large Lizard goes to the
+pool and drinks, then waddles off again. You see
+nothing else, If you leave the clearing, turn to 47. If
+you drink from the pool, turn to 77.
+
+4 Wwe
+\wege
+
+Ni
+
+395
+
+395
+You decide to go to the closest — the Black Bear.
+There are many convivial folk in the tavern down-
+stairs, but you pay the innkeeper a gold piece and go
+straight up to your room. But you cannot sleep
+because of the noise from the merry-makers below.
+Lose 1 STAMINA point. Will you:
+
+Pull the pillow over your head
+
+and ignore them? Turn to 116
+Go downstairs with your sword
+
+and threaten them? Turn to 236
+Leave and go to the Bent Spear? Turn to 78
+
+Leave and go to Tancred’s
+Flying Horse? Turn to 289
+
+396-397
+
+396
+
+‘Imagine that!’ says the Master of Gardens. ‘A bush
+of Antherica, still alive, and somewhere in this
+swamp! I felt that this place had some virtue when I
+found it. That must have been it.’ He sits still for a
+time, his attention turned inward. Then he opens
+his eyes. ‘The plant that you are seeking lies directly
+to the east of here. But there is no direct route; you
+must go west to find it, and then circle counter-
+clockwise.’ He wishes you good luck and gives you
+a magic gem containing one Good spell (you choose
+which one). Then you resume your travels. There is
+only one path leading to this clearing; you take it,
+going back to the west. Turn to 363.
+
+397
+You want nothing to do with this creature. You turn
+
+and leave as quickly as possible. The only exit leads
+you back to the west. Turn to 330.
+398-400
+
+398
+
+You enter a medium-sized clearing containing a
+small house built of logs. You are in Clearing 4. If you
+have been here before, turn te 239. If you have not been
+here before, keep on reading. You hear the low growling
+of adog. Then you see that itis not a dog, buta Wolf,
+watching you from beside the house. The door
+opens, and a big burly man steps out. Another Wolf
+follows him. The man carries a sword and is dressed
+as a forester, but you know from the silver Wolf
+Amulet he wears that he is the MASTER OF
+WOLVES. You hail him in a friendly fashion. He
+answers gruffly, ordering you away. Will you:
+
+Obey and leave? Turn to 314
+Casta spell? Turn to 191 .
+Attack him? Turn to 120
+
+399
+Which spell will you use against the Swamp Orcs?
+
+Fear? Turn to 346
+Mlusion? Turn to 169
+Neither of these? Turn to 281
+400
+Which spell will you try against the Slime?
+Fire? Turn to 188
+Wither? Turn to 380
+Ice? Turn to 282
+None of these? Turn to 336 and
+
+choose again.
+Part story, part game, this) is a’ book in|
+which YOU become the hero!
+
+You're no fool. All your life you've heard
+tales of Scorpion Swamp and how it is
+criss-crossed with treacherous paths
+leading to the haunts of its disgusting
+denizens. One step out of place spells
+a certain and lingering death. But now,
+the swamp holds out the lure of treasure
+and glory — and you cannot resist the
+challenge!
+
+Two dice, a pencil and an eraser are all
+you need to make your journey. YOU
+decide which way to go, which dangers
+to risk and which monsters to fight.
+
+FIGHTING FANTASY BOOKS
+a world-wide sensation!
+
+Cover and illustrations by Duncan Smith
+
