@@ -19,6 +19,9 @@ export {
 // Circuit Breaker
 export { getCircuitBreakerState } from './circuit-breaker.js';
 
+// Error Handler
+export { classifyLLMError, calculateRetryDelay, type LLMError } from './error-handler.js';
+
 // Prompt Builder
 export {
   getBiomeTone,
