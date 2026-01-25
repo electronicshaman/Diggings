@@ -16,6 +16,9 @@ export {
   type LLMCompletionResult,
 } from './llm-client.js';
 
+// Circuit Breaker
+export { getCircuitBreakerState } from './circuit-breaker.js';
+
 // Prompt Builder
 export {
   getBiomeTone,
