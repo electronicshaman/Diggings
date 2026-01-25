@@ -106,13 +106,46 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (To be filled by roadmap) | | |
+| STREAM-01 | Phase 4 | Pending |
+| STREAM-02 | Phase 5 | Pending |
+| STREAM-03 | Phase 5 | Pending |
+| STREAM-04 | Phase 5 | Pending |
+| GEN-01 | Phase 6 | Pending |
+| GEN-02 | Phase 5 | Pending |
+| GEN-03 | Phase 2 | Pending |
+| GEN-04 | Phase 2 | Pending |
+| QUAL-01 | Phase 3 | Pending |
+| QUAL-02 | Phase 3 | Pending |
+| QUAL-03 | Phase 3 | Pending |
+| QUAL-04 | Phase 3 | Pending |
+| PROV-01 | Phase 8 | Pending |
+| PROV-02 | Phase 8 | Pending |
+| PROV-03 | Phase 8 | Pending |
+| PROV-04 | Phase 8 | Pending |
+| PROV-05 | Phase 8 | Pending |
+| PROV-06 | Phase 8 | Pending |
+| PROV-07 | Phase 8 | Pending |
+| INTG-01 | Phase 1 | Pending |
+| INTG-02 | Phase 2 | Pending |
+| INTG-03 | Phase 2 | Pending |
+| INTG-04 | Phase 7 | Pending |
+| INTG-05 | Phase 2 | Pending |
+| CONF-01 | Phase 9 | Pending |
+| CONF-02 | Phase 9 | Pending |
+| CONF-03 | Phase 9 | Pending |
+| CONF-04 | Phase 9 | Pending |
+| CONF-05 | Phase 9 | Pending |
+| ERR-01 | Phase 2 | Pending |
+| ERR-02 | Phase 2 | Pending |
+| ERR-03 | Phase 1 | Pending |
+| ERR-04 | Phase 1 | Pending |
+| ERR-05 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 31 total
-- Mapped to phases: (pending roadmap)
-- Unmapped: (pending roadmap)
+- v1 requirements: 34 total
+- Mapped to phases: 34/34 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-25*
-*Last updated: 2026-01-25 after initial definition*
+*Last updated: 2026-01-25 after roadmap creation*
