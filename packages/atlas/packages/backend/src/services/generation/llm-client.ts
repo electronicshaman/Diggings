@@ -9,6 +9,7 @@ import { db } from '../../db/index.js';
 import { llmProviders, generationSettings } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
 import { completeWithCircuitBreaker } from './circuit-breaker.js';
+import { classifyLLMError, calculateRetryDelay } from './error-handler.js';
 
 // Provider types
 export type LLMProviderType = 'openai' | 'openrouter' | 'anthropic';
@@ -199,25 +200,19 @@ export async function completeWithRetry(
       return await completeWithCircuitBreaker(options);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
+      const classified = classifyLLMError(lastError);
 
-      // Don't retry on auth errors (401, 403)
-      if (
-        lastError.message.includes('401') ||
-        lastError.message.includes('403') ||
-        lastError.message.includes('unauthorized') ||
-        lastError.message.includes('forbidden')
-      ) {
+      // Don't retry non-retryable errors
+      if (!classified.retryable) {
         throw lastError;
       }
 
-      // Don't retry when circuit breaker is open
-      if (lastError.message.includes('circuit breaker is open')) {
-        throw lastError;
-      }
+      // Log retry attempt
+      console.log(`[LLM Retry] Attempt ${attempt + 1}/${retries + 1}: ${classified.userMessage}`);
 
-      // Exponential backoff: 2^attempt * 1000ms
+      // Wait with exponential backoff + jitter before next attempt
       if (attempt < retries) {
-        const delay = Math.pow(2, attempt) * 1000;
+        const delay = calculateRetryDelay(attempt);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
