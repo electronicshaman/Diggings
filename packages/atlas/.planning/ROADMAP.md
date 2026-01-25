@@ -33,10 +33,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Stream includes heartbeat pings every 10-15 seconds to detect connection drops
   3. Anti-buffering headers (X-Accel-Buffering: no) prevent proxy buffering
   4. Generation jobs persist to database and survive connection drops
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — SSE streaming with heartbeat, anti-buffering headers, and job persistence
 
 ### Phase 2: Core Generation Pipeline
 **Goal**: Complete 3-stage generation pipeline (outliner → expander → critic) executes successfully for single nodes
@@ -165,7 +165,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Streaming Foundation | 0/1 | Not started | - |
+| 1. Streaming Foundation | 0/1 | Planned | - |
 | 2. Core Generation Pipeline | 0/1 | Not started | - |
 | 3. Quality Control | 0/1 | Not started | - |
 | 4. Frontend Streaming Client | 0/1 | Not started | - |
