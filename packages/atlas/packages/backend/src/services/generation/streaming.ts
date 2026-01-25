@@ -114,26 +114,82 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
         });
 
         // Handle completion or failure
-        if (result.stage === 'completed') {
-          // Update job to completed
-          await updateJobStatus(jobId, {
-            status: 'completed',
-            progress: 100,
-            currentStage: 'completed',
-            result: result,
-          });
+        if (result.stage === 'completed' && result.content) {
+          try {
+            // Save to database
+            const savedNodeId = await saveNodeToDatabase({
+              nodeId: request.nodeId || undefined,
+              nodeType: request.nodeType,
+              biome: request.biome,
+              name: request.name,
+              themes: request.themes,
+              entityTypes: request.entityTypes,
+              content: result.content,
+              criticScore: result.critic?.score,
+              // Type-specific fields from nodeMetadata
+              enemyTypeHooks: request.nodeMetadata?.enemyTypeHooks,
+              environmentalContext: request.nodeMetadata?.environmentalContext,
+              consequenceHooks: request.nodeMetadata?.consequenceHooks,
+              dilemmaType: request.nodeMetadata?.dilemmaType,
+              traderArchetype: request.nodeMetadata?.traderArchetype,
+              pricingHooks: request.nodeMetadata?.pricingHooks,
+              restType: request.nodeMetadata?.restType,
+              interruptionChance: request.nodeMetadata?.interruptionChance,
+              dreamHooks: request.nodeMetadata?.dreamHooks,
+              travelEventHooks: request.nodeMetadata?.travelEventHooks,
+              environmentalStorytelling: request.nodeMetadata?.environmentalStorytelling,
+              conditionHooks: request.nodeMetadata?.conditionHooks,
+              actChangeTrigger: request.nodeMetadata?.actChangeTrigger,
+              narrativeSummary: request.nodeMetadata?.narrativeSummary,
+              worldStateShifts: request.nodeMetadata?.worldStateShifts,
+              estimatedCombatDifficulty: request.nodeMetadata?.estimatedCombatDifficulty,
+            });
 
-          // Send completion event
-          controller.enqueue(
-            encoder.encode(
-              formatSSE('complete', {
-                jobId,
-                outline: result.outline,
-                content: result.content,
-                critic: result.critic,
-              })
-            )
-          );
+            // Update job with final nodeId
+            await updateJobStatus(jobId, {
+              status: 'completed',
+              progress: 100,
+              currentStage: 'completed',
+              result: { ...result, nodeId: savedNodeId },
+            });
+
+            // Send completion event with nodeId
+            controller.enqueue(
+              encoder.encode(
+                formatSSE('complete', {
+                  jobId,
+                  nodeId: savedNodeId,
+                  outline: result.outline,
+                  content: result.content,
+                  critic: result.critic,
+                })
+              )
+            );
+          } catch (dbError) {
+            // Database save failed, but generation succeeded
+            // Still send completion but note the save failure
+            console.error('Failed to save generated node to database:', dbError);
+
+            await updateJobStatus(jobId, {
+              status: 'completed',
+              progress: 100,
+              currentStage: 'completed',
+              result: result,
+              error: 'Generated but failed to save: ' + (dbError instanceof Error ? dbError.message : String(dbError)),
+            });
+
+            controller.enqueue(
+              encoder.encode(
+                formatSSE('complete', {
+                  jobId,
+                  outline: result.outline,
+                  content: result.content,
+                  critic: result.critic,
+                  saveError: 'Failed to save to database',
+                })
+              )
+            );
+          }
         } else {
           // Update job to failed
           await updateJobStatus(jobId, {
@@ -209,9 +265,6 @@ function getStageMessage(stage: string, progress: number): string {
   const baseMessage = messages[stage] || 'Processing...';
   return `${baseMessage} (${progress}%)`;
 }
-
-// Legacy exports for backward compatibility
-export type { SSEMessage, SSEMessageType };
 
 /**
  * Create SSE stream (deprecated - use streamGeneration)
