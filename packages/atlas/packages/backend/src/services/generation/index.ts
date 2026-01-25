@@ -70,6 +70,7 @@ export {
 
 // Streaming
 export {
+  streamGeneration,
   createSSEStream,
   streamSSE,
   type SSEMessage,
