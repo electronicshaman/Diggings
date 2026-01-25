@@ -1,0 +1,363 @@
+[
+  {
+    "nodeType": "combat",
+    "sequenceKey": "combat_standard",
+    "beatStructure": [
+      { "role": "setup", "intent": "Environmental context + enemy introduction", "required": true },
+      { "role": "escalation", "intent": "Threat intensifies, stakes raised", "required": true },
+      { "role": "choice", "intent": "Combat prompt - player must fight", "required": true }
+    ],
+    "weight": 5,
+    "actConstraints": null,
+    "requiredTags": ["direct", "confrontation"]
+  },
+  {
+    "nodeType": "combat",
+    "sequenceKey": "combat_ambush",
+    "beatStructure": [
+      { "role": "setup", "intent": "Deceptive calm, false safety", "required": true },
+      { "role": "reveal", "intent": "Sudden threat emergence", "required": true },
+      { "role": "escalation", "intent": "No time to prepare", "required": true },
+      { "role": "choice", "intent": "Fight or flee", "required": true }
+    ],
+    "weight": 4,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["surprise", "tension", "fear"]
+  },
+  {
+    "nodeType": "combat",
+    "sequenceKey": "combat_territorial",
+    "beatStructure": [
+      { "role": "setup", "intent": "Enter claimed territory", "required": true },
+      { "role": "escalation", "intent": "Warning signs, territorial display", "required": true },
+      { "role": "choice", "intent": "Retreat, negotiate, or fight", "required": true },
+      { "role": "consequence", "intent": "Result of approach", "required": false }
+    ],
+    "weight": 3,
+    "actConstraints": null,
+    "requiredTags": ["warning", "choice", "negotiation"]
+  },
+  {
+    "nodeType": "combat",
+    "sequenceKey": "combat_hunt",
+    "beatStructure": [
+      { "role": "setup", "intent": "Signs of being watched", "required": true },
+      { "role": "tension", "intent": "Stalked, hunted feeling", "required": true },
+      { "role": "reveal", "intent": "The hunter reveals itself", "required": true },
+      { "role": "choice", "intent": "Desperate combat", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [3, 4] },
+    "requiredTags": ["predator", "dread", "stalking"]
+  },
+  {
+    "nodeType": "combat",
+    "sequenceKey": "combat_desperate",
+    "beatStructure": [
+      { "role": "setup", "intent": "Dire circumstances force confrontation", "required": true },
+      { "role": "escalation", "intent": "No good options, only bad and worse", "required": true },
+      { "role": "choice", "intent": "Fight despite the odds", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["survival", "desperation", "resource"]
+  },
+  {
+    "nodeType": "choice",
+    "sequenceKey": "choice_standard",
+    "beatStructure": [
+      { "role": "setup", "intent": "Situation description", "required": true },
+      { "role": "escalation", "intent": "Present the moral/practical/survival choice", "required": true },
+      { "role": "choice", "intent": "Player selects from options", "required": true },
+      { "role": "consequence", "intent": "Result varies by option selected", "required": false }
+    ],
+    "weight": 5,
+    "actConstraints": null,
+    "requiredTags": ["decision", "moral"]
+  },
+  {
+    "nodeType": "choice",
+    "sequenceKey": "choice_revelation",
+    "beatStructure": [
+      { "role": "setup", "intent": "Discovery of something unexpected", "required": true },
+      { "role": "reveal", "intent": "The true nature becomes clear", "required": true },
+      { "role": "reflection", "intent": "Process what this means", "required": true },
+      { "role": "choice", "intent": "Decide how to respond to the truth", "required": true }
+    ],
+    "weight": 4,
+    "actConstraints": null,
+    "requiredTags": ["discovery", "revelation", "mystery"]
+  },
+  {
+    "nodeType": "choice",
+    "sequenceKey": "choice_temptation",
+    "beatStructure": [
+      { "role": "setup", "intent": "Opportunity presents itself", "required": true },
+      { "role": "escalation", "intent": "The temptation grows stronger", "required": true },
+      { "role": "foreshadow", "intent": "Hint at potential consequences", "required": true },
+      { "role": "choice", "intent": "Take the risk or walk away", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": null,
+    "requiredTags": ["temptation", "greed", "consequence"]
+  },
+  {
+    "nodeType": "choice",
+    "sequenceKey": "choice_urgent",
+    "beatStructure": [
+      { "role": "setup", "intent": "Sudden crisis demands response", "required": true },
+      { "role": "escalation", "intent": "No time to think, must act", "required": true },
+      { "role": "choice", "intent": "Snap decision required", "required": true }
+    ],
+    "weight": 4,
+    "actConstraints": null,
+    "requiredTags": ["pressure", "time", "stress"]
+  },
+  {
+    "nodeType": "choice",
+    "sequenceKey": "choice_aftermath",
+    "beatStructure": [
+      { "role": "setup", "intent": "Confronting the results of past actions", "required": true },
+      { "role": "reflection", "intent": "What has been lost or gained", "required": true },
+      { "role": "choice", "intent": "How to move forward", "required": true },
+      { "role": "consequence", "intent": "The path chosen", "required": false }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["consequence", "reflection", "processing"]
+  },
+  {
+    "nodeType": "trade",
+    "sequenceKey": "trade_standard",
+    "beatStructure": [
+      { "role": "setup", "intent": "Trader introduction, atmosphere", "required": true },
+      { "role": "escalation", "intent": "Goods available, price hints", "required": true },
+      { "role": "choice", "intent": "Optional bargaining beat", "required": false },
+      { "role": "consequence", "intent": "Transaction outcome", "required": false }
+    ],
+    "weight": 5,
+    "actConstraints": null,
+    "requiredTags": ["commerce", "neutral"]
+  },
+  {
+    "nodeType": "trade",
+    "sequenceKey": "trade_suspicious",
+    "beatStructure": [
+      { "role": "setup", "intent": "Trader seems off, something wrong", "required": true },
+      { "role": "tension", "intent": "Unspoken wrongness in the exchange", "required": true },
+      { "role": "escalation", "intent": "Goods available but at what cost?", "required": true },
+      { "role": "choice", "intent": "Trade anyway or leave", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["mystery", "unease", "secrets"]
+  },
+  {
+    "nodeType": "trade",
+    "sequenceKey": "trade_desperate",
+    "beatStructure": [
+      { "role": "setup", "intent": "Need outweighs caution", "required": true },
+      { "role": "escalation", "intent": "Trader knows you need this", "required": true },
+      { "role": "choice", "intent": "Pay the price or go without", "required": true },
+      { "role": "consequence", "intent": "The cost of survival", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": null,
+    "requiredTags": ["desperation", "survival", "hard_choices"]
+  },
+  {
+    "nodeType": "trade",
+    "sequenceKey": "trade_opportunity",
+    "beatStructure": [
+      { "role": "setup", "intent": "Unexpected good fortune", "required": true },
+      { "role": "relief", "intent": "Finally, something going right", "required": true },
+      { "role": "escalation", "intent": "Good deals available", "required": true },
+      { "role": "choice", "intent": "What to prioritize", "required": false }
+    ],
+    "weight": 4,
+    "actConstraints": { "acts": [1, 2] },
+    "requiredTags": ["fortune", "luck", "windfall"]
+  },
+  {
+    "nodeType": "rest",
+    "sequenceKey": "rest_standard",
+    "beatStructure": [
+      { "role": "setup", "intent": "Rest location description", "required": true },
+      { "role": "escalation", "intent": "Recovery beat (or interruption if risky)", "required": true },
+      { "role": "consequence", "intent": "What player gained/lost", "required": true }
+    ],
+    "weight": 5,
+    "actConstraints": null,
+    "requiredTags": ["recovery", "respite"]
+  },
+  {
+    "nodeType": "rest",
+    "sequenceKey": "rest_uneasy",
+    "beatStructure": [
+      { "role": "setup", "intent": "Finding a place to rest", "required": true },
+      { "role": "tension", "intent": "Cannot fully relax, something feels wrong", "required": true },
+      { "role": "relief", "intent": "Nothing happens... this time", "required": true },
+      { "role": "consequence", "intent": "Partial recovery, lingering unease", "required": true }
+    ],
+    "weight": 4,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["tension", "unease", "watchful"]
+  },
+  {
+    "nodeType": "rest",
+    "sequenceKey": "rest_dream",
+    "beatStructure": [
+      { "role": "setup", "intent": "Sleep comes, but so do dreams", "required": true },
+      { "role": "foreshadow", "intent": "Visions of things to come", "required": true },
+      { "role": "reveal", "intent": "Wake with strange knowledge", "required": true },
+      { "role": "consequence", "intent": "Rested but disturbed", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["vision", "mystery", "foreshadow"]
+  },
+  {
+    "nodeType": "rest",
+    "sequenceKey": "rest_sanctuary",
+    "beatStructure": [
+      { "role": "setup", "intent": "A place of genuine safety", "required": true },
+      { "role": "relief", "intent": "True rest, guards down", "required": true },
+      { "role": "reflection", "intent": "Time to process recent events", "required": true },
+      { "role": "consequence", "intent": "Restored and ready", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": null,
+    "requiredTags": ["sacred", "protection", "ancient"]
+  },
+  {
+    "nodeType": "rest",
+    "sequenceKey": "rest_interrupted",
+    "beatStructure": [
+      { "role": "setup", "intent": "Settling in to rest", "required": true },
+      { "role": "tension", "intent": "Something approaches", "required": true },
+      { "role": "reveal", "intent": "Rest is shattered", "required": true },
+      { "role": "choice", "intent": "Respond to the intrusion", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["danger", "surprise", "vulnerability"]
+  },
+  {
+    "nodeType": "passage",
+    "sequenceKey": "passage_standard",
+    "beatStructure": [
+      { "role": "setup", "intent": "Journey begins", "required": true },
+      { "role": "escalation", "intent": "Travel description, environmental storytelling", "required": true },
+      { "role": "consequence", "intent": "Destination reached", "required": true }
+    ],
+    "weight": 5,
+    "actConstraints": null,
+    "requiredTags": ["travel", "journey"]
+  },
+  {
+    "nodeType": "passage",
+    "sequenceKey": "passage_ominous",
+    "beatStructure": [
+      { "role": "setup", "intent": "Setting out on the path", "required": true },
+      { "role": "foreshadow", "intent": "Signs that something is wrong", "required": true },
+      { "role": "tension", "intent": "The wrongness intensifies", "required": true },
+      { "role": "consequence", "intent": "Arrive changed, or at a changed place", "required": true }
+    ],
+    "weight": 4,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["dread", "wrongness", "foreshadow"]
+  },
+  {
+    "nodeType": "passage",
+    "sequenceKey": "passage_discovery",
+    "beatStructure": [
+      { "role": "setup", "intent": "Taking an unfamiliar route", "required": true },
+      { "role": "reveal", "intent": "Discover something unexpected", "required": true },
+      { "role": "reflection", "intent": "What does this mean for the world?", "required": true },
+      { "role": "consequence", "intent": "Continue with new knowledge", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": null,
+    "requiredTags": ["exploration", "mystery", "worldbuilding"]
+  },
+  {
+    "nodeType": "passage",
+    "sequenceKey": "passage_hardship",
+    "beatStructure": [
+      { "role": "setup", "intent": "The journey will not be easy", "required": true },
+      { "role": "escalation", "intent": "Conditions worsen", "required": true },
+      { "role": "tension", "intent": "Pushed to the limit", "required": true },
+      { "role": "consequence", "intent": "Arrive exhausted but alive", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": null,
+    "requiredTags": ["survival", "endurance", "wilderness"]
+  },
+  {
+    "nodeType": "passage",
+    "sequenceKey": "passage_contemplative",
+    "beatStructure": [
+      { "role": "setup", "intent": "Quiet journey, time to think", "required": true },
+      { "role": "reflection", "intent": "Processing recent events", "required": true },
+      { "role": "consequence", "intent": "Arrive with new perspective", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": null,
+    "requiredTags": ["reflection", "solitude", "processing"]
+  },
+  {
+    "nodeType": "transition",
+    "sequenceKey": "transition_standard",
+    "beatStructure": [
+      { "role": "setup", "intent": "Current state summary", "required": true },
+      { "role": "reveal", "intent": "Major story beat / world state shift", "required": true },
+      { "role": "consequence", "intent": "What has changed", "required": true },
+      { "role": "button", "intent": "The world will never be the same...", "required": true }
+    ],
+    "weight": 5,
+    "actConstraints": null,
+    "requiredTags": ["act_change", "progression"]
+  },
+  {
+    "nodeType": "transition",
+    "sequenceKey": "transition_revelation",
+    "beatStructure": [
+      { "role": "setup", "intent": "Something has been building", "required": true },
+      { "role": "tension", "intent": "The weight of accumulated wrongness", "required": true },
+      { "role": "reveal", "intent": "The truth that cannot be unseen", "required": true },
+      { "role": "consequence", "intent": "Everything is different now", "required": true },
+      { "role": "button", "intent": "There is no going back", "required": true }
+    ],
+    "weight": 4,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["truth", "cosmic", "horror"]
+  },
+  {
+    "nodeType": "transition",
+    "sequenceKey": "transition_transformation",
+    "beatStructure": [
+      { "role": "setup", "intent": "The old self", "required": true },
+      { "role": "reveal", "intent": "The moment of transformation", "required": true },
+      { "role": "reflection", "intent": "Who/what are you now?", "required": true },
+      { "role": "consequence", "intent": "New capabilities, new costs", "required": true },
+      { "role": "button", "intent": "Press forward as something new", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [3, 4] },
+    "requiredTags": ["change", "corruption", "evolution"]
+  },
+  {
+    "nodeType": "transition",
+    "sequenceKey": "transition_loss",
+    "beatStructure": [
+      { "role": "setup", "intent": "What was", "required": true },
+      { "role": "reveal", "intent": "What has been lost", "required": true },
+      { "role": "reflection", "intent": "Mourning what cannot return", "required": true },
+      { "role": "consequence", "intent": "The weight of absence", "required": true },
+      { "role": "button", "intent": "Carry on, lighter and heavier", "required": true }
+    ],
+    "weight": 3,
+    "actConstraints": { "acts": [2, 3, 4] },
+    "requiredTags": ["grief", "sacrifice", "price"]
+  }
+]

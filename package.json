@@ -1,0 +1,19 @@
+{
+  "name": "node-gen-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack web application for creating, editing, and browsing narrative graph nodes",
+  "scripts": {
+    "dev": "pnpm --parallel dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "db:migrate": "pnpm --filter @node-gen-web/backend db:migrate",
+    "db:seed": "pnpm --filter @node-gen-web/backend db:seed",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

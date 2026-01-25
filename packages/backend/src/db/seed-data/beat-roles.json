@@ -1,0 +1,72 @@
+[
+  {
+    "key": "setup",
+    "displayName": "Setup",
+    "description": "Establishes the scene, context, and initial situation",
+    "isCore": true,
+    "sortOrder": 1
+  },
+  {
+    "key": "escalation",
+    "displayName": "Escalation",
+    "description": "Raises tension, increases stakes, or intensifies the situation",
+    "isCore": true,
+    "sortOrder": 2
+  },
+  {
+    "key": "reveal",
+    "displayName": "Reveal",
+    "description": "Unveils hidden information, truth, or unexpected elements",
+    "isCore": true,
+    "sortOrder": 3
+  },
+  {
+    "key": "choice",
+    "displayName": "Choice",
+    "description": "Presents decision point or player action prompt",
+    "isCore": true,
+    "sortOrder": 4
+  },
+  {
+    "key": "consequence",
+    "displayName": "Consequence",
+    "description": "Shows results or outcomes of actions or decisions",
+    "isCore": true,
+    "sortOrder": 5
+  },
+  {
+    "key": "button",
+    "displayName": "Button",
+    "description": "Closing line that resonates or punctuates the scene",
+    "isCore": false,
+    "sortOrder": 6
+  },
+  {
+    "key": "tension",
+    "displayName": "Tension",
+    "description": "Builds suspense, dread, or anticipation without resolution",
+    "isCore": false,
+    "sortOrder": 7
+  },
+  {
+    "key": "relief",
+    "displayName": "Relief",
+    "description": "Provides respite, safety, or release from tension",
+    "isCore": false,
+    "sortOrder": 8
+  },
+  {
+    "key": "foreshadow",
+    "displayName": "Foreshadow",
+    "description": "Hints at future events or consequences",
+    "isCore": false,
+    "sortOrder": 9
+  },
+  {
+    "key": "reflection",
+    "displayName": "Reflection",
+    "description": "Contemplative moment processing recent events or choices",
+    "isCore": false,
+    "sortOrder": 10
+  }
+]
