@@ -5,13 +5,13 @@
 See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Generate complete, high-quality narrative nodes with minimal manual effort through AI-powered content creation
-**Current focus:** Phase 1 - Streaming Foundation
+**Current focus:** Phase 2 - Core Generation Pipeline
 
 ## Current Position
 
-Phase: 1 of 9 (Streaming Foundation)
-Plan: 1 of 1 in current phase
-Status: Phase complete
+Phase: 2 of 9 (Core Generation Pipeline)
+Plan: 0 of 1 in current phase
+Status: Ready to plan
 Last activity: 2026-01-25 — Completed 01-01-PLAN.md (SSE streaming foundation)
 
 Progress: [█░░░░░░░░░] 11%
@@ -71,7 +71,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-25 (Phase 1 execution)
-Stopped at: Completed 01-01-PLAN.md (SSE streaming foundation)
+Last session: 2026-01-25 (Phase 1 execution complete)
+Stopped at: Phase 1 verified and complete
 Resume file: None
-Next: Phase 2 - Error Handling & Recovery
