@@ -4,7 +4,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { GenerationRequest, ProgressEvent, GenerationResponse } from '@node-gen-web/shared';
+import type { GenerationRequest, ProgressEvent, GenerationResponse, CriticResult } from '@node-gen-web/shared';
 import { streamGeneration, type StreamHandle } from '@/lib/streaming';
 
 export interface GenerationState {
@@ -14,6 +14,7 @@ export interface GenerationState {
   outline?: unknown;
   content?: unknown;
   criticScore?: number;
+  criticResult?: CriticResult;
   error?: string;
 }
 
@@ -83,6 +84,7 @@ export function useGenerateNode() {
                 progress: 100,
                 content: response.content,
                 criticScore: response.criticScore,
+                criticResult: response.criticResult,
                 message: 'Generation completed!',
               });
               queryClient.invalidateQueries({ queryKey: ['nodes'] });
