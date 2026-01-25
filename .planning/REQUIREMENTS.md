@@ -114,10 +114,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GEN-02 | Phase 5 | Pending |
 | GEN-03 | Phase 2 | Complete |
 | GEN-04 | Phase 2 | Complete |
-| QUAL-01 | Phase 3 | Pending |
-| QUAL-02 | Phase 3 | Pending |
-| QUAL-03 | Phase 3 | Pending |
-| QUAL-04 | Phase 3 | Pending |
+| QUAL-01 | Phase 3 | Complete |
+| QUAL-02 | Phase 3 | Complete |
+| QUAL-03 | Phase 3 | Complete |
+| QUAL-04 | Phase 3 | Complete |
 | PROV-01 | Phase 8 | Pending |
 | PROV-02 | Phase 8 | Pending |
 | PROV-03 | Phase 8 | Pending |

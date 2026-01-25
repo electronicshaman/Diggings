@@ -170,7 +170,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. Streaming Foundation | 1/1 | Complete | 2026-01-25 |
 | 2. Core Generation Pipeline | 3/3 | Complete | 2026-01-25 |
-| 3. Quality Control | 0/2 | Not started | - |
+| 3. Quality Control | 2/2 | Complete | 2026-01-25 |
 | 4. Frontend Streaming Client | 0/1 | Not started | - |
 | 5. Single-Node Generation UI | 0/1 | Not started | - |
 | 6. Field-Level Assists | 0/1 | Not started | - |
