@@ -125,7 +125,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROV-05 | Phase 8 | Pending |
 | PROV-06 | Phase 8 | Pending |
 | PROV-07 | Phase 8 | Pending |
-| INTG-01 | Phase 1 | Pending |
+| INTG-01 | Phase 1 | Complete |
 | INTG-02 | Phase 2 | Pending |
 | INTG-03 | Phase 2 | Pending |
 | INTG-04 | Phase 7 | Pending |
@@ -137,8 +137,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONF-05 | Phase 9 | Pending |
 | ERR-01 | Phase 2 | Pending |
 | ERR-02 | Phase 2 | Pending |
-| ERR-03 | Phase 1 | Pending |
-| ERR-04 | Phase 1 | Pending |
+| ERR-03 | Phase 1 | Complete |
+| ERR-04 | Phase 1 | Complete |
 | ERR-05 | Phase 4 | Pending |
 
 **Coverage:**

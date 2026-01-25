@@ -12,7 +12,7 @@ This roadmap completes the AI-powered narrative generation features for an exist
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Streaming Foundation** - SSE infrastructure with anti-buffering and heartbeat
+- [x] **Phase 1: Streaming Foundation** - SSE infrastructure with anti-buffering and heartbeat
 - [ ] **Phase 2: Core Generation Pipeline** - Wire generation services to API routes with retry logic
 - [ ] **Phase 3: Quality Control** - Integrate critic stage with scoring and auto-retry
 - [ ] **Phase 4: Frontend Streaming Client** - EventSource hook with reconnection logic
@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01-01-PLAN.md — SSE streaming with heartbeat, anti-buffering headers, and job persistence
+- [x] 01-01-PLAN.md — SSE streaming with heartbeat, anti-buffering headers, and job persistence
 
 ### Phase 2: Core Generation Pipeline
 **Goal**: Complete 3-stage generation pipeline (outliner → expander → critic) executes successfully for single nodes
@@ -165,7 +165,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Streaming Foundation | 0/1 | Planned | - |
+| 1. Streaming Foundation | 1/1 | Complete | 2026-01-25 |
 | 2. Core Generation Pipeline | 0/1 | Not started | - |
 | 3. Quality Control | 0/1 | Not started | - |
 | 4. Frontend Streaming Client | 0/1 | Not started | - |
