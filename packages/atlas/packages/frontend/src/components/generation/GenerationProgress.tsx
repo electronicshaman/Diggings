@@ -4,6 +4,7 @@ import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { GenerationState } from '@/hooks/useGeneration';
+import { QualityFeedback } from './QualityFeedback';
 
 interface GenerationProgressProps {
   state: GenerationState;
@@ -11,6 +12,7 @@ interface GenerationProgressProps {
   onRetry?: () => void;
   onAccept?: () => void;
   showContent?: boolean;
+  threshold?: number;
 }
 
 const STAGES = [
@@ -48,8 +50,9 @@ export function GenerationProgress({
   onRetry,
   onAccept,
   showContent = false,
+  threshold = 70,
 }: GenerationProgressProps) {
-  const { stage, progress, message, criticScore, content, error } = state;
+  const { stage, progress, message, criticScore, criticResult, content, error } = state;
 
   return (
     <Card>
@@ -97,8 +100,11 @@ export function GenerationProgress({
           </div>
         )}
 
-        {/* Critic score */}
-        {typeof criticScore === 'number' ? (
+        {/* Critic score / Quality feedback */}
+        {criticResult ? (
+          <QualityFeedback critic={criticResult} threshold={threshold} compact />
+        ) : typeof criticScore === 'number' ? (
+          // Fallback for backward compatibility
           <div className="rounded-lg border bg-muted/50 p-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Quality Score</span>

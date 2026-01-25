@@ -3,3 +3,4 @@ export { QuickGenerate } from './QuickGenerate';
 export { AssistedCreate } from './AssistedCreate';
 export { BulkGenerate } from './BulkGenerate';
 export { DistributionGapChart } from './DistributionGapChart';
+export { QualityFeedback } from './QualityFeedback';
