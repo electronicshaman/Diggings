@@ -13,7 +13,7 @@ This roadmap completes the AI-powered narrative generation features for an exist
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Streaming Foundation** - SSE infrastructure with anti-buffering and heartbeat
-- [ ] **Phase 2: Core Generation Pipeline** - Wire generation services to API routes with retry logic
+- [x] **Phase 2: Core Generation Pipeline** - Wire generation services to API routes with retry logic
 - [ ] **Phase 3: Quality Control** - Integrate critic stage with scoring and auto-retry
 - [ ] **Phase 4: Frontend Streaming Client** - EventSource hook with reconnection logic
 - [ ] **Phase 5: Single-Node Generation UI** - Quick Generate flow with preview and regenerate
@@ -52,9 +52,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Circuit breaker integration with opossum for LLM failure protection
-- [ ] 02-02-PLAN.md — Enhanced error handling with user-friendly messages and retry jitter
-- [ ] 02-03-PLAN.md — Database save integration for streaming endpoint completion
+- [x] 02-01-PLAN.md — Circuit breaker integration with opossum for LLM failure protection
+- [x] 02-02-PLAN.md — Enhanced error handling with user-friendly messages and retry jitter
+- [x] 02-03-PLAN.md — Database save integration for streaming endpoint completion
 
 ### Phase 3: Quality Control
 **Goal**: Critic stage scores generated content and automatically retries low-quality outputs
@@ -65,10 +65,11 @@ Plans:
   2. Critic LLM scores content (0-100 quality rating) after generation
   3. System automatically retries generation if critic score falls below threshold (default: 70)
   4. User sees critic score breakdown with quality feedback in UI
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Zod validation layer and quality-based retry loop in batch-processor
+- [ ] 03-02-PLAN.md — QualityFeedback UI component with severity-grouped issues display
 
 ### Phase 4: Frontend Streaming Client
 **Goal**: Frontend consumes SSE streams with reconnection logic and progress state management
@@ -169,7 +170,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. Streaming Foundation | 1/1 | Complete | 2026-01-25 |
 | 2. Core Generation Pipeline | 3/3 | Complete | 2026-01-25 |
-| 3. Quality Control | 0/1 | Not started | - |
+| 3. Quality Control | 0/2 | Not started | - |
 | 4. Frontend Streaming Client | 0/1 | Not started | - |
 | 5. Single-Node Generation UI | 0/1 | Not started | - |
 | 6. Field-Level Assists | 0/1 | Not started | - |
