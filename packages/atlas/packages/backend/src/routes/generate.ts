@@ -21,6 +21,94 @@ import { eq } from 'drizzle-orm';
 const app = new Hono();
 
 /**
+ * Parameters for saving a node to the database
+ */
+interface SaveNodeParams {
+  nodeId?: string;
+  nodeType: string;
+  biome: string;
+  name: string;
+  acts?: number[];
+  actVariant?: boolean;
+  themes: string[];
+  entityTypes: string[];
+  content: any; // ExpandedContent from generation
+  criticScore?: number;
+  estimatedCombatDifficulty?: number;
+  // Type-specific fields from request
+  enemyTypeHooks?: string[];
+  environmentalContext?: string;
+  consequenceHooks?: string[];
+  dilemmaType?: string;
+  traderArchetype?: string;
+  pricingHooks?: string[];
+  restType?: string;
+  interruptionChance?: 'none' | 'low' | 'medium' | 'high';
+  dreamHooks?: string[];
+  travelEventHooks?: string[];
+  environmentalStorytelling?: string;
+  conditionHooks?: string[];
+  actChangeTrigger?: number;
+  narrativeSummary?: string;
+  worldStateShifts?: any;
+}
+
+/**
+ * Save or update a node in the database
+ * @returns The nodeId of the saved node
+ */
+export async function saveNodeToDatabase(params: SaveNodeParams): Promise<string> {
+  const nodeId = params.nodeId || crypto.randomUUID();
+
+  const nodeData = {
+    nodeId,
+    type: params.nodeType as any,
+    biome: params.biome as any,
+    name: params.name,
+    acts: params.acts || [1],
+    actVariant: params.actVariant || false,
+    isReplaceable: true,
+    replacementTags: [],
+    themes: params.themes,
+    entityTypes: params.entityTypes,
+    estimatedCombatDifficulty: params.estimatedCombatDifficulty,
+    eligibility: null,
+    resourceCost: null,
+    potentialRewards: [],
+    content: params.content,
+    actVariants: null,
+    criticScore: params.criticScore,
+    generatedBy: 'ai',
+    // Type-specific fields
+    enemyTypeHooks: params.enemyTypeHooks,
+    environmentalContext: params.environmentalContext,
+    consequenceHooks: params.consequenceHooks,
+    dilemmaType: params.dilemmaType as any,
+    traderArchetype: params.traderArchetype,
+    pricingHooks: params.pricingHooks,
+    restType: params.restType as any,
+    interruptionChance: params.interruptionChance as any,
+    dreamHooks: params.dreamHooks,
+    travelEventHooks: params.travelEventHooks,
+    environmentalStorytelling: params.environmentalStorytelling,
+    conditionHooks: params.conditionHooks,
+    actChangeTrigger: params.actChangeTrigger as any,
+    narrativeSummary: params.narrativeSummary,
+    worldStateShifts: params.worldStateShifts,
+  };
+
+  if (params.nodeId) {
+    // Update existing node
+    await db.update(nodesTable).set(nodeData as any).where(eq(nodesTable.nodeId, params.nodeId));
+  } else {
+    // Insert new node
+    await db.insert(nodesTable).values(nodeData as any);
+  }
+
+  return nodeId;
+}
+
+/**
  * Convert GenerationRequest to NodeGenerationRequest
  */
 function toNodeGenerationRequest(request: GenerationRequest): NodeGenerationRequest {
@@ -153,28 +241,19 @@ app.post('/node', zValidator('json', GenerationRequestSchema), async (c) => {
     }
 
     // Save to database if successful
-    if (result.content && result.nodeId) {
-      const nodeData = {
-        nodeId: result.nodeId,
-        type: request.nodeType,
+    if (result.content) {
+      const savedNodeId = await saveNodeToDatabase({
+        nodeId: request.nodeId,
+        nodeType: request.nodeType,
         biome: request.biome,
         name: request.name,
         acts: request.acts,
-        actVariant: request.actVariant || false,
-        isReplaceable: true,
-        replacementTags: [],
+        actVariant: request.actVariant,
         themes: request.themes,
         entityTypes: request.entityTypes,
-        estimatedCombatDifficulty: request.estimatedCombatDifficulty,
-        eligibility: null,
-        resourceCost: null,
-        potentialRewards: [],
         content: result.content,
-        actVariants: null,
         criticScore: result.critic?.score,
-        generatedBy: 'ai',
-
-        // Type-specific fields
+        estimatedCombatDifficulty: request.estimatedCombatDifficulty,
         enemyTypeHooks: request.enemyTypeHooks,
         environmentalContext: request.environmentalContext,
         consequenceHooks: request.consequenceHooks,
@@ -190,15 +269,8 @@ app.post('/node', zValidator('json', GenerationRequestSchema), async (c) => {
         actChangeTrigger: request.actChangeTrigger,
         narrativeSummary: request.narrativeSummary,
         worldStateShifts: request.worldStateShifts,
-      };
-
-      if (request.nodeId) {
-        // Update existing node
-        await db.update(nodesTable).set(nodeData).where(eq(nodesTable.nodeId, request.nodeId));
-      } else {
-        // Insert new node
-        await db.insert(nodesTable).values(nodeData as any);
-      }
+      });
+      result.nodeId = savedNodeId;
     }
 
     return c.json({
