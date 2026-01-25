@@ -6,6 +6,8 @@
 import type { Context } from 'hono';
 import { generateSingle, type NodeGenerationRequest, type GenerationProgress } from './batch-processor.js';
 import { createJob, updateJobStatus, type JobStatus } from './job-tracker.js';
+import { classifyLLMError, type LLMError } from './error-handler.js';
+import { saveNodeToDatabase } from '../../routes/generate.js';
 
 /**
  * SSE message types
@@ -30,42 +32,6 @@ function formatSSE(event: string, data: any): string {
   return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
 }
 
-/**
- * Classify errors as retryable or not
- */
-function isRetryableError(error: Error | string): boolean {
-  const errorMsg = typeof error === 'string' ? error : error.message;
-  const lowerMsg = errorMsg.toLowerCase();
-
-  // Retryable: rate limits, service unavailable, network errors
-  if (
-    lowerMsg.includes('429') ||
-    lowerMsg.includes('rate limit') ||
-    lowerMsg.includes('503') ||
-    lowerMsg.includes('service unavailable') ||
-    lowerMsg.includes('network') ||
-    lowerMsg.includes('timeout') ||
-    lowerMsg.includes('econnrefused') ||
-    lowerMsg.includes('enotfound')
-  ) {
-    return true;
-  }
-
-  // Non-retryable: auth errors, bad requests, validation errors
-  if (
-    lowerMsg.includes('400') ||
-    lowerMsg.includes('401') ||
-    lowerMsg.includes('403') ||
-    lowerMsg.includes('invalid') ||
-    lowerMsg.includes('unauthorized') ||
-    lowerMsg.includes('forbidden')
-  ) {
-    return false;
-  }
-
-  // Default to non-retryable for unknown errors
-  return false;
-}
 
 /**
  * Stream generation with SSE
@@ -177,14 +143,16 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
             error: result.error || 'Unknown error',
           });
 
-          // Send error event
-          const retryable = result.error ? isRetryableError(result.error) : false;
+          // Send error event with user-friendly message
+          const classified = classifyLLMError(result.error || 'Unknown error');
           controller.enqueue(
             encoder.encode(
               formatSSE('error', {
                 jobId,
-                error: result.error || 'Unknown error',
-                retryable,
+                error: classified.technicalMessage,
+                userMessage: classified.userMessage,
+                retryable: classified.retryable,
+                httpStatus: classified.httpStatus,
               })
             )
           );
@@ -203,14 +171,16 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
           error: errorMsg,
         });
 
-        // Send error event
-        const retryable = error instanceof Error ? isRetryableError(error) : false;
+        // Send error event with user-friendly message
+        const classified = classifyLLMError(error);
         controller.enqueue(
           encoder.encode(
             formatSSE('error', {
               jobId,
-              error: errorMsg,
-              retryable,
+              error: classified.technicalMessage,
+              userMessage: classified.userMessage,
+              retryable: classified.retryable,
+              httpStatus: classified.httpStatus,
             })
           )
         );
