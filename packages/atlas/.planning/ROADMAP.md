@@ -49,10 +49,12 @@ Plans:
   4. System implements circuit breaker after repeated failures (prevents runaway costs)
   5. System retries transient errors (429, 503) with exponential backoff
   6. User receives actionable error messages when generation fails
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — Circuit breaker integration with opossum for LLM failure protection
+- [ ] 02-02-PLAN.md — Enhanced error handling with user-friendly messages and retry jitter
+- [ ] 02-03-PLAN.md — Database save integration for streaming endpoint completion
 
 ### Phase 3: Quality Control
 **Goal**: Critic stage scores generated content and automatically retries low-quality outputs
@@ -166,7 +168,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Streaming Foundation | 1/1 | Complete | 2026-01-25 |
-| 2. Core Generation Pipeline | 0/1 | Not started | - |
+| 2. Core Generation Pipeline | 0/3 | Not started | - |
 | 3. Quality Control | 0/1 | Not started | - |
 | 4. Frontend Streaming Client | 0/1 | Not started | - |
 | 5. Single-Node Generation UI | 0/1 | Not started | - |
