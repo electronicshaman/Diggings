@@ -8,6 +8,7 @@ import { generateSingle, type NodeGenerationRequest, type GenerationProgress } f
 import { createJob, updateJobStatus, type JobStatus } from './job-tracker.js';
 import { classifyLLMError, type LLMError } from './error-handler.js';
 import { saveNodeToDatabase } from '../../routes/generate.js';
+import { validateNodeContent } from './content-validator.js';
 
 /**
  * SSE message types
@@ -115,6 +116,35 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
 
         // Handle completion or failure
         if (result.stage === 'completed' && result.content) {
+          // Validate content before database save
+          const validation = validateNodeContent(result.content);
+          if (!validation.success) {
+            // Validation failed - report but don't save
+            await updateJobStatus(jobId, {
+              status: 'completed',
+              progress: 100,
+              currentStage: 'completed',
+              error: 'Content validation failed: ' + validation.errors?.join(', '),
+            });
+
+            controller.enqueue(
+              encoder.encode(
+                formatSSE('complete', {
+                  jobId,
+                  outline: result.outline,
+                  content: result.content,
+                  critic: result.critic,
+                  validationError: validation.errors,
+                })
+              )
+            );
+            // Skip database save, close stream
+            clearInterval(heartbeat);
+            controller.close();
+            return;
+          }
+
+          // Validation passed - proceed with save
           try {
             // Save to database
             const savedNodeId = await saveNodeToDatabase({
