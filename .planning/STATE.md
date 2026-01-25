@@ -10,28 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-25)
 ## Current Position
 
 Phase: 2 of 9 (Core Generation Pipeline)
-Plan: 0 of 1 in current phase
-Status: Ready to plan
-Last activity: 2026-01-25 — Completed 01-01-PLAN.md (SSE streaming foundation)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-25 — Completed 02-01-PLAN.md (Circuit breaker protection)
 
-Progress: [█░░░░░░░░░] 11%
+Progress: [██░░░░░░░░] 22%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 5 minutes
-- Total execution time: 0.08 hours
+- Total plans completed: 2
+- Average duration: 4 minutes
+- Total execution time: 0.13 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 - Streaming Foundation | 1 | 5 min | 5 min |
+| 2 - Core Generation Pipeline | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5m)
-- Trend: N/A (only 1 plan completed)
+- Last 5 plans: 01-01 (5m), 02-01 (3m)
+- Trend: Improving velocity (5m → 3m)
 
 *Updated after each plan completion*
 
@@ -50,6 +51,9 @@ Recent decisions affecting current work:
 - Job persistence (24hr): Balance reconnection support with database cleanup (01-01)
 - Heartbeat interval (12s): Prevents proxy timeouts without excessive traffic (01-01)
 - Error classification: Pattern matching on messages until real API data available (01-01)
+- Circuit breaker thresholds: 50% error rate in 10s window with 5 request minimum (02-01)
+- LLM timeout: 60s accommodates slow responses without premature failures (02-01)
+- Auto-recovery: 30s cooldown balances downtime vs provider recovery (02-01)
 
 ### Pending Todos
 
@@ -65,12 +69,12 @@ None yet.
 - Database save on stream completion: Streaming endpoint doesn't persist to nodes table yet
 
 **From research:**
-- Phase 2: Error classification rules need validation with actual API responses (heuristic implemented in 01-01)
 - Phase 3: Critic scoring rubric calibration per node type requires domain expertise
 - Phase 7: Optimal concurrency levels depend on OpenRouter tier and rate limits
+- Pre-existing type errors in config-advanced.ts, llm-providers.ts, streaming.ts need cleanup (low priority)
 
 ## Session Continuity
 
-Last session: 2026-01-25 (Phase 1 execution complete)
-Stopped at: Phase 1 verified and complete
+Last session: 2026-01-25 (Phase 2 execution complete)
+Stopped at: Completed 02-01-PLAN.md (Circuit breaker protection)
 Resume file: None
