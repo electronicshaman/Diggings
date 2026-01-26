@@ -107,11 +107,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | STREAM-01 | Phase 4 | Complete |
-| STREAM-02 | Phase 5 | Pending |
-| STREAM-03 | Phase 5 | Pending |
-| STREAM-04 | Phase 5 | Pending |
+| STREAM-02 | Phase 5 | Complete |
+| STREAM-03 | Phase 5 | Complete |
+| STREAM-04 | Phase 5 | Complete |
 | GEN-01 | Phase 6 | Pending |
-| GEN-02 | Phase 5 | Pending |
+| GEN-02 | Phase 5 | Complete |
 | GEN-03 | Phase 2 | Complete |
 | GEN-04 | Phase 2 | Complete |
 | QUAL-01 | Phase 3 | Complete |
