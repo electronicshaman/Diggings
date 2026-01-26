@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-25)
 
 ## Current Position
 
-Phase: 4 of 9 (Frontend Streaming Client)
+Phase: 5 of 9 (Single-Node Generation UI)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-26 — Completed 04-01-PLAN.md (Frontend Streaming Client)
+Last activity: 2026-01-26 — Completed 05-01-PLAN.md (Quick Generate Save Workflow)
 
-Progress: [█████░░░░░] 44%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 3 minutes
-- Total execution time: 0.38 hours
+- Total plans completed: 8
+- Average duration: 3.4 minutes
+- Total execution time: 0.45 hours
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [█████░░░░░] 44%
 | 2 - Core Generation Pipeline | 3 | 9 min | 3 min |
 | 3 - Quality Control | 2 | 8 min | 4 min |
 | 4 - Frontend Streaming Client | 1 | 3 min | 3 min |
-| 4 - Frontend Streaming Client | 1 | 3 min | 3 min |
+| 5 - Single-Node Generation UI | 1 | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (4m), 03-01 (2m), 03-02 (6m), 04-01 (3m)
-- Trend: Stable velocity (avg 3.75 min/plan over last 4)
+- Last 5 plans: 03-01 (2m), 03-02 (6m), 04-01 (3m), 05-01 (5m)
+- Trend: Stable velocity (avg 4 min/plan over last 4)
 
 *Updated after each plan completion*
 
@@ -73,6 +73,10 @@ Recent decisions affecting current work:
 - Reconnection age threshold (60min): Balance recovery vs stale job cleanup (04-01)
 - Exponential backoff parameters: 1s initial, 30s max, 2x multiplier, 0-30% jitter for reconnection (04-01)
 - Partialize Zustand persist: Only persist activeJob, not ephemeral connectionAttempts (04-01)
+- Type-specific defaults: Provide minimal type-specific fields for quick generation without manual input (05-01)
+- Toast feedback pattern: Use sonner for success/error/info notifications (05-01)
+- Fresh form values on retry: handleRetry re-submits current form values instead of captured values (05-01)
+- Threshold visibility: Explicitly pass threshold=70 to GenerationProgress for clarity (05-01)
 
 ### Pending Todos
 
@@ -85,7 +89,7 @@ None yet.
 - ~~Generation service files exist but aren't integrated with API routes~~ (RESOLVED in 01-01)
 - ~~Database save on stream completion: Streaming endpoint doesn't persist to nodes table yet~~ (RESOLVED in 02-03)
 - ~~Frontend generation state persistence and reconnection~~ (RESOLVED in 04-01)
-- Frontend generation UI components exist but hooks don't call working endpoints
+- ~~Frontend generation UI components exist but hooks don't call working endpoints~~ (RESOLVED in 05-01)
 - Cleanup job scheduler: `cleanupOldJobs()` exists but not scheduled (low priority)
 
 **From research:**
@@ -95,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-26 (Phase 4 execution complete)
-Stopped at: Completed 04-01-PLAN.md (Frontend Streaming Client)
+Last session: 2026-01-26 (Phase 5 execution complete)
+Stopped at: Completed 05-01-PLAN.md (Quick Generate Save Workflow)
 Resume file: None
