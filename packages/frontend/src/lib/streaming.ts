@@ -4,10 +4,28 @@
 
 import type { ProgressEvent } from '@node-gen-web/shared';
 
+// Reconnection constants
+const INITIAL_RETRY_DELAY = 1000; // 1 second
+const MAX_RETRY_DELAY = 30000;    // 30 seconds
+// const MAX_RETRIES = 5; // Reserved for future retry logic
+const BACKOFF_MULTIPLIER = 2;
+
+export interface JobStatus {
+  jobId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  progress: number;
+  currentStage: string | null;
+  result: any;
+  error: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface StreamCallbacks {
   onProgress?: (event: ProgressEvent) => void;
   onComplete?: (data: unknown) => void;
   onError?: (error: string) => void;
+  onReconnecting?: (attempt: number, delay: number) => void;
 }
 
 export interface StreamHandle {
@@ -88,6 +106,32 @@ export function streamGeneration(
   return {
     abort: () => abortController.abort(),
   };
+}
+
+/**
+ * Calculate exponential backoff delay with jitter
+ */
+export function calculateBackoff(attemptNumber: number): number {
+  const delay = Math.min(
+    INITIAL_RETRY_DELAY * Math.pow(BACKOFF_MULTIPLIER, attemptNumber),
+    MAX_RETRY_DELAY
+  );
+  // Add jitter (0-30%) to prevent thundering herd
+  const jitter = Math.random() * 0.3 * delay;
+  return Math.floor(delay + jitter);
+}
+
+/**
+ * Reconnect to a job by fetching its current status
+ */
+export async function reconnectToJob(jobId: string): Promise<JobStatus | null> {
+  const response = await fetch(`/api/generate/job/${jobId}`);
+  if (!response.ok) {
+    if (response.status === 404) return null; // Job expired or not found
+    throw new Error('Failed to fetch job status');
+  }
+  const data = await response.json();
+  return data.job;
 }
 
 /**
