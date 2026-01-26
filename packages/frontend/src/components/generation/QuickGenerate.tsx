@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -68,6 +69,14 @@ export function QuickGenerate() {
   const selectedBiome = form.watch('biome');
   const biomeConfig = biomes?.find((b) => b.id === selectedBiome);
 
+  // Cleanup streaming on unmount
+  useEffect(() => {
+    return () => {
+      // Abort any in-flight stream when navigating away
+      abort();
+    };
+  }, [abort]);
+
   const onSubmit = async (data: QuickGenerateFormData) => {
     const request: GenerationRequest = {
       nodeType: data.nodeType,
@@ -88,6 +97,11 @@ export function QuickGenerate() {
 
   const handleRetry = () => {
     form.handleSubmit(onSubmit)();
+  };
+
+  const handleCancel = () => {
+    abort();
+    toast.info('Generation cancelled');
   };
 
   const handleAccept = async () => {
@@ -183,7 +197,7 @@ export function QuickGenerate() {
     return (
       <GenerationProgress
         state={state}
-        onCancel={abort}
+        onCancel={handleCancel}
         onRetry={handleRetry}
         onAccept={handleAccept}
         showContent
