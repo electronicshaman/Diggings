@@ -96,6 +96,9 @@ export function QuickGenerate() {
   };
 
   const handleRetry = () => {
+    // Reset state but preserve form values
+    reset();
+    // Re-submit with current form values
     form.handleSubmit(onSubmit)();
   };
 
@@ -201,6 +204,7 @@ export function QuickGenerate() {
         onRetry={handleRetry}
         onAccept={handleAccept}
         showContent
+        threshold={70}
       />
     );
   }
