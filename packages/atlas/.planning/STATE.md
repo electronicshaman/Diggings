@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-25)
 ## Current Position
 
 Phase: 6 of 9 (Field-Level Assists)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-26 — Completed 06-02-PLAN.md (Field Generation Frontend)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-01-26 — Completed 06-03-PLAN.md (Beat List Generation)
 
-Progress: [██████████░] 92%
+Progress: [███████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 3.3 minutes
-- Total execution time: 0.55 hours
+- Total plans completed: 11
+- Average duration: 3.1 minutes
+- Total execution time: 0.57 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [██████████░] 92%
 | 3 - Quality Control | 2 | 8 min | 4 min |
 | 4 - Frontend Streaming Client | 1 | 3 min | 3 min |
 | 5 - Single-Node Generation UI | 1 | 5 min | 5 min |
-| 6 - Field-Level Assists | 2 | 6 min | 3 min |
+| 6 - Field-Level Assists | 3 | 8 min | 2.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (3m), 05-01 (5m), 06-01 (3m), 06-02 (3m)
-- Trend: Excellent velocity (avg 3.5 min/plan over last 4)
+- Last 5 plans: 05-01 (5m), 06-01 (3m), 06-02 (3m), 06-03 (2m)
+- Trend: Outstanding velocity (avg 3.25 min/plan over last 4)
 
 *Updated after each plan completion*
 
@@ -86,6 +86,9 @@ Recent decisions affecting current work:
 - Actionable error messages: Map generic errors to user-friendly guidance (06-02)
 - Race condition prevention: Use isFieldGenerating to control textarea value source (06-02)
 - Partial generation visibility: Keep streamedContent on cancel for user editing (06-02)
+- Beat hints not passed to generation: GenerationRequest schema doesn't support hints field, stored for future enhancement (06-03)
+- All beats included by default: User must explicitly uncheck unwanted beats (06-03)
+- Beat count feedback: Show count of included beats when subset is selected (06-03)
 
 ### Pending Todos
 
@@ -108,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-26 (Phase 6 execution in progress)
-Stopped at: Completed 06-02-PLAN.md (Field Generation Frontend)
+Last session: 2026-01-26 (Phase 6 complete)
+Stopped at: Completed 06-03-PLAN.md (Beat List Generation)
 Resume file: None
