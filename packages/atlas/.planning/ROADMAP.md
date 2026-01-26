@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Streaming Foundation** - SSE infrastructure with anti-buffering and heartbeat
 - [x] **Phase 2: Core Generation Pipeline** - Wire generation services to API routes with retry logic
-- [ ] **Phase 3: Quality Control** - Integrate critic stage with scoring and auto-retry
+- [x] **Phase 3: Quality Control** - Integrate critic stage with scoring and auto-retry
 - [ ] **Phase 4: Frontend Streaming Client** - EventSource hook with reconnection logic
 - [ ] **Phase 5: Single-Node Generation UI** - Quick Generate flow with preview and regenerate
 - [ ] **Phase 6: Field-Level Assists** - Inline AI generation buttons in manual forms
@@ -68,8 +68,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Zod validation layer and quality-based retry loop in batch-processor
-- [ ] 03-02-PLAN.md — QualityFeedback UI component with severity-grouped issues display
+- [x] 03-01-PLAN.md — Zod validation layer and quality-based retry loop in batch-processor
+- [x] 03-02-PLAN.md — QualityFeedback UI component with severity-grouped issues display
 
 ### Phase 4: Frontend Streaming Client
 **Goal**: Frontend consumes SSE streams with reconnection logic and progress state management
@@ -80,10 +80,10 @@ Plans:
   2. Frontend EventSource hook connects to SSE endpoint and parses events
   3. Zustand store manages generation progress state (stages, partial results)
   4. User can reconnect to in-progress generation after connection loss
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Zustand generation store with persist middleware and reconnection logic
 
 ### Phase 5: Single-Node Generation UI
 **Goal**: User can generate complete nodes through Quick Generate flow with preview and regenerate controls
