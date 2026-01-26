@@ -110,7 +110,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STREAM-02 | Phase 5 | Complete |
 | STREAM-03 | Phase 5 | Complete |
 | STREAM-04 | Phase 5 | Complete |
-| GEN-01 | Phase 6 | Pending |
+| GEN-01 | Phase 6 | Complete |
 | GEN-02 | Phase 5 | Complete |
 | GEN-03 | Phase 2 | Complete |
 | GEN-04 | Phase 2 | Complete |
