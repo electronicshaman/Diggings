@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,12 +25,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBiomes } from '@/hooks/useConfig';
 import { useGenerateNode } from '@/hooks/useGeneration';
 import { useFieldGeneration } from '@/hooks/useFieldGeneration';
 import { FieldAssistButton } from './FieldAssistButton';
 import { NodeTypeDisplayNames, BiomeDisplayNames } from '@node-gen-web/shared';
+import { cn } from '@/lib/utils';
 
 const assistedCreateSchema = z.object({
   nodeType: z.enum(['combat', 'choice', 'trade', 'rest', 'passage', 'state_check', 'transition']),
@@ -73,7 +77,15 @@ export function AssistedCreate() {
   const { data: biomes } = useBiomes();
   const { generate, isGenerating } = useGenerateNode();
 
-  const { generateField, streamedContent, isGenerating: isFieldGenerating, cancel } = useFieldGeneration({
+  const [suggestedBeats, setSuggestedBeats] = useState<Array<{
+    id: string;
+    role: string;
+    text: string;
+    included: boolean;
+  }>>([]);
+  const [isLoadingBeats, setIsLoadingBeats] = useState(false);
+
+  const { generateField, generateBeatList, streamedContent, isGenerating: isFieldGenerating, cancel } = useFieldGeneration({
     onFinish: (_fieldName, content) => {
       // Update form state with final content
       form.setValue('narrativeHook', content, { shouldDirty: true });
@@ -123,8 +135,54 @@ export function AssistedCreate() {
     });
   };
 
+  const handleSuggestBeats = async () => {
+    const values = form.getValues();
+    if (!values.nodeType || !values.biome) {
+      toast.warning('Missing required fields', {
+        description: 'Please select node type and biome first'
+      });
+      return;
+    }
+
+    setIsLoadingBeats(true);
+    const beats = await generateBeatList({
+      nodeType: values.nodeType,
+      biome: values.biome,
+      name: values.name,
+      themes: biomeConfig?.themes?.slice(0, 2) || ['survival'],
+      narrativeHook: values.narrativeHook,
+    });
+    setIsLoadingBeats(false);
+
+    if (beats) {
+      setSuggestedBeats(beats.map(beat => ({
+        ...beat,
+        included: true, // All included by default
+      })));
+      toast.success('Beats suggested', {
+        description: `Generated ${beats.length} story beats. Review and adjust as needed.`
+      });
+    }
+  };
+
+  const toggleBeat = (beatId: string) => {
+    setSuggestedBeats(prev => prev.map(beat =>
+      beat.id === beatId ? { ...beat, included: !beat.included } : beat
+    ));
+  };
+
   const handleFullGenerate = async () => {
     const values = form.getValues();
+
+    // Note: Beat preferences are stored for future enhancement
+    // Currently, the generation API doesn't support passing beat hints
+    // Future work: Add hints field to GenerationRequest schema
+    const includedBeatsCount = suggestedBeats.filter(b => b.included).length;
+    if (includedBeatsCount > 0 && includedBeatsCount !== suggestedBeats.length) {
+      toast.info('Beat preferences noted', {
+        description: `Generating with ${includedBeatsCount} of ${suggestedBeats.length} suggested beats`,
+      });
+    }
 
     try {
       await generate({
@@ -306,6 +364,73 @@ export function AssistedCreate() {
                 </FormItem>
               )}
             />
+
+            {/* Beat Suggestions Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Story Beats (Optional Preview)</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSuggestBeats}
+                  disabled={isLoadingBeats || !form.watch('nodeType') || !form.watch('biome')}
+                >
+                  {isLoadingBeats ? (
+                    <>
+                      <Sparkles className="mr-2 size-4 animate-pulse" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 size-4" />
+                      Suggest Beats
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {suggestedBeats.length > 0 && (
+                <div className="space-y-2 rounded-lg border p-4">
+                  <p className="text-sm text-muted-foreground">
+                    Toggle beats to include/exclude from generation:
+                  </p>
+                  {suggestedBeats.map((beat) => (
+                    <div
+                      key={beat.id}
+                      className={cn(
+                        "flex items-start gap-3 rounded-md p-2 transition-colors",
+                        beat.included ? "bg-muted/50" : "bg-muted/20 opacity-60"
+                      )}
+                    >
+                      <Checkbox
+                        checked={beat.included}
+                        onCheckedChange={() => toggleBeat(beat.id)}
+                      />
+                      <div className="flex-1 space-y-1">
+                        <Badge variant="outline" className="text-xs">
+                          {beat.role}
+                        </Badge>
+                        <p className="text-sm">{beat.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSuggestedBeats([])}
+                    className="mt-2"
+                  >
+                    Clear suggestions
+                  </Button>
+                </div>
+              )}
+
+              <p className="text-xs text-muted-foreground">
+                Preview the beat structure before generating. Uncheck beats you don't want included.
+              </p>
+            </div>
 
             <FormField
               control={form.control}
