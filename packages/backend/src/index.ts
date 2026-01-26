@@ -6,6 +6,7 @@ import { nodesRouter } from './routes/nodes.js';
 import { configRouter } from './routes/config.js';
 import { searchRouter } from './routes/search.js';
 import generateRouter from './routes/generate.js';
+import generateFieldRouter from './routes/generate-field.js';
 import llmProvidersRouter from './routes/llm-providers.js';
 import configAdvancedRouter from './routes/config-advanced.js';
 
@@ -32,6 +33,7 @@ app.route('/api/nodes', nodesRouter);
 app.route('/api/config', configRouter);
 app.route('/api/search', searchRouter);
 app.route('/api/generate', generateRouter);
+app.route('/api/generate/field', generateFieldRouter);
 app.route('/api/llm/providers', llmProvidersRouter);
 app.route('/api/config/advanced', configAdvancedRouter);
 
