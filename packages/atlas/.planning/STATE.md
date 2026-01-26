@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Generate complete, high-quality narrative nodes with minimal manual effort through AI-powered content creation
-**Current focus:** Phase 5 - Single-Node Generation UI
+**Current focus:** Phase 6 - Field-Level Assists
 
 ## Current Position
 
-Phase: 5 of 9 (Single-Node Generation UI)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-26 — Completed 05-01-PLAN.md (Quick Generate Save Workflow)
+Phase: 6 of 9 (Field-Level Assists)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-26 — Completed 06-01-PLAN.md (Field Generation API)
 
-Progress: [██████████] 100%
+Progress: [██████████░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 3.4 minutes
-- Total execution time: 0.45 hours
+- Total plans completed: 9
+- Average duration: 3.3 minutes
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [██████████] 100%
 | 3 - Quality Control | 2 | 8 min | 4 min |
 | 4 - Frontend Streaming Client | 1 | 3 min | 3 min |
 | 5 - Single-Node Generation UI | 1 | 5 min | 5 min |
+| 6 - Field-Level Assists | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (2m), 03-02 (6m), 04-01 (3m), 05-01 (5m)
-- Trend: Stable velocity (avg 4 min/plan over last 4)
+- Last 5 plans: 03-02 (6m), 04-01 (3m), 05-01 (5m), 06-01 (3m)
+- Trend: Stable velocity (avg 4.25 min/plan over last 4)
 
 *Updated after each plan completion*
 
@@ -77,6 +78,10 @@ Recent decisions affecting current work:
 - Toast feedback pattern: Use sonner for success/error/info notifications (05-01)
 - Fresh form values on retry: handleRetry re-submits current form values instead of captured values (05-01)
 - Threshold visibility: Explicitly pass threshold=70 to GenerationProgress for clarity (05-01)
+- Field-level streaming: Text fields (narrative_hook, beat) use SSE streaming for real-time feedback (06-01)
+- Non-streaming for structured data: beat-list returns complete JSON array, not streamed (06-01)
+- Direct LLM calls for fields: Bypass 3-stage pipeline for faster targeted generation (06-01)
+- Beat role guidance: Embed role descriptions in system prompts for context-aware generation (06-01)
 
 ### Pending Todos
 
@@ -99,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-26 (Phase 5 execution complete)
-Stopped at: Completed 05-01-PLAN.md (Quick Generate Save Workflow)
+Last session: 2026-01-26 (Phase 6 execution in progress)
+Stopped at: Completed 06-01-PLAN.md (Field Generation API)
 Resume file: None
