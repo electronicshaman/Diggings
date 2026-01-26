@@ -98,7 +98,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 05-01-PLAN.md — Wire Quick Generate save workflow with navigation and toast feedback
+- [x] 05-01-PLAN.md — Wire Quick Generate save workflow with navigation and toast feedback
 
 ### Phase 6: Field-Level Assists
 **Goal**: User can generate individual fields via AI assist buttons in manual node creation forms
@@ -109,10 +109,12 @@ Plans:
   2. User sees "Suggest Beats" button in beat editor
   3. AI-generated field content streams into form field in real-time
   4. User can accept, regenerate, or manually edit AI-generated field content
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Backend field generation endpoints for narrative_hook, beat, and beat-list
+- [ ] 06-02-PLAN.md — FieldAssistButton component, useFieldGeneration hook, narrative hook integration
+- [ ] 06-03-PLAN.md — Beat editor AI assists with Suggest Beats and per-beat regeneration
 
 ### Phase 7: Batch Processing
 **Goal**: User can generate multiple nodes in bulk with concurrency control and incremental progress tracking
@@ -173,7 +175,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 3. Quality Control | 2/2 | Complete | 2026-01-25 |
 | 4. Frontend Streaming Client | 1/1 | Complete | 2026-01-26 |
 | 5. Single-Node Generation UI | 1/1 | Complete | 2026-01-26 |
-| 6. Field-Level Assists | 0/1 | Not started | - |
+| 6. Field-Level Assists | 0/3 | Not started | - |
 | 7. Batch Processing | 0/1 | Not started | - |
 | 8. Provider Management | 0/1 | Not started | - |
 | 9. Configuration Management | 0/1 | Not started | - |
