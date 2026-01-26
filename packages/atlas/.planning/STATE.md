@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-25)
 ## Current Position
 
 Phase: 4 of 9 (Frontend Streaming Client)
-Plan: 0 of 1 in current phase
-Status: Ready to plan
-Last activity: 2026-01-25 — Completed Phase 3 (Quality Control)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-26 — Completed 04-01-PLAN.md (Frontend Streaming Client)
 
-Progress: [████░░░░░░] 33%
+Progress: [█████░░░░░] 44%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 3 minutes
-- Total execution time: 0.33 hours
+- Total execution time: 0.38 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [████░░░░░░] 33%
 | 1 - Streaming Foundation | 1 | 5 min | 5 min |
 | 2 - Core Generation Pipeline | 3 | 9 min | 3 min |
 | 3 - Quality Control | 2 | 8 min | 4 min |
+| 4 - Frontend Streaming Client | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (2m), 02-03 (4m), 03-01 (2m), 03-02 (6m)
-- Trend: Stable velocity (avg 3.5 min/plan over last 4)
+- Last 5 plans: 02-03 (4m), 03-01 (2m), 03-02 (6m), 04-01 (3m)
+- Trend: Stable velocity (avg 3.75 min/plan over last 4)
 
 *Updated after each plan completion*
 
@@ -64,6 +65,10 @@ Recent decisions affecting current work:
 - Type extraction from schemas: Use indexed access types to derive types from schema arrays (03-02)
 - Backward compatibility in UI: Keep fallback displays when migrating to richer components (03-02)
 - Compact mode default: Use space-efficient compact mode for embedded component displays (03-02)
+- Frontend job persistence (24hr): Matches backend retention, enables reconnection after disconnect (04-01)
+- Reconnection age threshold (60min): Balance recovery vs stale job cleanup (04-01)
+- Exponential backoff parameters: 1s initial, 30s max, 2x multiplier, 0-30% jitter for reconnection (04-01)
+- Partialize Zustand persist: Only persist activeJob, not ephemeral connectionAttempts (04-01)
 
 ### Pending Todos
 
@@ -75,6 +80,7 @@ None yet.
 - ~~Streaming SSE not wired up frontend-to-backend~~ (RESOLVED in 01-01)
 - ~~Generation service files exist but aren't integrated with API routes~~ (RESOLVED in 01-01)
 - ~~Database save on stream completion: Streaming endpoint doesn't persist to nodes table yet~~ (RESOLVED in 02-03)
+- ~~Frontend generation state persistence and reconnection~~ (RESOLVED in 04-01)
 - Frontend generation UI components exist but hooks don't call working endpoints
 - Cleanup job scheduler: `cleanupOldJobs()` exists but not scheduled (low priority)
 
@@ -85,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-25 (Phase 3 execution complete)
-Stopped at: Completed 03-02-PLAN.md (Quality Feedback UI)
+Last session: 2026-01-26 (Phase 4 execution complete)
+Stopped at: Completed 04-01-PLAN.md (Frontend Streaming Client)
 Resume file: None
