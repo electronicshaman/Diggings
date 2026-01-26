@@ -2,6 +2,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -24,8 +26,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GenerationProgress } from './GenerationProgress';
 import { useGenerateNode } from '@/hooks/useGeneration';
+import { useCreateNode } from '@/hooks/useNodeMutations';
 import { useBiomes } from '@/hooks/useConfig';
-import { NodeTypeDisplayNames, BiomeDisplayNames } from '@node-gen-web/shared';
+import { NodeTypeDisplayNames, BiomeDisplayNames, NodeType, Biome } from '@node-gen-web/shared';
 import type { GenerationRequest } from '@node-gen-web/shared';
 
 const quickGenerateSchema = z.object({
@@ -47,7 +50,9 @@ const quickGenerateSchema = z.object({
 type QuickGenerateFormData = z.infer<typeof quickGenerateSchema>;
 
 export function QuickGenerate() {
+  const navigate = useNavigate();
   const { state, generate, abort, reset, isGenerating } = useGenerateNode();
+  const createNodeMutation = useCreateNode();
   const { data: biomes } = useBiomes();
 
   const form = useForm<QuickGenerateFormData>({
@@ -85,9 +90,93 @@ export function QuickGenerate() {
     form.handleSubmit(onSubmit)();
   };
 
-  const handleAccept = () => {
-    reset();
-    form.reset();
+  const handleAccept = async () => {
+    if (!state.content) return;
+
+    try {
+      // Build node data from form values + generated content
+      const formValues = form.getValues();
+      const nodeType = formValues.nodeType as NodeType;
+      const biome = formValues.biome as Biome;
+
+      // Build base node data
+      const baseData = {
+        type: nodeType,
+        biome,
+        name: formValues.name,
+        acts: formValues.acts as [number, ...number[]],
+        themes: biomeConfig?.themes?.slice(0, 2) || ['survival'],
+        entityTypes: ['character'],
+        content: state.content,
+        criticScore: state.criticScore,
+        isReplaceable: true,
+        replacementTags: [],
+        actVariant: false,
+      };
+
+      // Add type-specific required fields with defaults
+      let nodeData: any = baseData;
+
+      if (nodeType === NodeType.Combat) {
+        nodeData = {
+          ...baseData,
+          enemyTypeHooks: ['generic_enemy'],
+          environmentalContext: 'Standard combat environment',
+          estimatedCombatDifficulty: 3 as const,
+        };
+      } else if (nodeType === NodeType.Choice) {
+        nodeData = {
+          ...baseData,
+          consequenceHooks: ['generic_consequence'],
+          dilemmaType: 'practical' as const,
+        };
+      } else if (nodeType === NodeType.Trade) {
+        nodeData = {
+          ...baseData,
+          traderArchetype: 'general_merchant',
+          pricingHooks: ['standard_pricing'],
+        };
+      } else if (nodeType === NodeType.Rest) {
+        nodeData = {
+          ...baseData,
+          restType: 'safe' as const,
+          interruptionChance: 'low' as const,
+          dreamHooks: [],
+        };
+      } else if (nodeType === NodeType.Passage) {
+        nodeData = {
+          ...baseData,
+          travelEventHooks: ['travel_event'],
+          environmentalStorytelling: 'Standard travel passage',
+          resourceCost: { type: 'time', amount: 1 },
+        };
+      } else if (nodeType === NodeType.StateCheck) {
+        nodeData = {
+          ...baseData,
+          conditionHooks: ['state_condition'],
+          branchTargets: { success: 'success_node', failure: 'failure_node' },
+        };
+      } else if (nodeType === NodeType.Transition) {
+        nodeData = {
+          ...baseData,
+          narrativeSummary: 'Act transition',
+          worldStateShifts: ['narrative_progression'],
+        };
+      }
+
+      const savedNode = await createNodeMutation.mutateAsync(nodeData);
+
+      toast.success(`${savedNode.name} has been created.`);
+
+      // Navigate to node detail
+      navigate(`/nodes/${savedNode.id}`);
+
+      // Reset form and state
+      reset();
+      form.reset();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to save node');
+    }
   };
 
   if (state.stage !== 'idle') {
