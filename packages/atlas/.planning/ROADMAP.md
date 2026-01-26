@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Streaming Foundation** - SSE infrastructure with anti-buffering and heartbeat
 - [x] **Phase 2: Core Generation Pipeline** - Wire generation services to API routes with retry logic
 - [x] **Phase 3: Quality Control** - Integrate critic stage with scoring and auto-retry
-- [ ] **Phase 4: Frontend Streaming Client** - EventSource hook with reconnection logic
+- [x] **Phase 4: Frontend Streaming Client** - EventSource hook with reconnection logic
 - [ ] **Phase 5: Single-Node Generation UI** - Quick Generate flow with preview and regenerate
 - [ ] **Phase 6: Field-Level Assists** - Inline AI generation buttons in manual forms
 - [ ] **Phase 7: Batch Processing** - Bulk generation with concurrency control and progress tracking
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Streaming Foundation | 1/1 | Complete | 2026-01-25 |
 | 2. Core Generation Pipeline | 3/3 | Complete | 2026-01-25 |
 | 3. Quality Control | 2/2 | Complete | 2026-01-25 |
-| 4. Frontend Streaming Client | 0/1 | Not started | - |
+| 4. Frontend Streaming Client | 1/1 | Complete | 2026-01-26 |
 | 5. Single-Node Generation UI | 0/1 | Not started | - |
 | 6. Field-Level Assists | 0/1 | Not started | - |
 | 7. Batch Processing | 0/1 | Not started | - |
