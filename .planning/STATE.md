@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Generate complete, high-quality narrative nodes with minimal manual effort through AI-powered content creation
-**Current focus:** Phase 4 - Frontend Streaming Client
+**Current focus:** Phase 5 - Single-Node Generation UI
 
 ## Current Position
 
@@ -30,6 +30,7 @@ Progress: [█████░░░░░] 44%
 | 1 - Streaming Foundation | 1 | 5 min | 5 min |
 | 2 - Core Generation Pipeline | 3 | 9 min | 3 min |
 | 3 - Quality Control | 2 | 8 min | 4 min |
+| 4 - Frontend Streaming Client | 1 | 3 min | 3 min |
 | 4 - Frontend Streaming Client | 1 | 3 min | 3 min |
 
 **Recent Trend:**
@@ -65,6 +66,9 @@ Recent decisions affecting current work:
 - Type extraction from schemas: Use indexed access types to derive types from schema arrays (03-02)
 - Backward compatibility in UI: Keep fallback displays when migrating to richer components (03-02)
 - Compact mode default: Use space-efficient compact mode for embedded component displays (03-02)
+- Job age threshold (60min): Reconnection attempts only for jobs <60min old to balance recovery vs stale cleanup (04-01)
+- State persistence partialize: Only persist activeJob, not ephemeral connectionAttempts (04-01)
+- Reconnection backoff: 1s initial, 30s max, 2x multiplier with 0-30% jitter prevents thundering herd (04-01)
 - Frontend job persistence (24hr): Matches backend retention, enables reconnection after disconnect (04-01)
 - Reconnection age threshold (60min): Balance recovery vs stale job cleanup (04-01)
 - Exponential backoff parameters: 1s initial, 30s max, 2x multiplier, 0-30% jitter for reconnection (04-01)

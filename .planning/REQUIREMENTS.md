@@ -106,7 +106,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STREAM-01 | Phase 4 | Pending |
+| STREAM-01 | Phase 4 | Complete |
 | STREAM-02 | Phase 5 | Pending |
 | STREAM-03 | Phase 5 | Pending |
 | STREAM-04 | Phase 5 | Pending |
@@ -139,7 +139,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ERR-02 | Phase 2 | Complete |
 | ERR-03 | Phase 1 | Complete |
 | ERR-04 | Phase 1 | Complete |
-| ERR-05 | Phase 4 | Pending |
+| ERR-05 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 34 total
