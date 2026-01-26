@@ -83,7 +83,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — Zustand generation store with persist middleware and reconnection logic
+- [x] 04-01-PLAN.md — Zustand generation store with persist middleware and reconnection logic
 
 ### Phase 5: Single-Node Generation UI
 **Goal**: User can generate complete nodes through Quick Generate flow with preview and regenerate controls
@@ -95,10 +95,10 @@ Plans:
   3. User can regenerate content if output quality is unsatisfactory
   4. User can cancel in-flight generation requests mid-stream
   5. GenerationProgress component displays 3-stage pipeline progress
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Wire Quick Generate save workflow with navigation and toast feedback
 
 ### Phase 6: Field-Level Assists
 **Goal**: User can generate individual fields via AI assist buttons in manual node creation forms
