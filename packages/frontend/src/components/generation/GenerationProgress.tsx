@@ -151,8 +151,18 @@ export function GenerationProgress({
               Retry
             </Button>
           )}
-          {stage === 'completed' && onAccept && (
-            <Button onClick={onAccept}>Accept & Save</Button>
+          {stage === 'completed' && (
+            <>
+              {/* Show Regenerate alongside Accept when score is below threshold */}
+              {onRetry && typeof criticScore === 'number' && criticScore < threshold && (
+                <Button variant="outline" onClick={onRetry}>
+                  Regenerate
+                </Button>
+              )}
+              {onAccept && (
+                <Button onClick={onAccept}>Accept & Save</Button>
+              )}
+            </>
           )}
         </div>
       </CardContent>
