@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Quality Control** - Integrate critic stage with scoring and auto-retry
 - [x] **Phase 4: Frontend Streaming Client** - EventSource hook with reconnection logic
 - [x] **Phase 5: Single-Node Generation UI** - Quick Generate flow with preview and regenerate
-- [ ] **Phase 6: Field-Level Assists** - Inline AI generation buttons in manual forms
+- [ ] **Phase 6: Field-Level Assists** - AI generation for individual fields in AssistedCreate workflow
 - [ ] **Phase 7: Batch Processing** - Bulk generation with concurrency control and progress tracking
 - [ ] **Phase 8: Provider Management** - Settings UI for LLM provider configuration
 - [ ] **Phase 9: Configuration Management** - Advanced config UI for beat sequences and style guides
@@ -101,20 +101,20 @@ Plans:
 - [x] 05-01-PLAN.md — Wire Quick Generate save workflow with navigation and toast feedback
 
 ### Phase 6: Field-Level Assists
-**Goal**: User can generate individual fields via AI assist buttons in manual node creation forms
+**Goal**: User can generate individual fields via lightweight AI endpoints in AssistedCreate workflow
 **Depends on**: Phase 5
 **Requirements**: GEN-01
 **Success Criteria** (what must be TRUE):
-  1. User sees "Generate" button next to narrative hook field in manual forms
-  2. User sees "Suggest Beats" button in beat editor
+  1. User sees "Generate" button next to narrative hook field in AssistedCreate
+  2. User sees "Suggest Beats" button for previewing beat structure before generation
   3. AI-generated field content streams into form field in real-time
   4. User can accept, regenerate, or manually edit AI-generated field content
 **Plans**: 3 plans
 
 Plans:
 - [ ] 06-01-PLAN.md — Backend field generation endpoints for narrative_hook, beat, and beat-list
-- [ ] 06-02-PLAN.md — FieldAssistButton component, useFieldGeneration hook, narrative hook integration
-- [ ] 06-03-PLAN.md — Beat editor AI assists with Suggest Beats and per-beat regeneration
+- [ ] 06-02-PLAN.md — FieldAssistButton component, useFieldGeneration hook, narrative hook integration in AssistedCreate
+- [ ] 06-03-PLAN.md — Beat suggestion preview with include/exclude toggles in AssistedCreate
 
 ### Phase 7: Batch Processing
 **Goal**: User can generate multiple nodes in bulk with concurrency control and incremental progress tracking
