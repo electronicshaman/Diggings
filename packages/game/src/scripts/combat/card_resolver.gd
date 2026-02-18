@@ -44,7 +44,7 @@ func can_play_card(card_data: CardData) -> bool:
 		return false
 
 	# Check Disarmed status for Attack cards
-	if card_data.card_type == GameConstants.CardType.ATTACK:
+	if card_data.is_attack():
 		if player.status_effects and not player.status_effects.can_play_attack():
 			GLog.debug("CardResolver: Cannot play Attack cards while Disarmed")
 			return false
@@ -396,14 +396,14 @@ func _apply_single_result(values: Dictionary, source: RefCounted, target: RefCou
 
 			# Post-damage status effects: Thorns reflection
 			if actual_damage > 0 and target and "status_effects" in target and target.status_effects:
-				var reflect := target.status_effects.get_reflection_damage(actual_damage)
+				var reflect: int = int(target.status_effects.get_reflection_damage(actual_damage))
 				if reflect > 0 and source:
 					source.take_damage(reflect)
 					GLog.debug("CardResolver: Thorns reflected %d damage back to attacker" % reflect)
 
 			# Post-damage status effects: Drain lifesteal
 			if actual_damage > 0 and source and "status_effects" in source and source.status_effects:
-				var lifesteal := source.status_effects.get_lifesteal_amount(actual_damage)
+				var lifesteal: int = int(source.status_effects.get_lifesteal_amount(actual_damage))
 				if lifesteal > 0:
 					source.heal(lifesteal)
 					GLog.debug("CardResolver: Drain healed %d from damage dealt" % lifesteal)

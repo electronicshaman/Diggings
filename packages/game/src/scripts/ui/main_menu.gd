@@ -24,9 +24,9 @@ func setup_button_connections():
 	quit_button.pressed.connect(_on_quit_pressed)
 
 func check_save_file_exists():
-	# Enable/disable continue button based on save file existence
-	var save_exists = SaveSystem.has_save_file()
-	continue_button.disabled = not save_exists
+	# MVP currently supports quick duel flow only.
+	continue_button.disabled = true
+	continue_button.tooltip_text = "Continue is disabled in quick duel mode."
 
 func check_previous_seed_available():
 	# Enable/disable use previous seed button based on whether a previous run exists in history
@@ -55,13 +55,8 @@ func _on_new_game_pressed():
 	SceneManager.load_scene_by_name("class_selection")
 
 func _on_continue_pressed():
-	GLog.info("Continue button pressed")
-	if SaveSystem.load_game():
-		# Continue with loaded game state
-		GameManager.change_state(GameManager.GameState.PLAYING)
-		SceneManager.load_scene_by_name("map")
-	else:
-		GLog.error("Failed to load save file")
+	GLog.info("Continue button pressed - routing to quick duel setup")
+	SceneManager.load_scene_by_name("quick_duel_setup")
 
 func _on_settings_pressed():
 	GLog.info("Settings button pressed")

@@ -335,8 +335,8 @@ func _finish_and_return_to_map():
 		GLog.info("Victory reward complete - returning to %s" % continue_to_scene, "victory_reward")
 		SceneManager.load_scene_by_name(continue_to_scene)
 	else:
-		GLog.info("Victory reward complete - returning to map")
-		SceneManager.load_scene_by_name("map")
+		GLog.info("Victory reward complete - returning to quick duel setup")
+		SceneManager.load_scene_by_name("quick_duel_setup")
 
 func _display_gold_reward():
 	"""Display gold earned from the victory"""

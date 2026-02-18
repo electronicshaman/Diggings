@@ -184,13 +184,6 @@ func start_player_turn():
 	if player_data:
 		player_data.start_new_turn()
 	
-	# Draw 5 cards at the start of each turn (except turn 1, which already drew initial hand)
-	if player_turn_count > 1:
-		var cards_to_draw = 5 - hand.size() # Draw up to 5 cards
-		if cards_to_draw > 0:
-			var drawn = draw_cards(cards_to_draw)
-			GLog.info("Drew %d cards at start of turn %d" % [drawn.size(), player_turn_count])
-	
 	_emit_change("player_turn_started", {"turn_count": player_turn_count})
 
 func end_player_turn():

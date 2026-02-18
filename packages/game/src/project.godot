@@ -8,11 +8,15 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Card Battler Prototype"
 run/main_scene="res://scenes/ui/main_menu.tscn"
-config/features=PackedStringArray("4.5", "Mobile")
+config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -26,7 +30,6 @@ GLog="*res://scripts/autoloads/glog.gd"
 GameManager="*res://scripts/autoloads/game_manager.gd"
 DeckManager="*res://scripts/autoloads/deck_manager.gd"
 SceneManager="*res://scripts/autoloads/scene_manager.gd"
-GDAIMCPRuntime="*res://addons/gdai-mcp-plugin-godot/gdai_mcp_runtime.gd"
 CurioManager="*res://scripts/autoloads/curio_manager.gd"
 CharacterGenerator="*res://scripts/autoloads/character_generator.gd"
 RunHistoryManager="*res://scripts/autoloads/run_history_manager.gd"
@@ -48,7 +51,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
+enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
 
 [gdunit4]
 

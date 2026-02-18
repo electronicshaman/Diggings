@@ -31,17 +31,25 @@ func _ready() -> void:
 	_setup_connections()
 	_update_slider_labels()
 
-	# Set default selections to bushranger
-	var bushranger_char_idx = _find_item_index(characters, "bushranger", "class_name")
-	var bushranger_deck_idx = _find_item_index(decks, "bushranger_starter", "deck_name")
+	# Set default selections.
+	# Prefer class selected from Class Selection flow, fallback to Bushranger.
+	var preferred_class = ""
+	if GameManager and GameManager.current_character_class != "":
+		preferred_class = GameManager.current_character_class.to_lower()
 
-	if bushranger_char_idx >= 0:
-		character_dropdown.selected = bushranger_char_idx
-		_on_character_selected(bushranger_char_idx)
+	var preferred_char_search = preferred_class if preferred_class != "" else "bushranger"
+	var preferred_deck_search = (preferred_class + "_starter") if preferred_class != "" else "bushranger_starter"
 
-	if bushranger_deck_idx >= 0:
-		deck_dropdown.selected = bushranger_deck_idx
-		_update_decklist(bushranger_deck_idx)
+	var preferred_char_idx = _find_item_index(characters, preferred_char_search, "class_name")
+	var preferred_deck_idx = _find_item_index(decks, preferred_deck_search, "deck_name")
+
+	if preferred_char_idx >= 0:
+		character_dropdown.selected = preferred_char_idx
+		_on_character_selected(preferred_char_idx)
+
+	if preferred_deck_idx >= 0:
+		deck_dropdown.selected = preferred_deck_idx
+		_update_decklist(preferred_deck_idx)
 	elif deck_dropdown.item_count > 0:
 		deck_dropdown.selected = 0
 		_update_decklist(0)

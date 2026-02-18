@@ -20,12 +20,6 @@ const SCENE_PATHS: Dictionary = {
 	"class_selection": "res://scenes/ui/class_selection.tscn",
 	"duel": "res://scenes/game/duel.tscn",
 	"quick_duel_setup": "res://scenes/game/quick_duel_setup.tscn",
-	"map_selection": "res://scenes/game/map_selection.tscn",
-	"city_hub": "res://scenes/game/city_hub.tscn",
-	"shop": "res://scenes/game/shop.tscn",
-	"camp": "res://scenes/game/camp.tscn",
-	"junction": "res://scenes/game/junction.tscn",
-	"rest_site": "res://scenes/game/rest_site.tscn",
 	"game_over": "res://scenes/ui/game_over.tscn",
 
 	"settings": "res://scenes/ui/settings.tscn",
@@ -164,9 +158,8 @@ func preload_scene(scene_path: String) -> void:
 
 func preload_common_scenes() -> void:
 	var scenes_to_preload := [
-		"main_game",
+		"quick_duel_setup",
 		"duel",
-		"map",
 		"game_over",
 
 	]
@@ -204,7 +197,7 @@ func transition_to_main_menu() -> void:
 	load_scene_by_name("main_menu")
 
 func transition_to_game() -> void:
-	load_scene_by_name("main_game")
+	load_scene_by_name("quick_duel_setup")
 
 func transition_to_game_over() -> void:
 	load_scene_by_name("game_over")

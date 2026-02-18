@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://c8h5t2xam4n7k"]
 
-[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://cnd7hepxob5m2" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/handlers/core/conditional_value.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/handlers/core/handler_condition.gd" id="4"]

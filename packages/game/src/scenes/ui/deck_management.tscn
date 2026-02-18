@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dx0uect5c0lud"]
 
-[ext_resource type="Script" uid="uid://68qdej3yfb0a" path="res://scripts/ui/deck_management.gd" id="1"]
+[ext_resource type="Script" uid="uid://dneslos3c51ww" path="res://scripts/ui/deck_management.gd" id="1"]
 
 [node name="DeckManagement" type="Control"]
 layout_mode = 3
