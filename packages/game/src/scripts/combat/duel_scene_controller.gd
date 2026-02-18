@@ -251,6 +251,10 @@ func _on_duel_ended_from_state_manager(victory: bool) -> void:
 	GLog.debug("Duel ended (from state manager) - Victory: %s" % victory)
 	game_state_updated.emit()
 	
+	# Quick duel flow is routed by DuelManager (victory_reward/game_over/sequence).
+	if GameManager and GameManager.game_data.get("is_quick_duel", false):
+		return
+
 	# Check for duel sequence - let DuelManager handle the transition and persistence
 	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
 		GLog.debug("Duel sequence active - deferring end game logic to DuelManager", "duel_scene_controller")
@@ -259,9 +263,9 @@ func _on_duel_ended_from_state_manager(victory: bool) -> void:
 	await get_tree().create_timer(0.6).timeout
 	if victory:
 		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
-			SceneManager.load_scene_by_name("map")
+			SceneManager.load_scene_by_name("quick_duel_setup")
 		else:
-			push_error("DuelSceneController: Cannot load map scene on duel end - SceneManager unavailable")
+			push_error("DuelSceneController: Cannot load quick duel setup scene on duel end - SceneManager unavailable")
 	else:
 		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
 			SceneManager.load_scene_by_name("game_over")

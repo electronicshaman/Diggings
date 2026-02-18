@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://dkejnvd7wl47w"]
 
-[ext_resource type="Script" uid="uid://dli5qavf04f1l" path="res://scripts/combat/main_game_controller.gd" id="2_main_controller"]
-[ext_resource type="Script" uid="uid://c6j7ia2480bri" path="res://scripts/managers/duel_manager.gd" id="2_qgbr3"]
-[ext_resource type="Script" uid="uid://btuf86ovfqnev" path="res://scripts/managers/game_controller.gd" id="3_7qhhq"]
-[ext_resource type="Script" uid="uid://be3e1kesnfgey" path="res://scripts/managers/ui_controller.gd" id="4_noi7s"]
-[ext_resource type="Script" uid="uid://c4lbtms5gghy0" path="res://scripts/managers/input_controller.gd" id="5_p2514"]
+[ext_resource type="Script" uid="uid://y5p7o6kat70s" path="res://scripts/combat/main_game_controller.gd" id="2_main_controller"]
+[ext_resource type="Script" uid="uid://defvrh3jhpar8" path="res://scripts/managers/duel_manager.gd" id="2_qgbr3"]
+[ext_resource type="Script" uid="uid://bdthagdjr78ri" path="res://scripts/managers/game_controller.gd" id="3_7qhhq"]
+[ext_resource type="Script" uid="uid://c7ocurjircumh" path="res://scripts/managers/ui_controller.gd" id="4_noi7s"]
+[ext_resource type="Script" uid="uid://cf3awhwiyxqag" path="res://scripts/managers/input_controller.gd" id="5_p2514"]
 
 [node name="MainGame" type="Node2D"]
 script = ExtResource("2_main_controller")

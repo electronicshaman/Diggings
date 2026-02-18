@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=5 format=3 uid="uid://c2rat5m8k4w7r"]
 
-[ext_resource type="Script" uid="uid://dt0y1eovuf0tt" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://cnd7hepxob5m2" path="res://scripts/cards/card_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/combat/costs/energy_cost.gd" id="energy_cost_3"]
 

@@ -111,7 +111,7 @@ func _on_flow_controller_turn_started(is_player_turn: bool) -> void:
 	
 	# If it's enemy turn, execute AI
 	if not is_player_turn:
-		_execute_enemy_turn()
+		await _execute_enemy_turn()
 
 func _on_flow_controller_turn_ended(is_player_turn: bool) -> void:
 	turn_ended.emit(is_player_turn)
@@ -297,8 +297,8 @@ func _execute_enemy_turn() -> void:
 		flow_controller.end_enemy_turn()
 		return
 	
-	# Execute AI turn asynchronously
-	ai_controller.execute_turn(enemy, card_resolver)
+	# Execute AI turn and wait for all enemy card plays to finish.
+	await ai_controller.execute_turn(enemy, card_resolver)
 
 	# Wait for enemy AI to complete before ending turn
 	await get_tree().create_timer(GameConstants.TIMING_VALUES["enemy_turn_end_delay"]).timeout

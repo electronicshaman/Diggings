@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="DeckData" load_steps=2 format=3 uid="uid://c8qm5vx2nqawa"]
 
-[ext_resource type="Script" uid="uid://d1f3tqu7uyhl3" path="res://scripts/data/deck_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://dpbrolowhp7m8" path="res://scripts/data/deck_data.gd" id="1"]
 
 [resource]
 script = ExtResource("1")

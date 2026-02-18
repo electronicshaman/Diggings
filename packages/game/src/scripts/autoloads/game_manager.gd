@@ -175,11 +175,10 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 	if is_instance_valid(DeckManager):
 		DeckManager.start_new_run_deck(character_class)
 	
-	# Load map selection
+	# MVP routing: quick duel setup is the primary game flow.
 	change_state(GameState.PLAYING)
 	EventBus.emit_game_started()
-	# Route to region selection first
-	SceneManager.load_scene_by_name("map_selection")
+	SceneManager.load_scene_by_name("quick_duel_setup")
 
 func end_current_run(victory: bool = false) -> void:
 	GLog.debug("Ending run - Victory: " + str(victory))
@@ -461,8 +460,8 @@ func select_map(region_id: String) -> void:
 	game_data.current_map = region_id
 	GLog.info("Selected map: " + region_id)
 
-	# Load the map scene
-	SceneManager.load_scene_by_name("map")
+	# MVP routing: map exploration is disabled in quick duel mode.
+	SceneManager.load_scene_by_name("quick_duel_setup")
 
 func complete_current_map() -> void:
 	var current = game_data.current_map
@@ -483,8 +482,8 @@ func complete_current_map() -> void:
 		GLog.info("All maps completed! Victory!")
 		end_current_run(true)
 	else:
-		# Return to map selection
-		SceneManager.load_scene_by_name("map_selection")
+		# MVP routing: map exploration is disabled in quick duel mode.
+		SceneManager.load_scene_by_name("quick_duel_setup")
 
 func is_game_paused() -> bool:
 	return current_state == GameState.PAUSED

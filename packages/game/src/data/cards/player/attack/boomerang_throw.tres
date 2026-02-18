@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=7 format=3 uid="uid://c7w4r2lan5m8j"]
 
-[ext_resource type="Script" uid="uid://diotvmyurqkbx" path="res://scripts/cards/card_data.gd" id="1"]
-[ext_resource type="Script" uid="uid://bxvsehxk3ktf8" path="res://scripts/handlers/core/conditional_value.gd" id="1_0kld4"]
-[ext_resource type="Script" uid="uid://xanin6lft6g2" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
-[ext_resource type="Script" uid="uid://cfpgcrj4gia0t" path="res://scripts/handlers/types/card_manipulation_handler.gd" id="3"]
+[ext_resource type="Script" uid="uid://cnd7hepxob5m2" path="res://scripts/cards/card_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://cushitmafxkn1" path="res://scripts/handlers/core/conditional_value.gd" id="1_0kld4"]
+[ext_resource type="Script" uid="uid://dmem0xi1bdp46" path="res://scripts/handlers/types/damage_handler.gd" id="2"]
+[ext_resource type="Script" uid="uid://o1klqau2x20x" path="res://scripts/handlers/types/card_manipulation_handler.gd" id="3"]
 
 [sub_resource type="Resource" id="DamageHandler_1"]
 script = ExtResource("2")
