@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Generate complete, high-quality narrative nodes with minimal manual effort through AI-powered content creation
-**Current focus:** Phase 6 - Field-Level Assists
+**Current focus:** v1 Milestone Complete
 
 ## Current Position
 
-Phase: 6 of 9 (Field-Level Assists)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-01-26 — Completed 06-03-PLAN.md (Beat List Generation)
+Phase: 9 of 9 (All phases complete)
+Plan: All plans complete
+Status: v1 milestone complete
+Last activity: 2026-02-24 — Completed Phases 7, 8, 9 (Batch Processing, Provider Management, Configuration Management)
 
-Progress: [███████████] 100%
+Progress: [███████████] 100% — All 34 v1 requirements satisfied
 
 ## Performance Metrics
 
@@ -107,10 +107,10 @@ None yet.
 **From research:**
 - Phase 3: Critic scoring rubric calibration per node type requires domain expertise
 - Phase 7: Optimal concurrency levels depend on OpenRouter tier and rate limits
-- Pre-existing type errors in config-advanced.ts, llm-providers.ts need cleanup (low priority, streaming.ts fixed in 02-03)
+- ~~Pre-existing type errors in config-advanced.ts, llm-providers.ts need cleanup~~ (RESOLVED: $dynamic() for Drizzle queries, ne() for set-active, testProviderConnection for test endpoint)
 
 ## Session Continuity
 
-Last session: 2026-01-26 (Phase 6 complete)
-Stopped at: Completed 06-03-PLAN.md (Beat List Generation)
+Last session: 2026-02-24 (v1 milestone complete)
+Stopped at: All 9 phases complete — 34/34 v1 requirements satisfied
 Resume file: None

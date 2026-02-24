@@ -2,9 +2,9 @@
  * React hook for AI node generation with SSE streaming
  */
 
-import { useCallback, useRef, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { GenerationRequest, ProgressEvent, GenerationResponse, CriticResult } from '@node-gen-web/shared';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { GenerationRequest, ProgressEvent, GenerationResponse, CriticResult, BulkGenerationRequest } from '@node-gen-web/shared';
 import { streamGeneration, reconnectToJob, type StreamHandle } from '@/lib/streaming';
 import { useGenerationStore, type GenerationJob } from '@/store/generation-store';
 
@@ -205,11 +205,172 @@ export function useGenerateNodeMutation() {
 /**
  * Hook for fetching distribution gaps (for bulk generation)
  */
-export function useDistributionGaps(_biome?: string, _nodeType?: string) {
-  // TODO: Implement when backend supports gap analysis
-  return {
-    data: null,
-    isLoading: false,
-    error: null,
-  };
+export function useDistributionGaps() {
+  return useQuery({
+    queryKey: ['distribution-gaps'],
+    queryFn: async () => {
+      const response = await fetch('/api/config/advanced/distributions/gaps');
+      if (!response.ok) throw new Error('Failed to fetch distribution gaps');
+      return response.json();
+    },
+  });
+}
+
+/**
+ * Bulk generation progress state
+ */
+export interface BulkGenerationProgress {
+  status: 'idle' | 'running' | 'paused' | 'completed' | 'error';
+  total: number;
+  completed: number;
+  failed: number;
+  currentNode?: string;
+  errors: string[];
+}
+
+/**
+ * Hook for bulk generation with SSE streaming
+ */
+export function useBulkGeneration() {
+  const [progress, setProgress] = useState<BulkGenerationProgress>({
+    status: 'idle',
+    total: 0,
+    completed: 0,
+    failed: 0,
+    errors: [],
+  });
+  const abortRef = useRef<AbortController | null>(null);
+  const queryClient = useQueryClient();
+
+  const start = useCallback(async (request: BulkGenerationRequest) => {
+    abortRef.current = new AbortController();
+
+    setProgress({
+      status: 'running',
+      total: 0,
+      completed: 0,
+      failed: 0,
+      errors: [],
+    });
+
+    try {
+      const response = await fetch('/api/generate/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream',
+        },
+        body: JSON.stringify(request),
+        signal: abortRef.current.signal,
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Request failed' }));
+        setProgress((prev) => ({
+          ...prev,
+          status: 'error',
+          errors: [error.error || 'Bulk generation failed'],
+        }));
+        return;
+      }
+
+      if (!response.body) {
+        setProgress((prev) => ({ ...prev, status: 'error', errors: ['No response body'] }));
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        let eventType = '';
+        for (const line of lines) {
+          if (line.startsWith('event: ')) {
+            eventType = line.slice(7);
+          } else if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+
+              if (eventType === 'bulk_start') {
+                setProgress((prev) => ({ ...prev, total: data.total }));
+              } else if (eventType === 'node_progress') {
+                setProgress((prev) => ({
+                  ...prev,
+                  completed: data.completed,
+                  failed: data.failed,
+                  total: data.total,
+                  currentNode: data.nodeId,
+                  errors: data.error
+                    ? [...prev.errors, `${data.nodeId}: ${data.error}`]
+                    : prev.errors,
+                }));
+              } else if (eventType === 'bulk_complete') {
+                setProgress((prev) => ({
+                  ...prev,
+                  status: 'completed',
+                  completed: data.successful,
+                  failed: data.failed,
+                  total: data.total,
+                  currentNode: undefined,
+                }));
+                queryClient.invalidateQueries({ queryKey: ['nodes'] });
+                queryClient.invalidateQueries({ queryKey: ['distribution-gaps'] });
+              } else if (eventType === 'bulk_error') {
+                setProgress((prev) => ({
+                  ...prev,
+                  status: 'error',
+                  errors: [...prev.errors, data.error],
+                }));
+              }
+            } catch {
+              // Skip malformed JSON
+            }
+            eventType = '';
+          }
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        setProgress((prev) => ({
+          ...prev,
+          status: 'error',
+          errors: [...prev.errors, error instanceof Error ? error.message : 'Unknown error'],
+        }));
+      }
+    }
+  }, [queryClient]);
+
+  const cancel = useCallback(() => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
+    setProgress({
+      status: 'idle',
+      total: 0,
+      completed: 0,
+      failed: 0,
+      errors: [],
+    });
+  }, []);
+
+  const reset = useCallback(() => {
+    setProgress({
+      status: 'idle',
+      total: 0,
+      completed: 0,
+      failed: 0,
+      errors: [],
+    });
+  }, []);
+
+  return { progress, start, cancel, reset };
 }
