@@ -69,7 +69,7 @@ router.post('/narrative-hook', zValidator('json', narrativeHookRequestSchema), a
   c.header('Connection', 'keep-alive');
 
   const encoder = new TextEncoder();
-  const apiKey = decryptApiKey(provider.encryptedApiKey!);
+  const apiKey = provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!);
 
   const systemPrompt = `You are a narrative writer for an Australian Gold Rush cosmic horror game.
 
@@ -114,10 +114,13 @@ Entity types: ${body.entityTypes.join(', ') || 'none specified'}`;
             }
           }
         } else {
-          // OpenAI/OpenRouter
+          // OpenAI/OpenRouter/Ollama
+          const baseURL = provider.type === 'ollama'
+            ? `${(provider.baseUrl || '').replace(/\/+$/, '')}/v1`
+            : provider.baseUrl || undefined;
           const client = new OpenAI({
             apiKey,
-            baseURL: provider.baseUrl || undefined,
+            baseURL,
             defaultHeaders:
               provider.type === 'openrouter'
                 ? {
@@ -181,7 +184,7 @@ router.post('/beat', zValidator('json', beatRequestSchema), async (c) => {
   c.header('Connection', 'keep-alive');
 
   const encoder = new TextEncoder();
-  const apiKey = decryptApiKey(provider.encryptedApiKey!);
+  const apiKey = provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!);
 
   // Beat role guidance
   const roleGuidance: Record<string, string> = {
@@ -236,9 +239,12 @@ Return only the beat text, no JSON or metadata.`;
             }
           }
         } else {
+          const beatBaseURL = provider.type === 'ollama'
+            ? `${(provider.baseUrl || '').replace(/\/+$/, '')}/v1`
+            : provider.baseUrl || undefined;
           const client = new OpenAI({
             apiKey,
-            baseURL: provider.baseUrl || undefined,
+            baseURL: beatBaseURL,
             defaultHeaders:
               provider.type === 'openrouter'
                 ? {
@@ -294,7 +300,7 @@ router.post('/beat-list', zValidator('json', beatListRequestSchema), async (c) =
     return c.json({ error: 'No LLM provider configured' }, 500);
   }
 
-  const apiKey = decryptApiKey(provider.encryptedApiKey!);
+  const apiKey = provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!);
 
   // Beat sequence templates by node type
   const beatSequences: Record<string, string> = {
@@ -351,9 +357,12 @@ Return ONLY the JSON array, no markdown formatting.`;
 
       content = response.content[0]?.type === 'text' ? response.content[0].text : '';
     } else {
+      const listBaseURL = provider.type === 'ollama'
+        ? `${(provider.baseUrl || '').replace(/\/+$/, '')}/v1`
+        : provider.baseUrl || undefined;
       const client = new OpenAI({
         apiKey,
-        baseURL: provider.baseUrl || undefined,
+        baseURL: listBaseURL,
         defaultHeaders:
           provider.type === 'openrouter'
             ? {

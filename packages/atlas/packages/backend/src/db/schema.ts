@@ -25,7 +25,7 @@ export const biomeEnum = pgEnum('biome', [
 export const dilemmaTypeEnum = pgEnum('dilemma_type', ['moral', 'practical', 'survival']);
 export const restTypeEnum = pgEnum('rest_type', ['safe', 'risky', 'sacred']);
 export const interruptionChanceEnum = pgEnum('interruption_chance', ['none', 'low', 'medium', 'high']);
-export const llmProviderTypeEnum = pgEnum('llm_provider_type', ['openai', 'openrouter', 'anthropic']);
+export const llmProviderTypeEnum = pgEnum('llm_provider_type', ['openai', 'openrouter', 'anthropic', 'ollama']);
 export const beatRoleEnum = pgEnum('beat_role', [
   'setup',
   'escalation',

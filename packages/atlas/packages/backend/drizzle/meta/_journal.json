@@ -22,6 +22,13 @@
       "when": 1769326148321,
       "tag": "0002_public_virginia_dare",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1771894075165,
+      "tag": "0003_brainy_expediter",
+      "breakpoints": true
     }
   ]
 }
