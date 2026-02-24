@@ -12,7 +12,7 @@ import { completeWithCircuitBreaker } from './circuit-breaker.js';
 import { classifyLLMError, calculateRetryDelay } from './error-handler.js';
 
 // Provider types
-export type LLMProviderType = 'openai' | 'openrouter' | 'anthropic';
+export type LLMProviderType = 'openai' | 'openrouter' | 'anthropic' | 'ollama';
 
 export interface LLMProvider {
   id: number;
@@ -72,6 +72,14 @@ export async function getActiveProvider(): Promise<LLMProvider | null> {
  * Create an OpenAI-compatible client for the given provider
  */
 function createOpenAIClient(provider: LLMProvider): OpenAI {
+  if (provider.type === 'ollama') {
+    const base = (provider.baseUrl || '').replace(/\/+$/, '');
+    return new OpenAI({
+      apiKey: 'ollama',
+      baseURL: `${base}/v1`,
+    });
+  }
+
   if (!provider.encryptedApiKey) {
     throw new Error(`Provider ${provider.name} has no API key configured`);
   }
@@ -166,6 +174,81 @@ export async function complete(options: LLMCompletionOptions): Promise<LLMComple
 
     const content = response.choices[0]?.message?.content ?? '';
 
+    return {
+      content,
+      usage: response.usage
+        ? {
+            promptTokens: response.usage.prompt_tokens,
+            completionTokens: response.usage.completion_tokens,
+            totalTokens: response.usage.total_tokens,
+          }
+        : undefined,
+    };
+  }
+}
+
+/**
+ * Test a provider connection with arbitrary config (not limited to active provider)
+ */
+export async function testProviderConnection(config: {
+  type: string;
+  baseUrl?: string | null;
+  apiKey?: string;
+  model: string;
+  temperature?: number;
+}): Promise<LLMCompletionResult> {
+  const temperature = config.temperature ?? 0.7;
+  const maxTokens = 10;
+
+  if (config.type === 'anthropic') {
+    const client = new Anthropic({ apiKey: config.apiKey });
+
+    const response = await client.messages.create({
+      model: config.model,
+      max_tokens: maxTokens,
+      temperature,
+      system: 'You are a helpful assistant.',
+      messages: [{ role: 'user', content: 'Say "Hello" and nothing else.' }],
+    });
+
+    const content = response.content[0]?.type === 'text' ? response.content[0].text : '';
+    return {
+      content,
+      usage: {
+        promptTokens: response.usage.input_tokens,
+        completionTokens: response.usage.output_tokens,
+        totalTokens: response.usage.input_tokens + response.usage.output_tokens,
+      },
+    };
+  } else {
+    const isOllama = config.type === 'ollama';
+    const baseUrl = isOllama
+      ? `${(config.baseUrl || '').replace(/\/+$/, '')}/v1`
+      : config.baseUrl || undefined;
+
+    const client = new OpenAI({
+      apiKey: isOllama ? 'ollama' : config.apiKey!,
+      baseURL: baseUrl,
+      defaultHeaders:
+        config.type === 'openrouter'
+          ? {
+              'HTTP-Referer': 'https://github.com/node-gen-web',
+              'X-Title': 'Node Gen Web',
+            }
+          : undefined,
+    });
+
+    const response = await client.chat.completions.create({
+      model: config.model,
+      temperature,
+      max_tokens: maxTokens,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: 'Say "Hello" and nothing else.' },
+      ],
+    });
+
+    const content = response.choices[0]?.message?.content ?? '';
     return {
       content,
       usage: response.usage

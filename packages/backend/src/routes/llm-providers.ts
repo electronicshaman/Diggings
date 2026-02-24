@@ -10,9 +10,9 @@ import {
 } from '@node-gen-web/shared';
 import { db } from '../db/index.js';
 import { llmProviders } from '../db/schema.js';
-import { eq, desc } from 'drizzle-orm';
+import { eq, ne, desc } from 'drizzle-orm';
 import { encryptApiKey, decryptApiKey } from '../middleware/encryption.js';
-import { complete } from '../services/generation/llm-client.js';
+import { testProviderConnection } from '../services/generation/llm-client.js';
 
 const app = new Hono();
 
@@ -40,6 +40,44 @@ app.get('/', async (c) => {
       },
       500
     );
+  }
+});
+
+/**
+ * GET /api/llm/providers/ollama-models
+ * Fetch available models from an Ollama server
+ */
+app.get('/ollama-models', async (c) => {
+  const baseUrl = c.req.query('baseUrl');
+
+  if (!baseUrl) {
+    return c.json({ error: 'baseUrl query parameter is required' }, 400);
+  }
+
+  try {
+    const url = `${baseUrl.replace(/\/+$/, '')}/api/tags`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      return c.json({ error: `Ollama server returned ${response.status}` }, 502);
+    }
+
+    const data = (await response.json()) as { models?: Array<{ name: string }> };
+    const models = (data.models || []).map((m) => m.name);
+
+    return c.json({ models });
+  } catch (error) {
+    const message =
+      error instanceof Error && error.name === 'AbortError'
+        ? 'Ollama server did not respond within 5 seconds'
+        : error instanceof Error
+          ? error.message
+          : 'Failed to fetch Ollama models';
+    return c.json({ error: message }, 502);
   }
 });
 
@@ -88,8 +126,8 @@ app.post('/', zValidator('json', LLMProviderConfigSchema), async (c) => {
   const config = c.req.valid('json') as LLMProviderConfig;
 
   try {
-    // Encrypt the API key
-    const encryptedKey = encryptApiKey(config.apiKey);
+    // Encrypt the API key if provided (Ollama doesn't need one)
+    const encryptedKey = config.apiKey ? encryptApiKey(config.apiKey) : null;
 
     // If this provider is set as active, deactivate all others
     if (config.isActive) {
@@ -114,7 +152,7 @@ app.post('/', zValidator('json', LLMProviderConfigSchema), async (c) => {
     const sanitized = {
       ...provider,
       encryptedApiKey: undefined,
-      hasApiKey: true,
+      hasApiKey: !!provider.encryptedApiKey,
     };
 
     return c.json(sanitized, 201);
@@ -168,7 +206,7 @@ app.put('/:id', zValidator('json', LLMProviderUpdateSchema), async (c) => {
 
     // If setting as active, deactivate all others
     if (updates.isActive) {
-      await db.update(llmProviders).set({ isActive: false }).where(eq(llmProviders.id, id));
+      await db.update(llmProviders).set({ isActive: false }).where(ne(llmProviders.id, id));
     }
 
     const [provider] = await db
@@ -251,7 +289,7 @@ app.post('/test', zValidator('json', LLMProviderTestSchema), async (c) => {
       providerConfig = {
         type: provider.type,
         baseUrl: provider.baseUrl,
-        apiKey: decryptApiKey(provider.encryptedApiKey!),
+        apiKey: provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!),
         model: provider.model,
         temperature: provider.temperature,
         maxRetries: 1, // Use only 1 retry for testing
@@ -265,16 +303,13 @@ app.post('/test', zValidator('json', LLMProviderTestSchema), async (c) => {
 
     const startTime = Date.now();
 
-    // Try a simple completion
-    const result = await complete({
-      providerType: providerConfig.type as any,
-      baseUrl: providerConfig.baseUrl || undefined,
+    // Try a simple completion with the provider config directly
+    const result = await testProviderConnection({
+      type: providerConfig.type,
+      baseUrl: providerConfig.baseUrl,
       apiKey: providerConfig.apiKey,
       model: providerConfig.model,
-      temperature: providerConfig.temperature / 100, // Convert 0-100 to 0.0-1.0
-      systemPrompt: 'You are a helpful assistant.',
-      userPrompt: 'Say "Hello" and nothing else.',
-      maxTokens: 10,
+      temperature: (providerConfig.temperature ?? 70) / 100, // Convert 0-100 to 0.0-1.0
     });
 
     const latency = Date.now() - startTime;

@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -27,6 +28,7 @@ import {
   useCreateProvider,
   useUpdateProvider,
   useLLMProvider,
+  useOllamaModels,
 } from '@/hooks/useLLMProviders';
 import {
   LLMProviderConfigSchema,
@@ -53,13 +55,13 @@ export function ProviderFormDialog({
   const { data: existingProvider, isLoading: isLoadingProvider } = useLLMProvider(providerId);
   const createProvider = useCreateProvider();
   const updateProvider = useUpdateProvider();
+  const queryClient = useQueryClient();
+  const prevTypeRef = useRef<string>('openai');
 
-  // When editing, apiKey can be empty (to keep current). When creating, it's required.
-  const formSchema = LLMProviderConfigSchema.extend({
+  // Form schema: apiKey not required for Ollama or when editing
+  const formSchema = LLMProviderConfigSchema.innerType().extend({
     baseUrl: z.string().url().or(z.literal('')).optional(),
-    apiKey: isEditing
-      ? z.string().optional().or(z.literal(''))
-      : z.string().min(1, 'API key is required'),
+    apiKey: z.string().optional().or(z.literal('')),
   });
 
   const {
@@ -87,6 +89,24 @@ export function ProviderFormDialog({
   const temperature = watch('temperature');
   const maxRetries = watch('maxRetries');
   const isActive = watch('isActive');
+  const baseUrl = watch('baseUrl');
+  const isOllama = selectedType === 'ollama';
+
+  // Fetch Ollama models when type is ollama and baseUrl is valid
+  const ollamaBaseUrl = isOllama && baseUrl ? baseUrl : undefined;
+  const {
+    data: ollamaModels,
+    isLoading: isLoadingModels,
+    error: ollamaModelsError,
+  } = useOllamaModels(ollamaBaseUrl);
+
+  // Clear model when provider type changes
+  useEffect(() => {
+    if (prevTypeRef.current !== selectedType) {
+      setValue('model', '');
+      prevTypeRef.current = selectedType;
+    }
+  }, [selectedType, setValue]);
 
   // Load existing provider data when editing
   useEffect(() => {
@@ -121,11 +141,26 @@ export function ProviderFormDialog({
   }, [open, reset]);
 
   const onSubmit = async (data: FormData) => {
+    // Client-side validation for non-Ollama providers
+    if (data.type !== 'ollama' && !isEditing && !data.apiKey) {
+      toast.error('API key is required for this provider type');
+      return;
+    }
+    if (data.type === 'ollama' && !data.baseUrl) {
+      toast.error('Ollama Server URL is required');
+      return;
+    }
+
     try {
-      const payload: LLMProviderConfig = {
+      const payload: any = {
         ...data,
         baseUrl: data.baseUrl || null,
       };
+
+      // Strip apiKey for Ollama
+      if (data.type === 'ollama') {
+        delete payload.apiKey;
+      }
 
       if (isEditing && providerId) {
         // When editing, only include apiKey if it was changed
@@ -199,6 +234,7 @@ export function ProviderFormDialog({
                     <SelectItem value="openai">OpenAI</SelectItem>
                     <SelectItem value="openrouter">OpenRouter</SelectItem>
                     <SelectItem value="anthropic">Anthropic</SelectItem>
+                    <SelectItem value="ollama">Ollama</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.type && (
@@ -208,47 +244,107 @@ export function ProviderFormDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="baseUrl">Base URL (optional)</Label>
+              <Label htmlFor="baseUrl">
+                {isOllama ? 'Ollama Server URL *' : 'Base URL (optional)'}
+              </Label>
               <Input
                 id="baseUrl"
-                placeholder="https://api.openai.com/v1"
+                placeholder={isOllama ? 'http://192.168.1.100:11434' : 'https://api.openai.com/v1'}
                 {...register('baseUrl')}
               />
               {errors.baseUrl && (
                 <p className="text-sm text-destructive">{errors.baseUrl.message}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                Leave empty to use the default URL for the selected provider type.
+                {isOllama
+                  ? 'The address of your Ollama server (e.g. http://localhost:11434).'
+                  : 'Leave empty to use the default URL for the selected provider type.'}
               </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="apiKey">
-                API Key {isEditing ? '(leave empty to keep current)' : '*'}
-              </Label>
-              <Input
-                id="apiKey"
-                type="password"
-                placeholder={isEditing ? '••••••••' : 'sk-...'}
-                {...register('apiKey')}
-              />
-              {errors.apiKey && (
-                <p className="text-sm text-destructive">{errors.apiKey.message}</p>
-              )}
-              <p className="text-xs text-muted-foreground">
-                Your API key will be encrypted and stored securely.
-              </p>
-            </div>
+            {!isOllama && (
+              <div className="space-y-2">
+                <Label htmlFor="apiKey">
+                  API Key {isEditing ? '(leave empty to keep current)' : '*'}
+                </Label>
+                <Input
+                  id="apiKey"
+                  type="password"
+                  placeholder={isEditing ? '••••••••' : 'sk-...'}
+                  {...register('apiKey')}
+                />
+                {errors.apiKey && (
+                  <p className="text-sm text-destructive">{errors.apiKey.message}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Your API key will be encrypted and stored securely.
+                </p>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="model">Model *</Label>
-              <Input
-                id="model"
-                placeholder="gpt-4o, claude-3-5-sonnet-20241022, etc."
-                {...register('model')}
-              />
+              {isOllama ? (
+                <div className="flex gap-2">
+                  <Select
+                    value={watch('model')}
+                    onValueChange={(value) => setValue('model', value)}
+                    disabled={!ollamaModels?.length}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue
+                        placeholder={
+                          isLoadingModels
+                            ? 'Loading models...'
+                            : ollamaModelsError
+                              ? 'Server unreachable'
+                              : !baseUrl
+                                ? 'Enter server URL first'
+                                : 'Select a model'
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(ollamaModels || []).map((model) => (
+                        <SelectItem key={model} value={model}>
+                          {model}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={!baseUrl || isLoadingModels}
+                    onClick={() =>
+                      queryClient.invalidateQueries({
+                        queryKey: ['ollama-models', baseUrl],
+                      })
+                    }
+                    title="Refresh models"
+                  >
+                    <RefreshCw
+                      className={`h-4 w-4 ${isLoadingModels ? 'animate-spin' : ''}`}
+                    />
+                  </Button>
+                </div>
+              ) : (
+                <Input
+                  id="model"
+                  placeholder="gpt-4o, claude-3-5-sonnet-20241022, etc."
+                  {...register('model')}
+                />
+              )}
               {errors.model && (
                 <p className="text-sm text-destructive">{errors.model.message}</p>
+              )}
+              {isOllama && ollamaModelsError && (
+                <p className="text-sm text-destructive">
+                  {ollamaModelsError instanceof Error
+                    ? ollamaModelsError.message
+                    : 'Failed to connect to Ollama server'}
+                </p>
               )}
             </div>
 

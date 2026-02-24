@@ -140,7 +140,11 @@ export function ProviderList({ onEdit }: ProviderListProps) {
                 )}
               </TableCell>
               <TableCell>
-                {provider.hasApiKey ? (
+                {provider.type === 'ollama' ? (
+                  <Badge variant="secondary" className="gap-1">
+                    N/A
+                  </Badge>
+                ) : provider.hasApiKey ? (
                   <Badge variant="outline" className="gap-1">
                     <Check className="h-3 w-3" />
                     Configured
@@ -166,7 +170,7 @@ export function ProviderList({ onEdit }: ProviderListProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleTest(provider.id)}
-                    disabled={!provider.hasApiKey || testingId === provider.id}
+                    disabled={(!provider.hasApiKey && provider.type !== 'ollama') || testingId === provider.id}
                     title="Test connection"
                   >
                     {testingId === provider.id ? (
@@ -180,7 +184,7 @@ export function ProviderList({ onEdit }: ProviderListProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSetActive(provider.id)}
-                      disabled={!provider.hasApiKey}
+                      disabled={!provider.hasApiKey && provider.type !== 'ollama'}
                       title="Set as active provider"
                     >
                       <Check className="h-4 w-4" />

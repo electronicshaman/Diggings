@@ -138,6 +138,29 @@ export function useTestProvider() {
 }
 
 /**
+ * Fetch available models from an Ollama server
+ */
+export function useOllamaModels(baseUrl: string | undefined) {
+  return useQuery<string[]>({
+    queryKey: ['ollama-models', baseUrl],
+    queryFn: async () => {
+      const res = await fetch(
+        `/api/llm/providers/ollama-models?baseUrl=${encodeURIComponent(baseUrl!)}`
+      );
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to fetch Ollama models');
+      }
+      const data = await res.json();
+      return data.models as string[];
+    },
+    enabled: !!baseUrl,
+    retry: false,
+    staleTime: 30_000,
+  });
+}
+
+/**
  * Get the active provider
  */
 export function useActiveProvider() {
