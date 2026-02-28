@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Sparkles, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -94,7 +95,7 @@ export function AssistedCreate() {
     onError: (error) => {
       // Display actionable error message (GEN-04 requirement)
       const actionableMessage = getActionableErrorMessage(error);
-      toast.error('Generation failed', {
+      errorToast('Generation failed', {
         description: actionableMessage,
         duration: 5000,
       });

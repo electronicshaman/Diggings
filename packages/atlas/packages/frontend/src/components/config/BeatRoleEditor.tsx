@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Edit, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -95,7 +96,7 @@ export function BeatRoleEditor() {
       await deleteMutation.mutateAsync(id);
       toast.success('Beat role deleted successfully');
     } catch (error) {
-      toast.error('Failed to delete beat role');
+      errorToast('Failed to delete beat role');
     }
   };
 
@@ -123,7 +124,7 @@ export function BeatRoleEditor() {
       ]);
       toast.success('Sort order updated');
     } catch (error) {
-      toast.error('Failed to update sort order');
+      errorToast('Failed to update sort order');
     }
   };
 
@@ -142,7 +143,7 @@ export function BeatRoleEditor() {
       setShowDialog(false);
       reset();
     } catch (error) {
-      toast.error(`Failed to ${editingRole ? 'update' : 'create'} beat role`);
+      errorToast(`Failed to ${editingRole ? 'update' : 'create'} beat role`);
     }
   };
 

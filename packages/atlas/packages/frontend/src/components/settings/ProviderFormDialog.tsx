@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
@@ -143,11 +144,11 @@ export function ProviderFormDialog({
   const onSubmit = async (data: FormData) => {
     // Client-side validation for non-Ollama providers
     if (data.type !== 'ollama' && !isEditing && !data.apiKey) {
-      toast.error('API key is required for this provider type');
+      errorToast('API key is required for this provider type');
       return;
     }
     if (data.type === 'ollama' && !data.baseUrl) {
-      toast.error('Ollama Server URL is required');
+      errorToast('Ollama Server URL is required');
       return;
     }
 
@@ -180,7 +181,7 @@ export function ProviderFormDialog({
 
       onOpenChange(false);
     } catch (error) {
-      toast.error(
+      errorToast(
         `Failed to ${isEditing ? 'update' : 'create'} provider: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`

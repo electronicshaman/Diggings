@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Edit, Trash2, Eye, Code } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -130,7 +131,7 @@ export function BeatSequenceEditor() {
       await deleteMutation.mutateAsync(id);
       toast.success('Beat sequence deleted successfully');
     } catch (error) {
-      toast.error('Failed to delete beat sequence');
+      errorToast('Failed to delete beat sequence');
     }
   };
 
@@ -149,7 +150,7 @@ export function BeatSequenceEditor() {
       setShowDialog(false);
       reset();
     } catch (error) {
-      toast.error(`Failed to ${editingSequence ? 'update' : 'create'} beat sequence`);
+      errorToast(`Failed to ${editingSequence ? 'update' : 'create'} beat sequence`);
     }
   };
 

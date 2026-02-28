@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -24,11 +25,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GenerationProgress } from './GenerationProgress';
 import { useGenerateNode } from '@/hooks/useGeneration';
 import { useCreateNode } from '@/hooks/useNodeMutations';
 import { useBiomes } from '@/hooks/useConfig';
+import { useGenerationStore } from '@/store/generation-store';
 import { NodeTypeDisplayNames, BiomeDisplayNames, NodeType, Biome } from '@node-gen-web/shared';
 import type { GenerationRequest } from '@node-gen-web/shared';
 
@@ -50,24 +54,53 @@ const quickGenerateSchema = z.object({
 
 type QuickGenerateFormData = z.infer<typeof quickGenerateSchema>;
 
+function buildAutoName(biome: string, nodeType: string, counter: number): string {
+  const biomeName = BiomeDisplayNames[biome as Biome] ?? biome;
+  const typeName = NodeTypeDisplayNames[nodeType as NodeType] ?? nodeType;
+  return `${biomeName} ${typeName} ${counter}`;
+}
+
+/** Check if a name matches the auto-generated pattern `<Biome> <Type> <N>` */
+function isAutoName(name: string): boolean {
+  const biomeNames = Object.values(BiomeDisplayNames);
+  const typeNames = Object.values(NodeTypeDisplayNames);
+  const pattern = new RegExp(
+    `^(${biomeNames.map((b) => b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}) (${typeNames.join('|')}) \\d+$`
+  );
+  return pattern.test(name);
+}
+
 export function QuickGenerate() {
   const navigate = useNavigate();
   const { state, generate, abort, reset, isGenerating } = useGenerateNode();
   const createNodeMutation = useCreateNode();
   const { data: biomes } = useBiomes();
+  const { autoSave, setAutoSave } = useGenerationStore();
+  const counterRef = useRef(1);
+  const autoSaveGuardRef = useRef(false);
+  const [autoSaving, setAutoSaving] = useState(false);
 
   const form = useForm<QuickGenerateFormData>({
     resolver: zodResolver(quickGenerateSchema),
     defaultValues: {
       nodeType: 'combat',
       biome: 'township',
-      name: '',
+      name: buildAutoName('township', 'combat', 1),
       acts: [1],
     },
   });
 
   const selectedBiome = form.watch('biome');
+  const selectedNodeType = form.watch('nodeType');
   const biomeConfig = biomes?.find((b) => b.id === selectedBiome);
+
+  // Auto-update name when biome or nodeType changes (only if user hasn't manually edited it)
+  useEffect(() => {
+    const currentName = form.getValues('name');
+    if (currentName === '' || isAutoName(currentName)) {
+      form.setValue('name', buildAutoName(selectedBiome, selectedNodeType, counterRef.current));
+    }
+  }, [selectedBiome, selectedNodeType, form]);
 
   // Cleanup streaming on unmount
   useEffect(() => {
@@ -188,13 +221,36 @@ export function QuickGenerate() {
       // Navigate to node detail
       navigate(`/nodes/${savedNode.id}`);
 
-      // Reset form and state
+      // Increment counter and reset for next generation
+      counterRef.current += 1;
       reset();
-      form.reset();
+      const currentValues = form.getValues();
+      form.reset({
+        ...currentValues,
+        name: buildAutoName(currentValues.biome, currentValues.nodeType, counterRef.current),
+      });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to save node');
+      errorToast(error instanceof Error ? error.message : 'Failed to save node');
+    } finally {
+      setAutoSaving(false);
+      autoSaveGuardRef.current = false;
     }
   };
+
+  // Auto-save when generation completes with passing score
+  useEffect(() => {
+    if (
+      autoSave &&
+      state.stage === 'completed' &&
+      typeof state.criticScore === 'number' &&
+      state.criticScore >= 70 &&
+      !autoSaveGuardRef.current
+    ) {
+      autoSaveGuardRef.current = true;
+      setAutoSaving(true);
+      handleAccept();
+    }
+  }, [autoSave, state.stage, state.criticScore]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (state.stage !== 'idle') {
     return (
@@ -205,6 +261,7 @@ export function QuickGenerate() {
         onAccept={handleAccept}
         showContent
         threshold={70}
+        autoSaving={autoSaving}
       />
     );
   }
@@ -329,6 +386,20 @@ export function QuickGenerate() {
                 </FormItem>
               )}
             />
+
+            <div className="flex items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <Label htmlFor="auto-save">Auto-save on completion</Label>
+                <p className="text-sm text-muted-foreground">
+                  Automatically save nodes that pass quality threshold
+                </p>
+              </div>
+              <Switch
+                id="auto-save"
+                checked={autoSave}
+                onCheckedChange={setAutoSave}
+              />
+            </div>
 
             <Button type="submit" disabled={isGenerating} className="w-full">
               <Sparkles className="mr-2 size-4" />
