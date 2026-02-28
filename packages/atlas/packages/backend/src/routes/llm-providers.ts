@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import type { Context } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import {
@@ -267,8 +268,9 @@ app.delete('/:id', async (c) => {
 /**
  * POST /api/llm/test
  * Test an LLM provider connection
+ * Exported as a standalone handler — registered directly on the main app in index.ts
  */
-app.post('/test', zValidator('json', LLMProviderTestSchema), async (c) => {
+export async function handleTestProvider(c: Context) {
   const request = c.req.valid('json');
 
   try {
@@ -332,6 +334,6 @@ app.post('/test', zValidator('json', LLMProviderTestSchema), async (c) => {
       200 // Return 200 but with success: false
     );
   }
-});
+}
 
 export default app;
