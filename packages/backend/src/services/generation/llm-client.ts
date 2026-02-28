@@ -11,6 +11,8 @@ import { eq } from 'drizzle-orm';
 import { completeWithCircuitBreaker } from './circuit-breaker.js';
 import { classifyLLMError, calculateRetryDelay } from './error-handler.js';
 
+const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
+
 // Provider types
 export type LLMProviderType = 'openai' | 'openrouter' | 'anthropic' | 'ollama';
 
@@ -56,6 +58,19 @@ function decryptApiKey(encryptedKey: string): string {
 }
 
 /**
+ * Resolve the base URL for a given provider type
+ */
+export function resolveBaseUrl(type: string, baseUrl?: string | null): string | undefined {
+  if (type === 'ollama') {
+    return `${(baseUrl || '').replace(/\/+$/, '')}/v1`;
+  }
+  if (type === 'openrouter') {
+    return baseUrl || OPENROUTER_BASE_URL;
+  }
+  return baseUrl || undefined;
+}
+
+/**
  * Get the active LLM provider from the database
  */
 export async function getActiveProvider(): Promise<LLMProvider | null> {
@@ -73,10 +88,9 @@ export async function getActiveProvider(): Promise<LLMProvider | null> {
  */
 function createOpenAIClient(provider: LLMProvider): OpenAI {
   if (provider.type === 'ollama') {
-    const base = (provider.baseUrl || '').replace(/\/+$/, '');
     return new OpenAI({
       apiKey: 'ollama',
-      baseURL: `${base}/v1`,
+      baseURL: resolveBaseUrl(provider.type, provider.baseUrl),
     });
   }
 
@@ -88,7 +102,7 @@ function createOpenAIClient(provider: LLMProvider): OpenAI {
 
   return new OpenAI({
     apiKey,
-    baseURL: provider.baseUrl || undefined,
+    baseURL: resolveBaseUrl(provider.type, provider.baseUrl),
     defaultHeaders:
       provider.type === 'openrouter'
         ? {
@@ -222,13 +236,10 @@ export async function testProviderConnection(config: {
     };
   } else {
     const isOllama = config.type === 'ollama';
-    const baseUrl = isOllama
-      ? `${(config.baseUrl || '').replace(/\/+$/, '')}/v1`
-      : config.baseUrl || undefined;
 
     const client = new OpenAI({
       apiKey: isOllama ? 'ollama' : config.apiKey!,
-      baseURL: baseUrl,
+      baseURL: resolveBaseUrl(config.type, config.baseUrl),
       defaultHeaders:
         config.type === 'openrouter'
           ? {
