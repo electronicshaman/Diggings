@@ -8,7 +8,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import { getActiveProvider } from '../services/generation/llm-client.js';
+import { getActiveProvider, resolveBaseUrl } from '../services/generation/llm-client.js';
 
 // Helper to decrypt API key (from llm-client.ts)
 function decryptApiKey(encryptedKey: string): string {
@@ -115,9 +115,7 @@ Entity types: ${body.entityTypes.join(', ') || 'none specified'}`;
           }
         } else {
           // OpenAI/OpenRouter/Ollama
-          const baseURL = provider.type === 'ollama'
-            ? `${(provider.baseUrl || '').replace(/\/+$/, '')}/v1`
-            : provider.baseUrl || undefined;
+          const baseURL = resolveBaseUrl(provider.type, provider.baseUrl);
           const client = new OpenAI({
             apiKey,
             baseURL,
@@ -239,9 +237,7 @@ Return only the beat text, no JSON or metadata.`;
             }
           }
         } else {
-          const beatBaseURL = provider.type === 'ollama'
-            ? `${(provider.baseUrl || '').replace(/\/+$/, '')}/v1`
-            : provider.baseUrl || undefined;
+          const beatBaseURL = resolveBaseUrl(provider.type, provider.baseUrl);
           const client = new OpenAI({
             apiKey,
             baseURL: beatBaseURL,
@@ -357,9 +353,7 @@ Return ONLY the JSON array, no markdown formatting.`;
 
       content = response.content[0]?.type === 'text' ? response.content[0].text : '';
     } else {
-      const listBaseURL = provider.type === 'ollama'
-        ? `${(provider.baseUrl || '').replace(/\/+$/, '')}/v1`
-        : provider.baseUrl || undefined;
+      const listBaseURL = resolveBaseUrl(provider.type, provider.baseUrl);
       const client = new OpenAI({
         apiKey,
         baseURL: listBaseURL,

@@ -25,7 +25,7 @@ export interface NodeGenerationRequest {
 
 export interface GenerationProgress {
   nodeId: string;
-  stage: 'outlining' | 'expanding' | 'reviewing' | 'completed' | 'failed';
+  stage: 'outlining' | 'expanding' | 'reviewing' | 'completed' | 'error';
   progress: number; // 0-100
   outline?: BeatOutline;
   content?: ExpandedContent;
@@ -103,7 +103,7 @@ async function generateNodeContent(
       validation = validateNodeContent(progress.content);
       if (!validation.success) {
         // Validation failure = IMMEDIATE FAIL, no retry
-        progress.stage = 'failed';
+        progress.stage = 'error';
         progress.progress = 100;
         progress.error = `Validation failed: ${validation.errors?.join(', ')}`;
         if (onProgress) onProgress(progress);
@@ -153,13 +153,13 @@ async function generateNodeContent(
         // Quality failure after exhausting retries
         // Return best attempt if we have one
         if (bestAttempt && bestAttempt.critic && criticResult && bestAttempt.critic.score > criticResult.score) {
-          bestAttempt.stage = 'failed';
+          bestAttempt.stage = 'error';
           bestAttempt.progress = 100;
           bestAttempt.error = `Best attempt: ${bestAttempt.critic.score}/100 after ${qualityAttempts + 1} tries`;
           if (onProgress) onProgress(bestAttempt);
           return bestAttempt;
         }
-        progress.stage = 'failed';
+        progress.stage = 'error';
         progress.progress = 100;
         progress.error = `Quality below threshold (${criticResult.score}/100). ${criticResult.repairInstructions || ''}`;
         if (onProgress) onProgress(progress);
@@ -173,7 +173,7 @@ async function generateNodeContent(
       return progress;
 
     } catch (error) {
-      progress.stage = 'failed';
+      progress.stage = 'error';
       progress.progress = 100;
       progress.error = error instanceof Error ? error.message : String(error);
       if (onProgress) onProgress(progress);
@@ -183,7 +183,7 @@ async function generateNodeContent(
 
   // Should never reach here, but return best attempt just in case
   if (bestAttempt) {
-    bestAttempt.stage = 'failed';
+    bestAttempt.stage = 'error';
     bestAttempt.progress = 100;
     bestAttempt.error = bestAttempt.error || 'Exhausted quality retries';
     if (onProgress) onProgress(bestAttempt);
@@ -193,7 +193,7 @@ async function generateNodeContent(
   // Fallback error
   const fallback: GenerationProgress = {
     nodeId: request.nodeId,
-    stage: 'failed',
+    stage: 'error',
     progress: 100,
     error: 'Unknown error in quality retry loop',
   };
@@ -252,7 +252,7 @@ export async function generateBatch(
             successful++;
             results.set(request.nodeId, result);
             return;
-          } else if (result.stage === 'failed') {
+          } else if (result.stage === 'error') {
             lastError = result.error;
             attempts++;
 
@@ -275,7 +275,7 @@ export async function generateBatch(
       failed++;
       results.set(request.nodeId, {
         nodeId: request.nodeId,
-        stage: 'failed',
+        stage: 'error',
         progress: 100,
         error: lastError || 'Unknown error',
       });

@@ -225,7 +225,7 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
           await updateJobStatus(jobId, {
             status: 'failed',
             progress: 100,
-            currentStage: 'failed',
+            currentStage: 'error',
             error: result.error || 'Unknown error',
           });
 
@@ -235,6 +235,7 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
             encoder.encode(
               formatSSE('error', {
                 jobId,
+                stage: 'error',
                 error: classified.technicalMessage,
                 userMessage: classified.userMessage,
                 retryable: classified.retryable,
@@ -253,7 +254,7 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
         await updateJobStatus(jobId, {
           status: 'failed',
           progress: 100,
-          currentStage: 'failed',
+          currentStage: 'error',
           error: errorMsg,
         });
 
@@ -263,6 +264,7 @@ export async function streamGeneration(c: Context, request: NodeGenerationReques
           encoder.encode(
             formatSSE('error', {
               jobId,
+              stage: 'error',
               error: classified.technicalMessage,
               userMessage: classified.userMessage,
               retryable: classified.retryable,
@@ -289,7 +291,7 @@ function getStageMessage(stage: string, progress: number): string {
     expanding: 'Expanding beats into full prose...',
     reviewing: 'Evaluating content quality...',
     completed: 'Generation completed successfully!',
-    failed: 'Generation failed.',
+    error: 'Generation failed.',
   };
 
   const baseMessage = messages[stage] || 'Processing...';
