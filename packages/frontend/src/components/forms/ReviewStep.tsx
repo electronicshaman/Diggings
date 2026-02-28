@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -98,7 +99,7 @@ export function ReviewStep() {
       resetForm();
       navigate(`/nodes/${encodeURIComponent(node.id)}`);
     } catch {
-      toast.error('Failed to create node');
+      errorToast('Failed to create node');
     }
   };
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Check, X, Trash2, TestTube, Edit, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import {
   Table,
   TableBody,
@@ -35,7 +36,7 @@ export function ProviderList({ onEdit }: ProviderListProps) {
       await updateProvider.mutateAsync({ id, updates: { isActive: true } });
       toast.success('Provider activated successfully');
     } catch (error) {
-      toast.error(`Failed to activate provider: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      errorToast(`Failed to activate provider: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -48,7 +49,7 @@ export function ProviderList({ onEdit }: ProviderListProps) {
       await deleteProvider.mutateAsync(id);
       toast.success('Provider deleted successfully');
     } catch (error) {
-      toast.error(`Failed to delete provider: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      errorToast(`Failed to delete provider: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -68,20 +69,14 @@ export function ProviderList({ onEdit }: ProviderListProps) {
           </div>
         );
       } else {
-        toast.error(
-          <div>
-            <div className="font-semibold">Connection failed</div>
-            <div className="text-sm">{result.error || result.message}</div>
-          </div>
-        );
+        errorToast('Connection failed', {
+          description: result.error || result.message,
+        });
       }
     } catch (error) {
-      toast.error(
-        <div>
-          <div className="font-semibold">Connection test failed</div>
-          <div className="text-sm">{error instanceof Error ? error.message : 'Unknown error'}</div>
-        </div>
-      );
+      errorToast('Connection test failed', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
     } finally {
       setTestingId(null);
     }

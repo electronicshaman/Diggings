@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Edit, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorToast } from '@/lib/toast-utils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -89,7 +90,7 @@ export function VernacularEditor() {
       await deleteMutation.mutateAsync(id);
       toast.success('Vernacular term deleted successfully');
     } catch (error) {
-      toast.error('Failed to delete vernacular term');
+      errorToast('Failed to delete vernacular term');
     }
   };
 
@@ -116,7 +117,7 @@ export function VernacularEditor() {
       ]);
       toast.success('Sort order updated');
     } catch (error) {
-      toast.error('Failed to update sort order');
+      errorToast('Failed to update sort order');
     }
   };
 
@@ -141,7 +142,7 @@ export function VernacularEditor() {
       setShowDialog(false);
       reset();
     } catch (error) {
-      toast.error(`Failed to ${editingTerm ? 'update' : 'create'} vernacular term`);
+      errorToast(`Failed to ${editingTerm ? 'update' : 'create'} vernacular term`);
     }
   };
 
