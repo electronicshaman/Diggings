@@ -129,8 +129,14 @@ export function useTestProvider() {
         body: JSON.stringify(params),
       });
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || 'Failed to test provider');
+        let detail = `HTTP ${res.status}`;
+        try {
+          const body = await res.json();
+          detail = body.error || JSON.stringify(body);
+        } catch {
+          detail += ` ${res.statusText}`;
+        }
+        throw new Error(detail);
       }
       return res.json() as Promise<LLMProviderTestResult>;
     },
