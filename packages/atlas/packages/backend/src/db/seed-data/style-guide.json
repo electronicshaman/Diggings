@@ -1,0 +1,66 @@
+[
+  {
+    "biome": "township",
+    "atmosphere": "desperate commerce, barely-held order",
+    "sensoryDetails": ["canvas flap", "mud squelch", "tobacco smoke", "coins clinking", "distant hammering"],
+    "dangers": ["debt collectors", "licensing troopers", "claim-jumper rumors", "sly grog poisoning"],
+    "voiceNotes": "Transactions and threats. Everyone wants something. Trust is currency.",
+    "antipatterns": ["wild west", "saloon brawl", "sheriff", "frontier justice"]
+  },
+  {
+    "biome": "the_diggings",
+    "atmosphere": "feverish labor, jealous eyes",
+    "sensoryDetails": ["pick strikes", "turned earth smell", "sweat-stink", "gold glint", "creaking windlass"],
+    "dangers": ["cave-ins", "claim disputes", "exhaustion", "the colour madness"],
+    "voiceNotes": "Obsession made physical. Every shovelful might be fortune or nothing.",
+    "antipatterns": ["gold rush fever", "struck it rich", "eureka"]
+  },
+  {
+    "biome": "the_bush",
+    "atmosphere": "watchful silence, ancient indifference",
+    "sensoryDetails": ["eucalyptus oil", "cicada drone", "cracking twigs", "heat shimmer", "crow calls"],
+    "dangers": ["bushrangers", "getting lost", "snakebite", "thirst", "things that watch"],
+    "voiceNotes": "The land doesn't care if you live. Survival is earned, never given.",
+    "antipatterns": ["deadly Australia", "everything wants to kill you", "outback"]
+  },
+  {
+    "biome": "the_mines",
+    "atmosphere": "suffocating wrongness, depth that thinks",
+    "sensoryDetails": ["dripping water", "candle flicker", "stone groaning", "stale air", "echo distortion"],
+    "dangers": ["collapse", "foul air", "the whispers", "losing the way up", "what you dig into"],
+    "voiceNotes": "Claustrophobia and creeping dread. The deeper you go, the wronger it gets.",
+    "antipatterns": ["canary in coal mine", "dig too deep", "dwarven", "ancient evil"]
+  },
+  {
+    "biome": "the_waste",
+    "atmosphere": "poisoned stillness, memory of failure",
+    "sensoryDetails": ["cracked earth", "chemical taste", "bone-white sun", "silence pools", "rust smell"],
+    "dangers": ["contamination", "ghost-touched", "dehydration", "the past repeating"],
+    "voiceNotes": "Everything here failed or was abandoned. The ghosts remember why.",
+    "antipatterns": ["post-apocalyptic", "nuclear", "zombie", "wasteland warrior"]
+  },
+  {
+    "biome": "the_scar",
+    "atmosphere": "reality bleeding, geometry lies",
+    "sensoryDetails": ["static taste", "colors unnamed", "shadow lag", "ground ripple", "time-slip nausea"],
+    "dangers": ["transformation", "losing yourself", "the pull", "seeing too much"],
+    "voiceNotes": "Wrongness incarnate. Describe impossibility matter-of-factly—horror is mundane here.",
+    "antipatterns": ["portal", "dimension", "tentacles", "eldritch abomination", "sanity meter"]
+  },
+  {
+    "biome": "sacred_site",
+    "atmosphere": "ancient weight, watching presence",
+    "sensoryDetails": ["ochre smell", "stone warmth", "wind voices", "star clarity", "bone-deep vibration"],
+    "dangers": ["spiritual debt", "taboo violation", "ancestor judgment", "power offered"],
+    "voiceNotes": "Reverence and consequence. This place was here before and will remain after.",
+    "antipatterns": ["burial ground", "ancient curse", "mystical native", "spirit guide", "noble savage", "magic indian"]
+  },
+  {
+    "biome": "the_river",
+    "atmosphere": "deceptive calm, hidden current",
+    "sensoryDetails": ["water slap", "fish rot", "rope creak", "mist chill", "reflected light"],
+    "dangers": ["drowning", "river pirates", "what surfaces", "the ferryman's price"],
+    "voiceNotes": "Movement and transaction. The river takes as much as it gives.",
+    "antipatterns": ["river styx", "ferryman of death", "river monster"]
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "act": 1,
+    "toneName": "Hope and Discovery",
+    "description": "Measured pacing. Room to breathe. Introduce before threatening. Longer, more descriptive sentences. Player is learning the world.",
+    "sensoryPalette": {
+      "pacing": "Measured. Room to breathe. Introduce before threatening.",
+      "sentenceStyle": "Longer, more descriptive. Player is learning the world.",
+      "allowedHorror": "Hints only. Unease, not terror. Something slightly off."
+    }
+  },
+  {
+    "act": 2,
+    "toneName": "Competition and Wrongness",
+    "description": "Accelerating pace. Less rest between encounters. Competition pressure builds. Tighter sentences, clipped dialogue. People have less patience.",
+    "sensoryPalette": {
+      "pacing": "Accelerating. Less rest between encounters. Competition pressure.",
+      "sentenceStyle": "Tighter. Clipped dialogue. People have less patience.",
+      "allowedHorror": "Wrongness confirmed. First undeniable supernatural event."
+    }
+  },
+  {
+    "act": 3,
+    "toneName": "Corruption and Transformation",
+    "description": "Relentless pace. Brief respites feel earned and fragile. Fragmentary sentences under stress. Long when describing horror. Full cosmic horror allowed.",
+    "sensoryPalette": {
+      "pacing": "Relentless. Brief respites feel earned and fragile.",
+      "sentenceStyle": "Fragmentary under stress. Long when describing horror.",
+      "allowedHorror": "Full cosmic horror. Reality questioned. Transformation begins."
+    }
+  },
+  {
+    "act": 4,
+    "toneName": "Reality Collapse",
+    "description": "Dream-logic pacing. Time and space unreliable. Either very sparse or run-on sentences. Normality breaks down completely. All horror is permitted.",
+    "sensoryPalette": {
+      "pacing": "Dream-logic. Time and space unreliable.",
+      "sentenceStyle": "Either very sparse or run-on. Normality breaks down.",
+      "allowedHorror": "Anything. The rules are gone. Describe the indescribable."
+    }
+  }
+]
