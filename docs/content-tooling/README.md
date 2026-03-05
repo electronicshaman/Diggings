@@ -2,6 +2,7 @@
 
 Atlas is the node authoring tool (formerly node-gen-web).
 
+- [PLAN (all phases)](PLAN.md)
 - [Atlas overview](atlas-overview.md)
 - [Atlas implementation plan](atlas-implementation-plan.md)
 - [Atlas AI integration plan](atlas-ai-integration-plan.md)
