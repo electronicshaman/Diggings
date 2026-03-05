@@ -1,15 +1,21 @@
 import { z } from "zod";
 import {
-  CardType,
-  CardRarity,
-  CardOwner,
-  CardHandling,
-  AccessibilityTier,
-  CostType,
-} from "../../types/forge.js";
+  CARD_TYPES,
+  CARD_RARITIES,
+  CARD_OWNERS,
+  CARD_HANDLING,
+  ACCESSIBILITY_TIERS,
+} from "../../constants/forge.js";
+import { CostType } from "../../types/forge.js";
+
+const CardTypeSchema = z.enum(CARD_TYPES);
+const CardRaritySchema = z.enum(CARD_RARITIES);
+const CardOwnerSchema = z.enum(CARD_OWNERS);
+const CardHandlingSchema = z.enum(CARD_HANDLING);
+const AccessibilityTierSchema = z.enum(ACCESSIBILITY_TIERS);
 
 export const CardCostSchema = z.object({
-  type: z.custom<CostType>(),
+  type: z.enum(["energy", "sanity", "resource"]) as z.ZodType<CostType>,
   amount: z.number().int().min(0),
   resourceKey: z.string().optional(),
 });
@@ -23,14 +29,14 @@ export const CardSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   description: z.string().default(""),
-  cardType: z.custom<CardType>(),
+  cardType: CardTypeSchema,
   costs: z.array(CardCostSchema).default([]),
   effects: z.array(EffectRefSchema).default([]),
-  rarity: z.custom<CardRarity>(),
-  cardOwner: z.custom<CardOwner>(),
-  handling: z.custom<CardHandling>(),
+  rarity: CardRaritySchema,
+  cardOwner: CardOwnerSchema,
+  handling: CardHandlingSchema,
   classAffinity: z.array(z.string()).default([]),
-  accessibilityTier: z.custom<AccessibilityTier>(),
+  accessibilityTier: AccessibilityTierSchema,
 
   flavorText: z.string().optional(),
   baseDurability: z.number().int().optional(),

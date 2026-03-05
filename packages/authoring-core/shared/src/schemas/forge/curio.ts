@@ -1,8 +1,11 @@
 import { z } from "zod";
 import {
-  CurioRarity,
-  CurioMechanicalCategory,
-} from "../../types/forge.js";
+  CURIO_RARITIES,
+  CURIO_MECHANICAL_CATEGORIES,
+} from "../../constants/forge.js";
+
+const CurioRaritySchema = z.enum(CURIO_RARITIES);
+const CurioMechanicalCategorySchema = z.enum(CURIO_MECHANICAL_CATEGORIES);
 
 export const CurioEffectRefSchema = z.object({
   effectId: z.string().min(1),
@@ -17,8 +20,8 @@ export const CurioSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   description: z.string().default(""),
-  rarity: z.custom<CurioRarity>(),
-  mechanicalCategory: z.custom<CurioMechanicalCategory>(),
+  rarity: CurioRaritySchema,
+  mechanicalCategory: CurioMechanicalCategorySchema,
   effects: z.array(CurioEffectRefSchema).default([]),
   stackable: z.boolean().default(false),
   maxStacks: z.number().int().min(1).default(1),
