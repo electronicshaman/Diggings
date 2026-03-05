@@ -1,3 +1,4 @@
 packages:
   - "packages/*"
   - "packages/atlas/packages/*"
+  - "packages/authoring-core/*"
