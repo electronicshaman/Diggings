@@ -1,0 +1,6 @@
+{
+  "name": "@diggings/authoring-core-frontend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module"
+}

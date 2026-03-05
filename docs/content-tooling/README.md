@@ -10,5 +10,6 @@ Atlas is the node authoring tool (formerly node-gen-web).
 - [Forge distribution matrix](forge-distribution-matrix.md)
 - [Forge ID scheme](forge-id-scheme.md)
 - [Forge export contract](forge-export.md)
+- [Authoring core Phase 2 plan](authoring-core-phase2.md)
 
 This section will evolve into the canonical authoring workflow documentation.
