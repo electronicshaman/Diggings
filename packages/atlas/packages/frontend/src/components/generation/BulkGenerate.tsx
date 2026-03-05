@@ -25,7 +25,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { DistributionGapChart } from './DistributionGapChart';
-import { useBulkGeneration } from '@/hooks/useGeneration';
+import { useBulkGeneration } from '@diggings/authoring-core-frontend';
 import { NodeTypeDisplayNames, BiomeDisplayNames, type Biome, type NodeType } from '@node-gen-web/shared';
 
 const bulkGenerateSchema = z.object({
