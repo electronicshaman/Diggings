@@ -1,4 +1,4 @@
-import type { CardType, CardRarity } from "../types/forge.js";
+import type { CardType, CurioRarity } from "../types/forge.js";
 
 const CARD_TYPE_PREFIX: Record<CardType, string> = {
   Attack: "ATK",
@@ -9,11 +9,9 @@ const CARD_TYPE_PREFIX: Record<CardType, string> = {
   Curse: "CUR",
 };
 
-const CURIO_RARITY_PREFIX: Record<CardRarity | "Legendary" | "Corrupted", string> = {
+const CURIO_RARITY_PREFIX: Record<CurioRarity, string> = {
   Common: "COM",
-  Uncommon: "UNC",
   Rare: "RAR",
-  Eldritch: "ELD",
   Legendary: "LEG",
   Corrupted: "COR",
 };
@@ -22,6 +20,6 @@ export function formatCardId(type: CardType, n: number) {
   return `CRD_${CARD_TYPE_PREFIX[type]}_${String(n).padStart(3, "0")}`;
 }
 
-export function formatCurioId(rarity: keyof typeof CURIO_RARITY_PREFIX, n: number) {
+export function formatCurioId(rarity: CurioRarity, n: number) {
   return `CUR_${CURIO_RARITY_PREFIX[rarity]}_${String(n).padStart(3, "0")}`;
 }
