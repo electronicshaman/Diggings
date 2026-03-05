@@ -1,0 +1,12 @@
+{
+  "name": "diggings",
+  "private": true,
+  "packageManager": "pnpm@8",
+  "scripts": {
+    "dev:atlas": "pnpm --dir packages/atlas dev",
+    "dev:atlas:frontend": "pnpm --dir packages/atlas --filter @node-gen-web/frontend dev",
+    "dev:atlas:backend": "pnpm --dir packages/atlas --filter @node-gen-web/backend dev",
+    "atlas:db:migrate": "pnpm --dir packages/atlas db:migrate",
+    "atlas:db:seed": "pnpm --dir packages/atlas db:seed"
+  }
+}
