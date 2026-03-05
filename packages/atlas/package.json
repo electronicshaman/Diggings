@@ -21,5 +21,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2"
+  },
+  "dependencies": {
+    "@diggings/authoring-core-frontend": "workspace:*"
   }
 }
