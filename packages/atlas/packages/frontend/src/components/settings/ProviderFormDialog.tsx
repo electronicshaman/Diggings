@@ -32,7 +32,7 @@ import {
   LLMProviderConfigSchema,
   type LLMProviderConfig,
   type LLMProviderType,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 interface ProviderFormDialogProps {
   open: boolean;

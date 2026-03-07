@@ -9,7 +9,7 @@ import { evaluateContent, type CriticResult } from './critic.js';
 import { validateNodeContent, type ValidationResult } from './content-validator.js';
 import { db } from '../../db/index.js';
 import { generationSettings } from '../../db/schema.js';
-import type { NodeContentSchema } from '@node-gen-web/shared';
+import type { NodeContentSchema } from '@atlas/shared';
 import type { z } from 'zod';
 
 export interface NodeGenerationRequest {

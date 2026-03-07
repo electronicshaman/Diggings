@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AnyNodeMetadata } from '@node-gen-web/shared';
+import type { AnyNodeMetadata } from '@atlas/shared';
 
 export type WizardStep = 0 | 1 | 2 | 3 | 4;
 

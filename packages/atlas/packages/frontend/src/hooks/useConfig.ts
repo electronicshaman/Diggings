@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getBiomes, getDistributions, getLookup } from '../lib/api';
-import type { Biome } from '@node-gen-web/shared';
+import type { Biome } from '@atlas/shared';
 
 export function useBiomes() {
   return useQuery({

@@ -39,7 +39,7 @@ import {
   ActNames,
   Biome,
   type AnyNodeMetadata,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 const typeSpecificSchema = z.object({
   enemyTypeHooks: z.array(z.string()).optional(),

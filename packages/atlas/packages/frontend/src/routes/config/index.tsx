@@ -18,7 +18,7 @@ import {
   NodeTypeDisplayNames,
   ALL_NODE_TYPES,
   BIOME_DISTRIBUTIONS,
-} from "@node-gen-web/shared"
+} from "@atlas/shared"
 
 function DistributionsMatrix() {
   const { isLoading } = useDistributions()

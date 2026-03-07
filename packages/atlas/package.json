@@ -1,5 +1,5 @@
 {
-  "name": "node-gen-web",
+  "name": "atlas",
   "version": "1.0.0",
   "private": true,
   "description": "Full-stack web application for creating, editing, and browsing narrative graph nodes",
@@ -7,10 +7,10 @@
     "dev": "pnpm --parallel dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
-    "db:migrate": "pnpm --filter @node-gen-web/backend db:migrate",
-    "db:seed": "pnpm --filter @node-gen-web/backend db:seed",
-    "db:generate": "pnpm --filter @node-gen-web/backend db:generate",
-    "db:studio": "pnpm --filter @node-gen-web/backend db:studio",
+    "db:migrate": "pnpm --filter @atlas/backend db:migrate",
+    "db:seed": "pnpm --filter @atlas/backend db:seed",
+    "db:generate": "pnpm --filter @atlas/backend db:generate",
+    "db:studio": "pnpm --filter @atlas/backend db:studio",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down"
   },

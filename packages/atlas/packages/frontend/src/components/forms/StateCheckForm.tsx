@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import type { StateCheckNodeMetadata } from '@node-gen-web/shared';
+import type { StateCheckNodeMetadata } from '@atlas/shared';
 
 export function StateCheckForm() {
   const { control, watch, register } = useFormContext<StateCheckNodeMetadata>();

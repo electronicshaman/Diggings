@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNode, updateNode, deleteNode } from '../lib/api';
-import type { AnyNodeMetadata } from '@node-gen-web/shared';
+import type { AnyNodeMetadata } from '@atlas/shared';
 
 export function useCreateNode() {
   const queryClient = useQueryClient();

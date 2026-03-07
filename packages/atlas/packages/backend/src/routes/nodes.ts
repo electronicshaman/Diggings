@@ -12,7 +12,9 @@ import {
   PassageNodeSchema,
   StateCheckNodeSchema,
   TransitionNodeSchema,
-} from '@node-gen-web/shared';
+  BiomeSchema,
+  NodeTypeSchema,
+} from '@atlas/shared';
 
 export const nodesRouter = new Hono();
 
@@ -252,8 +254,8 @@ nodesRouter.put('/:nodeId', zValidator('json', AnyNodeMetadataSchema), async (c)
 // Partial update schema - allows any valid node fields
 const NodePatchSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  biome: z.string().optional(),
-  type: z.string().optional(),
+  biome: BiomeSchema.optional(),
+  type: NodeTypeSchema.optional(),
   acts: z.array(z.number().int().min(1).max(4)).optional(),
   themes: z.array(z.string()).optional(),
   entityTypes: z.array(z.string()).optional(),

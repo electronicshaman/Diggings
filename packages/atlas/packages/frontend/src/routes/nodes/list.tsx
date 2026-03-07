@@ -12,7 +12,7 @@ import {
   ActNames,
   type Act,
   type AnyNodeMetadata,
-} from "@node-gen-web/shared"
+} from "@atlas/shared"
 import { useNodes } from "@/hooks/useNodes"
 import { useUIStore } from "@/store/ui-store"
 import { Button } from "@/components/ui/button"

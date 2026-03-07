@@ -34,8 +34,8 @@ import {
   CONDITION_HOOKS,
   TRADER_ARCHETYPES,
   PRICING_HOOKS,
-} from '@node-gen-web/shared';
-import { Biome } from '@node-gen-web/shared/types';
+} from '@atlas/shared';
+import { Biome } from '@atlas/shared/types';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';

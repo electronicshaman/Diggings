@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { ChoiceNodeMetadata } from '@node-gen-web/shared';
+import type { ChoiceNodeMetadata } from '@atlas/shared';
 
 const DILEMMA_TYPES = ['moral', 'practical', 'survival'] as const;
 

@@ -37,7 +37,7 @@ pnpm build
 ### Database Operations
 ```bash
 # Generate new migration from schema changes
-pnpm --filter @node-gen-web/backend db:generate
+pnpm --filter @atlas/backend db:generate
 
 # Run migrations
 pnpm db:migrate
@@ -46,7 +46,7 @@ pnpm db:migrate
 pnpm db:seed
 
 # Open Drizzle Studio (database GUI)
-pnpm --filter @node-gen-web/backend db:studio
+pnpm --filter @atlas/backend db:studio
 ```
 
 ### Docker Management
@@ -61,9 +61,9 @@ pnpm docker:down
 ### Package-Specific Commands
 ```bash
 # Work in a specific package
-pnpm --filter @node-gen-web/backend <command>
-pnpm --filter @node-gen-web/frontend <command>
-pnpm --filter @node-gen-web/shared <command>
+pnpm --filter @atlas/backend <command>
+pnpm --filter @atlas/frontend <command>
+pnpm --filter @atlas/shared <command>
 
 # Backend development
 cd packages/backend
@@ -160,11 +160,11 @@ Each step uses React Hook Form with Zod validation, and data is accumulated in t
 ## Important Patterns
 
 ### Workspace Dependencies
-When importing from `@node-gen-web/shared` in backend or frontend, use the workspace protocol (`workspace:*` in package.json). The TypeScript compiler resolves directly to the source files, not built output.
+When importing from `@atlas/shared` in backend or frontend, use the workspace protocol (`workspace:*` in package.json). The TypeScript compiler resolves directly to the source files, not built output.
 
 ### Database Migrations
 After changing `packages/backend/src/db/schema.ts`:
-1. Run `pnpm --filter @node-gen-web/backend db:generate` to create migration files
+1. Run `pnpm --filter @atlas/backend db:generate` to create migration files
 2. Run `pnpm db:migrate` to apply migrations
 3. Migrations are stored in `packages/backend/drizzle/`
 

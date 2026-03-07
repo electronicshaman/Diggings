@@ -17,7 +17,7 @@ import {
   useDeleteProvider,
   useTestProvider,
 } from '@/hooks/useLLMProviders';
-import type { LLMProviderTestResult } from '@node-gen-web/shared';
+import type { LLMProviderTestResult } from '@atlas/shared';
 
 interface ProviderListProps {
   onEdit: (providerId: number) => void;

@@ -3,7 +3,7 @@ import type {
   NodeType,
   Biome,
   Act,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 const API_BASE = '/api';
 

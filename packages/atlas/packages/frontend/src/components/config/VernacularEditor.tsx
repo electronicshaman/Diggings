@@ -30,7 +30,7 @@ import {
   useUpdateVernacular,
   useDeleteVernacular,
 } from '@/hooks/useAdvancedConfig';
-import { VernacularCreateSchema, type VernacularCreate, type VernacularRecord } from '@node-gen-web/shared';
+import { VernacularCreateSchema, type VernacularCreate, type VernacularRecord } from '@atlas/shared';
 
 interface VernacularFormData extends VernacularCreate {}
 

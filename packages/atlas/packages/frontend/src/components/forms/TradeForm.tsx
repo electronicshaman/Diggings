@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { TradeNodeMetadata } from '@node-gen-web/shared';
+import type { TradeNodeMetadata } from '@atlas/shared';
 
 export function TradeForm() {
   const { control, watch } = useFormContext<TradeNodeMetadata>();

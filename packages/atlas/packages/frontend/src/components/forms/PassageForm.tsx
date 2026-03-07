@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { PassageNodeMetadata } from '@node-gen-web/shared';
+import type { PassageNodeMetadata } from '@atlas/shared';
 
 export function PassageForm() {
   const { control, watch, register } = useFormContext<PassageNodeMetadata>();

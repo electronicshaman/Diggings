@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { GenerationStage, CriticResult } from '@node-gen-web/shared';
+import type { GenerationStage, CriticResult } from '@atlas/shared';
 
 const JOB_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
 

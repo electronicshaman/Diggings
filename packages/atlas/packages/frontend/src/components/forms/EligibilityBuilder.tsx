@@ -27,7 +27,7 @@ import {
   ActNames,
   type BoolExpr,
   type Condition,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 type ConditionKind =
   | 'flag'

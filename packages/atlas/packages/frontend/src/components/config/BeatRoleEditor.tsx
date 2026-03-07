@@ -32,7 +32,7 @@ import {
   useUpdateBeatRole,
   useDeleteBeatRole,
 } from '@/hooks/useAdvancedConfig';
-import { BeatRoleCreateSchema, type BeatRoleCreate, type BeatRoleRecord } from '@node-gen-web/shared';
+import { BeatRoleCreateSchema, type BeatRoleCreate, type BeatRoleRecord } from '@atlas/shared';
 
 interface BeatRoleFormData extends BeatRoleCreate {}
 

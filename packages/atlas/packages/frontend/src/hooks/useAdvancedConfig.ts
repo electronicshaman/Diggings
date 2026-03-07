@@ -14,7 +14,7 @@ import type {
   ActToneUpdate,
   GenerationSettings,
   GenerationSettingsUpdate,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 const API_BASE = '';
 

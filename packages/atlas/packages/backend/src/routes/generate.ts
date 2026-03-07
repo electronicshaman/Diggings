@@ -5,7 +5,7 @@ import {
   BulkGenerationRequestSchema,
   type GenerationRequest,
   type BulkGenerationRequest,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 import {
   generateSingle,
   generateBatch,

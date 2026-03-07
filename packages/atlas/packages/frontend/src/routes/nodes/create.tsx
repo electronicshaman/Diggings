@@ -20,7 +20,7 @@ import {
   EligibilityBuilder,
   ReviewStep,
 } from '@/components/forms';
-import { NodeType, NodeTypeDisplayNames, type AnyNodeMetadata } from '@node-gen-web/shared';
+import { NodeType, NodeTypeDisplayNames, type AnyNodeMetadata } from '@atlas/shared';
 import { Button } from '@/components/ui/button';
 
 const STEP_LABELS = [

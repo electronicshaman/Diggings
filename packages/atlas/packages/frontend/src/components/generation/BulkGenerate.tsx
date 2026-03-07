@@ -26,7 +26,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { DistributionGapChart } from './DistributionGapChart';
-import { NodeTypeDisplayNames, BiomeDisplayNames, type Biome, type NodeType } from '@node-gen-web/shared';
+import { NodeTypeDisplayNames, BiomeDisplayNames, type Biome, type NodeType } from '@atlas/shared';
 
 const bulkGenerateSchema = z.object({
   biome: z.string().optional(),

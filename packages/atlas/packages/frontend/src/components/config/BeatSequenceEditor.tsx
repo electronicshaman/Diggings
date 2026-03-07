@@ -44,7 +44,7 @@ import {
   type BeatSequenceCreate,
   type BeatSequenceRecord,
   type BeatTemplate,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 const NODE_TYPES = ['combat', 'choice', 'trade', 'rest', 'passage', 'state_check', 'transition'] as const;
 const NODE_TYPE_LABELS: Record<string, string> = {

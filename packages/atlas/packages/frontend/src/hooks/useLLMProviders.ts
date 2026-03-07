@@ -4,7 +4,7 @@ import type {
   LLMProviderConfig,
   LLMProviderUpdate,
   LLMProviderTestResult,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 interface ProviderWithApiKey extends Omit<LLMProvider, 'encryptedApiKey'> {
   hasApiKey: boolean;

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { RestNodeMetadata } from '@node-gen-web/shared';
+import type { RestNodeMetadata } from '@atlas/shared';
 
 const REST_TYPES = ['safe', 'risky', 'sacred'] as const;
 const INTERRUPTION_CHANCES = ['none', 'low', 'medium', 'high'] as const;

@@ -3,7 +3,7 @@
  * Validates structure before database save using shared schemas
  */
 
-import { NodeContentSchema } from '@node-gen-web/shared';
+import { NodeContentSchema } from '@atlas/shared';
 import { z } from 'zod';
 
 export interface ValidationResult<T> {

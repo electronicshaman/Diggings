@@ -24,7 +24,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStyleGuides, useUpdateStyleGuide } from '@/hooks/useAdvancedConfig';
-import type { StyleGuideRecord, StyleGuideUpdate } from '@node-gen-web/shared';
+import type { StyleGuideRecord, StyleGuideUpdate } from '@atlas/shared';
 
 const BIOME_DISPLAY_NAMES: Record<string, string> = {
   township: 'Township',

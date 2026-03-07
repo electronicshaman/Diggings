@@ -8,7 +8,7 @@ import {
   ActNames,
   type AnyNodeMetadata,
   type Act,
-} from "@node-gen-web/shared"
+} from "@atlas/shared"
 import { useNode } from "@/hooks/useNodes"
 import { useDeleteNode } from "@/hooks/useNodeMutations"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

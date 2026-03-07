@@ -11,7 +11,7 @@ import {
   GenerationSettingsUpdateSchema,
   type GenerationSettings,
   type GenerationSettingsUpdate,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 interface GenerationSettingsFormProps {
   settings: GenerationSettings;

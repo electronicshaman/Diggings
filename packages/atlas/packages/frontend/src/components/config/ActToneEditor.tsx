@@ -25,7 +25,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useActTones, useUpdateActTone } from '@/hooks/useAdvancedConfig';
-import type { ActToneRecord, ActToneUpdate } from '@node-gen-web/shared';
+import type { ActToneRecord, ActToneUpdate } from '@atlas/shared';
 
 interface ActToneFormData {
   toneName: string;

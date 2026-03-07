@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Act, ActNames } from '@node-gen-web/shared';
-import type { TransitionNodeMetadata } from '@node-gen-web/shared';
+import { Act, ActNames } from '@atlas/shared';
+import type { TransitionNodeMetadata } from '@atlas/shared';
 
 const ACTS = [Act.Arrival, Act.Fever, Act.Blasphemy, Act.Unmaking];
 

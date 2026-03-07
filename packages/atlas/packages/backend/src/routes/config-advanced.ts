@@ -9,7 +9,7 @@ import {
   VernacularCreateSchema,
   VernacularUpdateSchema,
   ActToneUpdateSchema,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 import { db } from '../db/index.js';
 import {
   beatRoles,
@@ -102,7 +102,7 @@ app.get('/beat-sequences', async (c) => {
   const nodeType = c.req.query('nodeType');
 
   try {
-    let query = db.select().from(beatSequences);
+    let query = db.select().from(beatSequences).$dynamic();
 
     if (nodeType) {
       query = query.where(eq(beatSequences.nodeType, nodeType as any));
@@ -184,7 +184,7 @@ app.get('/style-guide', async (c) => {
   const biome = c.req.query('biome');
 
   try {
-    let query = db.select().from(styleGuide);
+    let query = db.select().from(styleGuide).$dynamic();
 
     if (biome) {
       query = query.where(eq(styleGuide.biome, biome as any));
@@ -302,7 +302,7 @@ app.get('/act-tones', async (c) => {
   const act = c.req.query('act');
 
   try {
-    let query = db.select().from(actTones);
+    let query = db.select().from(actTones).$dynamic();
 
     if (act) {
       const actNum = parseInt(act);

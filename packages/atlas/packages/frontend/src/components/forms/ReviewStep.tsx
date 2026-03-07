@@ -14,7 +14,7 @@ import {
   type AnyNodeMetadata,
   type BoolExpr,
   type Condition,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 
 function isCondition(expr: BoolExpr): expr is Condition {
   return 'kind' in expr;

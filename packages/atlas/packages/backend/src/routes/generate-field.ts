@@ -8,7 +8,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import { NodeTypeSchema, BiomeSchema } from '@node-gen-web/shared';
+import { NodeTypeSchema, BiomeSchema } from '@atlas/shared';
 import { getActiveProvider } from '../services/generation/llm-client.js';
 import { decryptApiKey } from '../middleware/encryption.js';
 

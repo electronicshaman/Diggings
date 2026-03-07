@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils';
 import { useDistributions, useBiomes } from '@/hooks/useConfig';
 import { useNodes } from '@/hooks/useNodes';
-import { NodeType, NodeTypeDisplayNames, BiomeDisplayNames, type Biome } from '@node-gen-web/shared';
+import { NodeType, NodeTypeDisplayNames, BiomeDisplayNames, type Biome } from '@atlas/shared';
 
 interface GapCellProps {
   target: number;

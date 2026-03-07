@@ -2,7 +2,7 @@
  * SSE streaming client for real-time generation updates
  */
 
-import type { ProgressEvent, GenerationResponse } from '@node-gen-web/shared';
+import type { ProgressEvent, GenerationResponse } from '@atlas/shared';
 
 // Reconnection constants
 const INITIAL_RETRY_DELAY = 1000; // 1 second

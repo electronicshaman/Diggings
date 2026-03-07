@@ -4,7 +4,7 @@
 
 import { useCallback, useRef, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { GenerationRequest, ProgressEvent, GenerationResponse, CriticResult } from '@node-gen-web/shared';
+import type { GenerationRequest, ProgressEvent, GenerationResponse, CriticResult } from '@atlas/shared';
 import { streamGeneration, reconnectToJob, type StreamHandle } from '@/lib/streaming';
 import { useGenerationStore, type GenerationJob } from '@/store/generation-store';
 
@@ -68,8 +68,8 @@ export function useGenerateNode() {
                 stage: 'completed',
                 progress: 100,
                 content: jobStatus.result?.content,
-                criticScore: jobStatus.result?.critic?.score,
-                criticResult: jobStatus.result?.critic,
+                criticScore: jobStatus.result?.criticScore,
+                criticResult: jobStatus.result?.criticResult,
               });
             } else if (jobStatus.status === 'failed') {
               useGenerationStore.getState().updateProgress({

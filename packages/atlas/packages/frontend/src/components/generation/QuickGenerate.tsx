@@ -29,8 +29,8 @@ import { GenerationProgress } from './GenerationProgress';
 import { useGenerateNode } from '@/hooks/useGeneration';
 import { useCreateNode } from '@/hooks/useNodeMutations';
 import { useBiomes } from '@/hooks/useConfig';
-import { NodeTypeDisplayNames, BiomeDisplayNames, NodeType, Biome } from '@node-gen-web/shared';
-import type { GenerationRequest, AnyNodeMetadata } from '@node-gen-web/shared';
+import { NodeTypeDisplayNames, BiomeDisplayNames, NodeType, Biome } from '@atlas/shared';
+import type { GenerationRequest, AnyNodeMetadata } from '@atlas/shared';
 
 const quickGenerateSchema = z.object({
   nodeType: z.enum(['combat', 'choice', 'trade', 'rest', 'passage', 'state_check', 'transition']),
@@ -132,7 +132,7 @@ export function QuickGenerate() {
       };
 
       // Add type-specific required fields with defaults
-      let nodeData: Omit<AnyNodeMetadata, 'id'> = baseData as Omit<AnyNodeMetadata, 'id'>;
+      let nodeData: Omit<AnyNodeMetadata, 'id'> = baseData as unknown as Omit<AnyNodeMetadata, 'id'>;
 
       if (nodeType === NodeType.Combat) {
         nodeData = {
@@ -140,45 +140,45 @@ export function QuickGenerate() {
           enemyTypeHooks: ['generic_enemy'],
           environmentalContext: 'Standard combat environment',
           estimatedCombatDifficulty: 3 as const,
-        };
+        } as unknown as Omit<AnyNodeMetadata, 'id'>;
       } else if (nodeType === NodeType.Choice) {
         nodeData = {
           ...baseData,
           consequenceHooks: ['generic_consequence'],
           dilemmaType: 'practical' as const,
-        };
+        } as unknown as Omit<AnyNodeMetadata, 'id'>;
       } else if (nodeType === NodeType.Trade) {
         nodeData = {
           ...baseData,
           traderArchetype: 'general_merchant',
           pricingHooks: ['standard_pricing'],
-        };
+        } as unknown as Omit<AnyNodeMetadata, 'id'>;
       } else if (nodeType === NodeType.Rest) {
         nodeData = {
           ...baseData,
           restType: 'safe' as const,
           interruptionChance: 'low' as const,
           dreamHooks: [],
-        };
+        } as unknown as Omit<AnyNodeMetadata, 'id'>;
       } else if (nodeType === NodeType.Passage) {
         nodeData = {
           ...baseData,
           travelEventHooks: ['travel_event'],
           environmentalStorytelling: 'Standard travel passage',
           resourceCost: { type: 'time', amount: 1 },
-        };
+        } as unknown as Omit<AnyNodeMetadata, 'id'>;
       } else if (nodeType === NodeType.StateCheck) {
         nodeData = {
           ...baseData,
           conditionHooks: ['state_condition'],
           branchTargets: { success: 'success_node', failure: 'failure_node' },
-        };
+        } as unknown as Omit<AnyNodeMetadata, 'id'>;
       } else if (nodeType === NodeType.Transition) {
         nodeData = {
           ...baseData,
           narrativeSummary: 'Act transition',
           worldStateShifts: ['narrative_progression'],
-        };
+        } as unknown as Omit<AnyNodeMetadata, 'id'>;
       }
 
       const savedNode = await createNodeMutation.mutateAsync(nodeData);

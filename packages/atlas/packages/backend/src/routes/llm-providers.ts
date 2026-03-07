@@ -7,12 +7,12 @@ import {
   LLMProviderTestSchema,
   type LLMProviderConfig,
   type LLMProviderUpdate,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 import { db } from '../db/index.js';
 import { llmProviders } from '../db/schema.js';
 import { eq, desc } from 'drizzle-orm';
 import { encryptApiKey, decryptApiKey } from '../middleware/encryption.js';
-import { complete } from '../services/generation/llm-client.js';
+import { complete, completeWithExplicitProvider } from '../services/generation/llm-client.js';
 
 const app = new Hono();
 
@@ -270,16 +270,20 @@ app.post('/test', zValidator('json', LLMProviderTestSchema), async (c) => {
     const startTime = Date.now();
 
     // Try a simple completion
-    const result = await complete({
-      providerType: providerConfig.type as any,
-      baseUrl: providerConfig.baseUrl || undefined,
-      apiKey: providerConfig.apiKey,
-      model: providerConfig.model,
-      temperature: providerConfig.temperature / 100, // Convert 0-100 to 0.0-1.0
-      systemPrompt: 'You are a helpful assistant.',
-      userPrompt: 'Say "Hello" and nothing else.',
-      maxTokens: 10,
-    });
+    const result = await completeWithExplicitProvider(
+      {
+        type: providerConfig.type,
+        baseUrl: providerConfig.baseUrl,
+        apiKey: providerConfig.apiKey,
+        model: providerConfig.model,
+      },
+      {
+        temperature: (providerConfig.temperature ?? 70) / 100,
+        systemPrompt: 'You are a helpful assistant.',
+        userPrompt: 'Say "Hello" and nothing else.',
+        maxTokens: 10,
+      }
+    );
 
     const latency = Date.now() - startTime;
 

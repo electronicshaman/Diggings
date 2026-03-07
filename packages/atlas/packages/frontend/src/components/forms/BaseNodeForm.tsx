@@ -19,7 +19,7 @@ import {
   ALL_ACTS,
   ActNames,
   Biome,
-} from '@node-gen-web/shared';
+} from '@atlas/shared';
 import { useFormStore } from '@/store/form-store';
 
 const baseNodeSchema = z.object({

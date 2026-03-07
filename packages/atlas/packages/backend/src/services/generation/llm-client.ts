@@ -34,6 +34,13 @@ export interface LLMCompletionOptions {
   responseFormat?: 'text' | 'json';
 }
 
+export interface LLMExplicitProviderConfig {
+  type: LLMProviderType;
+  baseUrl: string | null | undefined;
+  apiKey: string;
+  model: string;
+}
+
 export interface LLMCompletionResult {
   content: string;
   usage?: {
@@ -166,6 +173,67 @@ export async function complete(options: LLMCompletionOptions): Promise<LLMComple
 
     const content = response.choices[0]?.message?.content ?? '';
 
+    return {
+      content,
+      usage: response.usage
+        ? {
+            promptTokens: response.usage.prompt_tokens,
+            completionTokens: response.usage.completion_tokens,
+            totalTokens: response.usage.total_tokens,
+          }
+        : undefined,
+    };
+  }
+}
+
+/**
+ * Complete an LLM request using an explicitly-provided provider config (no DB lookup)
+ */
+export async function completeWithExplicitProvider(
+  provider: LLMExplicitProviderConfig,
+  options: LLMCompletionOptions
+): Promise<LLMCompletionResult> {
+  const temperature = options.temperature ?? 0.7;
+  const maxTokens = options.maxTokens ?? 2048;
+
+  if (provider.type === 'anthropic') {
+    const client = new Anthropic({ apiKey: provider.apiKey });
+    const response = await client.messages.create({
+      model: provider.model,
+      max_tokens: maxTokens,
+      temperature,
+      system: options.systemPrompt,
+      messages: [{ role: 'user', content: options.userPrompt }],
+    });
+    const content = response.content[0]?.type === 'text' ? response.content[0].text : '';
+    return {
+      content,
+      usage: {
+        promptTokens: response.usage.input_tokens,
+        completionTokens: response.usage.output_tokens,
+        totalTokens: response.usage.input_tokens + response.usage.output_tokens,
+      },
+    };
+  } else {
+    const client = new OpenAI({
+      apiKey: provider.apiKey,
+      baseURL: provider.baseUrl || undefined,
+      defaultHeaders:
+        provider.type === 'openrouter'
+          ? { 'HTTP-Referer': 'https://github.com/node-gen-web', 'X-Title': 'Node Gen Web' }
+          : undefined,
+    });
+    const response = await client.chat.completions.create({
+      model: provider.model,
+      temperature,
+      max_tokens: maxTokens,
+      response_format: options.responseFormat === 'json' ? { type: 'json_object' } : undefined,
+      messages: [
+        { role: 'system', content: options.systemPrompt },
+        { role: 'user', content: options.userPrompt },
+      ],
+    });
+    const content = response.choices[0]?.message?.content ?? '';
     return {
       content,
       usage: response.usage

@@ -8,7 +8,7 @@ import {
   ArrowRightCircle,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { NodeType, NodeTypeDisplayNames } from '@node-gen-web/shared';
+import { NodeType, NodeTypeDisplayNames } from '@atlas/shared';
 import { useFormStore } from '@/store/form-store';
 import type { LucideIcon } from 'lucide-react';
 

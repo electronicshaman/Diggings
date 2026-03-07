@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { CombatNodeMetadata } from '@node-gen-web/shared';
+import type { CombatNodeMetadata } from '@atlas/shared';
 
 export function CombatForm() {
   const { control, watch } = useFormContext<CombatNodeMetadata>();

@@ -32,7 +32,7 @@ import { useBiomes } from '@/hooks/useConfig';
 import { useGenerateNode } from '@/hooks/useGeneration';
 import { useFieldGeneration } from '@/hooks/useFieldGeneration';
 import { FieldAssistButton } from './FieldAssistButton';
-import { NodeTypeDisplayNames, BiomeDisplayNames } from '@node-gen-web/shared';
+import { NodeTypeDisplayNames, BiomeDisplayNames } from '@atlas/shared';
 import { cn } from '@/lib/utils';
 
 const assistedCreateSchema = z.object({
