@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "pnpm --parallel dev",
     "build": "pnpm -r build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "pnpm -r typecheck",
     "db:migrate": "pnpm --filter @atlas/backend db:migrate",
     "db:seed": "pnpm --filter @atlas/backend db:seed",
@@ -17,5 +20,9 @@
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.6.1",
+    "vitest": "^1.6.1"
   }
 }
