@@ -2,12 +2,11 @@
  * SSE streaming client for real-time generation updates
  */
 
-import type { ProgressEvent } from '@node-gen-web/shared';
+import type { ProgressEvent, GenerationResponse } from '@node-gen-web/shared';
 
 // Reconnection constants
 const INITIAL_RETRY_DELAY = 1000; // 1 second
 const MAX_RETRY_DELAY = 30000;    // 30 seconds
-// const MAX_RETRIES = 5; // Reserved for future retry logic
 const BACKOFF_MULTIPLIER = 2;
 
 export interface JobStatus {
@@ -15,7 +14,7 @@ export interface JobStatus {
   status: 'pending' | 'running' | 'completed' | 'failed';
   progress: number;
   currentStage: string | null;
-  result: any;
+  result: GenerationResponse | null;
   error: string | null;
   createdAt: string;
   updatedAt: string;

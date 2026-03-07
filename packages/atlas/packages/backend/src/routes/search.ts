@@ -17,25 +17,23 @@ searchRouter.get('/', zValidator('query', searchQuerySchema), async (c) => {
   const { q, limit, offset } = c.req.valid('query');
 
   // Search in name, nodeId, and content fields
-  const result = await db
-    .select()
-    .from(nodes)
-    .where(
-      sql`
-        ${nodes.nodeId} ILIKE ${`%${q}%`} OR
-        ${nodes.name} ILIKE ${`%${q}%`} OR
-        ${nodes.narrativeSummary} ILIKE ${`%${q}%`}
-      `
-    )
-    .limit(limit)
-    .offset(offset);
+  const searchCondition = sql`
+    ${nodes.nodeId} ILIKE ${`%${q}%`} OR
+    ${nodes.name} ILIKE ${`%${q}%`} OR
+    ${nodes.narrativeSummary} ILIKE ${`%${q}%`}
+  `;
+
+  const [totalResult, result] = await Promise.all([
+    db.select({ count: count() }).from(nodes).where(searchCondition),
+    db.select().from(nodes).where(searchCondition).limit(limit).offset(offset),
+  ]);
 
   return c.json({
     data: result,
     pagination: {
       limit,
       offset,
-      total: result.length,
+      total: totalResult[0]?.count ?? 0,
     },
   });
 });

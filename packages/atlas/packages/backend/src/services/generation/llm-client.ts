@@ -11,10 +11,8 @@ import { eq } from 'drizzle-orm';
 import { completeWithCircuitBreaker } from './circuit-breaker.js';
 import { classifyLLMError, calculateRetryDelay } from './error-handler.js';
 
-const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
-
 // Provider types
-export type LLMProviderType = 'openai' | 'openrouter' | 'anthropic' | 'ollama';
+export type LLMProviderType = 'openai' | 'openrouter' | 'anthropic';
 
 export interface LLMProvider {
   id: number;
@@ -58,19 +56,6 @@ function decryptApiKey(encryptedKey: string): string {
 }
 
 /**
- * Resolve the base URL for a given provider type
- */
-export function resolveBaseUrl(type: string, baseUrl?: string | null): string | undefined {
-  if (type === 'ollama') {
-    return `${(baseUrl || '').replace(/\/+$/, '')}/v1`;
-  }
-  if (type === 'openrouter') {
-    return baseUrl || OPENROUTER_BASE_URL;
-  }
-  return baseUrl || undefined;
-}
-
-/**
  * Get the active LLM provider from the database
  */
 export async function getActiveProvider(): Promise<LLMProvider | null> {
@@ -87,13 +72,6 @@ export async function getActiveProvider(): Promise<LLMProvider | null> {
  * Create an OpenAI-compatible client for the given provider
  */
 function createOpenAIClient(provider: LLMProvider): OpenAI {
-  if (provider.type === 'ollama') {
-    return new OpenAI({
-      apiKey: 'ollama',
-      baseURL: resolveBaseUrl(provider.type, provider.baseUrl),
-    });
-  }
-
   if (!provider.encryptedApiKey) {
     throw new Error(`Provider ${provider.name} has no API key configured`);
   }
@@ -102,7 +80,7 @@ function createOpenAIClient(provider: LLMProvider): OpenAI {
 
   return new OpenAI({
     apiKey,
-    baseURL: resolveBaseUrl(provider.type, provider.baseUrl),
+    baseURL: provider.baseUrl || undefined,
     defaultHeaders:
       provider.type === 'openrouter'
         ? {
@@ -188,78 +166,6 @@ export async function complete(options: LLMCompletionOptions): Promise<LLMComple
 
     const content = response.choices[0]?.message?.content ?? '';
 
-    return {
-      content,
-      usage: response.usage
-        ? {
-            promptTokens: response.usage.prompt_tokens,
-            completionTokens: response.usage.completion_tokens,
-            totalTokens: response.usage.total_tokens,
-          }
-        : undefined,
-    };
-  }
-}
-
-/**
- * Test a provider connection with arbitrary config (not limited to active provider)
- */
-export async function testProviderConnection(config: {
-  type: string;
-  baseUrl?: string | null;
-  apiKey?: string;
-  model: string;
-  temperature?: number;
-}): Promise<LLMCompletionResult> {
-  const temperature = config.temperature ?? 0.7;
-  const maxTokens = 10;
-
-  if (config.type === 'anthropic') {
-    const client = new Anthropic({ apiKey: config.apiKey });
-
-    const response = await client.messages.create({
-      model: config.model,
-      max_tokens: maxTokens,
-      temperature,
-      system: 'You are a helpful assistant.',
-      messages: [{ role: 'user', content: 'Say "Hello" and nothing else.' }],
-    });
-
-    const content = response.content[0]?.type === 'text' ? response.content[0].text : '';
-    return {
-      content,
-      usage: {
-        promptTokens: response.usage.input_tokens,
-        completionTokens: response.usage.output_tokens,
-        totalTokens: response.usage.input_tokens + response.usage.output_tokens,
-      },
-    };
-  } else {
-    const isOllama = config.type === 'ollama';
-
-    const client = new OpenAI({
-      apiKey: isOllama ? 'ollama' : config.apiKey!,
-      baseURL: resolveBaseUrl(config.type, config.baseUrl),
-      defaultHeaders:
-        config.type === 'openrouter'
-          ? {
-              'HTTP-Referer': 'https://github.com/node-gen-web',
-              'X-Title': 'Node Gen Web',
-            }
-          : undefined,
-    });
-
-    const response = await client.chat.completions.create({
-      model: config.model,
-      temperature,
-      max_tokens: maxTokens,
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: 'Say "Hello" and nothing else.' },
-      ],
-    });
-
-    const content = response.choices[0]?.message?.content ?? '';
     return {
       content,
       usage: response.usage

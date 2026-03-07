@@ -1,8 +1,0 @@
-{
-  "name": "@diggings/authoring-core",
-  "private": true,
-  "version": "0.0.1",
-  "workspaces": [
-    "shared"
-  ]
-}

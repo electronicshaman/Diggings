@@ -102,10 +102,10 @@ app.get('/beat-sequences', async (c) => {
   const nodeType = c.req.query('nodeType');
 
   try {
-    const query = db.select().from(beatSequences).$dynamic();
+    let query = db.select().from(beatSequences);
 
     if (nodeType) {
-      query.where(eq(beatSequences.nodeType, nodeType as any));
+      query = query.where(eq(beatSequences.nodeType, nodeType as any));
     }
 
     const sequences = await query;
@@ -184,10 +184,10 @@ app.get('/style-guide', async (c) => {
   const biome = c.req.query('biome');
 
   try {
-    const query = db.select().from(styleGuide).$dynamic();
+    let query = db.select().from(styleGuide);
 
     if (biome) {
-      query.where(eq(styleGuide.biome, biome as any));
+      query = query.where(eq(styleGuide.biome, biome as any));
     }
 
     const guides = await query;
@@ -302,17 +302,16 @@ app.get('/act-tones', async (c) => {
   const act = c.req.query('act');
 
   try {
-    const query = db.select().from(actTones).$dynamic();
+    let query = db.select().from(actTones);
 
     if (act) {
       const actNum = parseInt(act);
       if (!isNaN(actNum)) {
-        query.where(eq(actTones.act, actNum));
+        query = query.where(eq(actTones.act, actNum));
       }
     }
 
-    query.orderBy(actTones.act);
-    const tones = await query;
+    const tones = await query.orderBy(actTones.act);
     return c.json(act ? tones[0] || null : tones);
   } catch (error) {
     console.error('Error fetching act tones:', error);

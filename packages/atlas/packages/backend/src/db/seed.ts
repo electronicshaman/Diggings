@@ -35,7 +35,7 @@ import {
   TRADER_ARCHETYPES,
   PRICING_HOOKS,
 } from '@node-gen-web/shared';
-import { Biome, NodeType } from '@node-gen-web/shared/types';
+import { Biome } from '@node-gen-web/shared/types';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';

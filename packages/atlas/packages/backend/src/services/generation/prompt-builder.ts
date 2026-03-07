@@ -4,7 +4,7 @@
  */
 
 import { db } from '../../db/index.js';
-import { styleGuide, actTones, vernacular } from '../../db/schema.js';
+import { styleGuide, actTones, biomes } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
 
 export interface BiomeTone {
@@ -86,21 +86,10 @@ export function formatActToneForPrompt(tone: ActTone): string {
 }
 
 /**
- * Get vernacular hint for prompts from database
+ * Get vernacular hint for prompts
+ * TODO: Load from database vernacular table
  */
-export async function getVernacularHint(): Promise<string> {
-  try {
-    const terms = await db.select().from(vernacular).orderBy(vernacular.sortOrder);
-
-    if (terms.length > 0) {
-      const termPairs = terms.map((t) => `"${t.term}"${t.definition ? ` (${t.definition})` : ''}`);
-      return `\nVocabulary: ${termPairs.join(', ')}\n`;
-    }
-  } catch {
-    // Fall through to default
-  }
-
-  // Fallback if no terms in database
+export function getVernacularHint(): string {
   return `
 Vocabulary: "digger" not miner, "colour" for gold flakes, "duffer" for failed claim,
 "new chum" for newcomer, "old hand" for veteran, "sly grog" for illegal liquor,
@@ -110,6 +99,7 @@ Vocabulary: "digger" not miner, "colour" for gold flakes, "duffer" for failed cl
 
 /**
  * Get exemplar hint for critic prompts
+ * TODO: Load from database
  */
 export function getExemplarHint(): string {
   return `

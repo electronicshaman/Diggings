@@ -5,3 +5,5 @@ export * from './generation.js';
 export * from './llm.js';
 export * from './beat-sequences.js';
 export * from './style-guide.js';
+export * from './forge/card.js';
+export * from './forge/curio.js';

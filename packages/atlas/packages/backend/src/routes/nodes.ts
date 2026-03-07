@@ -93,7 +93,10 @@ nodesRouter.get('/', zValidator('query', listQuerySchema), async (c) => {
     conditions.push(eq(nodes.biome, biome as any));
   }
   if (acts) {
-    const actArray = acts.split(',').map(Number);
+    const actArray = acts.split(',').map(Number).filter((n) => n >= 1 && n <= 4);
+    if (actArray.length === 0) {
+      return c.json({ error: 'Invalid acts parameter: values must be between 1 and 4' }, 400);
+    }
     // Filter by acts contained in the JSONB array
     conditions.push(sql`${nodes.acts} @> ${JSON.stringify(actArray)}::jsonb`);
   }
@@ -246,10 +249,25 @@ nodesRouter.put('/:nodeId', zValidator('json', AnyNodeMetadataSchema), async (c)
   return c.json(result[0]);
 });
 
+// Partial update schema - allows any valid node fields
+const NodePatchSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  biome: z.string().optional(),
+  type: z.string().optional(),
+  acts: z.array(z.number().int().min(1).max(4)).optional(),
+  themes: z.array(z.string()).optional(),
+  entityTypes: z.array(z.string()).optional(),
+  content: z.record(z.any()).optional(),
+  narrativeSummary: z.string().optional(),
+  isReplaceable: z.boolean().optional(),
+  replacementTags: z.array(z.string()).optional(),
+  actVariant: z.boolean().optional(),
+}).strict();
+
 // PATCH /api/nodes/:nodeId - Partial update
-nodesRouter.patch('/:nodeId', async (c) => {
+nodesRouter.patch('/:nodeId', zValidator('json', NodePatchSchema), async (c) => {
   const nodeId = c.req.param('nodeId');
-  const data = await c.req.json();
+  const data = c.req.valid('json');
 
   // Check if node exists
   const existing = await db.select().from(nodes).where(eq(nodes.nodeId, nodeId)).limit(1);

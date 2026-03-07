@@ -1,4 +1,4 @@
-# Atlas — Node Generator Web Application
+# Node Generator Web Application
 
 Full-stack web application for creating, editing, and browsing narrative graph nodes.
 
@@ -14,7 +14,7 @@ Full-stack web application for creating, editing, and browsing narrative graph n
 ## Project Structure
 
 ```
-atlas/
+node-gen-web/
 ├── packages/
 │   ├── shared/     # Shared Zod schemas, types, constants
 │   ├── backend/    # Hono API + Drizzle ORM

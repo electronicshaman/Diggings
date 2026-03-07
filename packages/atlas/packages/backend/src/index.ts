@@ -7,9 +7,7 @@ import { configRouter } from './routes/config.js';
 import { searchRouter } from './routes/search.js';
 import generateRouter from './routes/generate.js';
 import generateFieldRouter from './routes/generate-field.js';
-import { zValidator } from '@hono/zod-validator';
-import { LLMProviderTestSchema } from '@node-gen-web/shared';
-import llmProvidersRouter, { handleTestProvider } from './routes/llm-providers.js';
+import llmProvidersRouter from './routes/llm-providers.js';
 import configAdvancedRouter from './routes/config-advanced.js';
 
 const app = new Hono();
@@ -37,7 +35,6 @@ app.route('/api/search', searchRouter);
 app.route('/api/generate', generateRouter);
 app.route('/api/generate/field', generateFieldRouter);
 app.route('/api/llm/providers', llmProvidersRouter);
-app.post('/api/llm/test', zValidator('json', LLMProviderTestSchema), handleTestProvider);
 app.route('/api/config/advanced', configAdvancedRouter);
 
 // 404 handler

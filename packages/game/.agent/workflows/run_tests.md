@@ -7,19 +7,19 @@ Note: `--ignoreHeadlessMode` is required because GdUnit4 by default blocks headl
 
 ```bash
 cd src
-/Applications/Godot.app/Contents/MacOS/Godot --headless -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/[path_to_test_script] --ignoreHeadlessMode
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/[path_to_test_script] --ignoreHeadlessMode
 ```
 
 Example for a specific test file:
 
 ```bash
 cd src
-/Applications/Godot.app/Contents/MacOS/Godot --headless -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/cards/test_card_data.gd --ignoreHeadlessMode
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/cards/test_card_data.gd --ignoreHeadlessMode
 ```
 
 Example for running a directory of tests:
 
 ```bash
 cd src
-/Applications/Godot.app/Contents/MacOS/Godot --headless -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/ --ignoreHeadlessMode
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/unit/ --ignoreHeadlessMode
 ```

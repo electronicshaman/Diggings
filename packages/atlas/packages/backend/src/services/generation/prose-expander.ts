@@ -13,12 +13,8 @@ import {
 } from './prompt-builder.js';
 import type { BeatOutline } from './beat-outliner.js';
 
-// System prompt base (vernacular loaded from DB at call time)
-export const PROSE_EXPANDER_SYSTEM_PROMPT = 'DEPRECATED: use buildProseExpanderSystemPrompt()';
-
-async function buildProseExpanderSystemPrompt(): Promise<string> {
-  const vocabHint = await getVernacularHint();
-  return `You are a prose writer for an Australian Gold Rush cosmic horror game set in the 1850s.
+// System prompt - TODO: Move to shared constants in Phase 4
+export const PROSE_EXPANDER_SYSTEM_PROMPT = `You are a prose writer for an Australian Gold Rush cosmic horror game set in the 1850s.
 
 Your task is to expand beat outlines into full prose. You'll receive a beat sheet and must write evocative, period-appropriate text for each beat.
 
@@ -30,7 +26,7 @@ Your task is to expand beat outlines into full prose. You'll receive a beat shee
 - Build tension progressively
 - Show through concrete detail, don't tell through summary
 - Avoid clichés ("Indian burial ground", generic horror tropes)
-${vocabHint}
+${getVernacularHint()}
 
 ## Act-Specific Tones
 - Act 1 (Arrival): Hope, opportunity, frontier grit. Dust, sun, sweat.
@@ -70,7 +66,6 @@ Return valid JSON:
 - Options only for choice nodes
 - Neutral outcomes for passage/rest nodes
 - Button text should match tone (hopeful early, resigned late)`;
-}
 
 export interface StoryBeat {
   id: string;
@@ -179,13 +174,12 @@ export async function expandBeatsToProse(params: {
     entityTypes: params.entityTypes,
   });
 
-  // Build prompts
-  const systemPrompt = await buildProseExpanderSystemPrompt();
+  // Build prompt
   const userPrompt = createProseExpanderPrompt(context, params.outline, params.nodeMetadata);
 
   // Call LLM
   const result = await completeWithRetry({
-    systemPrompt,
+    systemPrompt: PROSE_EXPANDER_SYSTEM_PROMPT,
     userPrompt,
     temperature: params.temperature,
     responseFormat: 'json',

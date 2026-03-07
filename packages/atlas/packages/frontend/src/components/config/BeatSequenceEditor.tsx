@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Plus, Edit, Trash2, Eye, Code } from 'lucide-react';
 import { toast } from 'sonner';
-import { errorToast } from '@/lib/toast-utils';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -131,7 +130,7 @@ export function BeatSequenceEditor() {
       await deleteMutation.mutateAsync(id);
       toast.success('Beat sequence deleted successfully');
     } catch (error) {
-      errorToast('Failed to delete beat sequence');
+      toast.error('Failed to delete beat sequence');
     }
   };
 
@@ -150,7 +149,7 @@ export function BeatSequenceEditor() {
       setShowDialog(false);
       reset();
     } catch (error) {
-      errorToast(`Failed to ${editingSequence ? 'update' : 'create'} beat sequence`);
+      toast.error(`Failed to ${editingSequence ? 'update' : 'create'} beat sequence`);
     }
   };
 
@@ -293,7 +292,7 @@ export function BeatSequenceEditor() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="nodeType">Node Type</Label>
-                <Select value={nodeType} onValueChange={(value) => setValue('nodeType', value as any)}>
+                <Select value={nodeType} onValueChange={(value) => setValue('nodeType', value as BeatSequenceCreate['nodeType'])}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
-import { errorToast } from '@/lib/toast-utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -200,7 +199,7 @@ export function NodeEditPage() {
       toast.success('Node updated successfully');
       navigate(`/nodes/${id}`);
     } catch (err) {
-      errorToast(err instanceof Error ? err.message : 'Failed to update node');
+      toast.error(err instanceof Error ? err.message : 'Failed to update node');
     }
   };
 

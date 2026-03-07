@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { errorToast } from '@/lib/toast-utils';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -50,7 +49,7 @@ export function GenerationSettingsForm({ settings }: GenerationSettingsFormProps
       await updateSettings.mutateAsync(data);
       toast.success('Generation settings updated successfully');
     } catch (error) {
-      errorToast(
+      toast.error(
         `Failed to update settings: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`

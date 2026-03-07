@@ -17,10 +17,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Quality Control** - Integrate critic stage with scoring and auto-retry
 - [x] **Phase 4: Frontend Streaming Client** - EventSource hook with reconnection logic
 - [x] **Phase 5: Single-Node Generation UI** - Quick Generate flow with preview and regenerate
-- [x] **Phase 6: Field-Level Assists** - AI generation for individual fields in AssistedCreate workflow
-- [x] **Phase 7: Batch Processing** - Bulk generation with concurrency control and progress tracking
-- [x] **Phase 8: Provider Management** - Settings UI for LLM provider configuration
-- [x] **Phase 9: Configuration Management** - Advanced config UI for beat sequences and style guides
+- [ ] **Phase 6: Field-Level Assists** - AI generation for individual fields in AssistedCreate workflow
+- [ ] **Phase 7: Batch Processing** - Bulk generation with concurrency control and progress tracking
+- [ ] **Phase 8: Provider Management** - Settings UI for LLM provider configuration
+- [ ] **Phase 9: Configuration Management** - Advanced config UI for beat sequences and style guides
 
 ## Phase Details
 
@@ -112,9 +112,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [x] 06-01-PLAN.md — Backend field generation endpoints for narrative_hook, beat, and beat-list
-- [x] 06-02-PLAN.md — FieldAssistButton component, useFieldGeneration hook, narrative hook integration in AssistedCreate
-- [x] 06-03-PLAN.md — Beat suggestion preview with include/exclude toggles in AssistedCreate
+- [ ] 06-01-PLAN.md — Backend field generation endpoints for narrative_hook, beat, and beat-list
+- [ ] 06-02-PLAN.md — FieldAssistButton component, useFieldGeneration hook, narrative hook integration in AssistedCreate
+- [ ] 06-03-PLAN.md — Beat suggestion preview with include/exclude toggles in AssistedCreate
 
 ### Phase 7: Batch Processing
 **Goal**: User can generate multiple nodes in bulk with concurrency control and incremental progress tracking
@@ -126,10 +126,10 @@ Plans:
   3. User sees per-node progress tracking with partial success reporting
   4. System saves completed nodes incrementally (doesn't lose progress on partial failure)
   5. DistributionGapChart visualizes which node types/biomes need generation
-**Plans**: 1 plan
+**Plans**: TBD
 
 Plans:
-- [x] 07-01: Bulk generation endpoint with SSE streaming, batch processor integration, and frontend UI wiring
+- [ ] 07-01: TBD
 
 ### Phase 8: Provider Management
 **Goal**: User can configure LLM providers through Settings UI with encrypted API key storage
@@ -143,10 +143,10 @@ Plans:
   5. System stores API keys encrypted in database (base64 for local dev)
   6. System enforces environment variable API keys when NODE_ENV=production
   7. User can test provider connection to verify credentials
-**Plans**: 1 plan
+**Plans**: TBD
 
 Plans:
-- [x] 08-01: Fix set-active bug (ne instead of eq), add testProviderConnection helper
+- [ ] 08-01: TBD
 
 ### Phase 9: Configuration Management
 **Goal**: User can view and edit advanced generation configuration (beat sequences, style guides, vernacular)
@@ -158,10 +158,10 @@ Plans:
   3. User can edit style guides per biome (atmosphere, sensory details, antipatterns)
   4. User can manage vernacular glossary (historical/archaic terms)
   5. System loads configuration from database (not hardcoded constants)
-**Plans**: 1 plan
+**Plans**: TBD
 
 Plans:
-- [x] 09-01: Fix Drizzle $dynamic() type errors, wire vernacular DB loading into prompt-builder
+- [ ] 09-01: TBD
 
 ## Progress
 
@@ -176,6 +176,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 4. Frontend Streaming Client | 1/1 | Complete | 2026-01-26 |
 | 5. Single-Node Generation UI | 1/1 | Complete | 2026-01-26 |
 | 6. Field-Level Assists | 3/3 | Complete | 2026-01-26 |
-| 7. Batch Processing | 1/1 | Complete | 2026-02-24 |
-| 8. Provider Management | 1/1 | Complete | 2026-02-24 |
-| 9. Configuration Management | 1/1 | Complete | 2026-02-24 |
+| 7. Batch Processing | 0/1 | Not started | - |
+| 8. Provider Management | 0/1 | Not started | - |
+| 9. Configuration Management | 0/1 | Not started | - |

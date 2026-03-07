@@ -26,6 +26,7 @@ export function FieldAssistButton({
             className="size-8"
             onClick={onClick}
             disabled={isLoading || disabled}
+            aria-label={tooltip}
           >
             {isLoading ? (
               <Sparkles className="size-4 animate-pulse" />

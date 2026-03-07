@@ -129,40 +129,11 @@ export function useTestProvider() {
         body: JSON.stringify(params),
       });
       if (!res.ok) {
-        let detail = `HTTP ${res.status}`;
-        try {
-          const body = await res.json();
-          detail = body.error || JSON.stringify(body);
-        } catch {
-          detail += ` ${res.statusText}`;
-        }
-        throw new Error(detail);
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to test provider');
       }
       return res.json() as Promise<LLMProviderTestResult>;
     },
-  });
-}
-
-/**
- * Fetch available models from an Ollama server
- */
-export function useOllamaModels(baseUrl: string | undefined) {
-  return useQuery<string[]>({
-    queryKey: ['ollama-models', baseUrl],
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/llm/providers/ollama-models?baseUrl=${encodeURIComponent(baseUrl!)}`
-      );
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Failed to fetch Ollama models');
-      }
-      const data = await res.json();
-      return data.models as string[];
-    },
-    enabled: !!baseUrl,
-    retry: false,
-    staleTime: 30_000,
   });
 }
 

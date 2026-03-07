@@ -3,7 +3,7 @@ import { z } from 'zod';
 /**
  * LLM provider type
  */
-export const LLMProviderTypeSchema = z.enum(['openai', 'openrouter', 'anthropic', 'ollama']);
+export const LLMProviderTypeSchema = z.enum(['openai', 'openrouter', 'anthropic']);
 
 export type LLMProviderType = z.infer<typeof LLMProviderTypeSchema>;
 
@@ -28,33 +28,16 @@ export type LLMProvider = z.infer<typeof LLMProviderSchema>;
 /**
  * LLM provider configuration for creation/update (with API key)
  */
-export const LLMProviderConfigSchema = z
-  .object({
-    name: z.string().min(1).max(100),
-    type: LLMProviderTypeSchema,
-    baseUrl: z.string().url().nullable().optional(),
-    apiKey: z.string().min(1).optional(), // Optional for Ollama
-    model: z.string().min(1).max(100),
-    temperature: z.number().int().min(0).max(100).default(70),
-    maxRetries: z.number().int().min(0).max(10).default(3),
-    isActive: z.boolean().default(false),
-  })
-  .superRefine((data, ctx) => {
-    if (data.type !== 'ollama' && !data.apiKey) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'API key is required for this provider type',
-        path: ['apiKey'],
-      });
-    }
-    if (data.type === 'ollama' && !data.baseUrl) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Base URL is required for Ollama',
-        path: ['baseUrl'],
-      });
-    }
-  });
+export const LLMProviderConfigSchema = z.object({
+  name: z.string().min(1).max(100),
+  type: LLMProviderTypeSchema,
+  baseUrl: z.string().url().nullable().optional(),
+  apiKey: z.string().min(1), // Plain text, will be encrypted
+  model: z.string().min(1).max(100),
+  temperature: z.number().int().min(0).max(100).default(70),
+  maxRetries: z.number().int().min(0).max(10).default(3),
+  isActive: z.boolean().default(false),
+});
 
 export type LLMProviderConfig = z.infer<typeof LLMProviderConfigSchema>;
 
@@ -78,7 +61,7 @@ export type LLMProviderUpdate = z.infer<typeof LLMProviderUpdateSchema>;
  */
 export const LLMProviderTestSchema = z.object({
   providerId: z.number().int().optional(), // If testing existing provider
-  providerConfig: LLMProviderConfigSchema.optional(), // If testing before saving (apiKey optional for Ollama)
+  providerConfig: LLMProviderConfigSchema.optional(), // If testing before saving
 });
 
 export type LLMProviderTest = z.infer<typeof LLMProviderTestSchema>;

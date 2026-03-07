@@ -20,7 +20,6 @@ export interface GenerationJob {
 interface GenerationState {
   activeJob: GenerationJob | null;
   connectionAttempts: number;
-  autoSave: boolean;
 
   // Actions
   setJob: (job: GenerationJob) => void;
@@ -28,7 +27,6 @@ interface GenerationState {
   clearJob: () => void;
   incrementRetry: () => void;
   resetRetry: () => void;
-  setAutoSave: (value: boolean) => void;
 }
 
 export const useGenerationStore = create<GenerationState>()(
@@ -36,7 +34,6 @@ export const useGenerationStore = create<GenerationState>()(
     (set) => ({
       activeJob: null,
       connectionAttempts: 0,
-      autoSave: true,
 
       setJob: (job) => set({ activeJob: job }),
 
@@ -51,14 +48,12 @@ export const useGenerationStore = create<GenerationState>()(
         set((state) => ({ connectionAttempts: state.connectionAttempts + 1 })),
 
       resetRetry: () => set({ connectionAttempts: 0 }),
-
-      setAutoSave: (value) => set({ autoSave: value }),
     }),
     {
       name: 'node-gen-generation',
       version: 1,
       // Only persist activeJob, not connectionAttempts (ephemeral)
-      partialize: (state) => ({ activeJob: state.activeJob, autoSave: state.autoSave }),
+      partialize: (state) => ({ activeJob: state.activeJob }),
       // Merge function to discard stale jobs on hydration
       merge: (persistedState, currentState) => {
         const persisted = persistedState as Partial<GenerationState>;
@@ -71,7 +66,6 @@ export const useGenerationStore = create<GenerationState>()(
             return {
               ...currentState,
               activeJob: null,
-              autoSave: persisted.autoSave ?? true,
             };
           }
         }
@@ -80,7 +74,6 @@ export const useGenerationStore = create<GenerationState>()(
         return {
           ...currentState,
           activeJob: persisted.activeJob ?? null,
-          autoSave: persisted.autoSave ?? true,
         };
       },
     }

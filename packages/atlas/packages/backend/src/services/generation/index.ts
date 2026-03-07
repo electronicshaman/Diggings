@@ -9,7 +9,6 @@ export {
   completeWithRetry,
   parseJsonResponse,
   getActiveProvider,
-  testProviderConnection,
   encryptApiKey,
   type LLMProvider,
   type LLMProviderType,

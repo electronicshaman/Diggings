@@ -4,3 +4,5 @@ export * from './distributions.js';
 export * from './defaults.js';
 export * from './lookup-data.js';
 export * from './prompts.js';
+export * from './forge.js';
+export * from './forge-distributions.js';

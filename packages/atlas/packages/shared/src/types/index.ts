@@ -3,3 +3,5 @@ export * from './node.js';
 export * from './biome.js';
 export * from './eligibility.js';
 export * from './generation.js';
+export * from './beat-sequences.js';
+export * from './forge.js';

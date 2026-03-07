@@ -13,7 +13,6 @@ interface GenerationProgressProps {
   onAccept?: () => void;
   showContent?: boolean;
   threshold?: number;
-  autoSaving?: boolean;
 }
 
 const STAGES = [
@@ -52,7 +51,6 @@ export function GenerationProgress({
   onAccept,
   showContent = false,
   threshold = 70,
-  autoSaving = false,
 }: GenerationProgressProps) {
   const { stage, progress, message, criticScore, criticResult, content, error } = state;
 
@@ -161,15 +159,8 @@ export function GenerationProgress({
                   Regenerate
                 </Button>
               )}
-              {autoSaving ? (
-                <Button disabled>
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                  Saving...
-                </Button>
-              ) : (
-                onAccept && (
-                  <Button onClick={onAccept}>Accept & Save</Button>
-                )
+              {onAccept && (
+                <Button onClick={onAccept}>Accept & Save</Button>
               )}
             </>
           )}

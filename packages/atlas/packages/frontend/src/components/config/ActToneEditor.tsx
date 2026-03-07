@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Edit } from 'lucide-react';
 import { toast } from 'sonner';
-import { errorToast } from '@/lib/toast-utils';
 import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -92,7 +91,7 @@ export function ActToneEditor() {
       setShowDialog(false);
       reset();
     } catch {
-      errorToast('Failed to update act tone');
+      toast.error('Failed to update act tone');
     }
   };
 

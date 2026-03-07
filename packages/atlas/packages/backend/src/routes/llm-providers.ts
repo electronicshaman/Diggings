@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import type { Context } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import {
@@ -11,9 +10,9 @@ import {
 } from '@node-gen-web/shared';
 import { db } from '../db/index.js';
 import { llmProviders } from '../db/schema.js';
-import { eq, ne, desc } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 import { encryptApiKey, decryptApiKey } from '../middleware/encryption.js';
-import { testProviderConnection } from '../services/generation/llm-client.js';
+import { complete } from '../services/generation/llm-client.js';
 
 const app = new Hono();
 
@@ -41,44 +40,6 @@ app.get('/', async (c) => {
       },
       500
     );
-  }
-});
-
-/**
- * GET /api/llm/providers/ollama-models
- * Fetch available models from an Ollama server
- */
-app.get('/ollama-models', async (c) => {
-  const baseUrl = c.req.query('baseUrl');
-
-  if (!baseUrl) {
-    return c.json({ error: 'baseUrl query parameter is required' }, 400);
-  }
-
-  try {
-    const url = `${baseUrl.replace(/\/+$/, '')}/api/tags`;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-
-    const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      return c.json({ error: `Ollama server returned ${response.status}` }, 502);
-    }
-
-    const data = (await response.json()) as { models?: Array<{ name: string }> };
-    const models = (data.models || []).map((m) => m.name);
-
-    return c.json({ models });
-  } catch (error) {
-    const message =
-      error instanceof Error && error.name === 'AbortError'
-        ? 'Ollama server did not respond within 5 seconds'
-        : error instanceof Error
-          ? error.message
-          : 'Failed to fetch Ollama models';
-    return c.json({ error: message }, 502);
   }
 });
 
@@ -127,8 +88,8 @@ app.post('/', zValidator('json', LLMProviderConfigSchema), async (c) => {
   const config = c.req.valid('json') as LLMProviderConfig;
 
   try {
-    // Encrypt the API key if provided (Ollama doesn't need one)
-    const encryptedKey = config.apiKey ? encryptApiKey(config.apiKey) : null;
+    // Encrypt the API key
+    const encryptedKey = encryptApiKey(config.apiKey);
 
     // If this provider is set as active, deactivate all others
     if (config.isActive) {
@@ -153,7 +114,7 @@ app.post('/', zValidator('json', LLMProviderConfigSchema), async (c) => {
     const sanitized = {
       ...provider,
       encryptedApiKey: undefined,
-      hasApiKey: !!provider.encryptedApiKey,
+      hasApiKey: true,
     };
 
     return c.json(sanitized, 201);
@@ -207,7 +168,7 @@ app.put('/:id', zValidator('json', LLMProviderUpdateSchema), async (c) => {
 
     // If setting as active, deactivate all others
     if (updates.isActive) {
-      await db.update(llmProviders).set({ isActive: false }).where(ne(llmProviders.id, id));
+      await db.update(llmProviders).set({ isActive: false }).where(eq(llmProviders.id, id));
     }
 
     const [provider] = await db
@@ -268,9 +229,8 @@ app.delete('/:id', async (c) => {
 /**
  * POST /api/llm/test
  * Test an LLM provider connection
- * Exported as a standalone handler — registered directly on the main app in index.ts
  */
-export async function handleTestProvider(c: Context) {
+app.post('/test', zValidator('json', LLMProviderTestSchema), async (c) => {
   const request = c.req.valid('json');
 
   try {
@@ -288,10 +248,14 @@ export async function handleTestProvider(c: Context) {
         return c.json({ error: 'Provider not found' }, 404);
       }
 
+      if (!provider.encryptedApiKey) {
+        return c.json({ error: 'Provider has no API key configured' }, 422);
+      }
+
       providerConfig = {
         type: provider.type,
         baseUrl: provider.baseUrl,
-        apiKey: provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!),
+        apiKey: decryptApiKey(provider.encryptedApiKey),
         model: provider.model,
         temperature: provider.temperature,
         maxRetries: 1, // Use only 1 retry for testing
@@ -305,13 +269,16 @@ export async function handleTestProvider(c: Context) {
 
     const startTime = Date.now();
 
-    // Try a simple completion with the provider config directly
-    const result = await testProviderConnection({
-      type: providerConfig.type,
-      baseUrl: providerConfig.baseUrl,
+    // Try a simple completion
+    const result = await complete({
+      providerType: providerConfig.type as any,
+      baseUrl: providerConfig.baseUrl || undefined,
       apiKey: providerConfig.apiKey,
       model: providerConfig.model,
-      temperature: (providerConfig.temperature ?? 70) / 100, // Convert 0-100 to 0.0-1.0
+      temperature: providerConfig.temperature / 100, // Convert 0-100 to 0.0-1.0
+      systemPrompt: 'You are a helpful assistant.',
+      userPrompt: 'Say "Hello" and nothing else.',
+      maxTokens: 10,
     });
 
     const latency = Date.now() - startTime;
@@ -331,9 +298,9 @@ export async function handleTestProvider(c: Context) {
         message: 'Provider connection failed',
         error: error instanceof Error ? error.message : 'Unknown error',
       },
-      200 // Return 200 but with success: false
+      502
     );
   }
-}
+});
 
 export default app;

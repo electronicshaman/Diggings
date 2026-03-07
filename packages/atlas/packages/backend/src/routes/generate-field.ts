@@ -8,12 +8,9 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import { getActiveProvider, resolveBaseUrl } from '../services/generation/llm-client.js';
-
-// Helper to decrypt API key (from llm-client.ts)
-function decryptApiKey(encryptedKey: string): string {
-  return Buffer.from(encryptedKey, 'base64').toString('utf-8');
-}
+import { NodeTypeSchema, BiomeSchema } from '@node-gen-web/shared';
+import { getActiveProvider } from '../services/generation/llm-client.js';
+import { decryptApiKey } from '../middleware/encryption.js';
 
 // SSE format helper
 function formatSSE(type: string, data: any): string {
@@ -22,8 +19,8 @@ function formatSSE(type: string, data: any): string {
 
 // Request schemas
 const narrativeHookRequestSchema = z.object({
-  nodeType: z.string(),
-  biome: z.string(),
+  nodeType: NodeTypeSchema,
+  biome: BiomeSchema,
   name: z.string(),
   themes: z.array(z.string()),
   entityTypes: z.array(z.string()),
@@ -32,8 +29,8 @@ const narrativeHookRequestSchema = z.object({
 });
 
 const beatRequestSchema = z.object({
-  nodeType: z.string(),
-  biome: z.string(),
+  nodeType: NodeTypeSchema,
+  biome: BiomeSchema,
   role: z.string(),
   context: z.string().optional(),
   narrativeHook: z.string().optional(),
@@ -41,8 +38,8 @@ const beatRequestSchema = z.object({
 });
 
 const beatListRequestSchema = z.object({
-  nodeType: z.string(),
-  biome: z.string(),
+  nodeType: NodeTypeSchema,
+  biome: BiomeSchema,
   name: z.string(),
   themes: z.array(z.string()),
   narrativeHook: z.string().optional(),
@@ -63,13 +60,17 @@ router.post('/narrative-hook', zValidator('json', narrativeHookRequestSchema), a
     return c.json({ error: 'No LLM provider configured' }, 500);
   }
 
+  if (!provider.encryptedApiKey) {
+    return c.json({ error: 'Provider has no API key configured' }, 422);
+  }
+
   // Set SSE headers
   c.header('Content-Type', 'text/event-stream');
   c.header('Cache-Control', 'no-cache');
   c.header('Connection', 'keep-alive');
 
   const encoder = new TextEncoder();
-  const apiKey = provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!);
+  const apiKey = decryptApiKey(provider.encryptedApiKey);
 
   const systemPrompt = `You are a narrative writer for an Australian Gold Rush cosmic horror game.
 
@@ -114,11 +115,10 @@ Entity types: ${body.entityTypes.join(', ') || 'none specified'}`;
             }
           }
         } else {
-          // OpenAI/OpenRouter/Ollama
-          const baseURL = resolveBaseUrl(provider.type, provider.baseUrl);
+          // OpenAI/OpenRouter
           const client = new OpenAI({
             apiKey,
-            baseURL,
+            baseURL: provider.baseUrl || undefined,
             defaultHeaders:
               provider.type === 'openrouter'
                 ? {
@@ -176,13 +176,17 @@ router.post('/beat', zValidator('json', beatRequestSchema), async (c) => {
     return c.json({ error: 'No LLM provider configured' }, 500);
   }
 
+  if (!provider.encryptedApiKey) {
+    return c.json({ error: 'Provider has no API key configured' }, 422);
+  }
+
   // Set SSE headers
   c.header('Content-Type', 'text/event-stream');
   c.header('Cache-Control', 'no-cache');
   c.header('Connection', 'keep-alive');
 
   const encoder = new TextEncoder();
-  const apiKey = provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!);
+  const apiKey = decryptApiKey(provider.encryptedApiKey);
 
   // Beat role guidance
   const roleGuidance: Record<string, string> = {
@@ -237,10 +241,9 @@ Return only the beat text, no JSON or metadata.`;
             }
           }
         } else {
-          const beatBaseURL = resolveBaseUrl(provider.type, provider.baseUrl);
           const client = new OpenAI({
             apiKey,
-            baseURL: beatBaseURL,
+            baseURL: provider.baseUrl || undefined,
             defaultHeaders:
               provider.type === 'openrouter'
                 ? {
@@ -296,7 +299,11 @@ router.post('/beat-list', zValidator('json', beatListRequestSchema), async (c) =
     return c.json({ error: 'No LLM provider configured' }, 500);
   }
 
-  const apiKey = provider.type === 'ollama' ? 'ollama' : decryptApiKey(provider.encryptedApiKey!);
+  if (!provider.encryptedApiKey) {
+    return c.json({ error: 'Provider has no API key configured' }, 422);
+  }
+
+  const apiKey = decryptApiKey(provider.encryptedApiKey);
 
   // Beat sequence templates by node type
   const beatSequences: Record<string, string> = {
@@ -353,10 +360,9 @@ Return ONLY the JSON array, no markdown formatting.`;
 
       content = response.content[0]?.type === 'text' ? response.content[0].text : '';
     } else {
-      const listBaseURL = resolveBaseUrl(provider.type, provider.baseUrl);
       const client = new OpenAI({
         apiKey,
-        baseURL: listBaseURL,
+        baseURL: provider.baseUrl || undefined,
         defaultHeaders:
           provider.type === 'openrouter'
             ? {

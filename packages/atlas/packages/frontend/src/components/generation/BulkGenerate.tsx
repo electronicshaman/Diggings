@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Boxes } from 'lucide-react';
+import { Boxes, Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -25,7 +26,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { DistributionGapChart } from './DistributionGapChart';
-import { useBulkGeneration } from '@/hooks/useGeneration';
 import { NodeTypeDisplayNames, BiomeDisplayNames, type Biome, type NodeType } from '@node-gen-web/shared';
 
 const bulkGenerateSchema = z.object({
@@ -37,8 +37,23 @@ const bulkGenerateSchema = z.object({
 
 type BulkGenerateFormData = z.infer<typeof bulkGenerateSchema>;
 
+interface BulkGenerationProgress {
+  status: 'idle' | 'running' | 'paused' | 'completed' | 'error';
+  total: number;
+  completed: number;
+  failed: number;
+  currentNode?: string;
+  errors: string[];
+}
+
 export function BulkGenerate() {
-  const { progress, start, cancel, reset } = useBulkGeneration();
+  const [progress, setProgress] = useState<BulkGenerationProgress>({
+    status: 'idle',
+    total: 0,
+    completed: 0,
+    failed: 0,
+    errors: [],
+  });
 
   const form = useForm<BulkGenerateFormData>({
     resolver: zodResolver(bulkGenerateSchema),
@@ -57,11 +72,47 @@ export function BulkGenerate() {
   };
 
   const onSubmit = async (data: BulkGenerateFormData) => {
-    await start({
-      biome: data.fillGaps ? undefined : (data.biome as any),
-      nodeType: data.fillGaps ? undefined : (data.nodeType as any),
-      count: data.fillGaps ? undefined : data.count,
-      fillGaps: data.fillGaps,
+    setProgress({
+      status: 'running',
+      total: data.count || 10,
+      completed: 0,
+      failed: 0,
+      errors: [],
+    });
+
+    // TODO: Implement actual bulk generation when backend supports it
+    // For now, simulate progress
+    const total = data.count || 10;
+    for (let i = 0; i < total; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setProgress((prev) => ({
+        ...prev,
+        completed: i + 1,
+        currentNode: `Node ${i + 1}`,
+      }));
+    }
+
+    setProgress((prev) => ({
+      ...prev,
+      status: 'completed',
+      currentNode: undefined,
+    }));
+  };
+
+  const handlePause = () => {
+    setProgress((prev) => ({
+      ...prev,
+      status: prev.status === 'running' ? 'paused' : 'running',
+    }));
+  };
+
+  const handleCancel = () => {
+    setProgress({
+      status: 'idle',
+      total: 0,
+      completed: 0,
+      failed: 0,
+      errors: [],
     });
   };
 
@@ -90,19 +141,13 @@ export function BulkGenerate() {
                     {progress.status === 'paused' ? 'Paused' : 'Generating'}...
                   </span>
                   <span>
-                    {progress.completed + progress.failed} / {progress.total}
+                    {progress.completed} / {progress.total}
                   </span>
                 </div>
-                <Progress
-                  value={
-                    progress.total > 0
-                      ? ((progress.completed + progress.failed) / progress.total) * 100
-                      : 0
-                  }
-                />
+                <Progress value={(progress.completed / progress.total) * 100} />
                 {progress.currentNode && (
                   <p className="text-sm text-muted-foreground">
-                    Currently generating: {progress.currentNode.slice(0, 8)}...
+                    Currently generating: {progress.currentNode}
                   </p>
                 )}
               </div>
@@ -110,18 +155,42 @@ export function BulkGenerate() {
               <div className="flex gap-3">
                 {progress.completed > 0 && (
                   <Badge variant="outline" className="gap-1">
-                    {progress.completed} completed
+                    ✓ {progress.completed} completed
                   </Badge>
                 )}
                 {progress.failed > 0 && (
                   <Badge variant="destructive" className="gap-1">
-                    {progress.failed} failed
+                    ✗ {progress.failed} failed
                   </Badge>
                 )}
               </div>
 
+              {progress.errors.length > 0 && (
+                <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 space-y-1">
+                  <p className="text-sm font-medium text-red-500">Errors:</p>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    {progress.errors.map((error, i) => (
+                      <li key={i} className="text-sm text-red-400">{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div className="flex gap-3">
-                <Button variant="destructive" onClick={cancel}>
+                <Button variant="outline" onClick={handlePause}>
+                  {progress.status === 'paused' ? (
+                    <>
+                      <Play className="mr-2 size-4" />
+                      Resume
+                    </>
+                  ) : (
+                    <>
+                      <Pause className="mr-2 size-4" />
+                      Pause
+                    </>
+                  )}
+                </Button>
+                <Button variant="destructive" onClick={handleCancel}>
                   Cancel
                 </Button>
               </div>
@@ -135,29 +204,8 @@ export function BulkGenerate() {
                   {progress.failed > 0 && ` (${progress.failed} failed)`}
                 </p>
               </div>
-              {progress.errors.length > 0 && (
-                <div className="max-h-32 overflow-y-auto rounded border p-2 text-xs text-muted-foreground">
-                  {progress.errors.map((err, i) => (
-                    <p key={i}>{err}</p>
-                  ))}
-                </div>
-              )}
-              <Button variant="outline" onClick={reset}>
+              <Button variant="outline" onClick={handleCancel}>
                 Generate More
-              </Button>
-            </div>
-          ) : progress.status === 'error' ? (
-            <div className="space-y-4">
-              <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
-                <p className="font-medium text-red-500">Generation Failed</p>
-                {progress.errors.map((err, i) => (
-                  <p key={i} className="text-sm text-muted-foreground">
-                    {err}
-                  </p>
-                ))}
-              </div>
-              <Button variant="outline" onClick={reset}>
-                Try Again
               </Button>
             </div>
           ) : (
@@ -196,6 +244,7 @@ export function BulkGenerate() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
+                              <SelectItem value="">Any biome</SelectItem>
                               {Object.entries(BiomeDisplayNames).map(([key, label]) => (
                                 <SelectItem key={key} value={key}>
                                   {label}
@@ -221,6 +270,7 @@ export function BulkGenerate() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
+                              <SelectItem value="">Any type</SelectItem>
                               {Object.entries(NodeTypeDisplayNames).map(([key, label]) => (
                                 <SelectItem key={key} value={key}>
                                   {label}
@@ -260,6 +310,11 @@ export function BulkGenerate() {
                   <Boxes className="mr-2 size-4" />
                   {fillGaps ? 'Fill All Gaps' : 'Start Bulk Generation'}
                 </Button>
+
+                <p className="text-center text-xs text-muted-foreground">
+                  Bulk generation is not yet fully implemented. Click the chart above to select a
+                  gap to fill.
+                </p>
               </form>
             </Form>
           )}

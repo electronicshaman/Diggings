@@ -1,1 +1,0 @@
-ALTER TYPE "public"."llm_provider_type" ADD VALUE 'ollama';
