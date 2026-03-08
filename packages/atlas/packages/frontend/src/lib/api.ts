@@ -3,6 +3,7 @@ import type {
   NodeType,
   Biome,
   Act,
+  Card,
 } from '@atlas/shared';
 
 const API_BASE = '/api';
@@ -175,4 +176,75 @@ export async function getLookup(type: string, biome?: Biome): Promise<LookupResp
   return fetchApi<LookupResponse>(
     `/config/lookup/${encodeURIComponent(type)}${query ? `?${query}` : ''}`
   );
+}
+
+export interface CardsParams {
+  cardType?: string;
+  rarity?: string;
+  cardOwner?: string;
+  handling?: string;
+  accessibilityTier?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface CardsResponse {
+  cards: Card[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+interface BackendCardsResponse {
+  data: (Card & { cardId?: string })[];
+  pagination: { limit: number; offset: number; total: number };
+}
+
+function normalizeCard(card: Card & { cardId?: string }): Card {
+  return { ...card, id: card.cardId ?? card.id } as Card;
+}
+
+export async function getCards(params: CardsParams = {}): Promise<CardsResponse> {
+  const searchParams = new URLSearchParams();
+  if (params.cardType) searchParams.set('cardType', params.cardType);
+  if (params.rarity) searchParams.set('rarity', params.rarity);
+  if (params.cardOwner) searchParams.set('cardOwner', params.cardOwner);
+  if (params.handling) searchParams.set('handling', params.handling);
+  if (params.accessibilityTier) searchParams.set('accessibilityTier', params.accessibilityTier);
+  if (params.limit !== undefined) searchParams.set('limit', String(params.limit));
+  if (params.offset !== undefined) searchParams.set('offset', String(params.offset));
+
+  const query = searchParams.toString();
+  const response = await fetchApi<BackendCardsResponse>(`/cards${query ? `?${query}` : ''}`);
+  return {
+    cards: response.data.map(normalizeCard),
+    total: response.pagination.total,
+    limit: response.pagination.limit,
+    offset: response.pagination.offset,
+  };
+}
+
+export async function getCard(cardId: string): Promise<Card> {
+  const card = await fetchApi<Card & { cardId?: string }>(`/cards/${encodeURIComponent(cardId)}`);
+  return normalizeCard(card);
+}
+
+export async function createCard(data: Omit<Card, 'id'> & { id?: string }): Promise<Card> {
+  const card = await fetchApi<Card & { cardId?: string }>('/cards', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+  return normalizeCard(card);
+}
+
+export async function updateCard(cardId: string, data: Card): Promise<Card> {
+  const card = await fetchApi<Card & { cardId?: string }>(
+    `/cards/${encodeURIComponent(cardId)}`,
+    { method: 'PUT', body: JSON.stringify(data) }
+  );
+  return normalizeCard(card);
+}
+
+export async function deleteCard(cardId: string): Promise<void> {
+  await fetchApi<void>(`/cards/${encodeURIComponent(cardId)}`, { method: 'DELETE' });
 }
