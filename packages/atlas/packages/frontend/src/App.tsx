@@ -13,6 +13,7 @@ import { CardListPage } from './routes/cards/list'
 import { CardCreatePage } from './routes/cards/create'
 import { CardDetailPage } from './routes/cards/detail'
 import { CardEditPage } from './routes/cards/edit'
+import BulkGeneratePage from './routes/cards/bulk-generate'
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/generate" element={<GeneratePage />} />
           <Route path="/cards" element={<CardListPage />} />
+          <Route path="/cards/generate" element={<BulkGeneratePage />} />
           <Route path="/cards/create" element={<CardCreatePage />} />
           <Route path="/cards/:id" element={<CardDetailPage />} />
           <Route path="/cards/:id/edit" element={<CardEditPage />} />

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus } from 'lucide-react'
+import { Plus, Wand2 } from 'lucide-react'
 import { CARD_TYPES, CARD_RARITIES, CARD_OWNERS } from '@atlas/shared'
 import type { Card } from '@atlas/shared'
 import { useCards } from '@/hooks/useCards'
@@ -31,12 +31,20 @@ export function CardListPage() {
           <h1 className="text-3xl font-bold tracking-tight">Cards</h1>
           <p className="text-muted-foreground">Browse and manage forge cards</p>
         </div>
-        <Button asChild>
-          <Link to="/cards/create">
-            <Plus className="size-4" />
-            Create Card
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link to="/cards/generate">
+              <Wand2 className="size-4" />
+              Bulk Generate
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link to="/cards/create">
+              <Plus className="size-4" />
+              Create Card
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <UICard>

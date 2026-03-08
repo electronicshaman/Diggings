@@ -10,6 +10,8 @@ export type {
   ProgressEvent,
   GenerationResponse,
   BatchGenerationResponse,
+  CardGenerationRequest,
+  BulkCardGenerationRequest,
 } from '../schemas/generation.js';
 
 // Extract CriticIssue type from CriticResult
