@@ -22,6 +22,13 @@
       "when": 1769326148321,
       "tag": "0002_public_virginia_dare",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772938882308,
+      "tag": "0003_strong_betty_ross",
+      "breakpoints": true
     }
   ]
 }

@@ -41,6 +41,12 @@ export const beatRoleEnum = pgEnum('beat_role', [
 
 export const jobStatusEnum = pgEnum('job_status', ['pending', 'running', 'completed', 'failed']);
 
+export const cardTypeEnum = pgEnum('card_type', ['Attack', 'Skill', 'Power', 'Fortune', 'Hex', 'Curse']);
+export const cardRarityEnum = pgEnum('card_rarity', ['Common', 'Uncommon', 'Rare', 'Eldritch']);
+export const cardOwnerEnum = pgEnum('card_owner', ['PLAYER', 'ENEMY', 'NEUTRAL']);
+export const cardHandlingEnum = pgEnum('card_handling', ['Standard', 'Equipped', 'Flash', 'Keep', 'Hold', 'Oneshot']);
+export const accessibilityTierEnum = pgEnum('accessibility_tier', ['Starting', 'Class', 'Neutral', 'Rare']);
+
 // Main nodes table (single table with nullable fields)
 export const nodes = pgTable(
   'nodes',
@@ -302,6 +308,37 @@ export const generationJobs = pgTable(
   }
 );
 
+// Cards table
+export const cards = pgTable(
+  'cards',
+  {
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    cardId: varchar('card_id', { length: 100 }).notNull().unique(),
+    name: varchar('name', { length: 255 }).notNull(),
+    description: text('description').notNull().default(''),
+    cardType: cardTypeEnum('card_type').notNull(),
+    costs: jsonb('costs').notNull(),
+    effects: jsonb('effects').notNull(),
+    rarity: cardRarityEnum('rarity').notNull(),
+    cardOwner: cardOwnerEnum('card_owner').notNull(),
+    handling: cardHandlingEnum('handling').notNull(),
+    classAffinity: jsonb('class_affinity').notNull(),
+    accessibilityTier: accessibilityTierEnum('accessibility_tier').notNull(),
+    flavorText: text('flavor_text'),
+    baseDurability: integer('base_durability'),
+    volatileBonus: boolean('volatile_bonus'),
+    luckModifier: integer('luck_modifier'),
+    enemyFaction: varchar('enemy_faction', { length: 100 }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      cardIdIdx: index('card_id_idx').on(table.cardId),
+    };
+  }
+);
+
 // Type exports for TypeScript
 export type Node = typeof nodes.$inferSelect;
 export type NewNode = typeof nodes.$inferInsert;
@@ -325,3 +362,5 @@ export type ActTone = typeof actTones.$inferSelect;
 export type NewActTone = typeof actTones.$inferInsert;
 export type GenerationJob = typeof generationJobs.$inferSelect;
 export type NewGenerationJob = typeof generationJobs.$inferInsert;
+export type DbCard = typeof cards.$inferSelect;
+export type NewDbCard = typeof cards.$inferInsert;

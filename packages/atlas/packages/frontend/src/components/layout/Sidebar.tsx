@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom"
-import { LayoutGrid, Settings, Wrench, Sparkles, Sliders } from "lucide-react"
+import { LayoutGrid, Settings, Wrench, Sparkles, Sliders, CreditCard } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: "All Nodes", href: "/nodes", icon: LayoutGrid },
+  { name: "Cards", href: "/cards", icon: CreditCard },
   { name: "AI Generate", href: "/generate", icon: Sparkles },
   { name: "Configuration", href: "/config", icon: Settings },
   { name: "Advanced Config", href: "/config/advanced", icon: Sliders },
