@@ -10,6 +10,7 @@ import generateFieldRouter from './routes/generate-field.js';
 import llmProvidersRouter from './routes/llm-providers.js';
 import configAdvancedRouter from './routes/config-advanced.js';
 import cardsRouter from './routes/cards.js';
+import generateCardsRouter from './routes/generate-cards.js';
 
 const app = new Hono();
 
@@ -38,6 +39,7 @@ app.route('/api/generate/field', generateFieldRouter);
 app.route('/api/llm/providers', llmProvidersRouter);
 app.route('/api/config/advanced', configAdvancedRouter);
 app.route('/api/cards', cardsRouter);
+app.route('/api/generate/cards', generateCardsRouter);
 
 // 404 handler
 app.notFound((c) => {

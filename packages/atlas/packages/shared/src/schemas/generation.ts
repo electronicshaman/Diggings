@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import {
+  CARD_TYPES,
+  CARD_RARITIES,
+  CARD_OWNERS,
+  CARD_HANDLING,
+  ACCESSIBILITY_TIERS,
+} from '../constants/forge.js';
 
 /**
  * Beat outline structure (Stage 1 output)
@@ -194,3 +201,28 @@ export const BatchGenerationResponseSchema = z.object({
 });
 
 export type BatchGenerationResponse = z.infer<typeof BatchGenerationResponseSchema>;
+
+/**
+ * Single card generation request (for the card-generator service)
+ */
+export const CardGenerationRequestSchema = z.object({
+  cardType: z.enum(CARD_TYPES),
+  rarity: z.enum(CARD_RARITIES),
+  cardOwner: z.enum(CARD_OWNERS),
+  handling: z.enum(CARD_HANDLING),
+  accessibilityTier: z.enum(ACCESSIBILITY_TIERS),
+  classAffinity: z.array(z.string()).optional(),
+  themeHint: z.string().optional(),
+});
+
+export type CardGenerationRequest = z.infer<typeof CardGenerationRequestSchema>;
+
+/**
+ * Bulk card generation request (for the SSE bulk endpoint)
+ */
+export const BulkCardGenerationRequestSchema = z.object({
+  targetTotal: z.number().int().min(1).max(200),
+  cardOwner: z.enum(CARD_OWNERS).optional(),
+});
+
+export type BulkCardGenerationRequest = z.infer<typeof BulkCardGenerationRequestSchema>;

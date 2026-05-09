@@ -6,3 +6,4 @@ export * from './lookup-data.js';
 export * from './prompts.js';
 export * from './forge.js';
 export * from './forge-distributions.js';
+export * from './card-handlers.js';
