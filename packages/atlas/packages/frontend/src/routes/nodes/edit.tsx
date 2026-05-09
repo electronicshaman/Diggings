@@ -194,7 +194,7 @@ export function NodeEditPage() {
     try {
       await updateNode.mutateAsync({
         nodeId: id,
-        data: { ...baseData, ...typeData },
+        data: { id, type: node.type, ...baseData, ...typeData },
       });
       toast.success('Node updated successfully');
       navigate(`/nodes/${id}`);
