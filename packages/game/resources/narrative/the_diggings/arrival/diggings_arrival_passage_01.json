@@ -1,0 +1,67 @@
+{
+  "id": "diggings_arrival_passage_01",
+  "type": "passage",
+  "biome": "the_diggings",
+  "name": "Along the Claim Line Trail",
+  "acts": [
+    1
+  ],
+  "isReplaceable": true,
+  "replacementTags": [
+    "passage",
+    "exploration"
+  ],
+  "themes": [
+    "labor",
+    "discovery"
+  ],
+  "entityTypes": [
+    "digger",
+    "wildlife"
+  ],
+  "travelEventHooks": [
+    "fellow_digger_path",
+    "claim_line_walk"
+  ],
+  "environmentalStorytelling": "pick_echo_across_cliffs",
+  "resourceCost": {
+    "type": "energy",
+    "amount": 2,
+    "optional": false
+  },
+  "content": {
+    "narrative_hook": "The ridge trail connects the diggings to the township \u2014 a narrow track worn by thousands of boots carrying picks and hope.",
+    "beats": [
+      {
+        "id": "beat_01_setup",
+        "role": "setup",
+        "text": "The trail winds along the cliff edge. Below you, a hundred claims stretch across the valley like open wounds."
+      },
+      {
+        "id": "beat_02_foreshadow",
+        "role": "foreshadow",
+        "text": "Every few paces, a stake marks someone's boundary \u2014 fresh wood or rotting, depending on how long they've lasted."
+      },
+      {
+        "id": "beat_03_button",
+        "role": "button",
+        "text": "A windlass creaks somewhere below. The sound carries across the diggings like a heartbeat."
+      }
+    ],
+    "outcomes": {
+      "neutral": {
+        "text": "You reach the township edge, your boots heavy with red earth.",
+        "buttonText": "Continue"
+      }
+    },
+    "mood": {
+      "tension": 2,
+      "atmosphere": "observant",
+      "sensoryDetails": [
+        "pick strikes",
+        "turned earth smell",
+        "sweat-stink"
+      ]
+    }
+  }
+}

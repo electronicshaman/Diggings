@@ -1,0 +1,135 @@
+[
+  {
+    "id": "diggings_arrival_combat_01",
+    "type": "combat",
+    "biome": "the_diggings",
+    "name": "Claim Jumper at the Creek Bend",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["combat", "human_threat", "low_difficulty"],
+    "themes": ["greed", "competition"],
+    "entityTypes": ["claim_jumper", "digger"],
+    "estimatedCombatDifficulty": 1,
+    "enemyTypeHooks": ["claim_jumper"],
+    "environmentalContext": "creek_bend",
+    "content": {
+      "narrative_hook": "A stranger has staked his claim right on your boundary line at the creek bend. His pick is already biting into earth you turned yesterday.",
+      "beats": [
+        {"id": "beat_01_setup", "role": "setup", "text": "You follow the creek to where your stake should be. Someone's driven another one — fresh wood, still green."},
+        {"id": "beat_02_escalation", "role": "escalation", "text": "He looks up from his pan, squints at you through sweat-streaked dust. Doesn't move aside."},
+        {"id": "beat_03_consequence", "role": "consequence", "text": "\"This ground's open,\" he says. His hands rest on his pick like a man who means to swing it.\""},
+        {"id": "beat_04_button", "role": "button", "text": "The creek runs between you both, cold and indifferent."}
+      ],
+      "outcomes": {
+        "victory": {"text": "He backs off when he sees you won't yield. You replant your stake with a curse.", "buttonText": "Continue"},
+        "defeat": {"text": "You walk away bruised, your claim line shifted downstream by three paces.", "buttonText": "Retreat"}
+      }
+    },
+    "potentialRewards": ["claim_secured"]
+  },
+  {
+    "id": "diggings_arrival_choice_01",
+    "type": "choice",
+    "biome": "the_diggings",
+    "name": "The Partner's Offer",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["choice", "practical_dilemma"],
+    "themes": ["greed", "labor", "competition"],
+    "entityTypes": ["human", "digger"],
+    "consequenceHooks": ["claim_sharing", "partner_betrayal"],
+    "dilemmaType": "practical",
+    "content": {
+      "narrative_hook": "An old hand offers to share his sluice line — but only if you work the upstream end, where the colour is thinner and the labour heavier.",
+      "beats": [
+        {"id": "beat_01_setup", "role": "setup", "text": "He leans on his windlass handle, watching you pan. You've been at it an hour for nothing."},
+        {"id": "beat_02_reveal", "role": "reveal", "text": "\"I got colour here,\" he says, tipping his pan. A few flakes catch the light.\""},
+        {"id": "beat_03_choice", "role": "choice", "text": "\"You take upstream, I take downstream. We split even.\" His eyes don't blink.", "playerPrompt": "What do you say?"},
+        {"id": "beat_04_consequence", "role": "consequence", "text": "Everyone knows the upstream end is a duffer — but it's better than nothing."}
+      ],
+      "outcomes": {
+        "neutral": {"text": "Whatever you decide, the old hand files your answer away for later.", "buttonText": "Continue"}
+      },
+      "options": [
+        {"id": "opt_accept", "label": "Accept the partnership", "description": "Take the upstream end — thin colour is still colour."},
+        {"id": "opt_refuse", "label": "Decline and keep your own ground", "description": "You didn't come here to work someone else's claim for scraps."},
+        {"id": "opt_counter", "label": "Propose a different split", "description": "Offer to take upstream only if the split favours you downstream."}
+      ]
+    }
+  },
+  {
+    "id": "diggings_arrival_rest_01",
+    "type": "rest",
+    "biome": "the_diggings",
+    "name": "Camp Beneath the Mullock Pile",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["rest", "risky"],
+    "themes": ["exhaustion", "labor"],
+    "entityTypes": ["human"],
+    "restType": "risky",
+    "interruptionChance": "low",
+    "dreamHooks": ["counting_nothing", "hands_that_wont_stop"],
+    "content": {
+      "narrative_hook": "You collapse beside your claim stake, using the mullock pile as a windbreak. The earth still smells of turned soil and sweat.",
+      "beats": [
+        {"id": "beat_01_setup", "role": "setup", "text": "The mullock pile rises like a small hill behind you — waste rock from weeks of someone else's labour."},
+        {"id": "beat_02_reflection", "role": "reflection", "text": "Your hands won't stop trembling. Even asleep, your fingers twitch like they're still panning."},
+        {"id": "beat_03_relief", "role": "relief", "text": "The wind dies down. Somewhere nearby, another digger's pick echoes against stone — a rhythm that never stops."},
+        {"id": "beat_04_button", "role": "button", "text": "You sleep fitfully, dreaming of gold that turns to mullock every time you reach for it."}
+      ],
+      "outcomes": {
+        "neutral": {"text": "Morning comes grey and cold. Your body aches but the claim is still yours.", "buttonText": "Rise and dig"}
+      }
+    }
+  },
+  {
+    "id": "diggings_arrival_passage_01",
+    "type": "passage",
+    "biome": "the_diggings",
+    "name": "Along the Claim Line Trail",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["passage", "exploration"],
+    "themes": ["labor", "discovery"],
+    "entityTypes": ["digger", "wildlife"],
+    "travelEventHooks": ["fellow_digger_path", "claim_line_walk"],
+    "environmentalStorytelling": "pick_echo_across_cliffs",
+    "resourceCost": {"type": "energy", "amount": 2, "optional": false},
+    "content": {
+      "narrative_hook": "The ridge trail connects the diggings to the township — a narrow track worn by thousands of boots carrying picks and hope.",
+      "beats": [
+        {"id": "beat_01_setup", "role": "setup", "text": "The trail winds along the cliff edge. Below you, a hundred claims stretch across the valley like open wounds."},
+        {"id": "beat_02_foreshadow", "role": "foreshadow", "text": "Every few paces, a stake marks someone's boundary — fresh wood or rotting, depending on how long they've lasted."},
+        {"id": "beat_03_button", "role": "button", "text": "A windlass creaks somewhere below. The sound carries across the diggings like a heartbeat."}
+      ],
+      "outcomes": {
+        "neutral": {"text": "You reach the township edge, your boots heavy with red earth.", "buttonText": "Continue"}
+      }
+    }
+  },
+  {
+    "id": "diggings_arrival_transition_01",
+    "type": "transition",
+    "biome": "the_diggings",
+    "name": "The Cost of Colour",
+    "acts": [1],
+    "isReplaceable": false,
+    "replacementTags": ["transition"],
+    "themes": ["exhaustion", "greed", "discovery"],
+    "entityTypes": ["human", "digger"],
+    "content": {
+      "narrative_hook": "Weeks of digging have worn you down to something harder and thinner. The colour you've found barely covers your camp trader's tab.",
+      "beats": [
+        {"id": "beat_01_setup", "role": "setup", "text": "You count your flakes on a tin plate — three days' work, maybe enough for flour and tobacco."},
+        {"id": "beat_02_reveal", "role": "reveal", "text": "The old hands don't talk about how much they've found. They just keep digging, deeper every day."},
+        {"id": "beat_03_button", "role": "button", "text": "Something shifts in the diggings — claims consolidate, strangers arrive with capital and muscle."}
+      ],
+      "outcomes": {
+        "neutral": {"text": "The fever builds. Tomorrow you'll dig deeper.", "buttonText": "Descend"}
+      }
+    },
+    "narrativeSummary": "The diggings reveal their true cost — fortune demands more than labor.",
+    "worldStateShifts": ["claims_consolidate", "desperation_grows", "old_hands_dominant"]
+  }
+]

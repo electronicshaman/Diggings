@@ -1,0 +1,63 @@
+{
+  "id": "diggings_arrival_transition_01",
+  "type": "transition",
+  "biome": "the_diggings",
+  "name": "The Cost of Colour",
+  "acts": [
+    1
+  ],
+  "isReplaceable": false,
+  "replacementTags": [
+    "transition"
+  ],
+  "themes": [
+    "exhaustion",
+    "greed",
+    "discovery"
+  ],
+  "entityTypes": [
+    "human",
+    "digger"
+  ],
+  "content": {
+    "narrative_hook": "Weeks of digging have worn you down to something harder and thinner. The colour you've found barely covers your camp trader's tab.",
+    "beats": [
+      {
+        "id": "beat_01_setup",
+        "role": "setup",
+        "text": "You count your flakes on a tin plate \u2014 three days' work, maybe enough for flour and tobacco."
+      },
+      {
+        "id": "beat_02_reveal",
+        "role": "reveal",
+        "text": "The old hands don't talk about how much they've found. They just keep digging, deeper every day."
+      },
+      {
+        "id": "beat_03_button",
+        "role": "button",
+        "text": "Something shifts in the diggings \u2014 claims consolidate, strangers arrive with capital and muscle."
+      }
+    ],
+    "outcomes": {
+      "neutral": {
+        "text": "The fever builds. Tomorrow you'll dig deeper.",
+        "buttonText": "Descend"
+      }
+    },
+    "mood": {
+      "tension": 4,
+      "atmosphere": "melancholy shift",
+      "sensoryDetails": [
+        "pick strikes",
+        "turned earth smell",
+        "sweat-stink"
+      ]
+    }
+  },
+  "narrativeSummary": "The diggings reveal their true cost \u2014 fortune demands more than labor.",
+  "worldStateShifts": [
+    "claims_consolidate",
+    "desperation_grows",
+    "old_hands_dominant"
+  ]
+}

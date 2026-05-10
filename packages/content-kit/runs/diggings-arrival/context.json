@@ -1,0 +1,131 @@
+{
+  "biome": "the_diggings",
+  "act": 1,
+  "act_name": "Arrival",
+  "tone": "Feverish labor, jealous eyes, obsession made physical",
+  "sensory_palette": ["pick strikes", "turned earth smell", "sweat-stink", "gold glint", "creaking windlass"],
+  "threat_register": "human-scale (claim disputes, exhaustion, greed)",
+  "themes": ["greed", "labor", "competition", "exhaustion", "discovery"],
+  "entity_types": ["human", "claim_jumper", "digger", "wildlife"],
+  "antipatterns": ["gold rush fever trope", "struck it rich cliché", "eureka moment", "pantry gold discovery"],
+  "target_nodes": [
+    {"type": "combat", "count": 5},
+    {"type": "choice", "count": 6},
+    {"type": "trade", "count": 3},
+    {"type": "rest", "count": 2},
+    {"type": "passage", "count": 3},
+    {"type": "state_check", "count": 4},
+    {"type": "transition", "count": 1}
+  ],
+  "combat_enemies": [
+    "claim_jumper",
+    "desperate_digger",
+    "territorial_old_hand",
+    "greedy_partner",
+    "possessionate_newcomer",
+    "mullock_thrower",
+    "water_hogger",
+    "license_inspector_hostile",
+    "bushranger_scavenger",
+    "exhausted_rival"
+  ],
+  "combat_contexts": [
+    "claim_boundary",
+    "sluice_line_dispute",
+    "camp_at_night",
+    "water_hole",
+    "panning_grounds",
+    "trench_collapse_zone",
+    "windlass_platform",
+    "mullock_pile",
+    "creek_bend",
+    "digger_camp"
+  ],
+  "combat_difficulty_curve": [1, 2, 2, 3],
+  "choice_contexts": [
+    "claim_sharing",
+    "water_rights",
+    "partner_betrayal",
+    "report_claim_jumper",
+    "help_or_ignore"
+  ],
+  "choice_dilemma_weights": {"moral": 2, "practical": 3, "survival": 1},
+  "rest_contexts": [
+    "gold_fever_dream",
+    "counting_nothing",
+    "fellow_digger_story",
+    "the_sound_below",
+    "hands_that_wont_stop",
+    "empty_pan_again",
+    "stars_over_the_bush",
+    "claim_stake_in_mind"
+  ],
+  "rest_types": ["safe", "risky"],
+  "trade_contexts": [
+    {"archetype": "camp_trader", "pricing_hooks": ["supply_scarcity", "distance_markup", "digger_reputation"]},
+    {"archetype": "water_vendor", "pricing_hooks": ["drought_premium", "bulk_discount", "credit_risk"]},
+    {"archetype": "tool_merchant", "pricing_hooks": ["demand_spike", "quality_tier", "barter_acceptance"]}
+  ],
+  "passage_contexts": [
+    "ridge_trail",
+    "creek_crossing",
+    "mullock_field",
+    "claim_line_walk",
+    "night_approach",
+    "fellow_digger_path"
+  ],
+  "passage_environmental_beats": [
+    "pick_echo_across_cliffs",
+    "windlass_creak_at_dawn",
+    "sluice_water_hum",
+    "distant_shout_over_claim",
+    "earth_slip_warning",
+    "gold_glint_or_not"
+  ],
+  "passage_resource_cost": {"type": "energy", "amount": 2},
+  "state_check_conditions": [
+    "has_tools",
+    "claim_staked",
+    "water_carried",
+    "digger_reputation"
+  ],
+  "state_check_branch_templates": [
+    "claim_accepted/contested",
+    "tools_functional/broken",
+    "water_sufficient/dwindling"
+  ],
+  "transition_summary": "The diggings reveal their true cost — fortune demands more than labor.",
+  "transition_world_shifts": [
+    ["claims_consolidate", "desperation_grows", "old_hands_dominant"],
+    ["water_runs_low", "strangers_arrive", "rumors_of_rich_vein"]
+  ],
+  "vernacular": {
+    "digger": "gold miner (NOT 'miner')",
+    "colour": "gold flakes",
+    "duffer": "failed/empty claim",
+    "new_chum": "newcomer to the goldfields",
+    "old_hand": "experienced veteran",
+    "mullock": "waste rock",
+    "claim": "your staked patch of ground",
+    "sluice": "water channel for washing gold"
+  },
+  "vernacular_usage_notes": [
+    "Use sparingly - flavour, not parody",
+    "\"Digger\" is identity-defining; use whenever referring to gold-seekers as a class",
+    "\"Colour\" carries obsession — diggers talk about it like a person"
+  ],
+  "exemplar_good": "His pick strikes the same rhythm every morning. The mullock pile beside him grows taller than he is.",
+  "exemplar_bad": "The miner worked hard all day hoping to find gold.",
+  "prose_rule": "Show through concrete detail. Don't tell through summary.",
+  "anti_cliches": [
+    "\"Indian burial ground\" / generic Indigenous-spirit horror",
+    "\"It was a dark and stormy night\"",
+    "Direct exposition of monster lore by NPCs",
+    "Adverb-stacked menace (\"ominously\", \"menacingly\", \"darkly\")"
+  ],
+  "biome_atmosphere": "feverish labor, jealous eyes",
+  "biome_sensory_detail": ["pick strikes", "turned earth smell", "sweat-stink", "gold glint", "creaking windlass"],
+  "biome_dangers": ["cave-ins", "claim disputes", "exhaustion", "the colour madness"],
+  "biome_voice": "obsession made physical; every shovelful might be fortune or nothing.",
+  "note_for_writer": "The Diggings in Act 1 (Arrival, weight 3) is human-scale obsession. No supernatural elements yet — the horror here is greed and exhaustion wearing down a person. Every digger believes this pan will be different. Choice dilemmas skew practical (weight 3) over moral (2). Rest nodes include one risky option. Combat difficulty starts low (1-3 range). Trade is available across three archetypes."
+}

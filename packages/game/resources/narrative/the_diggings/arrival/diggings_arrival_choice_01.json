@@ -1,0 +1,95 @@
+{
+  "id": "diggings_arrival_choice_01",
+  "type": "choice",
+  "biome": "the_diggings",
+  "name": "The Partner's Offer",
+  "acts": [
+    1
+  ],
+  "isReplaceable": true,
+  "replacementTags": [
+    "choice",
+    "practical_dilemma"
+  ],
+  "themes": [
+    "greed",
+    "labor",
+    "competition"
+  ],
+  "entityTypes": [
+    "human",
+    "digger"
+  ],
+  "consequenceHooks": [
+    "claim_sharing",
+    "partner_betrayal"
+  ],
+  "dilemmaType": "practical",
+  "content": {
+    "narrative_hook": "An old hand offers to share his sluice line \u2014 but only if you work the upstream end, where the colour is thinner and the labour heavier.",
+    "beats": [
+      {
+        "id": "beat_01_setup",
+        "role": "setup",
+        "text": "He leans on his windlass handle, watching you pan. You've been at it an hour for nothing."
+      },
+      {
+        "id": "beat_02_reveal",
+        "role": "reveal",
+        "text": "\"I got colour here,\" he says, tipping his pan. A few flakes catch the light.\""
+      },
+      {
+        "id": "beat_03_choice",
+        "role": "choice",
+        "text": "\"You take upstream, I take downstream. We split even.\" His eyes don't blink.",
+        "playerPrompt": "What do you say?"
+      },
+      {
+        "id": "beat_04_consequence",
+        "role": "consequence",
+        "text": "Everyone knows the upstream end is a duffer \u2014 but it's better than nothing."
+      }
+    ],
+    "outcomes": {
+      "neutral": {
+        "text": "Whatever you decide, the old hand files your answer away for later.",
+        "buttonText": "Continue"
+      }
+    },
+    "options": [
+      {
+        "id": "opt_accept",
+        "label": "Accept the partnership",
+        "description": "Take the upstream end \u2014 thin colour is still colour.",
+        "consequenceTags": [
+          "unknown_consequence"
+        ]
+      },
+      {
+        "id": "opt_refuse",
+        "label": "Decline and keep your own ground",
+        "description": "You didn't come here to work someone else's claim for scraps.",
+        "consequenceTags": [
+          "unknown_consequence"
+        ]
+      },
+      {
+        "id": "opt_counter",
+        "label": "Propose a different split",
+        "description": "Offer to take upstream only if the split favours you downstream.",
+        "consequenceTags": [
+          "unknown_consequence"
+        ]
+      }
+    ],
+    "mood": {
+      "tension": 3,
+      "atmosphere": "uncertain",
+      "sensoryDetails": [
+        "pick strikes",
+        "turned earth smell",
+        "sweat-stink"
+      ]
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "id": "diggings_arrival_rest_01",
+  "type": "rest",
+  "biome": "the_diggings",
+  "name": "Camp Beneath the Mullock Pile",
+  "acts": [
+    1
+  ],
+  "isReplaceable": true,
+  "replacementTags": [
+    "rest",
+    "risky"
+  ],
+  "themes": [
+    "exhaustion",
+    "labor"
+  ],
+  "entityTypes": [
+    "human"
+  ],
+  "restType": "risky",
+  "interruptionChance": "low",
+  "dreamHooks": [
+    "counting_nothing",
+    "hands_that_wont_stop"
+  ],
+  "content": {
+    "narrative_hook": "You collapse beside your claim stake, using the mullock pile as a windbreak. The earth still smells of turned soil and sweat.",
+    "beats": [
+      {
+        "id": "beat_01_setup",
+        "role": "setup",
+        "text": "The mullock pile rises like a small hill behind you \u2014 waste rock from weeks of someone else's labour."
+      },
+      {
+        "id": "beat_02_reflection",
+        "role": "reflection",
+        "text": "Your hands won't stop trembling. Even asleep, your fingers twitch like they're still panning."
+      },
+      {
+        "id": "beat_03_relief",
+        "role": "relief",
+        "text": "The wind dies down. Somewhere nearby, another digger's pick echoes against stone \u2014 a rhythm that never stops."
+      },
+      {
+        "id": "beat_04_button",
+        "role": "button",
+        "text": "You sleep fitfully, dreaming of gold that turns to mullock every time you reach for it."
+      }
+    ],
+    "outcomes": {
+      "neutral": {
+        "text": "Morning comes grey and cold. Your body aches but the claim is still yours.",
+        "buttonText": "Rise and dig"
+      }
+    },
+    "mood": {
+      "tension": 1,
+      "atmosphere": "quiet relief",
+      "sensoryDetails": [
+        "pick strikes",
+        "turned earth smell",
+        "sweat-stink"
+      ]
+    }
+  }
+}

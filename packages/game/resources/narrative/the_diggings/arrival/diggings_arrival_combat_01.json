@@ -1,0 +1,75 @@
+{
+  "id": "diggings_arrival_combat_01",
+  "type": "combat",
+  "biome": "the_diggings",
+  "name": "Claim Jumper at the Creek Bend",
+  "acts": [
+    1
+  ],
+  "isReplaceable": true,
+  "replacementTags": [
+    "combat",
+    "human_threat",
+    "low_difficulty"
+  ],
+  "themes": [
+    "greed",
+    "competition"
+  ],
+  "entityTypes": [
+    "claim_jumper",
+    "digger"
+  ],
+  "estimatedCombatDifficulty": 1,
+  "enemyTypeHooks": [
+    "claim_jumper"
+  ],
+  "environmentalContext": "creek_bend",
+  "content": {
+    "narrative_hook": "A stranger has staked his claim right on your boundary line at the creek bend. His pick is already biting into earth you turned yesterday.",
+    "beats": [
+      {
+        "id": "beat_01_setup",
+        "role": "setup",
+        "text": "You follow the creek to where your stake should be. Someone's driven another one \u2014 fresh wood, still green."
+      },
+      {
+        "id": "beat_02_escalation",
+        "role": "escalation",
+        "text": "He looks up from his pan, squints at you through sweat-streaked dust. Doesn't move aside."
+      },
+      {
+        "id": "beat_03_consequence",
+        "role": "consequence",
+        "text": "\"This ground's open,\" he says. His hands rest on his pick like a man who means to swing it.\""
+      },
+      {
+        "id": "beat_04_button",
+        "role": "button",
+        "text": "The creek runs between you both, cold and indifferent."
+      }
+    ],
+    "outcomes": {
+      "victory": {
+        "text": "He backs off when he sees you won't yield. You replant your stake with a curse.",
+        "buttonText": "Continue"
+      },
+      "defeat": {
+        "text": "You walk away bruised, your claim line shifted downstream by three paces.",
+        "buttonText": "Retreat"
+      }
+    },
+    "mood": {
+      "tension": 4,
+      "atmosphere": "confrontational",
+      "sensoryDetails": [
+        "pick strikes",
+        "turned earth smell",
+        "sweat-stink"
+      ]
+    }
+  },
+  "potentialRewards": [
+    "claim_secured"
+  ]
+}

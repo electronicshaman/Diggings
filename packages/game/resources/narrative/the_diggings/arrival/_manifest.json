@@ -1,0 +1,12 @@
+{
+  "nodes": [
+    "diggings_arrival_choice_01.json",
+    "diggings_arrival_combat_01.json",
+    "diggings_arrival_passage_01.json",
+    "diggings_arrival_rest_01.json",
+    "diggings_arrival_transition_01.json"
+  ],
+  "count": 5,
+  "generated_at": "2026-05-10T02:28:41.572870+00:00",
+  "pipeline_run": "diggings-arrival"
+}
