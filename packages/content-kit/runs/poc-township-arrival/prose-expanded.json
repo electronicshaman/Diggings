@@ -1,0 +1,497 @@
+[
+  {
+    "id": "township_arrival_combat_01",
+    "type": "combat",
+    "biome": "township",
+    "name": "Drunk Miner in the Back Alley",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["combat", "human_threat", "low_difficulty"],
+    "themes": ["desperation", "frontier_grit"],
+    "entityTypes": ["human", "desperate_seeker"],
+    "estimatedCombatDifficulty": 1,
+    "enemyTypeHooks": ["drunk_miner"],
+    "environmentalContext": "back_alley",
+    "content": {
+      "narrative_hook": "A digger stumbles from the sly grog shack behind the boarding house, swinging a rusted pick at anyone who crosses his path. The smell of cheap rum hangs thick in the alley air.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "You cut through the narrow gap between boarding house and canvas tent. Cheap rum hits you first, then the heavy thud of boots on mud. A digger leans against the brick wall, one eye swollen shut, a pickaxe dragging behind him like a chain."
+        },
+        {
+          "id": "beat_02_escalation",
+          "role": "escalation",
+          "text": "He straightens up slow. The pick comes around in a wide arc. \"You look like colour to me,\" he slurs, and lunges — not with skill but with the reckless weight of a man who has nothing left."
+        },
+        {
+          "id": "beat_03_consequence",
+          "role": "consequence",
+          "text": "The fight is ugly and short. He swings wide, drunk on grog and desperation. When it ends he sits in the mud staring at his hands like they belong to someone else."
+        },
+        {
+          "id": "beat_04_button",
+          "role": "button",
+          "text": "Somewhere behind you a trooper calls out. You wipe the mud from your coat and keep moving."
+        }
+      ],
+      "outcomes": {
+        "victory": {
+          "text": "The digger is down. You find a few coins and a half-empty flask in his pockets — not much, but enough.",
+          "buttonText": "Move on"
+        },
+        "defeat": {
+          "text": "You stumble back into the main street, bruised and bleeding. The troopers don't ask questions they want to hear.",
+          "buttonText": "Retreat"
+        }
+      }
+    },
+    "potentialRewards": ["scavenged_supplies"]
+  },
+  {
+    "id": "township_arrival_combat_02",
+    "type": "combat",
+    "biome": "township",
+    "name": "Claim Shark at the Gold Buyers Tent",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["combat", "human_threat", "medium_difficulty"],
+    "themes": ["commerce", "desperation", "order"],
+    "entityTypes": ["human", "merchant"],
+    "estimatedCombatDifficulty": 2,
+    "enemyTypeHooks": ["claim_shark"],
+    "environmentalContext": "gold_buyers_tent",
+    "content": {
+      "narrative_hook": "A claim shark corners a new chum at the gold buyers tent, demanding his licence and threatening to have him run off the fields. The whole queue stops to watch.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "The gold buyers tent is packed shoulder-to-shoulder. You push through to sell your own colour when a voice cuts across the queue — sharp, practiced. A man in a clean suit grips a new chum by the collar and holds up his licence like evidence."
+        },
+        {
+          "id": "beat_02_reveal",
+          "role": "reveal",
+          "text": "\"This here boy's running without a proper claim. You all see this?\" The shark turns to the crowd, playing his audience. But you notice the licence is genuine — he's bluffing, looking for someone to back him or step in."
+        },
+        {
+          "id": "beat_03_escalation",
+          "role": "escalation",
+          "text": "The new chum trembles. The shark's hand drops to a knife at his belt — not drawn, just resting there where everyone can see it. \"Last chance, mate. Hand it over or I call the troopers myself.\""
+        },
+        {
+          "id": "beat_04_consequence",
+          "role": "consequence",
+          "text": "You step between them. The shark's eyes flick to your hands, your stance, the weight of you. He calculates — and for a moment the whole tent goes quiet."
+        },
+        {
+          "id": "beat_05_button",
+          "role": "button",
+          "text": "The crowd waits to see what happens next."
+        }
+      ],
+      "outcomes": {
+        "victory": {
+          "text": "The shark backs off when he sees you mean it. The new chum presses a handful of colour into your palm — his thanks, small but honest.",
+          "buttonText": "Continue"
+        },
+        "defeat": {
+          "text": "You lose your footing in the argument. The troopers arrive and take the licence — technically or not, the shark wins this round.",
+          "buttonText": "Walk away"
+        }
+      }
+    },
+    "potentialRewards": ["reputation_gain", "new_chum_gratitude"]
+  },
+  {
+    "id": "township_arrival_choice_01",
+    "type": "choice",
+    "biome": "township",
+    "name": "The New Chum's Debt",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["choice", "moral_dilemma"],
+    "themes": ["hope", "desperation", "commerce"],
+    "entityTypes": ["human", "desperate_seeker"],
+    "consequenceHooks": ["reputation_change", "merchant_relation"],
+    "dilemmaType": "moral",
+    "content": {
+      "narrative_hook": "A young digger begs you to vouch for him with the general store owner — he owes three weeks of credit and can't pay. His knuckles are cracked from digging, his eyes desperate.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "You find him sitting on a crate outside the general store, knees pulled to his chest. His name is Thomas, twenty at most, still clean-faced from wherever he came. \"I just need one more week,\" he says. \"The claim's good. I can feel it.\""
+        },
+        {
+          "id": "beat_02_reveal",
+          "role": "reveal",
+          "text": "Inside the store, the owner — a woman with ink-stained fingers and a ledger open on the counter — looks up. \"Thomas again?\" She doesn't sound angry, just tired. \"He's not alone. Half these diggers are running on credit they can't cover.\""
+        },
+        {
+          "id": "beat_03_choice",
+          "role": "choice",
+          "text": "She turns to you. \"You know him?\" Thomas won't meet your eye. The ledger waits.",
+          "playerPrompt": "What do you do?"
+        },
+        {
+          "id": "beat_04_consequence",
+          "role": "consequence",
+          "text": "Your answer will shape how the store owner sees you — and whether Thomas gets another week or finds himself sleeping on the outskirts."
+        }
+      ],
+      "outcomes": {
+        "neutral": {
+          "text": "The ledger closes. Whatever you decided, the store owner files it away for later.",
+          "buttonText": "Continue"
+        }
+      },
+      "options": [
+        {
+          "id": "opt_vouch",
+          "label": "Vouch for Thomas",
+          "description": "Tell the owner you'll cover his debt if he doesn't pay by week's end."
+        },
+        {
+          "id": "opt_stay_neutral",
+          "label": "Stay out of it",
+          "description": "Say you don't know him well enough to get involved."
+        },
+        {
+          "id": "opt_warn_owner",
+          "label": "Warn the owner",
+          "description": "Tell her Thomas is unlikely to pay — protect your own standing with the store."
+        }
+      ]
+    }
+  },
+  {
+    "id": "township_arrival_choice_02",
+    "type": "choice",
+    "biome": "township",
+    "name": "Trooper's Question at the Notice Board",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["choice", "moral_dilemma"],
+    "themes": ["order", "law_weakens", "desperation"],
+    "entityTypes": ["official", "human"],
+    "consequenceHooks": ["law_attention", "gang_notice"],
+    "dilemmaType": "moral",
+    "content": {
+      "narrative_hook": "A trooper pulls you aside near the notice board and asks if you've seen a man matching the description of a deserter — someone you passed at the livery stable this morning.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "You're reading notices — claims for sale, wanted posters — when a trooper's hand lands on your shoulder. His uniform is clean but his eyes are tired. \"Seen this man?\" He holds up a sketch: broad shoulders, scar across the jaw."
+        },
+        {
+          "id": "beat_02_reveal",
+          "role": "reveal",
+          "text": "You recognise him. You saw him at the livery stable this morning — arguing with a horse trader, paying in silver that looked too bright to be honest. The man's face was turned away then, but you'd have recognised that scar anywhere."
+        },
+        {
+          "id": "beat_03_choice",
+          "role": "choice",
+          "text": "The trooper waits. Behind him the notice board flaps in the wind, a wanted poster peeling at the corners.",
+          "playerPrompt": "What do you tell the trooper?"
+        },
+        {
+          "id": "beat_04_consequence",
+          "role": "consequence",
+          "text": "Your words will determine whether a deserter stays free or gets caged — and how the troopers file your name in their books."
+        }
+      ],
+      "outcomes": {
+        "neutral": {
+          "text": "The trooper nods, makes a note in his book. Whatever you said, it's recorded now.",
+          "buttonText": "Continue"
+        }
+      },
+      "options": [
+        {
+          "id": "opt_identify",
+          "label": "Tell the trooper what you saw",
+          "description": "Describe the man at the livery stable and point him toward the outskirts."
+        },
+        {
+          "id": "opt_deflect",
+          "label": "Say you haven't seen anyone like that",
+          "description": "Lie smoothly — you're a new chum, faces blur together."
+        },
+        {
+          "id": "opt_partial_truth",
+          "label": "Give partial information",
+          "description": "Mention seeing someone at the stable but omit the scar — let the trooper draw his own conclusions."
+        }
+      ]
+    }
+  },
+  {
+    "id": "township_arrival_trade_01",
+    "type": "trade",
+    "biome": "township",
+    "name": "The General Store Owner's Ledger",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["trade", "general_store"],
+    "themes": ["commerce", "order"],
+    "entityTypes": ["merchant"],
+    "traderArchetype": "general_store",
+    "pricingHooks": ["act_inflation", "supply_scarcity", "reputation_discount"],
+    "content": {
+      "narrative_hook": "The general store is the heart of the township — everything from flour to rope, priced according to how badly you need it and who you are. The bell above the door announces your arrival.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "The bell jangles. Shelves packed floor-to-ceiling: tins of peaches, bolts of canvas, coils of rope, a single bottle of real brandy behind glass. The owner looks up from her ledger — ink-stained fingers, sharp eyes."
+        },
+        {
+          "id": "beat_02_choice",
+          "role": "choice",
+          "text": "\"What can I do for you?\" she asks. The prices are written on small cards beside each item, but you've heard the township talk — these numbers move depending on who's buying and what they're carrying.",
+          "playerPrompt": "Browse the store or negotiate?"
+        },
+        {
+          "id": "beat_03_button",
+          "role": "button",
+          "text": "The ledger waits. Your coin purse feels lighter than it should."
+        }
+      ],
+      "outcomes": {
+        "neutral": {
+          "text": "You leave the store with what you could afford — supplies weighed against coin, a fair trade in an unfair place.",
+          "buttonText": "Continue"
+        }
+      }
+    },
+    "potentialRewards": ["supplies_acquired", "merchant_contact_established"]
+  },
+  {
+    "id": "township_arrival_rest_01",
+    "type": "rest",
+    "biome": "township",
+    "name": "The Boarding House Room",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["rest", "safe"],
+    "themes": ["hope", "civilization"],
+    "entityTypes": ["human"],
+    "restType": "safe",
+    "interruptionChance": "none",
+    "dreamHooks": ["memory_of_home", "gold_vision"],
+    "content": {
+      "narrative_hook": "A small room above the boarding house — thin mattress, one window overlooking the township rooftops. For now it's yours, and that's more than most can say.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "The room is six paces wide, smells of lavender and old wood. Through the window you can see canvas roofs stretching to the tree line — a whole town built in weeks from nothing but ambition and hammer blows."
+        },
+        {
+          "id": "beat_02_reflection",
+          "role": "reflection",
+          "text": "You sit on the edge of the bed and unlace your boots. Your feet are raw, your coat is stiff with dried mud, but you're alive and under a roof. Tomorrow you'll walk the claims. Tonight you can just breathe."
+        },
+        {
+          "id": "beat_03_relief",
+          "role": "relief",
+          "text": "Sleep comes heavy and deep. In your dreams you're back home — the kitchen table, the smell of bread, someone calling your name from another room."
+        },
+        {
+          "id": "beat_04_button",
+          "role": "button",
+          "text": "Morning light through the window. The township wakes below you — hammers, voices, a dog barking somewhere in the distance."
+        }
+      ],
+      "outcomes": {
+        "neutral": {
+          "text": "You wake rested. The mattress was thin but the sleep was deep — enough to face whatever the claims hold.",
+          "buttonText": "Rise and go"
+        }
+      }
+    }
+  },
+  {
+    "id": "township_arrival_passage_01",
+    "type": "passage",
+    "biome": "township",
+    "name": "Through the Bustling Streets",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["passage", "exploration"],
+    "themes": ["civilization", "commerce"],
+    "entityTypes": ["human", "merchant"],
+    "travelEventHooks": ["road_encounter", "town_crier"],
+    "environmentalStorytelling": "bustling_streets",
+    "resourceCost": {
+      "type": "time",
+      "amount": 1,
+      "optional": false
+    },
+    "content": {
+      "narrative_hook": "You walk the main street of the township — a river of diggers, merchants, and officials all flowing toward their own destinations. The mud track is worn hard by thousands of boots.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "The main street is a mud track worn hard by boots. Canvas tents on one side, wooden shacks on the other — each with a hand-painted sign: GENERAL STORE, ASSAY OFFICE. A cart groans past, loaded with mullock from some claim that didn't pay off."
+        },
+        {
+          "id": "beat_02_foreshadow",
+          "role": "foreshadow",
+          "text": "A town crier stands on a crate near the commissioners' camp, reading from a notice. You catch fragments — \"licence inspection,\" \"curfew after dark\" — before the crowd swallows him up."
+        },
+        {
+          "id": "beat_03_button",
+          "role": "button",
+          "text": "The street opens ahead. Every direction leads somewhere new."
+        }
+      ],
+      "outcomes": {
+        "neutral": {
+          "text": "You make your way through the crowd, taking in the township's pulse — desperate, hopeful, alive.",
+          "buttonText": "Continue"
+        }
+      }
+    }
+  },
+  {
+    "id": "township_arrival_state_check_01",
+    "type": "state_check",
+    "biome": "township",
+    "name": "The Assay Office Queue",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["state_check", "gold_related"],
+    "themes": ["commerce", "order", "hope"],
+    "entityTypes": ["official", "human"],
+    "conditionHooks": ["has_gold"],
+    "branchTargets": {
+      "success": "welcomed",
+      "failure": "turned_away"
+    },
+    "content": {
+      "narrative_hook": "The assay office clerk looks at what you've brought and decides whether you're a serious digger or just another dreamer passing through. The queue stretches past the notice board.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "The queue outside the assay office stretches past the notice board. Men and women clutching canvas bags, tin boxes, even handkerchiefs tied tight around something they hope is worth more than the paper inside."
+        },
+        {
+          "id": "beat_02_reveal",
+          "role": "reveal",
+          "text": "When you reach the window, the clerk doesn't look up. \"Show me.\" He holds out a palm — calloused, patient. Behind him a scale sits on the desk and a ledger waits to record your name."
+        },
+        {
+          "id": "beat_03_consequence",
+          "role": "consequence",
+          "text": "What you put in his hand determines everything — whether he stamps your licence, offers you a tip about the upper claims, or waves you toward the exit with a shrug."
+        }
+      ],
+      "outcomes": {
+        "victory": {
+          "text": "The clerk's eyes widen slightly. He weighs your colour, stamps your licence with a heavy thud, and slides it back. \"Upper claims,\" he mutters. \"Worth a look if you've got this kind of luck.\"",
+          "buttonText": "Continue"
+        },
+        "defeat": {
+          "text": "He shakes his head before the scale even settles. \"Duffer,\" he says, and pushes your bag back without opening it. Next.",
+          "buttonText": "Move on"
+        }
+      }
+    }
+  },
+  {
+    "id": "township_arrival_state_check_02",
+    "type": "state_check",
+    "biome": "township",
+    "name": "Reputation at the Publican's Bar",
+    "acts": [1],
+    "isReplaceable": true,
+    "replacementTags": ["state_check", "reputation_related"],
+    "themes": ["civilization", "commerce", "order"],
+    "entityTypes": ["human", "merchant"],
+    "conditionHooks": ["reputation_level"],
+    "branchTargets": {
+      "success": "discount_offered",
+      "failure": "price_gouged"
+    },
+    "content": {
+      "narrative_hook": "You step into the public house and the room reads you in seconds — your coat, your boots, the way you carry yourself. The publican's smile doesn't reach his eyes.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "The public house is warm and smoky. A dozen diggers sit at rough tables, talking low over glasses of something that smells like it was distilled in a boot. The publican wipes the counter with a rag that's seen better days."
+        },
+        {
+          "id": "beat_02_reveal",
+          "role": "reveal",
+          "text": "\"First time in here?\" he asks. His hands stay below the bar — you notice that. The diggers at the nearest table glance your way, then look back at their drinks."
+        },
+        {
+          "id": "beat_03_consequence",
+          "role": "consequence",
+          "text": "If you've built a name in this township already — helped someone, stood your ground, paid your debts — the publican nods and slides over a glass without asking for coin first. If not, he quotes you prices that make your wallet ache."
+        }
+      ],
+      "outcomes": {
+        "victory": {
+          "text": "\"On the house,\" the publican says, and there's a flicker of respect in his eyes. Word travels fast in this town — yours is starting to work for you.",
+          "buttonText": "Sit down"
+        },
+        "defeat": {
+          "text": "He quotes you double for a drink and triple for food. \"New chum rates,\" he says, not unkindly. You pay and wonder what it takes to earn better.",
+          "buttonText": "Leave"
+        }
+      }
+    }
+  },
+  {
+    "id": "township_arrival_transition_01",
+    "type": "transition",
+    "biome": "township",
+    "name": "The Township Reveals Itself",
+    "acts": [1],
+    "isReplaceable": false,
+    "replacementTags": ["transition", "act_milestone"],
+    "themes": ["desperation", "order", "civilization"],
+    "entityTypes": ["human", "official"],
+    "narrativeSummary": "The township reveals its true nature as desperation takes hold.",
+    "worldStateShifts": ["law_weakens", "prices_rise", "desperation_spreads"],
+    "content": {
+      "narrative_hook": "Days have passed. The hopeful energy of arrival is thinning, and the cracks in the township's order are starting to show. The canvas tents that once looked like promise now look like a wound that won't close.",
+      "beats": [
+        {
+          "id": "beat_01_setup",
+          "role": "setup",
+          "text": "You stand at the edge of the township looking back toward where you arrived. The canvas tents look different now — not like promise but like a wound that won't close. More troopers patrol the streets, and their hands rest closer to their batons."
+        },
+        {
+          "id": "beat_02_reveal",
+          "role": "reveal",
+          "text": "The general store prices have gone up again. The notice board is full of wanted posters now, not claim listings. You hear diggers arguing in the streets — voices that were friendly a week ago are sharp with hunger and frustration."
+        },
+        {
+          "id": "beat_03_reflection",
+          "role": "reflection",
+          "text": "You came here for colour. For a fresh start. But the township is changing — the law's grip loosens, the merchants tighten their fists, and the diggers who arrived with you are starting to look like strangers."
+        },
+        {
+          "id": "beat_04_button",
+          "role": "button",
+          "text": "The road ahead forks. The claims still wait beyond the tree line, but something about this place feels like it's holding its breath."
+        }
+      ],
+      "outcomes": {
+        "neutral": {
+          "text": "You take a last look at the township and turn toward the claims. Whatever comes next, you won't find it standing still.",
+          "buttonText": "Head for the claims"
+        }
+      }
+    }
+  }
+]

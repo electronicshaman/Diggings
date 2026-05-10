@@ -1,0 +1,248 @@
+{
+  "evaluated_at": "2026-05-10T02:17:00Z",
+  "overall_pass": false,
+  "nodes": [
+    {
+      "id": "township_arrival_combat_01",
+      "pass": false,
+      "score": 74,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "3 of 4 beats exceed 150-char limit: beat_01_setup (238), beat_02_escalation (188), beat_03_consequence (162). Only button beat is within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "Split each long beat into two shorter beats or trim descriptive clauses. Target: under 150 chars per beat."
+        }
+      ],
+      "strengths": [
+        "Strong sensory opening - 'cheap rum hits you first, then the heavy thud of boots on mud' engages smell and sound immediately",
+        "Excellent show-don't-tell in consequence: 'he sits in the mud staring at his hands like they belong to someone else' conveys devastation without naming it",
+        "Good emotional complexity - the drunk miner is threatening but also pitiable, not a cartoon villain",
+        "Historically authentic details: sly grog shack, pickaxe, troopers"
+      ],
+      "repairInstructions": "Trim beat_01_setup from 238 to ~140 chars by splitting into two beats (setup + sensory detail). Cut beat_02_escalation from 188 to ~140 by removing 'not with skill but with the reckless weight of a man who has nothing left' and letting the action speak. Shorten beat_03_consequence from 162 to ~140 by tightening 'drunk on grog and desperation'."
+    },
+    {
+      "id": "township_arrival_combat_02",
+      "pass": false,
+      "score": 78,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "4 of 5 beats exceed 150-char limit: beat_01_setup (241), beat_02_reveal (218), beat_03_escalation (192), beat_04_consequence (152). Only button is within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "This node has the most beats and the most overages. Consider splitting some beats or aggressively trimming."
+        }
+      ],
+      "strengths": [
+        "Best combat node overall - 5-beat structure gives excellent pacing with clear escalation arc",
+        "Strong crowd dynamics: 'the whole queue stops to watch' creates natural tension amplifier",
+        "Smart reveal beat: noticing the licence is genuine adds strategic depth beyond simple fight-or-flight",
+        "'His hand drops to a knife at his belt - not drawn, just resting there where everyone can see it' is textbook show-don't-tell menace",
+        "Historically accurate concept of claim sharks exploiting new diggers"
+      ],
+      "repairInstructions": "Beat_01_setup (241 chars): split into two beats or cut 'when a voice cuts across the queue - sharp, practiced' to 'a voice cuts the queue'. Beat_02_reveal (218): trim dialogue tags and reduce 'The shark turns to the crowd, playing his audience' to 'He plays the crowd.' Beat_03_escalation (192): cut 'not drawn, just resting there where everyone can see it' to 'visible at his belt'. Beat_04_consequence (152): minor trim needed - cut 'the weight of you'."
+    },
+    {
+      "id": "township_arrival_choice_01",
+      "pass": false,
+      "score": 76,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "2 of 4 beats exceed 150-char limit: beat_01_setup (235), beat_02_reveal (237). Choice and consequence beats are within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "The setup and reveal beats carry too much exposition. Split or trim."
+        }
+      ],
+      "strengths": [
+        "Excellent moral dilemma with genuine weight - all three options have real consequences",
+        "'Ink-stained fingers and a ledger open on the counter' establishes character through concrete detail",
+        "Store owner's dialogue 'He's not alone. Half these diggers are running on credit they can't cover' adds world-building naturally",
+        "Thomas characterization is effective: 'knuckles cracked from digging, eyes desperate'",
+        "Options are well-differentiated with clear trade-offs (vouch/neutral/warn)"
+      ],
+      "repairInstructions": "Beat_01_setup (235): split into setup + character detail beats. Or trim to: 'You find him on a crate outside the store, knees to his chest. Thomas, twenty at most, still clean-faced. I just need one more week, he says. The claim is good.' Beat_02_reveal (237): cut 'a woman with ink-stained fingers and a ledger open on the counter' to 'ink-stained fingers, a ledger on the counter'. Trim store owner dialogue."
+    },
+    {
+      "id": "township_arrival_choice_02",
+      "pass": false,
+      "score": 73,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "2 of 4 beats exceed 150-char limit: beat_01_setup (226), beat_02_reveal (232). Choice and consequence are within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "Setup and reveal beats need trimming. The reveal beat has too much backstory crammed in."
+        }
+      ],
+      "strengths": [
+        "Strong moral ambiguity - the deserter question creates genuine ethical tension",
+        "'His uniform is clean but his eyes are tired' shows institutional strain through one detail",
+        "Silver 'too bright to be honest' is excellent subtle world-building implying stolen military pay",
+        "Options have nuanced gradations (identify/deflect/partial truth) rather than simple good/bad binary",
+        "'Wanted poster peeling at the corners' adds atmospheric decay"
+      ],
+      "repairInstructions": "Beat_01_setup (226): trim to 'Reading notices when a trooper's hand lands on your shoulder. Uniform clean, eyes tired. Seen this man? He holds up a sketch: broad shoulders, scar across the jaw.' Beat_02_reveal (232): cut the livery stable backstory detail and compress to 'You recognise him from the livery stable this morning - arguing with a horse trader, paying in silver too bright to be honest. You'd know that scar anywhere.'"
+    },
+    {
+      "id": "township_arrival_trade_01",
+      "pass": false,
+      "score": 72,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "2 of 3 beats exceed 150-char limit: beat_01_setup (214), beat_02_choice (199). Only button is within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "Trade node has fewer beats than others, making each overage proportionally more impactful."
+        },
+        {
+          "severity": "minor",
+          "category": "quality",
+          "description": "Could use a fourth beat for better pacing - currently setup/choice/button is thin compared to other nodes.",
+          "beatId": null,
+          "suggestion": "Consider adding an interaction beat between choice and button."
+        }
+      ],
+      "strengths": [
+        "'A single bottle of real brandy behind glass' perfectly conveys scarcity through one concrete detail",
+        "Bell jangle opening is a classic sensory hook that works well",
+        "Pricing hooks (act_inflation, supply_scarcity, reputation_discount) are well-designed mechanically",
+        "'Ink-stained fingers, sharp eyes' establishes the owner as both meticulous and perceptive"
+      ],
+      "repairInstructions": "Beat_01_setup (214): trim inventory list. 'The bell jangles. Shelves packed floor-to-ceiling: tins of peaches, canvas bolts, rope coils, one bottle of real brandy behind glass. The owner looks up - ink-stained fingers, sharp eyes.' Beat_02_choice (199): cut 'but you've heard the township talk' and shorten to 'Prices are on small cards beside each item, but these numbers move depending on who's buying.'"
+    },
+    {
+      "id": "township_arrival_rest_01",
+      "pass": false,
+      "score": 79,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "2 of 4 beats exceed 150-char limit: beat_01_setup (206), beat_02_reflection (205). Relief and button are within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "Trim the setup and reflection beats. These carry heavy descriptive load."
+        }
+      ],
+      "strengths": [
+        "Best rest node - excellent emotional arc from exhaustion to relief to dream to morning",
+        "'Smells of lavender and old wood' grounds the space sensorially",
+        "'A whole town built in weeks from nothing but ambition and hammer blows' captures frontier spirit perfectly",
+        "Dream sequence ('someone calling your name from another room') adds emotional depth without going supernatural",
+        "Morning button with 'hammers, voices, a dog barking' provides excellent audio transition to next scene"
+      ],
+      "repairInstructions": "Beat_01_setup (206): trim to 'Six paces wide, smells of lavender and old wood. Through the window: canvas roofs stretching to tree line - a town built in weeks from ambition and hammer blows.' Beat_02_reflection (205): cut 'Your feet are raw, your coat is stiff with dried mud' to 'Feet raw, coat stiff with mud'. Keep 'Tomorrow you'll walk the claims. Tonight you can just breathe.'"
+    },
+    {
+      "id": "township_arrival_passage_01",
+      "pass": false,
+      "score": 68,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "2 of 3 beats exceed 150-char limit: beat_01_setup (242), beat_02_foreshadow (183). Only button is within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "Both content beats are significantly over. This node also has the fewest beats, making it feel thin."
+        },
+        {
+          "severity": "major",
+          "category": "quality",
+          "description": "Thinnest node overall - only 3 beats with minimal interaction. Passage nodes should still provide atmospheric richness.",
+          "beatId": null,
+          "suggestion": "Consider adding a fourth beat with a brief encounter or observation to enrich the passage experience."
+        }
+      ],
+      "strengths": [
+        "'A cart groans past, loaded with mullock from some claim that didn't pay off' shows failure through concrete detail",
+        "Town crier fragments ('licence inspection', 'curfew after dark') provide good world-building exposition naturally",
+        "Good environmental storytelling with hand-painted signs and mud track"
+      ],
+      "repairInstructions": "Beat_01_setup (242): split into two beats or aggressively trim. 'The main street is a mud track worn hard by boots. Canvas tents on one side, wooden shacks on the other - each with a hand-painted sign: GENERAL STORE, ASSAY OFFICE.' Beat_02_foreshadow (183): cut to 'A town crier stands on a crate near the commissioners camp. You catch fragments - licence inspection, curfew after dark - before the crowd swallows him up.' Consider adding a brief encounter beat between foreshadow and button."
+    },
+    {
+      "id": "township_arrival_state_check_01",
+      "pass": false,
+      "score": 75,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "All 3 beats exceed 150-char limit: beat_01_setup (209), beat_02_reveal (182), beat_03_consequence (164). No beats within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "Every beat needs trimming. This is a 3-beat node so each overage matters."
+        }
+      ],
+      "strengths": [
+        "'Men and women clutching canvas bags, tin boxes, even handkerchiefs tied tight around something they hope is worth more than the paper inside' - excellent detail showing desperation through objects",
+        "Clerk characterization ('calloused, patient') conveys institutional weariness efficiently",
+        "Clear mechanical stakes: licence stamp vs being turned away",
+        "'Duffer' in defeat outcome is period-appropriate vernacular used sparingly and effectively"
+      ],
+      "repairInstructions": "Beat_01_setup (209): trim to 'The queue stretches past the notice board. Men and women clutching canvas bags, tin boxes, handkerchiefs tied tight around something they hope is worth more than the paper inside.' Beat_02_reveal (182): cut to 'You reach the window. The clerk does not look up. Show me. He holds out a palm - calloused, patient. Behind him: a scale on the desk, a ledger waiting.'"
+    },
+    {
+      "id": "township_arrival_state_check_02",
+      "pass": false,
+      "score": 74,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "All 3 beats exceed 150-char limit: beat_01_setup (222), beat_02_reveal (160), beat_03_consequence (232). No beats within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "The consequence beat at 232 chars is the longest in this node and needs the most work."
+        }
+      ],
+      "strengths": [
+        "'The room reads you in seconds - your coat, your boots, the way you carry yourself' shows social assessment through observation",
+        "'Something that smells like it was distilled in a boot' is excellent period-appropriate humor",
+        "Reputation mechanic integration is seamless - success/failure outcomes feel earned based on player history",
+        "'New chum rates' is authentic vernacular used naturally"
+      ],
+      "repairInstructions": "Beat_01_setup (222): trim to 'The public house is warm and smoky. A dozen diggers at rough tables, talking low over glasses of something distilled in a boot. The publican wipes the counter with a rag that has seen better days.' Beat_03_consequence (232): this is the worst offender - split into two beats or cut heavily: 'If you have built a name here - helped someone, stood your ground - the publican slides over a glass without asking for coin. If not, he quotes prices that make your wallet ache.'"
+    },
+    {
+      "id": "township_arrival_transition_01",
+      "pass": false,
+      "score": 76,
+      "issues": [
+        {
+          "severity": "critical",
+          "category": "length",
+          "description": "3 of 4 beats exceed 150-char limit: beat_01_setup (245), beat_02_reveal (230), beat_03_reflection (208). Only button is within bounds.",
+          "beatId": "beat_01_setup",
+          "suggestion": "Transition node carries heavy thematic weight but all content beats are over length."
+        }
+      ],
+      "strengths": [
+        "'The canvas tents that once looked like promise now look like a wound that won't close' - powerful metaphor for deteriorating hope",
+        "Excellent thematic progression: shows township decay through concrete changes (prices up, wanted posters replace claim listings, voices sharpen)",
+        "'Their hands rest closer to their batons' shows law tightening through physical detail rather than stating it",
+        "Reflection beat captures the core theme effectively: 'the diggers who arrived with you are starting to look like strangers'",
+        "Strong act transition structure with clear world state shifts"
+      ],
+      "repairInstructions": "Beat_01_setup (245): trim to 'You stand at the township edge looking back. The canvas tents look different now - not promise but a wound that will not close. More troopers patrol, hands closer to their batons.' Beat_02_reveal (230): cut to 'General store prices up again. Notice board full of wanted posters now, not claim listings. Diggers argue in the streets - voices friendly a week ago are sharp with hunger.' Beat_03_reflection (208): trim to 'You came for colour. For a fresh start. But the law loosens its grip, merchants tighten their fists, and the diggers who arrived with you look like strangers.'"
+    }
+  ],
+  "nodes_failing": [
+    "township_arrival_combat_01",
+    "township_arrival_combat_02",
+    "township_arrival_choice_01",
+    "township_arrival_choice_02",
+    "township_arrival_trade_01",
+    "township_arrival_rest_01",
+    "township_arrival_passage_01",
+    "township_arrival_state_check_01",
+    "township_arrival_state_check_02",
+    "township_arrival_transition_01"
+  ],
+  "nodes_passing": [],
+  "summary": "All 10 nodes fail on the required text length criterion - every node has beats exceeding the 150-character limit, with most beats running 160-245 chars. This is a systematic issue from the prose expansion stage that needs a global trim pass. Beat sequence completeness is perfect across all nodes. Tone alignment is excellent throughout: Act 1 hope/frontier grit maintained consistently with no supernatural elements. Historical authenticity is strong - period-appropriate terms (colour, chum, claim shark, duffer, sly grog) used accurately and sparingly. No cliches detected - no saloon brawls, sheriffs, or generic Western tropes. Quality scores range from 68-79, with combat_02 (78) and rest_01 (79) being the strongest nodes and passage_01 (68) the weakest due to thin content. The prose quality itself is genuinely good - strong sensory detail, effective show-don't-tell, clear stakes - but the length violations are uniform and must be fixed before these nodes can pass."
+}

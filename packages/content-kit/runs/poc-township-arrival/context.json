@@ -1,0 +1,142 @@
+{
+  "biome": "township",
+  "act": 1,
+  "act_name": "Arrival",
+  "tone": "Hope, opportunity, frontier grit",
+  "sensory_palette": ["dust", "sun", "sweat", "canvas", "hammered iron"],
+  "threat_register": "human-scale (cheating, injury, weather)",
+  "themes": ["civilization", "commerce", "order", "hope", "desperation"],
+  "entity_types": ["human", "merchant", "official", "desperate_seeker"],
+  "antipatterns": ["saloon brawl tropes", "sheriff stereotype", "generic wild west", "frontier justice"],
+  "target_nodes": [
+    {"type": "combat", "count": 5},
+    {"type": "choice", "count": 6},
+    {"type": "trade", "count": 4},
+    {"type": "rest", "count": 2},
+    {"type": "passage", "count": 2},
+    {"type": "state_check", "count": 4},
+    {"type": "transition", "count": 1}
+  ],
+  "combat_enemies": [
+    "drunk_miner",
+    "desperate_newcomer",
+    "crooked_official",
+    "gang_member",
+    "debt_collector",
+    "claim_shark",
+    "sly_grog_seller",
+    "license_hunter",
+    "deserter_trooper",
+    "card_sharp"
+  ],
+  "combat_contexts": [
+    "back_alley",
+    "saloon",
+    "warehouse",
+    "outskirts",
+    "general_store",
+    "assay_office",
+    "boarding_house",
+    "livery_stable",
+    "gold_buyers_tent",
+    "commissioners_camp"
+  ],
+  "combat_difficulty_curve": [1, 2, 2, 3],
+  "choice_contexts": [
+    "reputation_change",
+    "law_attention",
+    "merchant_relation",
+    "gang_notice"
+  ],
+  "choice_dilemma_weights": {"moral": 3, "practical": 2, "survival": 1},
+  "rest_contexts": [
+    "memory_of_home",
+    "gold_vision",
+    "warning_dream",
+    "debt_mounting",
+    "faces_in_crowd",
+    "the_empty_chair",
+    "ledger_bleeding",
+    "familiar_stranger",
+    "hanging_tree",
+    "gold_teeth_smile"
+  ],
+  "rest_types": ["safe", "safe"],
+  "trade_contexts": [
+    {"archetype": "general_store", "pricing_hooks": ["act_inflation", "supply_scarcity", "reputation_discount"]},
+    {"archetype": "gunsmith", "pricing_hooks": ["weapon_demand", "ammo_shortage", "quality_tier"]},
+    {"archetype": "apothecary", "pricing_hooks": ["medicine_rarity", "desperation_markup", "bulk_discount"]},
+    {"archetype": "black_market", "pricing_hooks": ["risk_premium", "contact_trust", "contraband_type"]}
+  ],
+  "passage_contexts": [
+    "road_encounter",
+    "fellow_traveler",
+    "checkpoint",
+    "shortcut_found",
+    "license_inspection",
+    "street_brawl",
+    "runaway_cart",
+    "town_crier",
+    "drunken_miner",
+    "pickpocket_attempt"
+  ],
+  "passage_environmental_beats": [
+    "bustling_streets",
+    "quiet_backroads",
+    "crowded_paths",
+    "empty_lots",
+    "canvas_town",
+    "sly_grog_alley",
+    "assay_office_queue",
+    "auction_yard",
+    "notice_board",
+    "trooper_post"
+  ],
+  "passage_resource_cost": {"type": "time", "amount": 1},
+  "state_check_conditions": [
+    "has_gold",
+    "reputation_level",
+    "law_standing",
+    "merchant_contact"
+  ],
+  "state_check_branch_templates": [
+    "welcomed/turned_away",
+    "discount_offered/price_gouged",
+    "info_shared/deceived"
+  ],
+  "transition_summary": "The township reveals its true nature as desperation takes hold.",
+  "transition_world_shifts": [
+    ["law_weakens", "prices_rise", "desperation_spreads"],
+    ["strangers_arrive", "old_powers_stir", "secrets_surface"]
+  ],
+  "vernacular": {
+    "digger": "gold miner (NOT 'miner')",
+    "colour": "gold flakes",
+    "duffer": "failed/empty claim",
+    "new_chum": "newcomer to the goldfields",
+    "old_hand": "experienced veteran",
+    "sly_grog": "illegal liquor",
+    "troopers": "police",
+    "publican": "bartender / innkeeper",
+    "mullock": "waste rock"
+  },
+  "vernacular_usage_notes": [
+    "Use sparingly - flavour, not parody",
+    "Mix with plain English; period-perfect dialogue rarely natural",
+    "\"Digger\" is identity-defining; use whenever referring to gold-seekers as a class"
+  ],
+  "exemplar_good": "The publican's smile doesn't reach his eyes. His hands stay below the bar.",
+  "exemplar_bad": "The innkeeper looks suspicious and might be hiding something.",
+  "prose_rule": "Show through concrete detail. Don't tell through summary.",
+  "anti_cliches": [
+    "\"Indian burial ground\" / generic Indigenous-spirit horror",
+    "\"It was a dark and stormy night\"",
+    "Direct exposition of monster lore by NPCs",
+    "Adverb-stacked menace (\"ominously\", \"menacingly\", \"darkly\")"
+  ],
+  "biome_atmosphere": "desperate commerce, barely-held order",
+  "biome_sensory_detail": ["canvas flap", "mud squelch", "tobacco smoke", "coins clinking", "distant hammering"],
+  "biome_dangers": ["debt collectors", "licensing troopers", "claim-jumper rumors", "sly grog poisoning"],
+  "biome_voice": "transactions and threats; trust is currency.",
+  "note_for_writer": "Township/Arrival is the hook: human-scale danger only. No supernatural elements. Settlers arriving with hope, rough camaraderie, frontier hardship. Think dust-caked optimism before the rot sets in. Township has act weight 4 (dominant) in Act 1 - it's the primary biome for Arrival. Choice dilemmas skew moral (weight 3) over practical (2) and survival (1). Rest nodes are safe type with no interruption risk. Trade is available across four archetypes. Combat difficulty starts low (1-3 range)."
+}

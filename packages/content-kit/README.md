@@ -1,50 +1,91 @@
-# content-kit
+# Content Kit
 
-Pure markdown extraction from `packages/atlas/` — content generation lore, templates, rules, and schemas. No code, no runtime. Hermes agent + kanban consume these as LLM context.
+Pipeline tooling for generating narrative content from lore-trained prompts into Godot-readable JSON node files.
 
-## Layout
+## Directory structure
 
 ```
-content-kit/
-  prompts/           # System prompts and style hints (LLM-ready)
-  rules/             # Generation rules: biomes, distributions, lookups, defaults
-  schemas/           # Data shape specs: node types, generation contracts
+packages/content-kit/
+  prompts/              # LLM prompt templates for each pipeline stage
+    act-tones.md        # Tone and voice guidance per act/biome
+    beat-outliner.md    # Beat outline generation prompt
+    critic.md           # Critic/review pass prompt
+    exemplars.md        # Example nodes for few-shot prompting
+    prose-expander.md   # Prose expansion prompt (beats → full text)
+    vernacular.md       # Period-appropriate language reference
+
+  rules/                # Generation constraints and game mechanics
+    beat-sequences.md   # Valid beat ordering rules
+    biomes.md           # Biome definitions and transitions
+    card-handlers.md    # Card effect handler mapping
+    defaults.md         # Default values for generated fields
+    distributions.md    # Probability distributions for random elements
+    eligibility.md      # Node type eligibility per biome/context
+    lookup-data.md      # Reference data tables
+
+  schemas/              # JSON schema definitions and style guides
+    beat-sequences.md   # Beat sequence schema
+    eligibility.md      # Eligibility rules schema
+    generation.md       # Generation pipeline schema
+    node.md             # Narrative node JSON schema
+    style-guide.md      # Prose style guide
+
+  scripts/              # Pipeline tools (see below)
+    serialize.py        # Serialize prose-final.json → individual node files + manifest
+    validate.py         # Validate beat text bounds (≤150 chars)
+    validate_beats.py   # Validate beat length range (10-150 chars)
+    verify.py           # Verify expanded node structure
+
+  runs/                 # Per-run working data
+    poc-township-arrival/   # POC run: township arrival sequence
+      context.json          # Prompt context / lore training data
+      beat-outlines.json    # Beat outline stage output
+      critic-results.json   # Critic/review stage output
+      prose-expanded.json   # Expanded prose with beats, outcomes, options
+      prose-final.json      # Final validated prose (input to serializer)
 ```
 
-## Files
+## Scripts
 
-### prompts/
-- `beat-outliner.md` — Stage 1 system prompt (beat structure)
-- `prose-expander.md` — Stage 2 system prompt (prose generation)
-- `critic.md` — Stage 3 system prompt (quality eval)
-- `vernacular.md` — 1850s Australian gold rush vocabulary
-- `exemplars.md` — Good vs bad prose examples
-- `act-tones.md` — Per-act tonal palette
+| Script | Purpose | Input | Output |
+|---|---|---|---|
+| `verify.py` | Check expanded node structure | `prose-expanded.json` | stdout report |
+| `validate.py` | Validate beat text bounds (≤150 chars) | `prose-final.json` | pass/fail per beat |
+| `validate_beats.py` | Validate beat length range (10-150 chars) | `prose-final.json` | pass/fail per beat |
+| `serialize.py` | Serialize nodes into individual JSON files + manifest | `prose-final.json` | `packages/game/resources/narrative/.../*.json` |
 
-### rules/
-- `biomes.md` — Biome list + per-act presence weights
-- `distributions.md` — Node-type distribution per biome
-- `lookup-data.md` — Per-biome enemy types, environmental contexts, hooks, etc.
-- `card-handlers.md` — Card mechanic handler registry
-- `defaults.md` — Default themes, entity types, difficulty curves, name prefixes
-- `beat-sequences.md` — Beat sequence template format
+## Usage
 
-### schemas/
-- `node.md` — Node metadata + content shape (all 7 types)
-- `generation.md` — Generation request/response contracts
-- `eligibility.md` — Eligibility/saliency/binding rules
-- `style-guide.md` — Style guide record format
-- `beat-sequences.md` — Beat sequence record format
+All scripts accept a `--run-dir` argument pointing to the run directory:
 
-## Source provenance
+```bash
+# Validate the POC run (default)
+python3 packages/content-kit/scripts/validate.py
 
-Extracted from:
-- `packages/atlas/packages/shared/src/constants/`
-- `packages/atlas/packages/shared/src/schemas/`
-- `packages/atlas/packages/backend/src/services/generation/`
+# Validate a different run
+python3 packages/content-kit/scripts/validate.py --run-dir packages/content-kit/runs/my-new-run
 
-Pipeline runtime (llm-client, beat-outliner, prose-expander, critic logic, batch-processor, streaming, circuit-breaker) intentionally dropped. Hermes redefines.
+# Serialize nodes to game resources
+python3 packages/content-kit/scripts/serialize.py \
+  --run-dir packages/content-kit/runs/poc-township-arrival \
+  --output-dir packages/game/resources/narrative/township/arrival
+```
 
-## Setting
+## Pipeline flow
 
-1850s Australian Gold Rush cosmic horror. Four acts: Arrival → Fever → Blasphemy → Unmaking. Eight biomes: township, the_diggings, the_bush, the_mines, the_waste, the_scar, sacred_site, the_river.
+1. **Context** — `context.json` holds the lore training data and prompt context for a generation run.
+2. **Beat outlines** — LLM generates structural beat outlines → `beat-outlines.json`.
+3. **Critic review** — A critic pass reviews beats → `critic-results.json`.
+4. **Prose expansion** — Beats are expanded with full prose, outcomes, and options → `prose-expanded.json`.
+5. **Final validation** — Text bounds checked, issues fixed → `prose-final.json`.
+6. **Serialization** — `serialize.py` writes individual node files to `packages/game/resources/narrative/` matching the Godot narrative schema.
+
+## Adding a new run
+
+```bash
+mkdir packages/content-kit/runs/my-new-biome
+# Copy or generate context.json, then run pipeline stages...
+python3 packages/content-kit/scripts/serialize.py \
+  --run-dir packages/content-kit/runs/my-new-biome \
+  --output-dir packages/game/resources/narrative/the-bush/encounter_01
+```
