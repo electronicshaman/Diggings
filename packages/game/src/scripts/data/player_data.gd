@@ -42,6 +42,10 @@ const DEBUG_ENABLED: bool = true
 @export var custom_resources: Dictionary = {} # CustomResourceType (int) -> current_amount (int)
 @export var custom_resource_max: Dictionary = {} # CustomResourceType (int) -> max_value (int)
 
+# Run-level state that persists between duels
+@export var run_corruption: int = 0
+@export var corruption_triggered_tiers: Dictionary = {}
+
 # HOLD card persistence (cards that persist between turns)
 @export var hold_cards: Array[CardData] = []
 
@@ -607,6 +611,8 @@ func get_save_data() -> Dictionary:
 		"damage_taken_this_turn": damage_taken_this_turn,
 		"custom_resources": custom_resources.duplicate(),
 		"custom_resource_max": custom_resource_max.duplicate(),
+		"run_corruption": run_corruption,
+		"corruption_triggered_tiers": corruption_triggered_tiers.duplicate(),
 		"curio_stacks": curio_stacks.duplicate(),
 		"moral_karma": moral_karma,
 		"karma_categories": karma_categories.duplicate(),
@@ -659,6 +665,8 @@ func load_from_data(data: Dictionary):
 	damage_taken_this_turn = data.get("damage_taken_this_turn", 0)
 	custom_resources = data.get("custom_resources", {}).duplicate()
 	custom_resource_max = data.get("custom_resource_max", {}).duplicate()
+	run_corruption = data.get("run_corruption", 0)
+	corruption_triggered_tiers = data.get("corruption_triggered_tiers", {}).duplicate()
 
 	# Load HOLD cards
 	hold_cards.clear()

@@ -318,7 +318,8 @@ func get_save_data() -> Dictionary:
 		"current_sanity": current_sanity,
 		"max_sanity": max_sanity,
 		"defense": defense,
-		"fatal_damage_prevented": fatal_damage_prevented
+		"fatal_damage_prevented": fatal_damage_prevented,
+		"current_gold": current_gold
 	}
 
 # Load stats from save data dictionary
@@ -331,6 +332,7 @@ func load_from_data(data: Dictionary) -> void:
 	max_sanity = data.get("max_sanity", max_sanity)
 	defense = data.get("defense", defense)
 	fatal_damage_prevented = data.get("fatal_damage_prevented", false)
+	current_gold = data.get("current_gold", current_gold)
 
 # Debug methods
 

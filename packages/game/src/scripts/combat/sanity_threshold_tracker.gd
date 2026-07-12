@@ -27,6 +27,8 @@ var _last_tier: Stats.SanityTier = Stats.SanityTier.STABLE
 ## Track which tiers have already triggered corruption (once per run)
 var _corruption_triggered_for_tiers: Dictionary = {}
 
+var _tracked_player: PlayerData
+
 ## Track sanity at start of current "event" for crisis detection
 var _sanity_before_event: int = -1
 
@@ -93,8 +95,10 @@ func _trigger_corruption_for_tier(tier: Stats.SanityTier) -> void:
 		return
 	
 	_corruption_triggered_for_tiers[tier] = true
+	if _tracked_player:
+		_tracked_player.corruption_triggered_tiers = _corruption_triggered_for_tiers.duplicate(true)
 	
-	var card_path = CORRUPTION_CARDS.get(tier, "")
+	var card_path: String = CORRUPTION_CARDS.get(tier, "")
 	if card_path.is_empty():
 		return
 	
@@ -127,7 +131,10 @@ func has_triggered_corruption(tier: Stats.SanityTier) -> bool:
 ## Force-sync the tracker to player's current state.
 ## Use this when loading a save or starting a run.
 func sync_to_player(player_data) -> void:
-	if player_data and player_data.stats:
-		_last_tier = player_data.stats.get_sanity_tier()
+	_tracked_player = player_data as PlayerData
+	if _tracked_player and _tracked_player.stats:
+		_last_tier = _tracked_player.stats.get_sanity_tier()
+		_corruption_triggered_for_tiers = _tracked_player.corruption_triggered_tiers.duplicate(true)
 	else:
 		_last_tier = Stats.SanityTier.STABLE
+		_corruption_triggered_for_tiers.clear()
