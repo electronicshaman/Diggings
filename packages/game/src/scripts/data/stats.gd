@@ -324,12 +324,12 @@ func get_save_data() -> Dictionary:
 
 # Load stats from save data dictionary
 func load_from_data(data: Dictionary) -> void:
-	current_health = data.get("current_health", current_health)
 	max_health = data.get("max_health", max_health)
-	current_energy = data.get("current_energy", current_energy)
+	current_health = data.get("current_health", current_health)
 	max_energy = data.get("max_energy", max_energy)
-	current_sanity = data.get("current_sanity", current_sanity)
+	current_energy = data.get("current_energy", current_energy)
 	max_sanity = data.get("max_sanity", max_sanity)
+	current_sanity = data.get("current_sanity", current_sanity)
 	defense = data.get("defense", defense)
 	fatal_damage_prevented = data.get("fatal_damage_prevented", false)
 	current_gold = data.get("current_gold", current_gold)
