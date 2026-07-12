@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RunDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/run/run_definition.gd" id="1_definition"]
+[ext_resource type="Resource" path="res://data/enemies/claim_jumper.tres" id="2_claim"]
+[ext_resource type="Resource" path="res://data/enemies/corrupt_sheriff.tres" id="3_sheriff"]
+[ext_resource type="Resource" path="res://data/enemies/whispering_cultist.tres" id="4_cultist"]
+
+[resource]
+script = ExtResource("1_definition")
+run_id = &"the_diggings_short_run"
+display_name = "Descent into the Diggings"
+enemies = Array[Resource]([ExtResource("2_claim"), ExtResource("3_sheriff"), ExtResource("4_cultist")])
+recovery_health = 12
+recovery_sanity = 4
+card_offer_count = 3
