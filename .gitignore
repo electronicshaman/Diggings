@@ -1,3 +1,4 @@
 node_modules
 .pnpm-store/
 .worktrees/
+.superpowers/sdd/
