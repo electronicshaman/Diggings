@@ -156,6 +156,10 @@ func play_card(card_instance: CardInstance):
 	card_resolver.play_player_card(card_instance)
 
 func end_duel(winner: String):
+	if not is_instance_valid(duel_state) or not duel_state.duel_active:
+		return
+	duel_state.end_duel(winner)
+
 	GLog.info("DuelManager: Duel ended! Winner: %s" % winner)
 
 	# Cleanup class passives
@@ -174,9 +178,6 @@ func end_duel(winner: String):
 			SceneManager.load_scene_by_name("quick_duel_setup")
 		duel_ended.emit(winner)
 		return
-
-	# Normal duel - do state cleanup
-	duel_state.end_duel(winner)
 
 	if winner == "player":
 		# Check if this enemy should offer curio reward (boss/elite only)

@@ -166,12 +166,13 @@ func _initialize_duel() -> void:
 			# Convert Array[CardData] to DeckData for start_duel()
 			var player_deck = _create_deck_data_from_cards(card_array, duel_config.scene_context)
 
-			# Start the duel via DuelStateManager
-			duel_state_manager.start_duel(player_deck, enemy_data)
 			var configured_player := duel_config.get_modifier("player_data", null) as PlayerData
 			if configured_player and duel_manager.duel_state:
 				duel_manager.duel_state.player_data = configured_player
 				GameManager.game_data["player"] = configured_player
+
+			# Start the duel via DuelStateManager
+			duel_state_manager.start_duel(player_deck, enemy_data)
 
 			# Check if this is a quick duel and set flag
 			if duel_config.get_modifier("quick_duel", false):
@@ -234,22 +235,6 @@ func _on_duel_started_signal() -> void:
 func _on_duel_ended_from_state_manager(victory: bool) -> void:
 	GLog.debug("Duel ended (from state manager) - Victory: %s" % victory)
 	game_state_updated.emit()
-	
-	# Quick Duel flow is routed by DuelManager.
-	if GameManager and GameManager.game_data.get("is_quick_duel", false):
-		return
-
-	await get_tree().create_timer(0.6).timeout
-	if victory:
-		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
-			SceneManager.load_scene_by_name("quick_duel_setup")
-		else:
-			push_error("DuelSceneController: Cannot load quick duel setup scene on duel end - SceneManager unavailable")
-	else:
-		if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene_by_name"):
-			SceneManager.load_scene_by_name("game_over")
-		else:
-			push_error("DuelSceneController: Cannot load game over scene on duel end - SceneManager unavailable")
 
 func _on_ui_refresh_requested() -> void:
 	pass
