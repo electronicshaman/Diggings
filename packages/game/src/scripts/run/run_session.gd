@@ -30,6 +30,7 @@ func begin(run_definition: RunDefinition, selected_character: CharacterClass, ru
 		return false
 	if not _deck_manager.is_deck_available():
 		return false
+	_seed_manager.set_master_seed(run_seed)
 	definition = run_definition
 	character = selected_character
 	seed = run_seed
@@ -75,7 +76,7 @@ func record_victory(player: PlayerData) -> bool:
 	if state != State.IN_DUEL:
 		return false
 	var captured := RunPlayerSnapshot.capture(player)
-	if captured == null:
+	if not _is_valid_victory_snapshot(captured):
 		record_defeat(EndReason.INVALID_STATE)
 		return false
 	player_snapshot = captured
@@ -91,6 +92,16 @@ func record_victory(player: PlayerData) -> bool:
 	)
 	state = State.REWARD_PENDING
 	return true
+
+
+func _is_valid_victory_snapshot(snapshot: RunPlayerSnapshot) -> bool:
+	return (
+		is_instance_valid(snapshot)
+		and is_instance_valid(snapshot.character_class)
+		and snapshot.character_class == character
+		and snapshot.health > 0
+		and snapshot.sanity > 0
+	)
 
 
 func get_pending_card_offers() -> Array[CardData]:
@@ -136,7 +147,7 @@ func _advance_after_reward() -> void:
 func record_defeat(reason: EndReason) -> void:
 	if state in [State.COMPLETED, State.DEFEATED, State.INACTIVE]:
 		return
-	end_reason = reason
+	end_reason = EndReason.INVALID_STATE if reason == EndReason.NONE else reason
 	state = State.DEFEATED
 
 
