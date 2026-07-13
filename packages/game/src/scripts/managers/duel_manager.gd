@@ -195,7 +195,12 @@ func end_duel(winner: String):
 	else:
 		# Player lost - go to game over or appropriate scene
 		await get_tree().create_timer(GameConstants.TIMING_VALUES["scene_transition_delay"]).timeout
-		SceneManager.load_scene_by_name("game_over")
+		var reason := (
+			RunSession.EndReason.SANITY
+			if duel_state.player_data.stats.current_sanity <= 0
+			else RunSession.EndReason.HEALTH
+		)
+		SceneManager.load_scene_by_name_with_intent("game_over", GameOverIntent.new(reason))
 
 	duel_ended.emit(winner)
 
