@@ -287,21 +287,32 @@ func hash_to_seed(hash_seed: String) -> int:
 	"""Convert a hash seed back to an integer seed.
 	
 	Args:
-		hash_seed: 10-character hex hash seed
+		hash_seed: 10-character alphanumeric hash seed
 		
 	Returns:
 		Integer seed derived from hash
 	"""
+	var int_value: int
 	if hash_seed.length() != 10:
 		GLog.warn("Invalid hash seed length: " + str(hash_seed.length()) + ", expected 10")
-		return abs(hash_seed.hash()) % 2147483647
-	
-	# Convert first 8 hex characters to integer (avoids overflow)
-	var hex_substr = hash_seed.substr(0, 8)
-	var int_value = hex_substr.hex_to_int()
+		int_value = hash_seed.hash()
+	else:
+		var normalized_hash := hash_seed.to_upper()
+		var hex_substr := normalized_hash.substr(0, 8)
+		var has_hex_prefix := true
+		for index in range(hex_substr.length()):
+			var character := hex_substr[index]
+			if not (
+				(character >= "0" and character <= "9")
+				or (character >= "A" and character <= "F")
+			):
+				has_hex_prefix = false
+				break
+		int_value = hex_substr.hex_to_int() if has_hex_prefix else normalized_hash.hash()
 	
 	# Ensure positive and within range
-	return abs(int_value) % 2147483647
+	var seed_value: int = abs(int_value) % 2147483647
+	return seed_value if seed_value != 0 else 1
 
 func validate_hash_seed(hash_seed: String) -> bool:
 	"""Validate that a hash seed is properly formatted.

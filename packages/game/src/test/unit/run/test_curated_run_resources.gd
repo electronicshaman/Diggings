@@ -9,6 +9,45 @@ const CLASS_PATHS: Array[String] = [
 ]
 
 
+func _card_paths(cards: Array[CardData]) -> Array[String]:
+	var paths: Array[String] = []
+	for card in cards:
+		paths.append(card.resource_path)
+	return paths
+
+
+func _curated_hash_replay_signature(hash_seed: String) -> Dictionary:
+	var derived_seed := SeedManager.set_master_seed(hash_seed)
+	SeedManager.start_run()
+	var character := load(CLASS_PATHS[0]) as CharacterClass
+	assert_bool(GameManager.begin_curated_run(character, derived_seed)).is_true()
+	assert_str(SeedManager.get_hash_seed_string()).is_equal(hash_seed)
+	assert_str(GameManager.current_run_hash_seed).is_equal(hash_seed)
+	var stream_values: Array[int] = [
+		SeedManager.map_rng.randi(),
+		SeedManager.combat_rng.randi(),
+		SeedManager.loot_rng.randi(),
+		SeedManager.character_rng.randi(),
+		SeedManager.event_rng.randi()
+	]
+	var offer_path: Array[String] = []
+	for fight_index in range(2):
+		assert_bool(
+			GameManager.run_session.record_victory(
+				GameManager.run_session.player_snapshot.to_player_data()
+			)
+		).is_true()
+		offer_path.append("|".join(_card_paths(GameManager.get_pending_run_rewards())))
+		assert_bool(GameManager.run_session.apply_recovery()).is_true()
+		if fight_index == 0:
+			assert_object(GameManager.run_session.prepare_current_duel()).is_not_null()
+	return {
+		"seed": derived_seed,
+		"streams": stream_values,
+		"offers": offer_path
+	}
+
+
 func after_test() -> void:
 	CurioManager.clear_curios()
 	CurioManager.reset_run_curios()
@@ -100,6 +139,29 @@ func test_curated_run_preserves_user_hash_and_resets_subsystem_streams() -> void
 	assert_int(SeedManager.loot_rng.randi()).is_equal(expected_first_draws["loot"])
 	assert_int(SeedManager.character_rng.randi()).is_equal(expected_first_draws["character"])
 	assert_int(SeedManager.event_rng.randi()).is_equal(expected_first_draws["event"])
+
+
+func test_zero_hex_hash_normalizes_nonzero_without_changing_hex_mapping() -> void:
+	const ZERO_HASH := "0000000000"
+	const NONZERO_HASH := "1234ABCD99"
+	assert_bool(SeedManager.validate_hash_seed(ZERO_HASH)).is_true()
+	assert_bool(SeedManager.set_master_seed(ZERO_HASH) != 0).is_true()
+	assert_str(SeedManager.get_hash_seed_string()).is_equal(ZERO_HASH)
+	assert_int(SeedManager.hash_to_seed(NONZERO_HASH)).is_equal(305441741)
+
+
+func test_thematic_hash_replays_curated_seed_streams_and_offer_path() -> void:
+	const THEMATIC_HASH := "GOLDMINE42"
+	assert_bool(SeedManager.validate_hash_seed(THEMATIC_HASH)).is_true()
+
+	var first := _curated_hash_replay_signature(THEMATIC_HASH)
+	GameManager.reset_curated_run()
+	var replay := _curated_hash_replay_signature(THEMATIC_HASH)
+
+	assert_bool(first["seed"] != 0).is_true()
+	assert_int(replay["seed"]).is_equal(first["seed"])
+	assert_array(replay["streams"]).is_equal(first["streams"])
+	assert_array(replay["offers"]).is_equal(first["offers"])
 
 
 func test_reset_curated_run_clears_stale_player_reference() -> void:
