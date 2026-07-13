@@ -6,6 +6,7 @@ class_name BetweenFightChoiceController
 @onready var recover_button: Button = $Margin/VBox/RecoverButton
 
 var choice_submitted := false
+var choices_ready := false
 
 
 func _ready() -> void:
@@ -22,10 +23,22 @@ func _ready() -> void:
 		button.pressed.connect(_on_card_selected.bind(card))
 		card_offers.add_child(button)
 	recover_button.pressed.connect(_on_recover_selected)
+	EventBus.scene_transition_completed.connect(_on_scene_transition_completed)
+	choices_ready = not SceneManager.is_transitioning
+	_set_controls_disabled(not choices_ready)
+
+
+func _on_scene_transition_completed(scene_path: String) -> void:
+	if scene_path != SceneManager.SCENE_PATHS["between_fight_choice"]:
+		return
+	if choice_submitted or not GameManager.has_pending_run_reward():
+		return
+	choices_ready = true
+	_set_controls_disabled(false)
 
 
 func _on_card_selected(card: CardData) -> void:
-	if choice_submitted:
+	if choice_submitted or not choices_ready:
 		return
 	_begin_submission()
 	if not GameManager.choose_run_card(card):
@@ -33,7 +46,7 @@ func _on_card_selected(card: CardData) -> void:
 
 
 func _on_recover_selected() -> void:
-	if choice_submitted:
+	if choice_submitted or not choices_ready:
 		return
 	_begin_submission()
 	if not GameManager.choose_run_recovery():
@@ -42,6 +55,7 @@ func _on_recover_selected() -> void:
 
 func _begin_submission() -> void:
 	choice_submitted = true
+	choices_ready = false
 	_set_controls_disabled(true)
 
 
@@ -49,7 +63,8 @@ func _restore_choices_if_reward_is_pending() -> void:
 	if not GameManager.has_pending_run_reward():
 		return
 	choice_submitted = false
-	_set_controls_disabled(false)
+	choices_ready = not SceneManager.is_transitioning
+	_set_controls_disabled(not choices_ready)
 
 
 func _set_controls_disabled(disabled: bool) -> void:

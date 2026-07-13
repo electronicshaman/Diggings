@@ -232,12 +232,16 @@ func get_run_progress_text() -> String:
 
 
 func choose_run_card(card: CardData) -> bool:
+	if SceneManager.is_transitioning:
+		return false
 	if not has_pending_run_reward() or not run_session.apply_card_reward(card):
 		return false
 	return _prepare_and_start_next_run_duel()
 
 
 func choose_run_recovery() -> bool:
+	if SceneManager.is_transitioning:
+		return false
 	if not has_pending_run_reward() or not run_session.apply_recovery():
 		return false
 	return _prepare_and_start_next_run_duel()
