@@ -3,6 +3,7 @@ extends Node
 # Quick Duel is now the primary game mode
 
 const DEBUG_ENABLED: bool = true
+const CURATED_RUN_PATH := "res://data/runs/the_diggings_short_run.tres"
 
 enum GameState {
 	MENU,
@@ -28,7 +29,9 @@ var current_mode: GameMode = GameMode.STANDARD
 var current_run_seed: int = 0
 var current_run_hash_seed: String = ""
 var current_character_class: String = ""
-var selected_character: GeneratedCharacter = null
+var selected_character: CharacterClass = null
+var run_session: RunSession = null
+var last_run_summary: Dictionary = {}
 var is_run_active: bool = false
 
 var game_data: Dictionary = {}
@@ -39,7 +42,7 @@ var run_start_time: float = 0.0
 # Duel system
 var pending_duel_config: DuelConfig = null
 
-# Duel sequence state (typed as Resource to avoid autoload dependency issues)
+# Temporary compatibility state for Quick Duel. Task 6 retires its callers.
 var duel_sequence_state = null # Will be DuelSequenceState instance
 
 func _ready() -> void:
@@ -121,8 +124,15 @@ func prepare_new_run() -> void:
 	
 	GLog.info("New run prepared with seed: " + str(final_seed) + " (Hash: " + current_run_hash_seed + ")")
 
-func start_new_run(character_class: String, custom_seed: Variant = null, mode: GameMode = GameMode.STANDARD) -> void:
-	GLog.debug("Starting new run with class: " + character_class)
+func start_new_run(
+	character: CharacterClass,
+	custom_seed: Variant = null,
+	mode: GameMode = GameMode.STANDARD
+) -> bool:
+	if not character:
+		GLog.error("Cannot start curated run without a character class")
+		return false
+	GLog.debug("Starting new run with class: " + character.character_class_name)
 	
 	if custom_seed != null:
 		# Override with custom seed (for direct API calls)
@@ -135,18 +145,9 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 		GameSettings.last_used_hash_seed = current_run_hash_seed
 		GameSettings.save_settings()
 	elif current_run_seed == 0 or current_run_hash_seed.is_empty():
-		# No seed pre-established, fall back to auto-generation
+		# No seed pre-established, use the normal new-run preparation path.
 		GLog.warn("No seed pre-established for run, auto-generating from GameSettings")
-		var seed_to_use = GameSettings.get_effective_seed()
-		if seed_to_use.is_empty():
-			seed_to_use = null
-		var final_seed = SeedManager.set_master_seed(seed_to_use)
-		SeedManager.start_run(seed_to_use)
-		current_run_seed = final_seed
-		current_run_hash_seed = SeedManager.get_hash_seed_string()
-		GameSettings.last_used_seed = final_seed
-		GameSettings.last_used_hash_seed = current_run_hash_seed
-		GameSettings.save_settings()
+		prepare_new_run()
 	else:
 		# Use the pre-established seed from prepare_new_run()
 		GLog.info("Using pre-established seed: " + str(current_run_seed) + " (Hash: " + current_run_hash_seed + ")")
@@ -154,31 +155,120 @@ func start_new_run(character_class: String, custom_seed: Variant = null, mode: G
 		if not SeedManager.is_run_active():
 			SeedManager.current_run_active = true
 	
-	current_character_class = character_class
 	current_mode = mode
-	is_run_active = true
 	run_start_time = Time.get_ticks_msec() / 1000.0
 	
 	initialize_game_data()
 	reset_run_statistics()
 
-	# Reset curio tracking for new run
-	if CurioManager:
-		CurioManager.reset_run_curios()
-
-
-	# Apply character data if available
-	if selected_character:
-		apply_character_data()
-	
-	# Initialize deck in DeckManager
-	if is_instance_valid(DeckManager):
-		DeckManager.start_new_run_deck(character_class)
-	
-	# MVP routing: quick duel setup is the primary game flow.
-	change_state(GameState.PLAYING)
+	var started := begin_curated_run(character, current_run_seed)
+	if not started:
+		return false
 	EventBus.emit_game_started()
-	SceneManager.load_scene_by_name("quick_duel_setup")
+	SceneManager.load_scene_by_name("duel")
+	return true
+
+
+func has_active_run() -> bool:
+	return run_session != null and run_session.state in [
+		RunSession.State.FIGHT_READY,
+		RunSession.State.IN_DUEL,
+		RunSession.State.REWARD_PENDING
+	]
+
+
+func begin_curated_run(character: CharacterClass, run_seed: int) -> bool:
+	reset_curated_run()
+	if not character:
+		return false
+	selected_character = character
+	current_character_class = character.character_class_name
+	current_run_seed = run_seed
+	if SeedManager.master_seed != run_seed:
+		SeedManager.set_master_seed(run_seed)
+	if not DeckManager.start_new_run_deck(current_character_class):
+		reset_curated_run()
+		return false
+	run_session = RunSession.new(DeckManager, SeedManager)
+	var definition := load(CURATED_RUN_PATH) as RunDefinition
+	if not run_session.begin(definition, character, run_seed):
+		reset_curated_run()
+		return false
+	current_run_hash_seed = SeedManager.get_hash_seed_string()
+	pending_duel_config = run_session.prepare_current_duel()
+	if pending_duel_config == null or not pending_duel_config.is_valid():
+		reset_curated_run()
+		return false
+	is_run_active = true
+	change_state(GameState.PLAYING)
+	return true
+
+
+func reset_curated_run() -> void:
+	pending_duel_config = null
+	run_session = null
+	selected_character = null
+	is_run_active = false
+	DeckManager.clear_current_deck()
+	CurioManager.reset_run_curios()
+
+
+func get_pending_run_rewards() -> Array[CardData]:
+	return run_session.get_pending_card_offers() if run_session else []
+
+
+func choose_run_card(card: CardData) -> bool:
+	if run_session == null or not run_session.apply_card_reward(card):
+		return false
+	return _prepare_and_start_next_run_duel()
+
+
+func choose_run_recovery() -> bool:
+	if run_session == null or not run_session.apply_recovery():
+		return false
+	return _prepare_and_start_next_run_duel()
+
+
+func _prepare_and_start_next_run_duel() -> bool:
+	pending_duel_config = run_session.prepare_current_duel()
+	if pending_duel_config == null or not pending_duel_config.is_valid():
+		run_session.record_defeat(RunSession.EndReason.INVALID_STATE)
+		last_run_summary = run_session.get_summary()
+		end_current_run(false)
+		SceneManager.load_scene_by_name("game_over")
+		return false
+	return start_prepared_duel()
+
+
+func complete_curated_duel(player: PlayerData, winner: String) -> void:
+	if not has_active_run():
+		return
+	if winner != "player":
+		var reason := (
+			RunSession.EndReason.SANITY
+			if player.stats.current_sanity <= 0
+			else RunSession.EndReason.HEALTH
+		)
+		run_session.record_defeat(reason)
+		last_run_summary = run_session.get_summary()
+		end_current_run(false)
+		SceneManager.load_scene_by_name("game_over")
+		return
+	if not run_session.record_victory(player):
+		last_run_summary = run_session.get_summary()
+		end_current_run(false)
+		SceneManager.load_scene_by_name("game_over")
+		return
+	if run_session.is_complete():
+		last_run_summary = run_session.get_summary()
+		end_current_run(true)
+		SceneManager.load_scene_by_name("run_complete")
+	else:
+		SceneManager.load_scene_by_name("between_fight_choice")
+
+
+func get_last_run_summary() -> Dictionary:
+	return last_run_summary.duplicate(true)
 
 func end_current_run(victory: bool = false) -> void:
 	GLog.debug("Ending run - Victory: " + str(victory))
@@ -209,9 +299,9 @@ func save_run_statistics(victory: bool, duration: float) -> void:
 	run_statistics["floor_reached"] = game_data.get("current_floor", 0)
 	run_statistics["timestamp"] = Time.get_unix_time_from_system()
 	
-	# Add character name if available
+	# Static class selection uses the class name as the run character name.
 	if selected_character:
-		run_statistics["character_name"] = selected_character.full_name + " '" + selected_character.nickname + "'"
+		run_statistics["character_name"] = selected_character.character_class_name
 	else:
 		run_statistics["character_name"] = current_character_class
 	
@@ -283,56 +373,6 @@ func clear_pending_duel_config() -> void:
 ## Check if a duel is prepared and ready to start
 func is_duel_prepared() -> bool:
 	return is_instance_valid(pending_duel_config) and pending_duel_config.is_valid()
-
-func apply_character_data() -> void:
-	"""Apply selected character data to game state"""
-	if not selected_character:
-		return
-	
-	GLog.info("Applying character data for: " + selected_character.full_name + " '" + selected_character.nickname + "'")
-	
-	# Apply stat modifiers to base stats
-	var base_stats = get_base_character_stats(current_character_class)
-	for stat in selected_character.stat_modifiers:
-		if base_stats.has(stat):
-			base_stats[stat] += selected_character.stat_modifiers[stat]
-	
-	# Apply starting gold
-	if base_stats.has("starting_gold"):
-		game_data["gold"] = base_stats["starting_gold"]
-	
-	# Add starting curio
-	if selected_character.starting_curio:
-		var curio_resource = selected_character.starting_curio
-		if curio_resource:
-			var curio_name = "Unknown Curio"
-			if curio_resource.curio_name:
-				curio_name = curio_resource.curio_name
-			
-			GLog.info("Character has starting curio: " + curio_name)
-			var success = CurioManager.add_curio(curio_resource)
-			if success:
-				GLog.info("Added starting curio: " + curio_name)
-			else:
-				GLog.warn("Failed to add starting curio: " + curio_name)
-	
-	# Store character in game data for access by other systems
-	game_data["character"] = selected_character
-	
-	GLog.info("Character data applied successfully")
-
-func get_base_character_stats(character_class: String) -> Dictionary:
-	"""Get base stats for a character class from the character resource"""
-	var character_path = "res://data/characters/" + character_class.to_lower() + ".tres"
-	
-	if ResourceLoader.exists(character_path):
-		var character_resource = load(character_path) as CharacterClass
-		if character_resource:
-			return character_resource.get_starting_stats()
-	
-	GLog.warn("Failed to load character resource for %s, using fallback stats" % character_class)
-	# Fallback stats if resource loading fails
-	return {"base_health": 50, "base_sanity": 20, "base_energy": 3, "starting_gold": 10}
 
 func change_state(new_state: GameState) -> void:
 	if current_state == new_state:
@@ -436,11 +476,12 @@ func heal(amount: int) -> void:
 			EventBus.health_changed.emit(player.stats.current_health, player.stats.max_health)
 
 func add_corruption(amount: int) -> void:
-	# Update run-level corruption
-	var current := int(game_data.get("corruption", 0))
-	game_data["corruption"] = max(0, current + amount)
-	if has_node("/root/EventBus"):
-		EventBus.corruption_changed.emit(amount)
+	var updated := maxi(0, int(game_data.get("corruption", 0)) + amount)
+	game_data["corruption"] = updated
+	var player := get_player_data() as PlayerData
+	if player:
+		player.run_corruption = updated
+	EventBus.corruption_changed.emit(amount)
 
 func generate_all_maps() -> void:
 	# Map generation placeholder for region selection

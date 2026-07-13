@@ -250,7 +250,7 @@ func update_player_data() -> void:
 	if character_name_value and GameManager:
 		if GameManager.selected_character:
 			var character_ref = GameManager.selected_character
-			character_name_value.text = character_ref.full_name + " '" + character_ref.nickname + "'"
+			character_name_value.text = character_ref.character_class_name
 		else:
 			character_name_value.text = "None"
 	
