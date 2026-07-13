@@ -391,7 +391,7 @@ func get_weighted_curio_selection(character_class: String, count: int = 3) -> Ar
 			total_weight += weight
 
 		# Weighted random selection
-		var roll = randf() * total_weight
+		var roll = randf() * total_weight  # unreachable from curated run: get_weighted_curio_selection() is only called from victory_reward.gd
 		var cumulative: float = 0.0
 		var selected_index: int = 0
 

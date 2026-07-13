@@ -73,7 +73,7 @@ func set_master_seed(seed_input: Variant = null) -> int:
 		# Auto-generate seed using multiple sources for better randomness
 		randomize()  # Initialize Godot's random number generator with system time
 		var time_component = Time.get_ticks_msec()
-		var random_component = randi() % 1000000
+		var random_component = randi() % 1000000  # seed creation: generating the master seed itself, precedes any deterministic subsystem RNG
 		var unix_component = int(Time.get_unix_time_from_system()) % 1000000
 		master_seed = abs((time_component + random_component * 31 + unix_component * 17)) % 2147483647
 		seed_source = str(master_seed)
@@ -92,7 +92,7 @@ func set_master_seed(seed_input: Variant = null) -> int:
 			# Empty string - auto-generate with better randomness
 			randomize()
 			var time_component = Time.get_ticks_msec()
-			var random_component = randi() % 1000000
+			var random_component = randi() % 1000000  # seed creation: generating the master seed itself, precedes any deterministic subsystem RNG
 			var unix_component = int(Time.get_unix_time_from_system()) % 1000000
 			master_seed = abs((time_component + random_component * 31 + unix_component * 17)) % 2147483647
 			seed_source = str(master_seed)
@@ -361,6 +361,9 @@ func is_thematic_seed(hash_seed: String) -> bool:
 	return false
 
 # Convenience methods for each system
+# NOTE: every randi_range()/randf() call below (through the shuffle_array_* helpers too) operates
+# on this file's own seeded RandomNumberGenerator instances (map_rng/combat_rng/loot_rng/...), not
+# global randomness. This IS the deterministic API the rest of the codebase is threaded through.
 func get_map_random_int(from: int, to: int) -> int:
 	"""Get a random integer for map generation."""
 	return map_rng.randi_range(from, to)

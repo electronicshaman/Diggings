@@ -43,7 +43,10 @@ func start_duel(player_deck: DeckData, enemy_data: EnemyState) -> void:
 	# Debug enemy health after assignment
 	if duel_state.enemy_data and duel_state.enemy_data.stats:
 		GLog.debug("DuelFlowController: Enemy assigned to duel_state with HP: %d/%d" % [duel_state.enemy_data.stats.current_health, duel_state.enemy_data.stats.max_health])
-	
+
+	# Thread the seeded combat RNG into every pile before any shuffle/draw happens
+	duel_state.set_combat_rng(SeedManager.combat_rng)
+
 	# Batch notifications during duel setup to avoid UI flicker/resets
 	if duel_state and duel_state.has_method("begin_batch_changes"):
 		duel_state.begin_batch_changes()
@@ -93,7 +96,10 @@ func start_duel_with_config(config: DuelConfig) -> void:
 		
 	# 1. Assign enemy data (triggers setter we added earlier)
 	duel_state.enemy_data = config.enemy_data
-	
+
+	# Thread the seeded combat RNG into every pile before any shuffle/draw happens
+	duel_state.set_combat_rng(SeedManager.combat_rng)
+
 	# 2. Batch notifications
 	if duel_state.has_method("begin_batch_changes"):
 		duel_state.begin_batch_changes()

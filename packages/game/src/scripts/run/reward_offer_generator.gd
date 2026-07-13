@@ -41,7 +41,7 @@ static func generate(character: CharacterClass, candidates: Array[CardData], cou
 			total_weight += maxf(0.0, character.get_card_preference_weight(card))
 		if total_weight <= 0.0:
 			break
-		var roll := rng.randf() * total_weight
+		var roll := rng.randf() * total_weight  # already deterministic: caller passes SeedManager.loot_rng (Task 8); loot domain, out of this task's combat RNG scope
 		var selected_index := pool.size() - 1
 		for index in range(pool.size()):
 			roll -= maxf(0.0, character.get_card_preference_weight(pool[index]))

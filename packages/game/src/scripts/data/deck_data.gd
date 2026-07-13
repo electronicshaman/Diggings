@@ -161,7 +161,7 @@ func create_shuffled_copy() -> DeckData:
 	
 	# Shuffle the card paths
 	copy.card_paths = card_paths.duplicate()
-	copy.card_paths.shuffle()
+	copy.card_paths.shuffle()  # unreachable from curated run: create_shuffled_copy() has no call sites in the codebase
 	
 	GLog.debug("Shuffled copy created")
 	return copy

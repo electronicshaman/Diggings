@@ -11,10 +11,12 @@ const LOW_HEALTH_THRESHOLD: float = 0.3 # Used for defensive/aggressive decision
 
 # Dependencies
 var duel_state: DuelState
+var _rng: RandomNumberGenerator
 
 
-func _init(state: DuelState) -> void:
+func _init(state: DuelState, rng: RandomNumberGenerator) -> void:
 	duel_state = state
+	_rng = rng
 	GLog.debug("EnemyAIController initialized", "enemy_ai_controller")
 
 
@@ -179,6 +181,6 @@ func _select_cunning(enemy: EnemyState, playable: Array[CardData]) -> CardData:
 				return card
 	
 	# Default: random selection for unpredictability
-	var selected := playable[randi() % playable.size()]
+	var selected := playable[_rng.randi_range(0, playable.size() - 1)]
 	GLog.debug("Cunning AI (random): Selected card: %s" % selected.card_name, "enemy_ai_controller")
 	return selected

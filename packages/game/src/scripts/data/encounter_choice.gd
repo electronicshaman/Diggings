@@ -100,7 +100,7 @@ func apply_costs(game_state: Dictionary) -> void:
 	if health_cost > 0:
 		game_state["health"] = max(0, game_state.get("health", 0) - health_cost)
 
-func get_outcomes_to_apply(rng_result: float = randf()) -> Array[Resource]:
+func get_outcomes_to_apply(rng_result: float = randf()) -> Array[Resource]:  # unreachable from curated run: encounter/narrative system has no callers on the curated combat path
 	if rng_result <= success_chance:
 		return outcomes
 	else:

@@ -15,6 +15,13 @@ const DEBUG_ENABLED = false
 # Change tracking system - since Resources don't have signals, we use a callback system
 var _change_listeners: Array[Callable] = []
 
+# RNG used for shuffling and random draws. Defaults to an unseeded instance so
+# piles outside a seeded run (e.g. Quick Duel) still behave as before.
+var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+
+func set_rng(rng: RandomNumberGenerator) -> void:
+	_rng = rng
+
 func _init(type: String = "generic", maximum_size: int = -1) -> void:
 	GLog.debug("Initializing pile: type='%s', max_size=%d" % [type, maximum_size])
 	pile_type = type
@@ -176,7 +183,7 @@ func draw_random() -> CardInstance:
 		GLog.warn("Pile is empty, cannot draw")
 		return null
 	
-	var index: int = randi() % cards.size()
+	var index: int = _rng.randi_range(0, cards.size() - 1)
 	var drawn_card: CardInstance = cards[index]
 	GLog.debug("Drawing random card at index %d: '%s'" % [index, drawn_card.get_card_name()])
 	cards.remove_at(index)
@@ -196,7 +203,7 @@ func shuffle() -> void:
 	GLog.trace("Shuffling pile using Fisher-Yates algorithm...")
 	# Fisher-Yates shuffle
 	for i in range(cards.size() - 1, 0, -1):
-		var j: int = randi() % (i + 1)
+		var j: int = _rng.randi_range(0, i)
 		var temp: CardInstance = cards[i]
 		cards[i] = cards[j]
 		cards[j] = temp

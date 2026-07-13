@@ -40,7 +40,7 @@ func can_trigger(_game_state: Node, _context: Dictionary) -> bool:
 	
 	# Check chance to trigger
 	if chance_to_trigger < 1.0:
-		var roll = randf()
+		var roll = randf()  # unreachable from curated run: CurioEffect.can_trigger() only runs for active_curios, which no curated-run code path populates
 		if roll > chance_to_trigger:
 			return false
 	

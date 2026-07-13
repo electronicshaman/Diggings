@@ -82,4 +82,4 @@ func _load_random_curio_from_folder(folder_path: String, character_class: String
 		file_name = dir.get_next()
 	if valid_curios.is_empty():
 		return null
-	return valid_curios[randi() % valid_curios.size()]
+	return valid_curios[randi() % valid_curios.size()]  # unreachable from curated run: curio rewards are only offered from DuelManager's legacy (non-curated, non-Quick-Duel) end_duel branch

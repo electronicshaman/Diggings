@@ -24,7 +24,7 @@ func apply_effect(context: Resource) -> Resource:
 	if random_range:
 		var lo = min(min_amount, max_amount)
 		var hi = max(min_amount, max_amount)
-		apply_amt = randi_range(lo, hi)
+		apply_amt = SeedManager.get_combat_random_int(lo, hi)
 
 	# NOTE: Like DamageHandler, we do NOT directly mutate targets during effect
 	# resolution. We accumulate intended outcomes in EffectResult and let

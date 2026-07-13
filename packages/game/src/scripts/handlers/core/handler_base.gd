@@ -75,7 +75,7 @@ func should_trigger(context: Resource) -> bool:
 	
 	# Check random chance
 	if chance_to_trigger < 1.0:
-		return randf() <= chance_to_trigger
+		return SeedManager.get_combat_random_float() <= chance_to_trigger
 	
 	return true
 

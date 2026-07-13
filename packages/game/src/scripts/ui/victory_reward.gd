@@ -101,7 +101,7 @@ func _generate_reward_cards():
 	
 	# Shuffle the card pool
 	var available_paths = all_card_paths.duplicate()
-	available_paths.shuffle()
+	available_paths.shuffle()  # Quick Duel-only / unreachable from curated run: complete_curated_duel() routes to between_fight_choice/run_complete instead
 	
 	# Pick 3 cards (or less if pool is smaller)
 	var cards_to_offer = min(3, available_paths.size())
@@ -330,7 +330,7 @@ func _finish_and_return_to_map():
 func _display_gold_reward():
 	"""Display gold earned from the victory"""
 	# Calculate gold based on enemy difficulty (placeholder)
-	gold_reward = randi_range(10, 30)
+	gold_reward = randi_range(10, 30)  # Quick Duel-only / unreachable from curated run: same reward screen as above
 	
 	if gold_label:
 		gold_label.text = "Gold: +%d" % gold_reward

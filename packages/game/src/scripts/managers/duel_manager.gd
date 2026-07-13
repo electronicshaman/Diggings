@@ -34,7 +34,7 @@ func _ready():
 
 	# Initialize components
 	flow_controller = DuelFlowController.new(duel_state)
-	ai_controller = EnemyAIController.new(duel_state)
+	ai_controller = EnemyAIController.new(duel_state, SeedManager.combat_rng)
 	card_resolver = CardResolver.new(duel_state, self) # Removed effect_processor arg
 	passive_handler = ClassPassiveHandler.new(duel_state)
 	

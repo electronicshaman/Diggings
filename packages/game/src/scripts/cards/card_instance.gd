@@ -35,6 +35,7 @@ func _init(data: CardData = null, card_owner: Owner = Owner.PLAYER) -> void:
 		GLog.debug("Created CardInstance for '%s' with ID: %s, owner: %s, durability: %d" % [card_data.card_name, instance_id, "PLAYER" if owner == Owner.PLAYER else ("ENEMY" if owner == Owner.ENEMY else "NEUTRAL"), current_durability])
 
 func _generate_instance_id() -> String:
+	# non-gameplay identifier: uniquifies internal instance IDs only, never influences shuffle/draw/AI/handler outcomes
 	return "%s_%d_%d" % [card_data.resource_path.get_file().get_basename(), Time.get_unix_time_from_system(), randi()]
 
 # NEW: Create a context for this card instance

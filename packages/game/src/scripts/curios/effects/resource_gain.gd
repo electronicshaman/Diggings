@@ -17,7 +17,7 @@ func apply_effect(game_state: Node, _curio_data: Resource, context: Dictionary) 
 		return
 	
 	# Calculate actual amount (random roll first if enabled)
-	var actual_amount = (randi_range(1, amount) if random_range else amount)
+	var actual_amount = (randi_range(1, amount) if random_range else amount)  # unreachable from curated run: only fires for active_curios, which no curated-run code path populates (see CurioManager.add_curio callers)
 	# Honor stacks when managed by CurioManager (multiply rolled/base amount)
 	if _curio_data and game_state and game_state.has_method("get_curio_stack_count"):
 		var curio_name: String = (_curio_data as CurioData).curio_name if (_curio_data is CurioData) else ""

@@ -70,6 +70,18 @@ func _forward_discard_change(change_type: String, data: Dictionary) -> void:
 	_emit_change("discard_" + change_type, data)
 
 
+## RNG Wiring
+
+func set_rng(rng: RandomNumberGenerator) -> void:
+	"""Apply a shared RNG to all card piles for deterministic shuffles/draws"""
+	if hand:
+		hand.set_rng(rng)
+	if deck:
+		deck.set_rng(rng)
+	if discard:
+		discard.set_rng(rng)
+
+
 ## Card Operations
 
 func draw_cards(count: int) -> Array[CardData]:

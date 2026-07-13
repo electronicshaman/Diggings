@@ -6,7 +6,7 @@ class_name DamageHandler
 @export var multi_hit: bool = false
 @export var hits: int = 1
 @export var random_target: bool = false
-# Random damage range (when random_range is true, damage is randi_range(min_amount, max_amount))
+# Random damage range (when random_range is true, damage is SeedManager.get_combat_random_int(min_amount, max_amount))
 @export var random_range: bool = false
 @export var min_amount: int = 0
 @export var max_amount: int = 0
@@ -29,7 +29,7 @@ func apply_effect(context: Resource) -> Resource:
 		# Random damage between min and max
 		var final_min = resolve_conditional_value("min_amount", min_amount, context)
 		var final_max = resolve_conditional_value("max_amount", max_amount, context)
-		final_amount = randi_range(final_min, final_max)
+		final_amount = SeedManager.get_combat_random_int(final_min, final_max)
 	else:
 		final_amount = resolve_conditional_value("amount", amount, context)
 
@@ -63,7 +63,7 @@ func _select_target(context: Resource) -> Resource:
 	if not context:
 		return null
 	if random_target and context.secondary_targets and context.secondary_targets.size() > 0:
-		return context.secondary_targets[randi() % context.secondary_targets.size()]
+		return context.secondary_targets[SeedManager.get_combat_random_int(0, context.secondary_targets.size() - 1)]
 	return context.primary_target if context.primary_target else context.enemy_data
 
 func _resolve_conditional_bool(property_name: String, base_value: bool, context: Resource) -> bool:

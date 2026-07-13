@@ -78,6 +78,22 @@ func _init():
 	# We still need to setup card piles as they don't have setters defined above yet.
 	setup_change_forwarding()
 
+func set_combat_rng(rng: RandomNumberGenerator) -> void:
+	"""Apply a shared RNG to all card piles (player and enemy) for deterministic
+	shuffles and random draws on the curated combat path."""
+	if hand:
+		hand.set_rng(rng)
+	if deck:
+		deck.set_rng(rng)
+	if discard_pile:
+		discard_pile.set_rng(rng)
+	if removed_pile:
+		removed_pile.set_rng(rng)
+	if battlefield:
+		battlefield.set_rng(rng)
+	if enemy_data and enemy_data.card_manager:
+		enemy_data.card_manager.set_rng(rng)
+
 func setup_change_forwarding():
 	"""Set up change notification forwarding from all sub-resources"""
 	# player_data and enemy_data are handled by their setters

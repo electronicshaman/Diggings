@@ -189,7 +189,7 @@ func clear_history() -> void:
 func generate_run_id() -> String:
 	"""Generate a unique ID for a run."""
 	var timestamp = Time.get_unix_time_from_system()
-	var random_component = randi() % 10000
+	var random_component = randi() % 10000  # non-gameplay identifier: unique run record ID, not a gameplay opportunity
 	return str(timestamp) + "_" + str(random_component)
 
 func has_previous_run() -> bool:
