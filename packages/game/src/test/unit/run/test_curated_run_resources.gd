@@ -185,3 +185,12 @@ func test_add_corruption_synchronizes_registered_player() -> void:
 	GameManager.add_corruption(-20)
 	assert_int(GameManager.game_data["corruption"]).is_equal(0)
 	assert_int(player.run_corruption).is_equal(0)
+
+
+func test_quick_duel_is_blocked_only_while_curated_run_is_active() -> void:
+	GameManager.reset_curated_run()
+	assert_bool(GameManager.can_start_quick_duel()).is_true()
+	var character := load("res://data/characters/bushranger.tres") as CharacterClass
+	assert_bool(GameManager.begin_curated_run(character, 8080)).is_true()
+	assert_bool(GameManager.can_start_quick_duel()).is_false()
+	GameManager.reset_curated_run()

@@ -21,7 +21,6 @@ var flow_controller: DuelFlowController
 var ai_controller: EnemyAIController
 var card_resolver: CardResolver
 var passive_handler: ClassPassiveHandler
-var sequence_handler: DuelSequenceHandler
 var sanity_tracker: SanityThresholdTracker
 
 # Removed EffectProcessor dependency
@@ -38,7 +37,6 @@ func _ready():
 	ai_controller = EnemyAIController.new(duel_state)
 	card_resolver = CardResolver.new(duel_state, self) # Removed effect_processor arg
 	passive_handler = ClassPassiveHandler.new(duel_state)
-	sequence_handler = DuelSequenceHandler.new()
 	
 	# Wire inter-component references
 	flow_controller.card_resolver = card_resolver
@@ -163,42 +161,21 @@ func end_duel(winner: String):
 	# Cleanup class passives
 	passive_handler.cleanup()
 
-	# Delegate test sequence handling to DuelSequenceHandler
-	var handler_result = sequence_handler.handle_duel_end(winner, duel_state)
-	
-	if handler_result.handled:
-		# Test sequence handler took care of everything
-		if handler_result.should_emit_signals:
-			duel_ended.emit(winner)
-		
-		if handler_result.scene_to_load:
-			await get_tree().create_timer(GameConstants.TIMING_VALUES["scene_transition_delay"]).timeout
-			# Use intent-based loading if available
-			if handler_result.has("intent") and handler_result.intent:
-				SceneManager.load_scene_with_intent(handler_result.scene_to_load, handler_result.intent)
-			else:
-				SceneManager.load_scene(handler_result.scene_to_load)
-		else:
-			# Handled, but no scene change -> Sequence Continue
-			GLog.info("DuelManager: Sequence continuing to next battle...")
-			var next_config = sequence_handler.start_next_battle()
-			if next_config:
-				# Brief pause between battles
-				await get_tree().create_timer(GameConstants.TIMING_VALUES["scene_transition_delay"]).timeout
-				
-				# Start the next duel using the config
-				flow_controller.start_duel_with_config(next_config)
-				
-				# Re-setup passives for the new duel
-				passive_handler.setup_passives()
-				
-				duel_started.emit()
-			else:
-				GLog.error("DuelManager: Failed to get next battle config from sequence handler")
-				
+	if GameManager.has_active_run():
+		GameManager.complete_curated_duel(duel_state.player_data, winner)
+		duel_ended.emit(winner)
 		return
 
-	# Normal (non-test) duel - do state cleanup
+	if GameManager.game_data.get("is_quick_duel", false):
+		if winner == "player" and GameManager.game_data.get("show_quick_duel_rewards", false):
+			var intent := RewardIntent.create_quick_duel_reward(false, "quick_duel_setup")
+			SceneManager.load_scene_with_intent("res://scenes/ui/victory_reward.tscn", intent)
+		else:
+			SceneManager.load_scene_by_name("quick_duel_setup")
+		duel_ended.emit(winner)
+		return
+
+	# Normal duel - do state cleanup
 	duel_state.end_duel(winner)
 
 	if winner == "player":

@@ -168,6 +168,10 @@ func _initialize_duel() -> void:
 
 			# Start the duel via DuelStateManager
 			duel_state_manager.start_duel(player_deck, enemy_data)
+			var configured_player := duel_config.get_modifier("player_data", null) as PlayerData
+			if configured_player and duel_manager.duel_state:
+				duel_manager.duel_state.player_data = configured_player
+				GameManager.game_data["player"] = configured_player
 
 			# Check if this is a quick duel and set flag
 			if duel_config.get_modifier("quick_duel", false):
@@ -207,26 +211,6 @@ func _initialize_duel() -> void:
 			# Clear the config after using it
 			GameManager.clear_pending_duel_config()
 			return
-	
-	# Check for active duel sequence (returning from victory reward mid-sequence)
-	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
-		GLog.info("Active duel sequence detected - starting next battle", "duel_scene_controller")
-
-		# Use DuelSequenceHandler to create next battle config
-		var sequence_handler = DuelSequenceHandler.new()
-		var next_config = sequence_handler.start_next_battle()
-
-		if next_config and next_config.is_valid():
-			var card_array = next_config.get_modified_deck()
-			var enemy_data = next_config.enemy_data
-			var player_deck = _create_deck_data_from_cards(card_array, next_config.scene_context)
-
-			duel_state_manager.start_duel(player_deck, enemy_data)
-			GameManager.game_data["is_quick_duel"] = true
-			GLog.info("Started sequence battle against: %s" % (enemy_data.enemy_name if enemy_data and "enemy_name" in enemy_data else "Unknown"), "duel_scene_controller")
-			return
-		else:
-			GLog.error("Failed to create config for sequence battle", "duel_scene_controller")
 
 	# No fallback - let test scenes handle their own initialization
 	GLog.debug("No duel config found - waiting for external initialization")
@@ -251,13 +235,8 @@ func _on_duel_ended_from_state_manager(victory: bool) -> void:
 	GLog.debug("Duel ended (from state manager) - Victory: %s" % victory)
 	game_state_updated.emit()
 	
-	# Quick duel flow is routed by DuelManager (victory_reward/game_over/sequence).
+	# Quick Duel flow is routed by DuelManager.
 	if GameManager and GameManager.game_data.get("is_quick_duel", false):
-		return
-
-	# Check for duel sequence - let DuelManager handle the transition and persistence
-	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
-		GLog.debug("Duel sequence active - deferring end game logic to DuelManager", "duel_scene_controller")
 		return
 
 	await get_tree().create_timer(0.6).timeout
@@ -297,13 +276,6 @@ func _on_win_duel_pressed() -> void:
 		duel_manager.end_duel("player")
 	else:
 		push_warning("DuelSceneController: Cannot end duel - DuelManager is invalid or missing method")
-	
-	# Return to quick duel setup after a brief delay
-	await get_tree().create_timer(1.0).timeout
-	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene"):
-		SceneManager.load_scene("res://scenes/game/quick_duel_setup.tscn")
-	else:
-		push_error("DuelSceneController: Cannot load quick duel setup scene - SceneManager unavailable")
 
 func _on_lose_duel_pressed() -> void:
 	GLog.debug("Test lose button pressed - ending duel as player defeat")
@@ -311,13 +283,6 @@ func _on_lose_duel_pressed() -> void:
 		duel_manager.end_duel("enemy")
 	else:
 		push_warning("DuelSceneController: Cannot end duel - DuelManager is invalid or missing method")
-	
-	# Go to game over after a brief delay
-	await get_tree().create_timer(1.0).timeout
-	if is_instance_valid(SceneManager) and SceneManager.has_method("load_scene"):
-		SceneManager.load_scene("res://scenes/ui/game_over.tscn")
-	else:
-		push_error("DuelSceneController: Cannot load game over scene - SceneManager unavailable")
 
 
 func get_ui_controller() -> Node:

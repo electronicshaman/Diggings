@@ -42,9 +42,6 @@ var run_start_time: float = 0.0
 # Duel system
 var pending_duel_config: DuelConfig = null
 
-# Temporary compatibility state for Quick Duel. Task 6 retires its callers.
-var duel_sequence_state = null # Will be DuelSequenceState instance
-
 func _ready() -> void:
 	GLog.debug("GameManager initialized - The cosmic game engine awakens")
 	session_start_time = Time.get_ticks_msec() / 1000.0
@@ -175,6 +172,10 @@ func has_active_run() -> bool:
 		RunSession.State.IN_DUEL,
 		RunSession.State.REWARD_PENDING
 	]
+
+
+func can_start_quick_duel() -> bool:
+	return not has_active_run()
 
 
 func begin_curated_run(character: CharacterClass, run_seed: int) -> bool:

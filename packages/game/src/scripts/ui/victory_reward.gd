@@ -26,7 +26,6 @@ var curio_phase_active: bool = false
 
 # Where to navigate after reward selection (from intent or legacy)
 var continue_to_scene: String = ""
-var should_continue_sequence: bool = false
 
 func _ready():
 	GLog.info("Victory reward screen loaded")
@@ -58,16 +57,13 @@ func _ready():
 
 func _apply_intent(intent: RewardIntent) -> void:
 	"""Configure scene from a RewardIntent"""
-	should_continue_sequence = intent.continue_sequence
 	continue_to_scene = intent.return_scene
 	pending_curio_reward = intent.offer_curio
 
 	if intent.gold_reward > 0:
 		gold_reward = intent.gold_reward
 
-	GLog.debug("Applied RewardIntent: continue=%s, return=%s" % [
-		should_continue_sequence, continue_to_scene
-	], "victory_reward")
+	GLog.debug("Applied RewardIntent: return=%s" % continue_to_scene, "victory_reward")
 
 func _load_card_pool():
 	"""Load all available card paths for reward selection"""
@@ -323,15 +319,8 @@ func _on_curio_unhover(button: Button):
 	tween.tween_property(button, "scale", Vector2(1.0, 1.0), 0.1)
 
 func _finish_and_return_to_map():
-	"""Complete all rewards and return to map (or continue sequence)"""
-	if should_continue_sequence:
-		GLog.info("Victory reward complete - continuing to next battle in sequence", "victory_reward")
-		# Advance to next enemy in sequence
-		if GameManager.duel_sequence_state:
-			GameManager.duel_sequence_state.advance_to_next_enemy()
-		# Return to duel scene to continue sequence
-		SceneManager.load_scene("res://scenes/game/duel.tscn")
-	elif continue_to_scene and not continue_to_scene.is_empty():
+	"""Complete all rewards and return to the requested scene."""
+	if continue_to_scene and not continue_to_scene.is_empty():
 		GLog.info("Victory reward complete - returning to %s" % continue_to_scene, "victory_reward")
 		SceneManager.load_scene_by_name(continue_to_scene)
 	else:

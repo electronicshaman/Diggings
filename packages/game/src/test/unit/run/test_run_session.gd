@@ -62,6 +62,18 @@ func _assert_invalid_victory_preserves_snapshot(session: RunSession, player: Pla
 	assert_object(session.player_snapshot).is_same(original_snapshot)
 
 
+func test_prepared_duel_contains_normalized_player_data() -> void:
+	var session := _session()
+	session.player_snapshot.health = 19
+	session.player_snapshot.sanity = 7
+	var config := session.prepare_current_duel()
+	assert_bool(config.get_modifier("curated_run", false)).is_true()
+	var player := config.get_modifier("player_data") as PlayerData
+	assert_int(player.stats.current_health).is_equal(19)
+	assert_int(player.stats.current_sanity).is_equal(7)
+	assert_int(player.stats.current_energy).is_equal(player.stats.max_energy)
+
+
 func test_begin_reseeds_loot_rng_for_deterministic_replay() -> void:
 	const RUN_SEED := 8675309
 	SeedManager.set_master_seed(RUN_SEED)

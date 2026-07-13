@@ -9,8 +9,6 @@ const DEBUG_ENABLED = true
 @onready var enemy_container: VBoxContainer = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/EnemyRow/EnemyScroll/EnemyContainer
 @onready var curio_container: VBoxContainer = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/CurioRow/CurioScroll/CurioContainer
 @onready var rewards_checkbox: CheckBox = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/RewardsRow/RewardsCheckbox
-@onready var progress_row: HBoxContainer = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/ProgressRow
-@onready var progress_label: Label = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/ProgressRow/ProgressLabel
 @onready var health_slider: HSlider = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/HealthRow/HealthSlider
 @onready var health_label: Label = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/HealthRow/HealthValue
 @onready var energy_slider: HSlider = $MarginContainer/MainHBox/VBoxContainer/ConfigSection/EnergyRow/EnergySlider
@@ -54,14 +52,8 @@ func _ready() -> void:
 		deck_dropdown.selected = 0
 		_update_decklist(0)
 
-	# Select first 3 enemies by default
-	_select_default_enemies(3)
-
-	# Check for active sequence and resume if needed
-	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
-		_resume_sequence()
-	else:
-		progress_row.visible = false
+	# Select one enemy by default.
+	_select_default_enemies(1)
 
 func _scan_resources() -> void:
 	# Scan characters
@@ -227,7 +219,15 @@ func _populate_enemy_list() -> void:
 		var e_name = enemy.get("enemy_name") if enemy.get("enemy_name") else enemy.resource_path.get_file().get_basename()
 		checkbox.text = e_name
 		checkbox.set_meta("enemy_resource", enemy)
+		checkbox.toggled.connect(_on_enemy_toggled.bind(checkbox))
 		enemy_container.add_child(checkbox)
+
+func _on_enemy_toggled(pressed: bool, selected_checkbox: CheckBox) -> void:
+	if not pressed:
+		return
+	for child in enemy_container.get_children():
+		if child is CheckBox and child != selected_checkbox:
+			child.set_pressed_no_signal(false)
 
 func _get_selected_enemies() -> Array[Resource]:
 	"""Get array of selected enemy resources"""
@@ -236,74 +236,6 @@ func _get_selected_enemies() -> Array[Resource]:
 		if child is CheckBox and child.button_pressed:
 			selected.append(child.get_meta("enemy_resource"))
 	return selected
-
-func _update_progress_display() -> void:
-	"""Update progress label with current battle number"""
-	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
-		progress_label.text = GameManager.duel_sequence_state.get_progress_text()
-		progress_row.visible = true
-	else:
-		progress_row.visible = false
-
-func _start_sequence_battle() -> void:
-	"""Start the next battle in the sequence"""
-	var seq_state = GameManager.duel_sequence_state
-	if not seq_state or not seq_state.is_active:
-		GLog.error("Cannot start sequence battle - no active sequence", "quick_duel")
-		return
-
-	var enemy = seq_state.get_next_enemy()
-	if not enemy:
-		GLog.error("No enemy available for sequence battle", "quick_duel")
-		return
-
-	# Get selected curios from sequence state
-	var selected_curios = seq_state.selected_curios
-
-	GLog.info("Starting sequence battle %d/%d vs %s" % [
-		seq_state.current_enemy_index + 1,
-		seq_state.total_enemies,
-		enemy.get("enemy_name") if enemy.get("enemy_name") else "Unknown"
-	], "quick_duel")
-
-	# Start duel with persistent health/energy
-	_start_quick_duel(
-		seq_state.selected_character,
-		seq_state.selected_deck,
-		enemy,
-		selected_curios,
-		seq_state.persistent_health,
-		seq_state.persistent_energy
-	)
-
-func _resume_sequence() -> void:
-	"""Resume sequence after returning from rewards or on completion"""
-	var seq_state = GameManager.duel_sequence_state
-	if not seq_state or not seq_state.is_active:
-		return
-
-	_update_progress_display()
-
-	if seq_state.is_sequence_complete():
-		# Sequence complete!
-		GLog.info("Sequence complete! Defeated all %d enemies" % seq_state.total_enemies, "quick_duel")
-		EventBus.emit_ui_notification("Sequence Complete! Defeated %d/%d enemies" % [seq_state.total_enemies, seq_state.total_enemies], "success")
-
-		# Cleanup
-		CurioManager.clear_curios()
-		seq_state.reset()
-		GameManager.duel_sequence_state = null
-
-		# Reset UI
-		progress_row.visible = false
-	else:
-		# More battles remain - came from rewards screen
-		# Auto-advance to next battle after brief delay
-		GLog.info("Continuing sequence from rewards - battle %d/%d" % [seq_state.current_enemy_index + 1, seq_state.total_enemies], "quick_duel")
-		await get_tree().create_timer(1.5).timeout
-		if not is_instance_valid(self) or not is_inside_tree():
-			return
-		_start_sequence_battle()
 
 func _setup_connections() -> void:
 	start_button.pressed.connect(_on_start_pressed)
@@ -386,6 +318,9 @@ func _update_decklist(index: int) -> void:
 
 func _on_start_pressed() -> void:
 	GLog.info("Starting test duel")
+	if not GameManager.can_start_quick_duel():
+		EventBus.emit_ui_notification("Finish the active run before using Quick Duel", "warning")
+		return
 
 	var character_idx = character_dropdown.selected
 	var deck_idx = deck_dropdown.selected
@@ -399,9 +334,9 @@ func _on_start_pressed() -> void:
 
 	# Get selected enemies
 	var selected_enemies = _get_selected_enemies()
-	if selected_enemies.is_empty():
-		GLog.warn("Please select at least one enemy")
-		EventBus.emit_ui_notification("Please select at least one enemy", "warning")
+	if selected_enemies.size() != 1:
+		GLog.warn("Please select exactly one enemy")
+		EventBus.emit_ui_notification("Please select exactly one enemy", "warning")
 		return
 
 	# Get selected curios
@@ -416,36 +351,15 @@ func _on_start_pressed() -> void:
 	var energy_override = int(energy_slider.value)
 	var show_rewards = rewards_checkbox.button_pressed
 
-	# Check if this is a sequence (multiple enemies)
-	if selected_enemies.size() > 1:
-		# Initialize sequence state
-		if not GameManager.duel_sequence_state:
-			GameManager.duel_sequence_state = DuelSequenceState.new()
-
-		GameManager.duel_sequence_state.initialize(
-			selected_enemies,
-			character,
-			deck,
-			selected_curios,
-			health_override,
-			energy_override,
-			show_rewards
-		)
-
-		# Apply curios once for the entire sequence
-		CurioManager.clear_curios()
-		for curio in selected_curios:
-			CurioManager.add_curio(curio)
-
-		# Start first battle
-		_start_sequence_battle()
-	else:
-		# Persist rewards option for single duel
-		GameManager.game_data["show_quick_duel_rewards"] = show_rewards
-		
-		# Single enemy - backward compatibility (no sequence)
-		var enemy = selected_enemies[0]
-		_start_quick_duel(character, deck, enemy, selected_curios, health_override, energy_override)
+	GameManager.game_data["show_quick_duel_rewards"] = show_rewards
+	_start_quick_duel(
+		character,
+		deck,
+		selected_enemies[0],
+		selected_curios,
+		health_override,
+		energy_override
+	)
 
 func _start_quick_duel(character: Resource, deck: Resource, enemy: Resource, selected_curios: Array[Resource], health: int, energy: int) -> void:
 	GLog.info("Quick duel config: Character=%s, Deck=%s, Enemy=%s, Curios=%d, HP=%d, Energy=%d" % [
@@ -476,13 +390,10 @@ func _start_quick_duel(character: Resource, deck: Resource, enemy: Resource, sel
 		GLog.error("Failed to load deck cards")
 		return
 	
-	# Initialize DeckManager with this deck so rewards persist across duels
-	# ONLY initialize if no deck is loaded (avoid clearing mid-sequence reward cards)
-	if DeckManager and deck is DeckData and not DeckManager.is_deck_available():
+	# A one-fight sandbox always starts from the selected deck.
+	if DeckManager and deck is DeckData:
 		DeckManager.start_run_deck_from_data(deck)
 		GLog.info("Initialized DeckManager with run deck", "quick_duel")
-	elif DeckManager and DeckManager.is_deck_available():
-		GLog.info("DeckManager already has deck loaded - preserving existing cards", "quick_duel")
 
 	# Create DuelConfig with modifiers for health/energy overrides and character class
 	var modifiers = {
@@ -505,11 +416,4 @@ func _start_quick_duel(character: Resource, deck: Resource, enemy: Resource, sel
 	SceneManager.load_scene("res://scenes/game/duel.tscn")
 
 func _on_back_pressed() -> void:
-	# Cleanup active sequence if any
-	if GameManager.duel_sequence_state and GameManager.duel_sequence_state.is_active:
-		GLog.info("Abandoning active sequence", "quick_duel")
-		CurioManager.clear_curios()
-		GameManager.duel_sequence_state.reset()
-		GameManager.duel_sequence_state = null
-
 	SceneManager.load_scene("res://scenes/ui/main_menu.tscn")
