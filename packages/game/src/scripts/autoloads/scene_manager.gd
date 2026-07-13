@@ -21,6 +21,7 @@ const SCENE_PATHS: Dictionary = {
 	"duel": "res://scenes/game/duel.tscn",
 	"quick_duel_setup": "res://scenes/game/quick_duel_setup.tscn",
 	"game_over": "res://scenes/ui/game_over.tscn",
+	"between_fight_choice": "res://scenes/ui/between_fight_choice.tscn",
 
 	"settings": "res://scenes/ui/settings.tscn",
 	"deck_viewer": "res://scenes/ui/deck_viewer.tscn",

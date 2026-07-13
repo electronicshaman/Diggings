@@ -223,14 +223,22 @@ func get_pending_run_rewards() -> Array[CardData]:
 	return run_session.get_pending_card_offers() if run_session else []
 
 
+func has_pending_run_reward() -> bool:
+	return run_session != null and run_session.state == RunSession.State.REWARD_PENDING
+
+
+func get_run_progress_text() -> String:
+	return "Fight %d of 3 complete" % (run_session.fight_index + 1) if run_session else ""
+
+
 func choose_run_card(card: CardData) -> bool:
-	if run_session == null or not run_session.apply_card_reward(card):
+	if not has_pending_run_reward() or not run_session.apply_card_reward(card):
 		return false
 	return _prepare_and_start_next_run_duel()
 
 
 func choose_run_recovery() -> bool:
-	if run_session == null or not run_session.apply_recovery():
+	if not has_pending_run_reward() or not run_session.apply_recovery():
 		return false
 	return _prepare_and_start_next_run_duel()
 
