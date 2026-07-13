@@ -24,6 +24,9 @@ anchor_bottom = 0.5
 layout_mode = 2
 text = "GAME OVER"
 
+[node name="ReasonLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+
 [node name="MainMenuButton" type="Button" parent="MainContainer"]
 layout_mode = 2
 text = "Return to Main Menu"

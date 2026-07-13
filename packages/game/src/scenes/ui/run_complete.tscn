@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://vjg4urd3bn8i"]
 
-[ext_resource type="Script" uid="uid://b8y3xjrkoqdls" path="res://src/scripts/ui/run_complete_scene.gd" id="1_t5kbj"]
+[ext_resource type="Script" uid="uid://dgjr4adbf2pko" path="res://scripts/ui/run_complete_scene.gd" id="1_t5kbj"]
 
 [node name="RunCompleteScene" type="Control"]
 layout_mode = 3
@@ -27,7 +27,19 @@ layout_mode = 2
 layout_mode = 2
 text = "Run Complete"
 
-[node name="MessageLabel" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+[node name="ClassLabel" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SeedLabel" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="FightsLabel" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VitalsLabel" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CardsLabel" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 
 [node name="ReturnButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer"]

@@ -253,7 +253,9 @@ func _prepare_and_start_next_run_duel() -> bool:
 		run_session.record_defeat(RunSession.EndReason.INVALID_STATE)
 		last_run_summary = run_session.get_summary()
 		end_current_run(false)
-		SceneManager.load_scene_by_name("game_over")
+		SceneManager.load_scene_by_name_with_intent(
+			"game_over", GameOverIntent.new(RunSession.EndReason.INVALID_STATE)
+		)
 		return false
 	return start_prepared_duel()
 
@@ -270,17 +272,22 @@ func complete_curated_duel(player: PlayerData, winner: String) -> void:
 		run_session.record_defeat(reason)
 		last_run_summary = run_session.get_summary()
 		end_current_run(false)
-		SceneManager.load_scene_by_name("game_over")
+		SceneManager.load_scene_by_name_with_intent("game_over", GameOverIntent.new(reason))
 		return
 	if not run_session.record_victory(player):
+		var defeat_reason := run_session.end_reason
 		last_run_summary = run_session.get_summary()
 		end_current_run(false)
-		SceneManager.load_scene_by_name("game_over")
+		SceneManager.load_scene_by_name_with_intent(
+			"game_over", GameOverIntent.new(defeat_reason)
+		)
 		return
 	if run_session.is_complete():
 		last_run_summary = run_session.get_summary()
 		end_current_run(true)
-		SceneManager.load_scene_by_name("run_complete")
+		SceneManager.load_scene_by_name_with_intent(
+			"run_complete", RunCompleteIntent.from_summary(last_run_summary)
+		)
 	else:
 		SceneManager.load_scene_by_name("between_fight_choice")
 
