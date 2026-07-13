@@ -199,6 +199,7 @@ func begin_curated_run(character: CharacterClass, run_seed: int) -> bool:
 	if pending_duel_config == null or not pending_duel_config.is_valid():
 		reset_curated_run()
 		return false
+	SeedManager.start_run()
 	is_run_active = true
 	change_state(GameState.PLAYING)
 	return true
@@ -210,7 +211,11 @@ func reset_curated_run() -> void:
 	selected_character = null
 	is_run_active = false
 	DeckManager.clear_current_deck()
+	CurioManager.clear_curios()
 	CurioManager.reset_run_curios()
+	SeedManager.end_run()
+	if game_data.has("player"):
+		game_data["player"] = null
 
 
 func get_pending_run_rewards() -> Array[CardData]:

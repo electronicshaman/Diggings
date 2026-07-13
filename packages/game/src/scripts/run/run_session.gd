@@ -30,7 +30,10 @@ func begin(run_definition: RunDefinition, selected_character: CharacterClass, ru
 		return false
 	if not _deck_manager.is_deck_available():
 		return false
-	_seed_manager.set_master_seed(run_seed)
+	if _seed_manager.get_master_seed() == run_seed and not _seed_manager.get_hash_seed_string().is_empty():
+		_seed_manager.setup_subsystem_seeds()
+	else:
+		_seed_manager.set_master_seed(run_seed)
 	definition = run_definition
 	character = selected_character
 	seed = run_seed
