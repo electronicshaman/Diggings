@@ -42,3 +42,11 @@ func test_duplicate_curated_completion_closes_and_hands_off_once() -> void:
 	assert_bool(GameManager.is_run_active).is_true()
 	assert_dict(GameManager.last_run_summary).is_empty()
 	manager.passive_handler.cleanup()
+
+# NOTE: DuelManager.end_duel()'s legacy player-loss branch (non-curated,
+# non-quick-duel) is deliberately untested here. It awaits a wall-clock
+# scene_transition_delay and then performs a real SceneManager scene load,
+# which cannot be stubbed out headless: the loaded game_over scene chains
+# further transitions and pollutes later suites. The defeat-reason wiring it
+# shares with the curated path is covered by
+# test_game_manager_intent_routing.gd.

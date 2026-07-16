@@ -156,6 +156,7 @@ func test_post_application_transition_failure_stays_locked() -> void:
 	var recover_button := scene.get_node("Margin/VBox/RecoverButton") as Button
 	_complete_incoming_between_fight_transition()
 	DeckManager.current_run_deck.cards[0] = null
+	var existing_tweens := get_tree().get_processed_tweens()
 
 	recover_button.pressed.emit()
 
@@ -165,6 +166,9 @@ func test_post_application_transition_failure_stays_locked() -> void:
 		assert_bool((child as Button).disabled).is_true()
 	assert_int(GameManager.run_session.state).is_equal(RunSession.State.DEFEATED)
 	assert_int(GameManager.run_session.fight_index).is_equal(1)
+	# The defeat above starts a real game_over transition; kill its tween so
+	# the load cannot complete mid-way through a later suite.
+	_cancel_new_scene_transition_tweens(existing_tweens)
 
 
 func test_manager_rejects_card_while_scene_transition_is_busy_without_mutating_reward() -> void:
