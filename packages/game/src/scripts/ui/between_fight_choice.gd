@@ -28,6 +28,12 @@ func _ready() -> void:
 	_set_controls_disabled(not choices_ready)
 
 
+## Re-arms the controls once the transition into this scene finishes.
+## Assumption: the only transition in flight while this screen is alive is the
+## one that brought it in. If a choice is ever rejected while a transition to a
+## *different* scene is in progress, this handler will not re-arm the controls
+## (the guard below ignores other scene paths) — acceptable today because any
+## other transition means this scene is being left.
 func _on_scene_transition_completed(scene_path: String) -> void:
 	if scene_path != SceneManager.SCENE_PATHS["between_fight_choice"]:
 		return

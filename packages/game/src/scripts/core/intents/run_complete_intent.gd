@@ -29,7 +29,7 @@ func get_intent_type() -> String:
 
 ## Factory for building a RunCompleteIntent from a RunSession.get_summary() Dictionary.
 static func from_summary(summary: Dictionary) -> RunCompleteIntent:
-	var intent := RunCompleteIntent.new(true, "main_menu")
+	var intent := RunCompleteIntent.new(summary.get("victory", true), "main_menu")
 	intent.character_class = summary.get("character_class", "Unknown")
 	intent.seed = summary.get("seed", 0)
 	intent.battles_won = summary.get("fights_won", 0)

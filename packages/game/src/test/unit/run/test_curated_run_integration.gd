@@ -35,6 +35,11 @@ func _complete_incoming_between_fight_transition() -> void:
 	EventBus.scene_transition_completed.emit(SceneManager.SCENE_PATHS["between_fight_choice"])
 
 
+## Kills any tween started during the test so a headless run never awaits one.
+## Tween.kill() stops a tween WITHOUT emitting finished, so SceneManager's
+## finished-driven cleanup never runs — that is why is_transitioning must be
+## reset by hand below. Letting the tweens finish instead would fire real
+## scene changes mid-test.
 func _cancel_new_scene_transition_tweens(existing_tweens: Array[Tween]) -> void:
 	for tween in get_tree().get_processed_tweens():
 		if not existing_tweens.has(tween):
