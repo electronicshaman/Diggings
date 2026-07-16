@@ -32,7 +32,6 @@ GameManager
 DeckManager
 SceneManager
 CurioManager
-CharacterGenerator
 RunHistoryManager
 DebugHUD
 HandlerRegistry

@@ -199,6 +199,3 @@ func transition_to_main_menu() -> void:
 
 func transition_to_game() -> void:
 	load_scene_by_name("quick_duel_setup")
-
-func transition_to_game_over() -> void:
-	load_scene_by_name("game_over")
