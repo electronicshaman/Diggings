@@ -218,3 +218,95 @@ func test_choice_waits_for_matching_transition_and_routes_to_duel_once() -> void
 			route_tweens.append(tween)
 	assert_int(route_tweens.size()).is_equal(1)
 	_cancel_new_scene_transition_tweens(existing_tweens)
+
+
+func test_complete_run_persists_choices_and_builds_summary() -> void:
+	GameManager.reset_curated_run()
+	SeedManager.set_master_seed(515151)
+	var character := load("res://data/characters/bushranger.tres") as CharacterClass
+	assert_bool(GameManager.begin_curated_run(character, 515151)).is_true()
+	var first_player := GameManager.run_session.player_snapshot.to_player_data()
+	first_player.stats.current_health = 38
+	first_player.stats.current_sanity = 14
+	first_player.stats.current_gold = 19
+	first_player.custom_resources[GameEnums.CustomResourceType.AMMO] = 2
+	first_player.run_corruption = 4
+	first_player.corruption_triggered_tiers = {Stats.SanityTier.SHAKEN: true}
+	var curio := load("res://data/curios/common/lucky_nugget.tres")
+	assert_bool(CurioManager.add_curio(curio)).is_true()
+	GameManager.run_session.record_victory(first_player)
+	var offered := GameManager.get_pending_run_rewards()
+	assert_bool(GameManager.run_session.apply_card_reward(offered[0])).is_true()
+	var second_config := GameManager.run_session.prepare_current_duel()
+	var persisted := second_config.get_modifier("player_data") as PlayerData
+	assert_int(persisted.stats.current_health).is_equal(38)
+	assert_int(persisted.stats.current_sanity).is_equal(14)
+	assert_int(persisted.stats.current_gold).is_equal(19)
+	assert_int(persisted.custom_resources[GameEnums.CustomResourceType.AMMO]).is_equal(2)
+	assert_int(persisted.run_corruption).is_equal(4)
+	assert_bool(persisted.corruption_triggered_tiers[Stats.SanityTier.SHAKEN]).is_true()
+	assert_bool(CurioManager.has_curio(curio.curio_name)).is_true()
+	var second_player := GameManager.run_session.player_snapshot.to_player_data()
+	second_player.stats.current_health = 30
+	second_player.stats.current_sanity = 10
+	GameManager.run_session.record_victory(second_player)
+	assert_bool(GameManager.run_session.apply_recovery()).is_true()
+	GameManager.run_session.prepare_current_duel()
+	GameManager.run_session.record_victory(GameManager.run_session.player_snapshot.to_player_data())
+	var summary := GameManager.run_session.get_summary()
+	assert_bool(summary.victory).is_true()
+	assert_int(summary.fights_won).is_equal(3)
+	assert_int(summary.cards_added.size()).is_equal(1)
+	GameManager.reset_curated_run()
+
+
+func _card_reward_paths(cards: Array[CardData]) -> Array[String]:
+	var paths: Array[String] = []
+	for card in cards:
+		paths.append(card.resource_path)
+	return paths
+
+
+func _play_curated_run_and_capture(run_seed: int) -> Dictionary:
+	GameManager.reset_curated_run()
+	SeedManager.set_master_seed(run_seed)
+	var character := load("res://data/characters/bushranger.tres") as CharacterClass
+	assert_bool(GameManager.begin_curated_run(character, run_seed)).is_true()
+	var enemy_names: Array[String] = []
+	var offer_paths: Array[String] = []
+
+	enemy_names.append(GameManager.pending_duel_config.enemy_data.enemy_name)
+	assert_bool(
+		GameManager.run_session.record_victory(GameManager.run_session.player_snapshot.to_player_data())
+	).is_true()
+	var first_offers := GameManager.get_pending_run_rewards()
+	offer_paths.append("|".join(_card_reward_paths(first_offers)))
+	assert_bool(GameManager.run_session.apply_card_reward(first_offers[0])).is_true()
+
+	var second_config := GameManager.run_session.prepare_current_duel()
+	enemy_names.append(second_config.enemy_data.enemy_name)
+	assert_bool(
+		GameManager.run_session.record_victory(GameManager.run_session.player_snapshot.to_player_data())
+	).is_true()
+	var second_offers := GameManager.get_pending_run_rewards()
+	offer_paths.append("|".join(_card_reward_paths(second_offers)))
+	assert_bool(GameManager.run_session.apply_recovery()).is_true()
+
+	var third_config := GameManager.run_session.prepare_current_duel()
+	enemy_names.append(third_config.enemy_data.enemy_name)
+	assert_bool(
+		GameManager.run_session.record_victory(GameManager.run_session.player_snapshot.to_player_data())
+	).is_true()
+	assert_bool(GameManager.run_session.is_complete()).is_true()
+
+	GameManager.reset_curated_run()
+	return {"enemy_names": enemy_names, "offer_paths": offer_paths}
+
+
+func test_same_seed_same_decisions_produce_identical_offers_and_enemies() -> void:
+	const RUN_SEED := 424242
+	var first_run := _play_curated_run_and_capture(RUN_SEED)
+	var second_run := _play_curated_run_and_capture(RUN_SEED)
+	assert_int(second_run["enemy_names"].size()).is_equal(3)
+	assert_array(second_run["enemy_names"]).is_equal(first_run["enemy_names"])
+	assert_array(second_run["offer_paths"]).is_equal(first_run["offer_paths"])

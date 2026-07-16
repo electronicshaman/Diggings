@@ -1,12 +1,27 @@
 # High-Level Summary: Gold Rush Lovecraft Game Design
 
-Last verified: 2026-01-11
+Last verified: 2026-07-13
+
+## Active Milestone
+
+The active milestone is the deterministic curated three-fight mini-run.
+
+- **New Game flow:** static class selection, then three fights with a
+  card-or-recovery choice after each of the first two fights, ending in a
+  summary.
+- **Quick Duel:** single-fight developer sandbox, independent of the curated
+  run.
+- **Frozen:** Atlas, content-kit, generated narrative, the narrative runtime,
+  maps, shops, and saving.
+- **Canonical design:**
+  `docs/superpowers/specs/2026-07-12-core-game-recovery-design.md` (repo
+  root).
 
 ## Core Game Identity
 
 **Genre**: Roguelite card battler
 **Setting**: Australian gold rush meets Lovecraftian horror
-**Core Loop**: 1v1 card duels → Manage resources → Build deck → Progress through encounters
+**Core Loop**: 1v1 card duels → Manage resources → Build deck → Advance through the curated three-fight run
 
 ## Key Differentiators from Slay the Spire
 
@@ -131,4 +146,6 @@ Persistent run modifiers (like relics) with Australian gold rush + cosmic horror
 - 1v1 duels with player/enemy turns and visible intents
 - Core card categories: Attack, Skill, Power, Fortune; Status and Curse as deck pollutants
 - Seeded runs via SeedManager; seed display toggle in UI settings
-- Autoload managers: GameSettings, EventBus, SaveSystem, ResourceManager, SeedManager, GLog, GameManager, DeckManager, SceneManager, CurioManager, CharacterGenerator, RunHistoryManager, DebugHUD, HandlerRegistry
+- Curated three-fight run (`RunSession`) launched from static class selection: persistent player state, deck growth, two card-or-recovery choices, victory/defeat summary
+- Quick Duel remains a single-fight developer sandbox, separate from the curated run
+- Autoload managers: GameSettings, EventBus, SaveSystem, ResourceManager, SeedManager, GLog, GameManager, DeckManager, SceneManager, CurioManager, RunHistoryManager, DebugHUD, HandlerRegistry
